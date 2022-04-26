@@ -38,9 +38,12 @@ class GemmConvXPUKernel : public framework::OpKernel<T> {
     const std::string padding_algorithm =
         context.Attr<std::string>("padding_algorithm");
 
-    PADDLE_ENFORCE_EQ(data_format == "NHWC" || data_format == "NDHWC", false,
-                      platform::errors::InvalidArgument(
-                          ("XPU do support data_format is NCHW in conv op.")));
+    PADDLE_ENFORCE_EQ(
+        data_format == "NDHWC", false,
+        platform::errors::InvalidArgument(
+            "XPU do support data_format is NCHW or NHWC in conv op."
+            "But recevived 'data_format' is [%s].",
+            data_format));
 
     framework::DDim in_data_dims =
         phi::slice_ddim(input->dims(), 2, input->dims().size());
@@ -51,9 +54,18 @@ class GemmConvXPUKernel : public framework::OpKernel<T> {
                              in_data_dims, strides, ksize);
 
     const int batch_size = static_cast<int>(input->dims()[0]);
-    const int img_c = static_cast<int>(input->dims()[1]);
-    const int img_h = static_cast<int>(input->dims()[2]);
-    const int img_w = static_cast<int>(input->dims()[3]);
+    int img_c = -1;
+    int img_h = -1;
+    int img_w = -1;
+    if (data_format != "NHWC") {
+      img_c = static_cast<int>(input->dims()[1]);
+      img_h = static_cast<int>(input->dims()[2]);
+      img_w = static_cast<int>(input->dims()[3]);
+    } else {
+      img_c = static_cast<int>(input->dims()[3]);
+      img_h = static_cast<int>(input->dims()[1]);
+      img_w = static_cast<int>(input->dims()[2]);
+    }
     const int f = static_cast<int>(filter.dims()[0]);
 
     const XPUT *input_data = reinterpret_cast<const XPUT *>(input->data<T>());
@@ -61,10 +73,11 @@ class GemmConvXPUKernel : public framework::OpKernel<T> {
     XPUT *output_data = reinterpret_cast<XPUT *>(output->data<T>());
 
     auto &dev_ctx = context.template device_context<DeviceContext>();
+    bool is_nchw = data_format != "NHWC";
     int r = xpu::conv2d<XPUT, XPUT, XPUT, int16_t>(
         dev_ctx.x_context(), input_data, filter_data, output_data, batch_size,
         img_c, img_h, img_w, f, ksize, strides, paddings, dilations, groups,
-        nullptr, nullptr, nullptr, true);
+        nullptr, nullptr, nullptr, is_nchw);
     PADDLE_ENFORCE_EQ(
         r, XPU_SUCCESS,
         platform::errors::External("XPU conv kernel return wrong value[%d %s]",
@@ -99,9 +112,11 @@ class GemmConvGradXPUKernel : public framework::OpKernel<T> {
         context.Attr<std::string>("padding_algorithm");
 
     PADDLE_ENFORCE_EQ(
-        data_format == "NHWC" || data_format == "NDHWC", false,
+        data_format == "NDHWC", false,
         platform::errors::InvalidArgument(
-            ("XPU do support data_format is NCHW in conv grad op.")));
+            "XPU do support data_format is NCHW or NHWC in conv grad op."
+            "But recevived 'data_format' is [%s].",
+            data_format));
 
     framework::DDim in_data_dims =
         phi::slice_ddim(input->dims(), 2, input->dims().size());
@@ -112,9 +127,18 @@ class GemmConvGradXPUKernel : public framework::OpKernel<T> {
                              in_data_dims, strides, ksize);
 
     const int batch_size = static_cast<int>(input->dims()[0]);
-    const int img_c = static_cast<int>(input->dims()[1]);
-    const int img_h = static_cast<int>(input->dims()[2]);
-    const int img_w = static_cast<int>(input->dims()[3]);
+    int img_c = -1;
+    int img_h = -1;
+    int img_w = -1;
+    if (data_format != "NHWC") {
+      img_c = static_cast<int>(input->dims()[1]);
+      img_h = static_cast<int>(input->dims()[2]);
+      img_w = static_cast<int>(input->dims()[3]);
+    } else {
+      img_c = static_cast<int>(input->dims()[3]);
+      img_h = static_cast<int>(input->dims()[1]);
+      img_w = static_cast<int>(input->dims()[2]);
+    }
     const int f = static_cast<int>(filter.dims()[0]);
 
     const XPUT *input_data = reinterpret_cast<const XPUT *>(input->data<T>());
@@ -132,11 +156,12 @@ class GemmConvGradXPUKernel : public framework::OpKernel<T> {
       filter_grad_data = reinterpret_cast<XPUT *>(filter_grad->data<T>());
     }
     auto &dev_ctx = context.template device_context<DeviceContext>();
+    bool is_nchw = data_format != "NHWC";
     int r = xpu::conv2d_grad<XPUT, XPUT, XPUT, int16_t>(
         dev_ctx.x_context(), input_data, filter_data, output_grad_data,
         input_grad_data, filter_grad_data, batch_size, img_c, img_h, img_w, f,
         ksize, strides, paddings, dilations, groups, nullptr, nullptr, nullptr,
-        nullptr, nullptr, true);
+        nullptr, nullptr, is_nchw);
     PADDLE_ENFORCE_EQ(
         r, XPU_SUCCESS,
         platform::errors::External("XPU conv kernel return wrong value[%d %s]",

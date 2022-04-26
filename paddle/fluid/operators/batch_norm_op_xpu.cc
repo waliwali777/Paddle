@@ -53,8 +53,12 @@ class BatchNormXPUKernel : public framework::OpKernel<T> {
             "But received: the size of input's dimensions is [%d]",
             x_dims.size()));
 
-    int N, C, H, W, D;
+    int N = -1, C = -1, H = -1, W = -1, D = -1;
     ExtractNCWHD(x_dims, data_layout, &N, &C, &H, &W, &D);
+    N = (N == 0) ? 1 : N;
+    C = (C == 0) ? 1 : C;
+    H = (H == 0) ? 1 : H;
+    W = (W == 0) ? 1 : W;
 
     const auto *scale = ctx.Input<Tensor>("Scale");
     const auto *bias = ctx.Input<Tensor>("Bias");
@@ -103,24 +107,91 @@ class BatchNormXPUKernel : public framework::OpKernel<T> {
                             "The batch_norm XPU API return wrong value[%d %s]",
                             r, XPUAPIErrorMsg[r]));
     } else {
-      PADDLE_ENFORCE_EQ(
-          data_layout_str == "NCHW", true,
-          platform::errors::InvalidArgument(
-              "The batch_norm_infer 'data_layout' attribute must be NCHW. "
-              "But recevived 'data_layout' is [%s].",
-              data_layout_str));
       const auto *mean = ctx.Input<Tensor>("Mean");
       const auto *variance = ctx.Input<Tensor>("Variance");
       const auto *mean_data = mean->data<float>();
       const auto *variance_data = variance->data<float>();
-      int r = xpu::batch_norm_infer(dev_ctx.x_context(), x_data, y_data, N, C,
-                                    H, W, epsilon, scale_data, bias_data,
-                                    mean_data, variance_data, is_nchw);
-      PADDLE_ENFORCE_EQ(
-          r, xpu::Error_t::SUCCESS,
-          platform::errors::External(
-              "The batch_norm_infer XPU API return wrong value[%d %s]", r,
-              XPUAPIErrorMsg[r]));
+      int r = -1;
+      if (is_nchw) {
+        r = xpu::batch_norm_infer(dev_ctx.x_context(), x_data, y_data, N, C, H,
+                                  W, epsilon, scale_data, bias_data, mean_data,
+                                  variance_data, true);
+        PADDLE_ENFORCE_EQ(
+            r, xpu::Error_t::SUCCESS,
+            platform::errors::External(
+                "The batch_norm_infer XPU API return wrong value[%d %s]", r,
+                XPUAPIErrorMsg[r]));
+      } else if (data_layout_str == "NHWC") {
+        float *x_data_transform = nullptr;
+        float *y_data_transform = nullptr;
+        r = xpu_malloc(reinterpret_cast<void **>(&x_data_transform),
+                       sizeof(float) * N * H * W * C);
+        PADDLE_ENFORCE_EQ(
+            r, 0, platform::errors::External("Alloc memory in xpu failed"));
+
+        r = xpu_malloc(reinterpret_cast<void **>(&y_data_transform),
+                       sizeof(float) * N * H * W * C);
+        PADDLE_ENFORCE_EQ(r, 0,
+                          platform::errors::External(
+                              "Alloc memory in xpu for result data failed"));
+
+        std::vector<int> xshape;
+        std::vector<int> permute;
+
+        xshape.push_back(N);
+        xshape.push_back(H);
+        xshape.push_back(W);
+        xshape.push_back(C);
+
+        permute.push_back(0);
+        permute.push_back(3);
+        permute.push_back(1);
+        permute.push_back(2);
+
+        r = xpu::transpose(dev_ctx.x_context(), x_data, x_data_transform,
+                           xshape, permute);
+
+        PADDLE_ENFORCE_EQ(r, xpu::Error_t::SUCCESS,
+                          platform::errors::External(
+                              "The transpose XPU API return wrong value[%d %s]",
+                              r, XPUAPIErrorMsg[r]));
+        r = xpu::batch_norm_infer(
+            dev_ctx.x_context(), x_data_transform, y_data_transform, N, C, H, W,
+            epsilon, scale_data, bias_data, mean_data, variance_data, true);
+        PADDLE_ENFORCE_EQ(
+            r, xpu::Error_t::SUCCESS,
+            platform::errors::External(
+                "The batch_norm_infer XPU API return wrong value[%d %s]", r,
+                XPUAPIErrorMsg[r]));
+
+        xshape.clear();
+        permute.clear();
+
+        xshape.push_back(N);
+        xshape.push_back(C);
+        xshape.push_back(H);
+        xshape.push_back(W);
+
+        permute.push_back(0);
+        permute.push_back(2);
+        permute.push_back(3);
+        permute.push_back(1);
+
+        r = xpu::transpose(dev_ctx.x_context(), y_data_transform, y_data,
+                           xshape, permute);
+
+        PADDLE_ENFORCE_EQ(
+            r, xpu::Error_t::SUCCESS,
+            platform::errors::External(
+                "The transpose XPU API for result return w rong value[%d %s]",
+                r, XPUAPIErrorMsg[r]));
+
+        xshape.clear();
+        permute.clear();
+
+        xpu_free(x_data_transform);
+        xpu_free(y_data_transform);
+      }
     }
   }
 };
@@ -175,7 +246,6 @@ class BatchNormGradXPUKernel : public framework::OpKernel<T> {
     const bool is_test = ctx.Attr<bool>("is_test");
     const float epsilon = ctx.Attr<float>("epsilon");
     const auto data_layout = framework::StringToDataLayout(data_layout_str);
-
     PADDLE_ENFORCE_EQ(data_layout_str == "NCHW" || data_layout_str == "NHWC",
                       true,
                       platform::errors::InvalidArgument(
@@ -222,8 +292,12 @@ class BatchNormGradXPUKernel : public framework::OpKernel<T> {
             "But received: the size of input's dimensions is [%d]",
             x_dims.size()));
 
-    int N, C, H, W, D;
+    int N = -1, C = -1, H = -1, W = -1, D = -1;
     ExtractNCWHD(x_dims, data_layout, &N, &C, &H, &W, &D);
+    N = (N == 0) ? 1 : N;
+    C = (C == 0) ? 1 : C;
+    H = (H == 0) ? 1 : H;
+    W = (W == 0) ? 1 : W;
 
     const auto *x_data = x->data<T>();
     const auto *d_y_data = d_y->data<T>();
@@ -294,7 +368,6 @@ class BatchNormGradXPUKernel : public framework::OpKernel<T> {
                                              "return wrong value[%d %s]",
                                              r2, XPUAPIErrorMsg[r2]));
     }
-
     int r3;
     bool is_nchw = data_layout_str == "NCHW";
     if (use_global_stats) {
