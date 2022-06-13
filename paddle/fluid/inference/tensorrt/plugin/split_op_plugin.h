@@ -45,6 +45,9 @@ class SplitPlugin : public PluginTensorRTV2Ext {
     SplitPlugin* ptr = new SplitPlugin(axis_, output_length_, with_fp16_);
     ptr->setPluginNamespace(this->getPluginNamespace());
     ptr->shareData(this);
+    ptr->data_type_ = data_type_;
+    ptr->data_format_ = data_format_;
+    ptr->input_dims_ = input_dims_;
     return ptr;
   }
 
@@ -64,6 +67,8 @@ class SplitPlugin : public PluginTensorRTV2Ext {
                                      const nvinfer1::Dims* input_dims,
                                      int num_inputs) TRT_NOEXCEPT override;
 
+  bool supportsFormat(nvinfer1::DataType type, nvinfer1::PluginFormat format)
+      const TRT_NOEXCEPT override;
   int initialize() TRT_NOEXCEPT override;
   void terminate() TRT_NOEXCEPT override;
 #if IS_TRT_VERSION_LT(8000)
