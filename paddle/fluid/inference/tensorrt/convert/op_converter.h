@@ -226,22 +226,23 @@ class OpConverter {
     std::vector<std::string> outputs_name = op_desc.OutputNames();
 
     for (size_t i = 0; i < inputs_name.size(); i++) {
-      if (op_desc.HasAttr(inputs_name[i])) {
+      auto attr_name = inputs_name[i] + "0_range";
+      if (op_desc.HasAttr(attr_name)) {
         std::string input_tensor_name = op_desc.Input(inputs_name[i])[0];
         auto* input_itensor = engine->GetITensor(input_tensor_name);
-        float input_scale =
-            PADDLE_GET_CONST(float, op_desc.GetAttr(inputs_name[i]));
+        float input_scale = PADDLE_GET_CONST(float, op_desc.GetAttr(attr_name));
         engine->SetTensorDynamicRange(input_itensor, input_scale);
         VLOG(1) << "Set input tensor scale = " << input_scale
                 << " for tensor: " << input_tensor_name << ".";
       }
     }
     for (size_t i = 0; i < outputs_name.size(); i++) {
-      if (op_desc.HasAttr(outputs_name[i])) {
+      auto attr_name = outputs_name[i] + "0_range";
+      if (op_desc.HasAttr(attr_name)) {
         std::string output_tensor_name = op_desc.Output(outputs_name[i])[0];
         auto* output_itensor = engine->GetITensor(output_tensor_name);
         float output_scale =
-            PADDLE_GET_CONST(float, op_desc.GetAttr(outputs_name[i]));
+            PADDLE_GET_CONST(float, op_desc.GetAttr(attr_name));
         engine->SetTensorDynamicRange(output_itensor, output_scale);
         VLOG(1) << "Set output tensor scale = " << output_scale
                 << " for tensor: " << output_tensor_name << ".";
