@@ -178,6 +178,7 @@ limitations under the License. */
 #include "paddle/fluid/pybind/fleet_py.h"
 #endif
 
+#include "paddle/fluid/pybind/paddle_bfloat/bfloat16.h"
 #ifdef PADDLE_WITH_CINN
 #include "paddle/fluid/framework/paddle2cinn/cinn_compiler.h"
 #endif
@@ -602,6 +603,8 @@ static int GetNCCLVersion() {
 #endif
 
 PYBIND11_MODULE(libpaddle, m) {
+  paddle_bfloat::RegisterNumpyBfloat16();
+
   BindImperative(&m);
   BindEager(&m);
   BindEagerStringTensor(&m);

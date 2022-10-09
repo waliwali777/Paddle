@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import numpy as np
+from paddle_bfloat import bfloat16
 import math
 import re
 from paddle.common_ops_import import fill_constant
@@ -1777,7 +1778,7 @@ def _memcpy(input, place=None, output=None):
 
     if isinstance(input, (Variable, core.VarBase)):
         check_dtype(input.dtype, 'input', [
-            'float16', 'uint16', 'float32', 'float64', 'int32', 'int64',
+            'float16', bfloat16, 'float32', 'float64', 'int32', 'int64',
             'uint8', 'bool'
         ], 'memcpy', '(When the type of input in memcpy is Variable.)')
     if output is None:

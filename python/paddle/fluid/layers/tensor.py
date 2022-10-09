@@ -32,6 +32,8 @@ from paddle.utils import deprecated
 from .utils import check_shape
 from paddle import _C_ops, _legacy_C_ops
 
+from paddle_bfloat import bfloat16
+
 __all__ = [
     'create_tensor',
     'create_parameter',
@@ -85,7 +87,7 @@ def create_tensor(dtype, name=None, persistable=False):
     """
     check_dtype(dtype, 'dtype', [
         'bool', 'float16', 'float32', 'float64', 'int8', 'int32', 'int32',
-        'int64'
+        'int64', 'bfloat16'
     ], 'create_tensor')
     helper = LayerHelper("create_tensor", **locals())
     return helper.create_variable(name=helper.name,
@@ -200,7 +202,7 @@ def create_global_var(shape,
         'int32',
         'int64',
         'uint8',
-        'uint16',
+        'bfloat16',
     ], 'create_global_var')
 
     helper = LayerHelper("global_var", **locals())
@@ -253,11 +255,11 @@ def cast(x, dtype):
 
     check_variable_and_dtype(x, 'x', [
         'bool', 'float16', 'float32', 'float64', 'int16', 'int32', 'int64',
-        'uint8', 'uint16'
+        'uint8', 'bfloat16'
     ], 'cast')
     check_dtype(dtype, 'dtype', [
         'bool', 'float16', 'float32', 'float64', 'int8', 'int16', 'int32',
-        'int64', 'uint8', 'uint16'
+        'int64', 'uint8', 'bfloat16'
     ], 'cast')
 
     helper = LayerHelper('cast', **locals())
@@ -643,7 +645,7 @@ def assign(input, output=None):
                 _legacy_C_ops.assign(input, output)
         else:
             check_dtype(input.dtype, 'input', [
-                'float16', 'uint16', 'float32', 'float64', 'int32', 'int64',
+                'float16', 'bfloat16', 'float32', 'float64', 'int32', 'int64',
                 'uint8', 'bool'
             ], 'assign', '(When the type of input in assign is Variable.)')
             if output is None:

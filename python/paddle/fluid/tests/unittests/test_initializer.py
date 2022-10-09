@@ -21,6 +21,8 @@ import paddle.fluid as fluid
 import paddle.fluid.framework as framework
 import paddle.fluid.initializer as initializer
 from paddle.fluid.core import VarDesc
+from paddle_bfloat import bfloat16
+from paddle.fluid.tests.unittests.op_test import OpTestTool
 from paddle.regularizer import L2Decay
 
 DELTA = 0.00001
@@ -97,12 +99,13 @@ class TestConstantInitializer(unittest.TestCase):
         self.test_constant_initializer_default_value("float16")
         self.test_constant_initializer("float16")
 
+    @OpTestTool.skip_if_not_cpu_bf16()
     def test_constant_initializer_bf16(self):
         """Test constant initializer with bfloat16
            No cast operator has been added here
         """
-        self.test_constant_initializer_default_value("uint16")
-        self.test_constant_initializer("uint16")
+        self.test_constant_initializer_default_value("bfloat16")
+        self.test_constant_initializer("bfloat16")
 
 
 class TestUniformInitializer(unittest.TestCase):
@@ -202,13 +205,14 @@ class TestUniformInitializer(unittest.TestCase):
         block = self.test_uniform_initializer_two_op("float16")
         self.assertTrue(check_cast_op(block.ops[1]))
 
+    @OpTestTool.skip_if_not_cpu_bf16()
     def test_uniform_initializer_bf16(self):
         """Test uniform initializer with bfloat16
            No cast operator has been added here
         """
-        block = self.test_uniform_initializer_default_value("uint16")
-        block = self.test_uniform_initializer(dtype="uint16")
-        block = self.test_uniform_initializer_two_op("uint16")
+        block = self.test_uniform_initializer_default_value("bfloat16")
+        block = self.test_uniform_initializer(dtype="bfloat16")
+        block = self.test_uniform_initializer_two_op("bfloat16")
 
 
 class TestNormalInitializer(unittest.TestCase):
@@ -257,10 +261,11 @@ class TestNormalInitializer(unittest.TestCase):
         """
         self.test_normal_initializer("float16")
 
+    @OpTestTool.skip_if_not_cpu_bf16()
     def test_normal_initializer_bf16(self):
         """Test normal initializer with bfloat16
         """
-        self.test_normal_initializer("uint16")
+        self.test_normal_initializer("bfloat16")
 
 
 class TestXavierInitializer(unittest.TestCase):
@@ -371,7 +376,7 @@ class TestXavierInitializer(unittest.TestCase):
                                        fan_out=23,
                                        seed=134))
         num_ops = 2 if (dtype == "float16" or
-                        (dtype == "uint16" and not uniform)) else 1
+                        (dtype == "bfloat16" and not uniform)) else 1
         self.assertEqual(len(block.ops), num_ops)
         init_op = block.ops[0]
         if uniform:
@@ -389,14 +394,16 @@ class TestXavierInitializer(unittest.TestCase):
         """
         block = self.test_xavier_initializer_supplied_arguments("float16")
 
+    @OpTestTool.skip_if_not_cpu_bf16()
     def test_xavier_initializer_bf16(self):
         """Test the Xavier initializer with bfloat16
         """
         block_uniform = self.test_xavier_initializer_supplied_arguments(
-            "uint16")
+            "bfloat16")
         self.assertEqual(len(block_uniform.ops), 1)
         block_gaussian = self.test_xavier_initializer_supplied_arguments(
-            "uint16", False)
+            "bfloat16", False)
+        self.assertTrue(check_cast_op(block_gaussian.ops[1]))
 
 
 class TestMSRAInitializer(unittest.TestCase):
@@ -515,10 +522,11 @@ class TestMSRAInitializer(unittest.TestCase):
         block = self.test_msra_initializer_supplied_arguments("float16")
         self.assertTrue(check_cast_op(block.ops[1]))
 
+    @OpTestTool.skip_if_not_cpu_bf16()
     def test_msra_initializer_bf16(self):
         """Test the MSRA initializer with bfloat16
         """
-        block = self.test_msra_initializer_supplied_arguments("uint16")
+        block = self.test_msra_initializer_supplied_arguments("bfloat16")
 
 
 class TestBilinearInitializer(unittest.TestCase):
@@ -535,7 +543,7 @@ class TestBilinearInitializer(unittest.TestCase):
                 lod_level=0,
                 name="param",
                 initializer=initializer.BilinearInitializer())
-        num_ops = 2 if dtype in ["float16", "uint16", "float64"] else 1
+        num_ops = 2 if dtype in ["float16", "bfloat16", "float64"] else 1
         self.assertEqual(len(block.ops), num_ops)
         init_op = block.ops[0]
         self.assertEqual(init_op.type, 'assign_value')
@@ -550,10 +558,11 @@ class TestBilinearInitializer(unittest.TestCase):
         block = self.test_bilinear_initializer("float16")
         self.assertTrue(check_cast_op(block.ops[1]))
 
+    @OpTestTool.skip_if_not_cpu_bf16()
     def test_bilinear_initializer_bf16(self):
         """Test the bilinear initializer with supplied arguments
         """
-        block = self.test_bilinear_initializer("uint16")
+        block = self.test_bilinear_initializer("bfloat16")
         self.assertTrue(check_cast_op(block.ops[1]))
 
     def test_type_error(self):
@@ -625,7 +634,7 @@ class TestNumpyArrayInitializer(unittest.TestCase):
                 lod_level=0,
                 name="param",
                 initializer=initializer.NumpyArrayInitializer(np_array))
-        num_ops = 2 if dtype in ["float16", "uint16"] else 1
+        num_ops = 2 if dtype in ["float16", "bfloat16"] else 1
         self.assertEqual(len(block.ops), num_ops)
         init_op = block.ops[0]
         self.assertEqual(init_op.type, 'assign_value')
@@ -638,10 +647,11 @@ class TestNumpyArrayInitializer(unittest.TestCase):
         block = self.test_numpy_array_initializer("float16")
         self.assertTrue(block.ops[1])
 
+    @OpTestTool.skip_if_not_cpu_bf16()
     def test_numpy_array_initializer_bf16(self):
         """Test the numpy array initializer with bfloat16
         """
-        block = self.test_numpy_array_initializer("uint16")
+        block = self.test_numpy_array_initializer("bfloat16")
         self.assertTrue(block.ops[1])
 
 

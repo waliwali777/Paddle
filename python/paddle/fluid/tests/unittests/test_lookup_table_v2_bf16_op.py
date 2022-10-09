@@ -16,6 +16,7 @@ import unittest
 import numpy as np
 import paddle
 from paddle.fluid.tests.unittests.op_test import (skip_check_grad_ci,
+                                                  OpTestTool,
                                                   convert_uint16_to_float)
 from paddle.fluid.tests.unittests.test_lookup_table_bf16_op import (
     _lookup, TestLookupTableBF16Op, TestLookupTableBF16OpIds4D,
@@ -23,6 +24,7 @@ from paddle.fluid.tests.unittests.test_lookup_table_bf16_op import (
     TestLookupTableBF16OpWIsSelectedRows4DIds)
 import paddle.fluid as fluid
 import paddle.fluid.core as core
+from paddle_bfloat import bfloat16
 
 
 class TestLookupTableV2BF16Op(TestLookupTableBF16Op):
@@ -78,6 +80,7 @@ class TestLookupTableBF16OpIds4DPadding(TestLookupTableV2BF16OpIds4D):
         self.check_output_with_place(core.CPUPlace())
 
 
+@OpTestTool.skip_if_not_cpu_bf16()
 class TestEmbeddingLayerBF16ConstantInitializer(unittest.TestCase):
     """
     Test embedding layer from input api and results for bfloat16
@@ -108,7 +111,7 @@ class TestEmbeddingLayerBF16ConstantInitializer(unittest.TestCase):
                                                  name="emb_weight",
                                                  initializer=self.initializer),
                                              is_sparse=False,
-                                             dtype="uint16")  # bfloat16
+                                             dtype="bfloat16")
         exe = fluid.Executor(self.place)
         exe.run(self.startup_prog)
         self.result = exe.run(self.prog,

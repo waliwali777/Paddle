@@ -45,6 +45,8 @@ limitations under the License. */
 #include "pybind11/numpy.h"
 #include "pybind11/pybind11.h"
 
+#include "paddle/fluid/pybind/paddle_bfloat/bfloat16.h"
+
 namespace py = pybind11;
 
 namespace pybind11 {
@@ -54,7 +56,7 @@ namespace detail {
 // import numpy as np
 // print np.dtype(np.float16).num  # 23
 constexpr int NPY_FLOAT16_ = 23;
-constexpr int NPY_UINT16_ = 4;
+constexpr int NPY_BFLOAT16_ = 256;
 constexpr int NPY_COMPLEX64 = 14;
 constexpr int NPY_COMPLEX128 = 15;
 
@@ -121,7 +123,7 @@ struct npy_format_descriptor<paddle::platform::float16> {
 template <>
 struct npy_format_descriptor<paddle::platform::bfloat16> {
   static py::dtype dtype() {
-    handle ptr = npy_api::get().PyArray_DescrFromType_(NPY_UINT16_);
+    handle ptr = npy_api::get().PyArray_DescrFromType_(NPY_BFLOAT16_);
     return reinterpret_borrow<py::dtype>(ptr);
   }
   static std::string format() {
@@ -532,11 +534,13 @@ void SetTensorFromPyArray(phi::DenseTensor *self,
                  array)) {
     SetTensorFromPyArrayT<paddle::platform::complex<double>, P>(
         self, array, place, zero_copy);
-  } else if (py::isinstance<py::array_t<uint16_t>>(array)) {
-    // since there is still no support for bfloat16 in NumPy,
-    // uint16 is used for casting bfloat16
-    SetTensorFromPyArrayT<paddle::platform::bfloat16, P>(
-        self, array, place, zero_copy);
+  } else if (py::isinstance<py::array_t<paddle::platform::bfloat16>>(array)) {
+    py::handle bfloat16(paddle_bfloat::Bfloat16Dtype());
+    py::dtype dtype =
+        py::dtype::from_args(py::reinterpret_borrow<py::object>(bfloat16));
+
+    SetTensorFromPyArrayT<paddle::platform::bfloat16, P>(self, array, place,
+                                                         zero_copy);
   } else if (py::isinstance<py::array_t<bool>>(array)) {
     SetTensorFromPyArrayT<bool, P>(self, array, place, zero_copy);
   } else {
@@ -1002,17 +1006,21 @@ inline py::array TensorToPyArray(const phi::DenseTensor &tensor,
   std::string py_dtype_str = details::TensorDTypeToPyDTypeStr(
       framework::TransToProtoVarType(tensor.dtype()));
 
+  py::handle bfloat16(paddle_bfloat::Bfloat16Dtype());
+
+  py::dtype tensor_pydtype =
+      tensor_dtype == paddle::framework::proto::VarType::BF16
+          ? py::dtype::from_args(py::reinterpret_borrow<py::object>(bfloat16))
+          : py::dtype(py_dtype_str.c_str());
+
   if (!is_gpu_tensor && !is_xpu_tensor && !is_npu_tensor && !is_mlu_tensor &&
       !is_custom_device_tensor) {
     if (!need_deep_copy) {
       auto base = py::cast(std::move(tensor));
-      return py::array(py::dtype(py_dtype_str.c_str()),
-                       py_dims,
-                       py_strides,
-                       const_cast<void *>(tensor_buf_ptr),
-                       base);
+      return py::array(py::dtype(tensor_pydtype), py_dims, py_strides,
+                       const_cast<void *>(tensor_buf_ptr), base);
     } else {
-      py::array py_arr(py::dtype(py_dtype_str.c_str()), py_dims, py_strides);
+      py::array py_arr(py::dtype(tensor_pydtype), py_dims, py_strides);
       PADDLE_ENFORCE_EQ(
           py_arr.writeable(),
           true,
@@ -1033,9 +1041,8 @@ inline py::array TensorToPyArray(const phi::DenseTensor &tensor,
     }
   } else if (is_xpu_tensor) {
 #ifdef PADDLE_WITH_XPU
-    py::array py_arr(py::dtype(py_dtype_str.c_str()), py_dims, py_strides);
-    PADDLE_ENFORCE_EQ(py_arr.writeable(),
-                      true,
+    py::array py_arr(py::dtype(tensor_pydtype), py_dims, py_strides);
+    PADDLE_ENFORCE_EQ(py_arr.writeable(), true,
                       platform::errors::InvalidArgument(
                           "PyArray is not writable, in which case memory leak "
                           "or double free would occur"));
@@ -1061,9 +1068,8 @@ inline py::array TensorToPyArray(const phi::DenseTensor &tensor,
 #endif
   } else if (is_gpu_tensor) {
 #if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
-    py::array py_arr(py::dtype(py_dtype_str.c_str()), py_dims, py_strides);
-    PADDLE_ENFORCE_EQ(py_arr.writeable(),
-                      true,
+    py::array py_arr(py::dtype(tensor_pydtype), py_dims, py_strides);
+    PADDLE_ENFORCE_EQ(py_arr.writeable(), true,
                       platform::errors::InvalidArgument(
                           "PyArray is not writable, in which case memory leak "
                           "or double free would occur"));
@@ -1090,9 +1096,8 @@ inline py::array TensorToPyArray(const phi::DenseTensor &tensor,
 #endif
   } else if (is_npu_tensor) {
 #ifdef PADDLE_WITH_ASCEND_CL
-    py::array py_arr(py::dtype(py_dtype_str.c_str()), py_dims, py_strides);
-    PADDLE_ENFORCE_EQ(py_arr.writeable(),
-                      true,
+    py::array py_arr(py::dtype(tensor_pydtype), py_dims, py_strides);
+    PADDLE_ENFORCE_EQ(py_arr.writeable(), true,
                       platform::errors::InvalidArgument(
                           "PyArray is not writable, in which case memory leak "
                           "or double free would occur"));
@@ -1123,9 +1128,8 @@ inline py::array TensorToPyArray(const phi::DenseTensor &tensor,
 #endif
   } else if (is_mlu_tensor) {
 #ifdef PADDLE_WITH_MLU
-    py::array py_arr(py::dtype(py_dtype_str.c_str()), py_dims, py_strides);
-    PADDLE_ENFORCE_EQ(py_arr.writeable(),
-                      true,
+    py::array py_arr(py::dtype(tensor_pydtype), py_dims, py_strides);
+    PADDLE_ENFORCE_EQ(py_arr.writeable(), true,
                       platform::errors::InvalidArgument(
                           "PyArray is not writable, in which case memory leak "
                           "or double free would occur"));
@@ -1156,9 +1160,8 @@ inline py::array TensorToPyArray(const phi::DenseTensor &tensor,
 #endif
   } else if (is_custom_device_tensor) {
 #ifdef PADDLE_WITH_CUSTOM_DEVICE
-    py::array py_arr(py::dtype(py_dtype_str.c_str()), py_dims, py_strides);
-    PADDLE_ENFORCE_EQ(py_arr.writeable(),
-                      true,
+    py::array py_arr(py::dtype(tensor_pydtype), py_dims, py_strides);
+    PADDLE_ENFORCE_EQ(py_arr.writeable(), true,
                       platform::errors::InvalidArgument(
                           "PyArray is not writable, in which case memory leak "
                           "or double free would occur"));

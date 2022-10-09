@@ -24,6 +24,11 @@ import sys
 from io import BytesIO
 
 import numpy as np
+import builtins
+from paddle_bfloat import bfloat16
+# workaround to allow pickling non-native bfloat16 numpy dtype
+builtins.bfloat16 = bfloat16
+
 import math
 import paddle
 from paddle.fluid import layers

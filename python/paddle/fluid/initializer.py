@@ -25,6 +25,7 @@ from . import unique_name
 from .data_feeder import check_variable_and_dtype, check_type, check_dtype
 from paddle import _C_ops, _legacy_C_ops
 import paddle
+from paddle_bfloat import bfloat16
 
 __all__ = [
     'Constant', 'Uniform', 'Normal', 'TruncatedNormal', 'Xavier', 'Bilinear',
@@ -256,7 +257,7 @@ class UniformInitializer(Initializer):
 
         assert isinstance(block, framework.Block)
         check_variable_and_dtype(var, "Out",
-                                 ["uint16", "float16", "float32", "float64"],
+                                 ["bfloat16", "float16", "float32", "float64"],
                                  "uniform_random")
 
         if self._seed == 0:
@@ -369,7 +370,7 @@ class NormalInitializer(Initializer):
         assert isinstance(block, framework.Block)
 
         check_variable_and_dtype(var, "Out",
-                                 ["uint16", "float16", "float32", "float64"],
+                                 ["bfloat16", "float16", "float32", "float64"],
                                  "guassian_random")
 
         if self._seed == 0:
@@ -579,7 +580,7 @@ class XavierInitializer(Initializer):
 
         assert isinstance(block, framework.Block)
         check_variable_and_dtype(var, "Out",
-                                 ["uint16", "float16", "float32", "float64"],
+                                 ["bfloat16", "float16", "float32", "float64"],
                                  "xavier_init")
 
         f_in, f_out = self._compute_fans(var)

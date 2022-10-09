@@ -251,6 +251,7 @@ include(external/gflags) # download, build, install gflags
 include(external/glog) # download, build, install glog
 include(external/eigen) # download eigen3
 include(external/threadpool) # download threadpool
+include(external/paddle_bfloat) # download paddle_bfloat
 include(external/dlpack) # download dlpack
 include(external/xxhash) # download, build, install xxhash
 include(external/warpctc) # download, build, install warpctc
