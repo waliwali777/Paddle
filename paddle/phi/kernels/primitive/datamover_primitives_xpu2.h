@@ -95,6 +95,32 @@ struct BroadcastConfig {
 
   HOSTDEVICE BroadcastConfig(const std::vector<int64_t>& out_dims,
                              const std::vector<int64_t>& in_dims,
+                             int dim_size) {
+    std::vector<int> strides_in_tmp;
+    std::vector<int> strides_out_tmp;
+    std::vector<int> dim_tmp;
+    strides_in_tmp.resize(dim_size, 1);
+    strides_out_tmp.resize(dim_size, 1);
+    dim_tmp.resize(dim_size, 1);
+    for (int i = 1; i < dim_size; i++) {
+      strides_in_tmp[i] = strides_in_tmp[i - 1] * in_dims[i - 1];
+      strides_out_tmp[i] = strides_out_tmp[i - 1] * out_dims[i - 1];
+    }
+
+    int numel_out = 1;
+    for (int i = 0; i < dim_size; i++) {
+      dim_tmp[i] = in_dims[i];
+      numel_out = out_dims[i] * numel_out;
+    }
+    kDims = dim_size;
+    memcpy(strides_in, strides_in_tmp.data(), kDims * sizeof(int));
+    memcpy(strides_out, strides_out_tmp.data(), kDims * sizeof(int));
+    memcpy(in_dim, dim_tmp.data(), kDims * sizeof(int));
+    buf_len = 256;
+  }
+
+  HOSTDEVICE BroadcastConfig(const std::vector<int64_t>& out_dims,
+                             const std::vector<int64_t>& in_dims,
                              const std::vector<int64_t>& y_in_dims,
                              int dim_size) {
     std::vector<int> strides_in_tmp;
