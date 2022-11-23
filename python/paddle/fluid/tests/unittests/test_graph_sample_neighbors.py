@@ -19,6 +19,7 @@ import paddle.fluid as fluid
 
 
 class TestGraphSampleNeighbors(unittest.TestCase):
+
     def setUp(self):
         num_nodes = 20
         edges = np.random.randint(num_nodes, size=(100, 2))
@@ -39,9 +40,14 @@ class TestGraphSampleNeighbors(unittest.TestCase):
 
         self.row = sorted_edges[:, 0].astype("int64")
         self.colptr = colptr.astype("int64")
+<<<<<<< HEAD
+        self.nodes = np.unique(np.random.randint(num_nodes,
+                                                 size=5)).astype("int64")
+=======
         self.nodes = np.unique(np.random.randint(num_nodes, size=5)).astype(
             "int64"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.sample_size = 5
         self.dst_src_dict = dst_src_dict
 
@@ -60,6 +66,13 @@ class TestGraphSampleNeighbors(unittest.TestCase):
                 neighbors = out_neighbors[0 : out_count_cumsum[i]]
             else:
                 neighbors = out_neighbors[
+<<<<<<< HEAD
+                    out_count_cumsum[i - 1]:out_count_cumsum[i]]
+            # Ensure the correct sample size.
+            self.assertTrue(
+                out_count[i] == self.sample_size
+                or out_count[i] == len(self.dst_src_dict[self.nodes[i]]))
+=======
                     out_count_cumsum[i - 1] : out_count_cumsum[i]
                 ]
             # Ensure the correct sample size.
@@ -67,6 +80,7 @@ class TestGraphSampleNeighbors(unittest.TestCase):
                 out_count[i] == self.sample_size
                 or out_count[i] == len(self.dst_src_dict[self.nodes[i]])
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             # Ensure no repetitive sample neighbors.
             self.assertTrue(
                 neighbors.shape[0] == paddle.unique(neighbors).shape[0]
@@ -99,6 +113,13 @@ class TestGraphSampleNeighbors(unittest.TestCase):
                     neighbors = out_neighbors[0 : out_count_cumsum[i]]
                 else:
                     neighbors = out_neighbors[
+<<<<<<< HEAD
+                        out_count_cumsum[i - 1]:out_count_cumsum[i]]
+                # Ensure the correct sample size.
+                self.assertTrue(
+                    out_count[i] == self.sample_size
+                    or out_count[i] == len(self.dst_src_dict[self.nodes[i]]))
+=======
                         out_count_cumsum[i - 1] : out_count_cumsum[i]
                     ]
                 # Ensure the correct sample size.
@@ -106,6 +127,7 @@ class TestGraphSampleNeighbors(unittest.TestCase):
                     out_count[i] == self.sample_size
                     or out_count[i] == len(self.dst_src_dict[self.nodes[i]])
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 # Ensure no repetitive sample neighbors.
                 self.assertTrue(
                     neighbors.shape[0] == paddle.unique(neighbors).shape[0]
@@ -119,6 +141,17 @@ class TestGraphSampleNeighbors(unittest.TestCase):
     def test_sample_result_static(self):
         paddle.enable_static()
         with paddle.static.program_guard(paddle.static.Program()):
+<<<<<<< HEAD
+            row = paddle.static.data(name="row",
+                                     shape=self.row.shape,
+                                     dtype=self.row.dtype)
+            colptr = paddle.static.data(name="colptr",
+                                        shape=self.colptr.shape,
+                                        dtype=self.colptr.dtype)
+            nodes = paddle.static.data(name="nodes",
+                                       shape=self.nodes.shape,
+                                       dtype=self.nodes.dtype)
+=======
             row = paddle.static.data(
                 name="row", shape=self.row.shape, dtype=self.row.dtype
             )
@@ -128,6 +161,7 @@ class TestGraphSampleNeighbors(unittest.TestCase):
             nodes = paddle.static.data(
                 name="nodes", shape=self.nodes.shape, dtype=self.nodes.dtype
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             out_neighbors, out_count = paddle.incubate.graph_sample_neighbors(
                 row, colptr, nodes, sample_size=self.sample_size
@@ -144,9 +178,16 @@ class TestGraphSampleNeighbors(unittest.TestCase):
             out_neighbors, out_count = ret
             out_count_cumsum = np.cumsum(out_count)
             out_neighbors = np.split(out_neighbors, out_count_cumsum)[:-1]
+<<<<<<< HEAD
+            for neighbors, node, count in zip(out_neighbors, self.nodes,
+                                              out_count):
+                self.assertTrue(count == self.sample_size
+                                or count == len(self.dst_src_dict[node]))
+=======
             for neighbors, node, count in zip(
                 out_neighbors, self.nodes, out_count
             ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 self.assertTrue(
                     count == self.sample_size
                     or count == len(self.dst_src_dict[node])
@@ -164,6 +205,20 @@ class TestGraphSampleNeighbors(unittest.TestCase):
         nodes = paddle.to_tensor(self.nodes)
 
         def check_eid_error():
+<<<<<<< HEAD
+            paddle.incubate.graph_sample_neighbors(row,
+                                                   colptr,
+                                                   nodes,
+                                                   sample_size=self.sample_size,
+                                                   return_eids=True)
+
+        def check_perm_buffer_error():
+            paddle.incubate.graph_sample_neighbors(row,
+                                                   colptr,
+                                                   nodes,
+                                                   sample_size=self.sample_size,
+                                                   flag_perm_buffer=True)
+=======
             paddle.incubate.graph_sample_neighbors(
                 row,
                 colptr,
@@ -180,6 +235,7 @@ class TestGraphSampleNeighbors(unittest.TestCase):
                 sample_size=self.sample_size,
                 flag_perm_buffer=True,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, check_eid_error)
         self.assertRaises(ValueError, check_perm_buffer_error)
@@ -222,6 +278,20 @@ class TestGraphSampleNeighbors(unittest.TestCase):
 
         paddle.enable_static()
         with paddle.static.program_guard(paddle.static.Program()):
+<<<<<<< HEAD
+            row = paddle.static.data(name="row",
+                                     shape=self.row.shape,
+                                     dtype=self.row.dtype)
+            colptr = paddle.static.data(name="colptr",
+                                        shape=self.colptr.shape,
+                                        dtype=self.colptr.dtype)
+            nodes = paddle.static.data(name="nodes",
+                                       shape=self.nodes.shape,
+                                       dtype=self.nodes.dtype)
+            eids = paddle.static.data(name="eids",
+                                      shape=self.edges_id.shape,
+                                      dtype=self.nodes.dtype)
+=======
             row = paddle.static.data(
                 name="row", shape=self.row.shape, dtype=self.row.dtype
             )
@@ -234,6 +304,7 @@ class TestGraphSampleNeighbors(unittest.TestCase):
             eids = paddle.static.data(
                 name="eids", shape=self.edges_id.shape, dtype=self.nodes.dtype
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             (
                 out_neighbors,

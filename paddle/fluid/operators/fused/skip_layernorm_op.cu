@@ -15,7 +15,10 @@
 #include <paddle/fluid/platform/device_context.h>
 
 #include <algorithm>
+<<<<<<< HEAD
+=======
 #include <type_traits>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 #include "paddle/fluid/framework/op_registry.h"
 #include "paddle/fluid/memory/malloc.h"
@@ -55,6 +58,17 @@ class SkipLayerNormKernel : public framework::OpKernel<T> {
     auto &device_ctx = context.template device_context<DeviceContext>();
     operators::math::SkipLayerNormFunctor<T> skip_layer_norm_func;
 
+<<<<<<< HEAD
+    skip_layer_norm_func(num,
+                         hidden,
+                         X_d,
+                         Y_d,
+                         scale_d,
+                         bias_d,
+                         output_d,
+                         epsilon,
+                         device_ctx.stream());
+=======
     if (std::is_same<T, paddle::platform::float16>::value) {
       const half *X_new = reinterpret_cast<const half *>(X_d);
       const half *Y_new = reinterpret_cast<const half *>(Y_d);
@@ -83,6 +97,7 @@ class SkipLayerNormKernel : public framework::OpKernel<T> {
                            epsilon,
                            device_ctx.stream());
     }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 };
 
@@ -90,6 +105,10 @@ class SkipLayerNormKernel : public framework::OpKernel<T> {
 }  // namespace paddle
 
 namespace ops = paddle::operators;
+<<<<<<< HEAD
+REGISTER_OP_CUDA_KERNEL(skip_layernorm,
+                        ops::SkipLayerNormKernel<phi::GPUContext, float>);
+=======
 
 #if defined(PADDLE_WITH_CUDA) && CUDA_VERSION >= 10000
 REGISTER_OP_CUDA_KERNEL(
@@ -100,3 +119,4 @@ REGISTER_OP_CUDA_KERNEL(
 REGISTER_OP_CUDA_KERNEL(skip_layernorm,
                         ops::SkipLayerNormKernel<phi::GPUContext, float>);
 #endif
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

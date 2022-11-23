@@ -45,7 +45,12 @@ def _supported_check():
     return True
 
 
+<<<<<<< HEAD
+class LRUSharedCache(OrderedDict):
+
+=======
 class _LRUSharedCache(OrderedDict):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self):
         self.limit = 128
         self._after_fork()

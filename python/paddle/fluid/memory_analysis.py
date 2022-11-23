@@ -32,9 +32,14 @@ def get_var_and_memory_size(block, var_name, batch_size=None):
             assert not has_none
             shape[i] = batch_size
             has_none = True
+<<<<<<< HEAD
+    assert all([s >= 0
+                for s in shape]), "shape {} is not deterministic".format(shape)
+=======
     assert all([s >= 0 for s in shape]), "shape {} is not deterministic".format(
         shape
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     mem_size = int(np.prod(shape)) * core.size_of_dtype(var.dtype)
     return var, mem_size
 

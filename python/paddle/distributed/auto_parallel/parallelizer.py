@@ -109,10 +109,15 @@ class AutoParallelizer:
             if config["use_pure_fp16"]:
                 config["base_opt"] = self._optimizer
                 auto_parallel_fp16_pass = new_pass("auto_parallel_fp16", config)
+<<<<<<< HEAD
+                auto_parallel_fp16_pass.apply([main_program], [startup_program],
+                                              self._pass_context)
+=======
                 auto_parallel_fp16_pass.apply(
                     [main_program], [startup_program], self._pass_context
                 )
                 loss = auto_parallel_fp16_pass.get_loss()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             else:
                 auto_parallel_amp_pass = new_pass("auto_parallel_amp", config)
                 auto_parallel_amp_pass.apply(
@@ -126,6 +131,16 @@ class AutoParallelizer:
             config["dist_context"] = self._dist_context
             config["no_grad_set"] = copy.deepcopy(no_grad_set)
             config["loss"] = loss
+<<<<<<< HEAD
+            auto_parallel_recompute_pass = new_pass("auto_parallel_recompute",
+                                                    config)
+            auto_parallel_recompute_pass.apply([main_program],
+                                               [startup_program],
+                                               self._pass_context)
+
+    def _generate_backward(self, main_program, startup_program, loss,
+                           parameter_list, no_grad_set, callbacks):
+=======
             auto_parallel_recompute_pass = new_pass(
                 "auto_parallel_recompute", config
             )
@@ -142,6 +157,7 @@ class AutoParallelizer:
         no_grad_set,
         callbacks,
     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         with program_guard(main_program, startup_program):
             params_grads = append_backward(
@@ -160,9 +176,15 @@ class AutoParallelizer:
 
         optimizer = copy.deepcopy(self._optimizer)
         with program_guard(main_program, startup_program):
+<<<<<<< HEAD
+            optimize_ops = copy.deepcopy(
+                self._optimizer).apply_gradients(params_grads)
+
+=======
             optimize_ops = optimizer.apply_gradients(params_grads)
 
         self._dist_context._serial_optimizer = optimizer
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         # update completion
         self._completer = Completer(self._dist_context)
         self._completer.complete_update_annotation(main_program)
@@ -178,6 +200,12 @@ class AutoParallelizer:
             config["dist_context"] = self._dist_context
             config["params_grads"] = params_grads
             config["global_rank"] = rank
+<<<<<<< HEAD
+            auto_parallel_sharding_pass = new_pass("auto_parallel_sharding",
+                                                   config)
+            auto_parallel_sharding_pass.apply([main_program], [startup_program],
+                                              self._pass_context)
+=======
             auto_parallel_sharding_pass = new_pass(
                 "auto_parallel_sharding", config
             )
@@ -194,17 +222,25 @@ class AutoParallelizer:
         auto_parallel_clip_pass.apply(
             [main_program], [startup_program], self._pass_context
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         if self._dist_strategy.gradient_merge:
             config = copy.deepcopy(self._dist_strategy.gradient_merge_configs)
             config["dist_context"] = self._dist_context
             config["params_grads"] = params_grads
             auto_parallel_gradient_merge_pass = new_pass(
+<<<<<<< HEAD
+                "auto_parallel_gradient_merge_pass", config)
+            auto_parallel_gradient_merge_pass.apply([main_program],
+                                                    [startup_program],
+                                                    self._pass_context)
+=======
                 "auto_parallel_gradient_merge_pass", config
             )
             auto_parallel_gradient_merge_pass.apply(
                 [main_program], [startup_program], self._pass_context
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def _get_dist_program(self, rank, dist_context=None, relaunch_phase=False):
         completed_main_program = None
@@ -239,6 +275,11 @@ class AutoParallelizer:
         )
 
         # serial forward pass
+<<<<<<< HEAD
+        self._apply_pre_optimization_passes(completed_main_program,
+                                            serial_startup_program, serial_loss,
+                                            params_grads, self._no_grad_set)
+=======
         self._apply_pre_optimization_passes(
             completed_main_program,
             serial_startup_program,
@@ -246,6 +287,7 @@ class AutoParallelizer:
             params_grads,
             self._no_grad_set,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         # Logical partition
         partitioner = Partitioner(self._dist_context, rank)
         (
@@ -258,9 +300,15 @@ class AutoParallelizer:
 
         # TODO refactor the placement of optimizer
         # generate optimize program
+<<<<<<< HEAD
+        dist_optimize_ops = self._apply_optimize(dist_main_prog,
+                                                 dist_startup_prog,
+                                                 dist_params_grads)
+=======
         dist_optimize_ops = self._apply_optimize(
             dist_main_prog, dist_startup_prog, dist_params_grads
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         set_grad_var_shape(dist_main_prog, self._dist_context)
 
@@ -320,6 +368,19 @@ class AutoParallelizer:
             # auto search
             if self._dist_strategy.auto_search:
                 logging.info("Start searching dist attr.")
+<<<<<<< HEAD
+                serial_program_info = SerialProgramInfo(self._main_program,
+                                                        self._startup_program,
+                                                        self._loss,
+                                                        self._optimizer,
+                                                        self._cluster)
+                planner = Planner(serial_program_info,
+                                  self,
+                                  algorithm_config={
+                                      "name": "mcmc",
+                                      "max_search_times": 5
+                                  })
+=======
                 serial_program_info = SerialProgramInfo(
                     self._main_program,
                     self._startup_program,
@@ -332,6 +393,7 @@ class AutoParallelizer:
                     self,
                     algorithm_config={"name": "mcmc", "max_search_times": 5},
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 dist_context, _ = planner.search()
                 logging.info("End searching dist attr.")
 
@@ -406,6 +468,11 @@ class AutoParallelizer:
                 coverage_args = ["-m", "coverage", "run", "--branch", "-p"]
             else:
                 coverage_args = []
+<<<<<<< HEAD
+            new_cmd_args = "-m paddle.distributed.fleet.launch" + " " + rank_mapping_args + " " + original_cmd_args
+            new_cmd = [sys.executable, "-u"
+                       ] + coverage_args + shlex.split(new_cmd_args)
+=======
             new_cmd_args = (
                 "-m paddle.distributed.fleet.launch"
                 + " "
@@ -418,6 +485,7 @@ class AutoParallelizer:
                 + coverage_args
                 + shlex.split(new_cmd_args)
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             new_process = subprocess.Popen(new_cmd)
             new_process.wait()
             assert (
@@ -464,6 +532,15 @@ class AutoParallelizer:
                         self._startup_program,
                         self._loss,
                         self._optimizer,
+<<<<<<< HEAD
+                        cluster=self._cluster)
+                    planner = Planner(serial_program_info,
+                                      self,
+                                      algorithm_config={
+                                          "name": "mcmc",
+                                          "max_search_times": 5
+                                      })
+=======
                         cluster=self._cluster,
                     )
                     planner = Planner(
@@ -474,6 +551,7 @@ class AutoParallelizer:
                             "max_search_times": 5,
                         },
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     dist_context, _ = planner.search()
 
             # rebuild g_process_group

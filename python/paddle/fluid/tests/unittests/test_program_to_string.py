@@ -17,8 +17,19 @@ import unittest
 
 
 class TestProgram(unittest.TestCase):
+
     def test_program_to_string(self):
         prog = fluid.default_main_program()
+<<<<<<< HEAD
+        a = fluid.layers.data(name="X",
+                              shape=[2, 3],
+                              dtype="float32",
+                              append_batch_size=False)
+        c = fluid.layers.fc(a, size=3)
+        prog_string = prog.to_string(throw_on_error=True, with_details=False)
+        prog_string_with_details = prog.to_string(throw_on_error=False,
+                                                  with_details=True)
+=======
         a = fluid.layers.data(
             name="X", shape=[2, 3], dtype="float32", append_batch_size=False
         )
@@ -27,6 +38,7 @@ class TestProgram(unittest.TestCase):
         prog_string_with_details = prog.to_string(
             throw_on_error=False, with_details=True
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         assert prog_string is not None
         assert len(prog_string_with_details) > len(prog_string)
 

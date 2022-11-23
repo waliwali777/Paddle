@@ -171,6 +171,11 @@ inline void RegisterKernelClass(const char* op_type,
   if (library == "MKLDNN") {
     data_layout = "MKLDNNLAYOUT";
   }
+<<<<<<< HEAD
+  OpKernelType key(ToDataType(std::type_index(typeid(T))),
+                   PlaceType(),
+                   StringToDataLayout(data_layout),
+=======
 #ifdef PADDLE_WITH_CUSTOM_DEVICE
   if (std::is_same<PlaceType, platform::CustomPlace>::value) {
     OpKernelType key(ToDataType(std::type_index(typeid(T))),
@@ -185,6 +190,7 @@ inline void RegisterKernelClass(const char* op_type,
   OpKernelType key(ToDataType(std::type_index(typeid(T))),
                    PlaceType(),
                    phi::StringToDataLayout(data_layout),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                    StringToLibraryType(library_type),
                    customized_type_value);
   OperatorWithKernel::AllOpKernels()[op_type][key] = func;

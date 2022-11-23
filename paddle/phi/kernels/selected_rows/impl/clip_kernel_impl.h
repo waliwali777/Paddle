@@ -14,11 +14,18 @@
 
 #pragma once
 
+<<<<<<< HEAD
+#include "paddle/fluid/operators/math/selected_rows_functor.h"
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/common/scalar.h"
 #include "paddle/phi/core/dense_tensor.h"
 #include "paddle/phi/core/device_context.h"
 #include "paddle/phi/core/selected_rows.h"
+<<<<<<< HEAD
+=======
 #include "paddle/phi/kernels/funcs/selected_rows_functor.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/kernels/selected_rows/clip_kernel.h"
 
 namespace phi {

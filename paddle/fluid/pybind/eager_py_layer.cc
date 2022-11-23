@@ -111,6 +111,8 @@ PyObject* pylayer_method_name(PyObject* self, PyObject* noargs) {
   EAGER_CATCH_AND_THROW_RETURN_NULL
 }
 
+<<<<<<< HEAD
+=======
 PyObject* new_tensor_with_impl(paddle::experimental::Tensor* tensor) {
   PyObject* obj = p_tensor_type->tp_alloc(p_tensor_type, 0);
   if (obj) {
@@ -125,6 +127,7 @@ PyObject* new_tensor_with_impl(paddle::experimental::Tensor* tensor) {
   return obj;
 }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 PyObject* pylayer_method_apply(PyObject* cls,
                                PyObject* args,
                                PyObject* kwargs) {
@@ -390,19 +393,36 @@ PyObject* pylayer_method_apply(PyObject* cls,
       }
     }
 
+<<<<<<< HEAD
+    // add inplace strategy, inplaced tensor is ctx->dirty_tensors
+    auto dirty_tensors = GetTensorsFromPyObject(ctx->dirty_tensors);
+    for (auto it = dirty_tensors.begin(); it != dirty_tensors.end(); ++it) {
+      auto dirty_tensor = *it;
+      auto dirty_tensor_autograd_meta =
+          egr::EagerUtils::autograd_meta(dirty_tensor);
+      PADDLE_ENFORCE_EQ(!dirty_tensor_autograd_meta->StopGradient() &&
+                            egr::egr_utils_api::IsLeafTensor(*dirty_tensor),
+=======
     for (auto it = inplace_tensors.begin(); it != inplace_tensors.end(); ++it) {
       auto inplace_tensor = *it;
       auto inplace_tensor_autograd_meta =
           egr::EagerUtils::autograd_meta(inplace_tensor);
       PADDLE_ENFORCE_EQ(!inplace_tensor_autograd_meta->StopGradient() &&
                             egr::egr_utils_api::IsLeafTensor(*inplace_tensor),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         false,
                         paddle::platform::errors::InvalidArgument(
                             "Leaf Var (%s) that doesn't stop gradient "
                             "can't use inplace strategy.",
+<<<<<<< HEAD
+                            dirty_tensor->name()));
+      dirty_tensor->bump_inplace_version();
+      VLOG(3) << "Tensor(" << dirty_tensor->name()
+=======
                             inplace_tensor->name()));
       inplace_tensor->bump_inplace_version();
       VLOG(3) << "Tensor(" << inplace_tensor->name()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
               << ") uses Inplace Strategy.";
     }
 
@@ -516,6 +536,8 @@ PyObject* tensor_properties_get_container(PyLayerObject* self, void* closure) {
   EAGER_CATCH_AND_THROW_RETURN_NULL
 }
 
+<<<<<<< HEAD
+=======
 void call_pack_hook(PyLayerObject* self, PyObject* value) {
   PyObject* saved_value = nullptr;
   if (PyTuple_Check(value)) {
@@ -591,6 +613,7 @@ void call_pack_hook(PyLayerObject* self, PyObject* value) {
   self->container_be_packed = true;
 }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 int tensor_properties_set_container(PyLayerObject* self,
                                     PyObject* value,
                                     void* closure) {
@@ -639,9 +662,15 @@ PyObject* tensor_properties_get_not_inplace_tensors(PyLayerObject* self,
   EAGER_CATCH_AND_THROW_RETURN_NULL
 }
 
+<<<<<<< HEAD
+int tensor_properties_set_dirty_tensors(PyLayerObject* self,
+                                        PyObject* value,
+                                        void* closure) {
+=======
 int tensor_properties_set_not_inplace_tensors(PyLayerObject* self,
                                               PyObject* value,
                                               void* closure) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   EAGER_TRY
   Py_XINCREF(value);
   Py_XDECREF(self->not_inplace_tensors);
@@ -667,6 +696,13 @@ PyMethodDef pylayer_methods[] = {
     {"apply",
      (PyCFunction)(void (*)(void))pylayer_method_apply,
      METH_CLASS | METH_VARARGS | METH_KEYWORDS,
+<<<<<<< HEAD
+     NULL},
+    {"register_hook",
+     (PyCFunction)(void (*)(void))pylayer_method_register_hook,
+     METH_O,
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
      NULL},
     {NULL, NULL, 0, NULL}};
 
@@ -681,9 +717,15 @@ struct PyGetSetDef pylayer_properties[] {
        (setter)tensor_properties_set_non_differentiable,
        nullptr,
        nullptr},
+<<<<<<< HEAD
+      {"dirty_tensors",
+       (getter)tensor_properties_get_dirty_tensors,
+       (setter)tensor_properties_set_dirty_tensors,
+=======
       {"not_inplace_tensors",
        (getter)tensor_properties_get_not_inplace_tensors,
        (setter)tensor_properties_set_not_inplace_tensors,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
        nullptr,
        nullptr},
       {"materialize_grads",

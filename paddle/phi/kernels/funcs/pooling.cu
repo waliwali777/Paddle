@@ -15,11 +15,18 @@ limitations under the License. */
 #include <algorithm>
 #include <vector>
 
+<<<<<<< HEAD
+#include "paddle/fluid/platform/device/gpu/gpu_primitives.h"
+#include "paddle/fluid/platform/fast_divmod.h"
+#include "paddle/phi/backends/gpu/gpu_launch_config.h"
+#include "paddle/phi/kernels/funcs/pooling.h"
+=======
 #include "paddle/phi/backends/gpu/gpu_launch_config.h"
 #include "paddle/phi/backends/gpu/gpu_primitives.h"
 #include "paddle/phi/kernels/funcs/pooling.h"
 #include "paddle/phi/kernels/funcs/reduce_function.h"
 #include "paddle/phi/kernels/primitive/datamover_primitives.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace phi {
 namespace funcs {
@@ -558,6 +565,27 @@ class Pool2dFunctor<phi::GPUContext, PoolProcess, T> {
     int nthreads = batch_size * output_channels * output_height * output_width;
     auto pool_divmods =
         FastDivModForPooling(input_channels, output_width, output_height);
+<<<<<<< HEAD
+    KernelPool2D<PoolProcess, T>
+        <<<grid, threads, 0, context.stream()>>>(nthreads,
+                                                 input_data,
+                                                 input_channels,
+                                                 input_height,
+                                                 input_width,
+                                                 output_height,
+                                                 output_width,
+                                                 ksize_height,
+                                                 ksize_width,
+                                                 stride_height,
+                                                 stride_width,
+                                                 padding_height,
+                                                 padding_width,
+                                                 pool_divmods,
+                                                 pool_process,
+                                                 exclusive,
+                                                 adaptive,
+                                                 output_data);
+=======
     if (adaptive) {
       int max_threads = 512;
       int thread_num = std::min(
@@ -612,6 +640,7 @@ class Pool2dFunctor<phi::GPUContext, PoolProcess, T> {
                                                    exclusive,
                                                    output_data);
     }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
   void operator()(const phi::GPUContext& context,
                   const DenseTensor& input,
@@ -652,6 +681,28 @@ class Pool2dFunctor<phi::GPUContext, PoolProcess, T> {
     int nthreads = batch_size * output_channels * output_height * output_width;
     auto pool_divmods =
         FastDivModForPooling(input_channels, output_width, output_height);
+<<<<<<< HEAD
+    KernelPool2D<PoolProcess, T>
+        <<<grid, threads, 0, context.stream()>>>(nthreads,
+                                                 input_data,
+                                                 input_channels,
+                                                 input_height,
+                                                 input_width,
+                                                 output_height,
+                                                 output_width,
+                                                 ksize_height,
+                                                 ksize_width,
+                                                 stride_height,
+                                                 stride_width,
+                                                 padding_height,
+                                                 padding_width,
+                                                 pool_divmods,
+                                                 pool_process,
+                                                 exclusive,
+                                                 adaptive,
+                                                 output_data,
+                                                 channel_last);
+=======
     if (adaptive) {
       int max_threads = 512;
       int thread_num = std::min(
@@ -708,6 +759,7 @@ class Pool2dFunctor<phi::GPUContext, PoolProcess, T> {
                                                    output_data,
                                                    channel_last);
     }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 };
 /*
@@ -2112,6 +2164,26 @@ class MaxPool2dWithIndexFunctor<phi::GPUContext, T1, T2> {
     int nthreads = batch_size * output_channels * output_height * output_width;
     auto pool_divmods =
         FastDivModForPooling(input_channels, output_width, output_height);
+<<<<<<< HEAD
+    KernelMaxPool2dWithIdx<T1, T2>
+        <<<grid, threads, 0, context.stream()>>>(nthreads,
+                                                 input_data,
+                                                 input_channels,
+                                                 input_height,
+                                                 input_width,
+                                                 output_height,
+                                                 output_width,
+                                                 ksize_height,
+                                                 ksize_width,
+                                                 stride_height,
+                                                 stride_width,
+                                                 padding_height,
+                                                 padding_width,
+                                                 adaptive,
+                                                 output_data,
+                                                 mask_data,
+                                                 pool_divmods);
+=======
     if (adaptive && output_height > 1 && output_width > 1) {
       int max_threads = 512;
       int thread_num = std::min(
@@ -2165,6 +2237,7 @@ class MaxPool2dWithIndexFunctor<phi::GPUContext, T1, T2> {
                                                    mask_data,
                                                    pool_divmods);
     }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 };
 
@@ -2406,6 +2479,21 @@ class MaxPool3dWithIndexFunctor<phi::GPUContext, T1, T2> {
     T1* output_data = context.template Alloc<T1>(output);
     T2* mask_data = context.template Alloc<T2>(mask);
 
+<<<<<<< HEAD
+    int nthreads = batch_size * output_channels * output_depth * output_height *
+                   output_width;
+    int thread_num = 1024;
+#ifdef WITH_NV_JETSON
+    backends::gpu::ChangeThreadNum(context, &thread_num);
+#endif
+
+    int blocks = (nthreads + thread_num - 1) / thread_num;
+    dim3 threads(thread_num, 1);
+    dim3 grid(blocks, 1);
+
+    KernelMaxPool3DWithIdx<T1, T2>
+        <<<grid, threads, 0, context.stream()>>>(nthreads,
+=======
     int ncd = batch_size * input_channels * output_depth;
 
     int thread_x = 32;
@@ -2425,6 +2513,7 @@ class MaxPool3dWithIndexFunctor<phi::GPUContext, T1, T2> {
 
     KernelMaxPool3DWithIdx<T1, T2>
         <<<grid, threads, 0, context.stream()>>>(ncd,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                                  input_data,
                                                  input_channels,
                                                  input_depth,
@@ -2444,8 +2533,12 @@ class MaxPool3dWithIndexFunctor<phi::GPUContext, T1, T2> {
                                                  padding_width,
                                                  adaptive,
                                                  output_data,
+<<<<<<< HEAD
+                                                 mask_data);
+=======
                                                  mask_data,
                                                  pool_divmods_output);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 };
 
@@ -2487,6 +2580,16 @@ class MaxPool3dWithIndexGradFunctor<phi::GPUContext, T1, T2> {
     const T2* mask_data = mask.data<T2>();
     T1* input_grad_data = context.template Alloc<T1>(input_grad);
 
+<<<<<<< HEAD
+    int nthreads =
+        batch_size * input_channels * input_depth * input_height * input_width;
+    int blocks = (nthreads + 1024 - 1) / 1024;
+    dim3 threads(1024, 1);
+    dim3 grid(blocks, 1);
+
+    KernelMaxPool3DWithIdxGrad<T1, T2>
+        <<<grid, threads, 0, context.stream()>>>(nthreads,
+=======
     int ncd = batch_size * input_channels * output_depth;
 
     int thread_x = 32;
@@ -2506,6 +2609,7 @@ class MaxPool3dWithIndexGradFunctor<phi::GPUContext, T1, T2> {
 
     KernelMaxPool3DWithIdxGrad<T1, T2>
         <<<grid, threads, 0, context.stream()>>>(ncd,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                                  output_grad_data,
                                                  mask_data,
                                                  input_channels,
@@ -2525,8 +2629,12 @@ class MaxPool3dWithIndexGradFunctor<phi::GPUContext, T1, T2> {
                                                  padding_height,
                                                  padding_width,
                                                  adaptive,
+<<<<<<< HEAD
+                                                 input_grad_data);
+=======
                                                  input_grad_data,
                                                  pool_divmods_output);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 };
 

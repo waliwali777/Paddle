@@ -20,6 +20,15 @@ KernelSignature CropTensorOpArgumentMapping(const ArgumentMappingContext& ctx) {
   if (ctx.InputSize("ShapeTensor") > 0) {
     if (ctx.InputSize("OffsetsTensor") > 0) {
       return KernelSignature(
+<<<<<<< HEAD
+          "crop_tensor", {"X"}, {"ShapeTensor", "OffsetsTensor"}, {"Out"});
+    } else if (ctx.HasInput("Offsets")) {
+      return KernelSignature(
+          "crop_tensor", {"X"}, {"ShapeTensor", "Offsets"}, {"Out"});
+    } else {
+      return KernelSignature(
+          "crop_tensor", {"X"}, {"ShapeTensor", "offsets"}, {"Out"});
+=======
           "crop", {"X"}, {"ShapeTensor", "OffsetsTensor"}, {"Out"});
     } else if (ctx.HasInput("Offsets")) {
       return KernelSignature(
@@ -27,24 +36,45 @@ KernelSignature CropTensorOpArgumentMapping(const ArgumentMappingContext& ctx) {
     } else {
       return KernelSignature(
           "crop", {"X"}, {"ShapeTensor", "offsets"}, {"Out"});
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     }
   } else if (ctx.HasInput("Shape")) {
     if (ctx.InputSize("OffsetsTensor") > 0) {
       return KernelSignature(
+<<<<<<< HEAD
+          "crop_tensor", {"X"}, {"Shape", "OffsetsTensor"}, {"Out"});
+    } else if (ctx.HasInput("Offsets")) {
+      return KernelSignature(
+          "crop_tensor", {"X"}, {"Shape", "Offsets"}, {"Out"});
+    } else {
+      return KernelSignature(
+          "crop_tensor", {"X"}, {"Shape", "offsets"}, {"Out"});
+=======
           "crop", {"X"}, {"Shape", "OffsetsTensor"}, {"Out"});
     } else if (ctx.HasInput("Offsets")) {
       return KernelSignature("crop", {"X"}, {"Shape", "Offsets"}, {"Out"});
     } else {
       return KernelSignature("crop", {"X"}, {"Shape", "offsets"}, {"Out"});
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     }
   } else {
     if (ctx.InputSize("OffsetsTensor") > 0) {
       return KernelSignature(
+<<<<<<< HEAD
+          "crop_tensor", {"X"}, {"shape", "OffsetsTensor"}, {"Out"});
+    } else if (ctx.HasInput("Offsets")) {
+      return KernelSignature(
+          "crop_tensor", {"X"}, {"shape", "Offsets"}, {"Out"});
+    } else {
+      return KernelSignature(
+          "crop_tensor", {"X"}, {"shape", "offsets"}, {"Out"});
+=======
           "crop", {"X"}, {"shape", "OffsetsTensor"}, {"Out"});
     } else if (ctx.HasInput("Offsets")) {
       return KernelSignature("crop", {"X"}, {"shape", "Offsets"}, {"Out"});
     } else {
       return KernelSignature("crop", {"X"}, {"shape", "offsets"}, {"Out"});
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     }
   }
 }
@@ -53,6 +83,15 @@ KernelSignature CropTensorGradOpArgumentMapping(
     const ArgumentMappingContext& ctx) {
   if (ctx.InputSize("OffsetsTensor") > 0) {
     return KernelSignature(
+<<<<<<< HEAD
+        "crop_tensor_grad", {"X", "Out@GRAD"}, {"OffsetsTensor"}, {"X@GRAD"});
+  } else if (ctx.HasInput("Offsets")) {
+    return KernelSignature(
+        "crop_tensor_grad", {"X", "Out@GRAD"}, {"Offsets"}, {"X@GRAD"});
+  } else {
+    return KernelSignature(
+        "crop_tensor_grad", {"X", "Out@GRAD"}, {"offsets"}, {"X@GRAD"});
+=======
         "crop_grad", {"X", "Out@GRAD"}, {"OffsetsTensor"}, {"X@GRAD"});
   } else if (ctx.HasInput("Offsets")) {
     return KernelSignature(
@@ -60,14 +99,18 @@ KernelSignature CropTensorGradOpArgumentMapping(
   } else {
     return KernelSignature(
         "crop_grad", {"X", "Out@GRAD"}, {"offsets"}, {"X@GRAD"});
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 }
 
 }  // namespace phi
 
+<<<<<<< HEAD
+=======
 PD_REGISTER_BASE_KERNEL_NAME(crop_tensor, crop);
 PD_REGISTER_BASE_KERNEL_NAME(crop_tensor_grad, crop_grad);
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 PD_REGISTER_ARG_MAPPING_FN(crop_tensor, phi::CropTensorOpArgumentMapping);
 PD_REGISTER_ARG_MAPPING_FN(crop_tensor_grad,
                            phi::CropTensorGradOpArgumentMapping);

@@ -83,6 +83,8 @@ class PADDLE_API DeviceContext {
   void SetZeroAllocator(const Allocator*);
 
   /**
+<<<<<<< HEAD
+=======
    * @brief Set the zero-size host Allocator object.
    *
    * @param allocator
@@ -90,6 +92,7 @@ class PADDLE_API DeviceContext {
   void SetHostZeroAllocator(const Allocator*);
 
   /**
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
    * @brief Set the zero-size Allocator object.
    *
    * @param allocator

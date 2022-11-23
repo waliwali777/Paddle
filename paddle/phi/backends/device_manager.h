@@ -207,7 +207,10 @@ class DeviceManager {
                         size_t num,
                         ccl::CCLDataType data_type,
                         ccl::CCLReduceOp reduce_op,
+<<<<<<< HEAD
+=======
                         size_t root_id,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         const ccl::CCLComm& ccl_comm,
                         const stream::Stream& stream);
   static void CCLAllGather(const std::string& device_type,
@@ -242,6 +245,8 @@ class DeviceManager {
                       const ccl::CCLComm& ccl_comm,
                       const stream::Stream& stream);
 
+<<<<<<< HEAD
+=======
   // profiler
   static void ProfilerInitialize(
       const std::string& dev_type,
@@ -268,6 +273,7 @@ class DeviceManager {
       uint64_t start_ns,
       void* context);
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   static void Clear();
 
  private:

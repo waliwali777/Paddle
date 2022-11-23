@@ -27,6 +27,8 @@ std::unordered_set<Scope*>& global_transfer_scope_cache() {
   return *x;
 }
 
+<<<<<<< HEAD
+=======
 std::unordered_map<const Scope*, std::unordered_set<size_t>>&
 global_transfer_scope_key() {
   thread_local auto* x =
@@ -34,6 +36,7 @@ global_transfer_scope_key() {
   return *x;
 }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 Scope* TryCreateTransferScope(OpKernelType type0,
                               OpKernelType type1,
                               const Scope* scope) {

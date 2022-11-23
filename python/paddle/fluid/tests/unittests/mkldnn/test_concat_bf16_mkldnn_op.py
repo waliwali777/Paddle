@@ -24,6 +24,7 @@ from paddle import enable_static
     not core.supports_bfloat16(), "place does not support BF16 evaluation"
 )
 class TestConcatBf16Op(OpTest):
+
     def setUp(self):
         self.op_type = "concat"
         self.use_mkldnn = True
@@ -41,9 +42,14 @@ class TestConcatBf16Op(OpTest):
         self.sections = [self.x0.shape[self.axis]] * 2
         self.sections[1] += self.x1.shape[self.axis]
 
+<<<<<<< HEAD
+        self.output = np.concatenate((self.x0, self.x1, self.x2),
+                                     axis=self.axis).astype(np.uint16)
+=======
         self.output = np.concatenate(
             (self.x0, self.x1, self.x2), axis=self.axis
         ).astype(np.uint16)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.outputs = {'Out': self.output}
 
     def calculate_grads(self):
@@ -89,6 +95,7 @@ class TestConcatBf16Op(OpTest):
 
 
 class TestAxis1Case(TestConcatBf16Op):
+
     def init_axis(self):
         self.axis = 1
 
@@ -102,6 +109,7 @@ class TestAxis1Case(TestConcatBf16Op):
 
 
 class TestAxis2Case(TestConcatBf16Op):
+
     def init_axis(self):
         self.axis = 2
 
@@ -115,6 +123,7 @@ class TestAxis2Case(TestConcatBf16Op):
 
 
 class TestAxis3Case(TestConcatBf16Op):
+
     def init_axis(self):
         self.axis = 3
 

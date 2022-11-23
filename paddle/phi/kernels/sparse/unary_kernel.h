@@ -14,8 +14,11 @@
 
 #pragma once
 
+<<<<<<< HEAD
+=======
 #include "paddle/phi/common/int_array.h"
 #include "paddle/phi/core/ddim.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/core/sparse_coo_tensor.h"
 #include "paddle/phi/core/sparse_csr_tensor.h"
 
@@ -74,6 +77,39 @@ void ScaleCsrKernel(const Context& dev_ctx,
                     float bias,
                     bool bias_after_scale,
                     SparseCsrTensor* out);
+<<<<<<< HEAD
+
+template <typename T, typename Context>
+void DivCooScalarKernel(const Context& dev_ctx,
+                        const SparseCooTensor& x,
+                        float scalar,
+                        SparseCooTensor* out);
+
+template <typename T, typename Context>
+void DivCsrScalarKernel(const Context& dev_ctx,
+                        const SparseCsrTensor& x,
+                        float scalar,
+                        SparseCsrTensor* out);
+
+template <typename T, typename Context>
+void CastCooKernel(const Context& dev_ctx,
+                   const SparseCooTensor& x,
+                   DataType index_dtype,
+                   DataType value_dtype,
+                   SparseCooTensor* out);
+
+template <typename T, typename Context>
+void CastCsrKernel(const Context& dev_ctx,
+                   const SparseCsrTensor& x,
+                   DataType index_dtype,
+                   DataType value_dtype,
+                   SparseCsrTensor* out);
+
+template <typename T, typename Context>
+SparseCooTensor ReluCoo(const Context& dev_ctx, const SparseCooTensor& x) {
+  SparseCooTensor coo;
+  ReluCooKernel<T, Context>(dev_ctx, x, &coo);
+=======
 
 template <typename T, typename Context>
 void DivScalarCooKernel(const Context& dev_ctx,
@@ -175,10 +211,16 @@ SparseCooTensor ReshapeCoo(const Context& dev_ctx,
                            const phi::IntArray& shape) {
   SparseCooTensor coo;
   ReshapeCooKernel<T, Context>(dev_ctx, x, shape, &coo);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   return coo;
 }
 
 template <typename T, typename Context>
+<<<<<<< HEAD
+SparseCooTensor ReluCsr(const Context& dev_ctx, const SparseCooTensor& x) {
+  SparseCooTensor csr;
+  ReluCsrKernel<T, Context>(dev_ctx, x, &csr);
+=======
 SparseCsrTensor ReshapeCsr(const Context& dev_ctx,
                            const SparseCsrTensor& x,
                            const phi::IntArray& shape) {
@@ -192,6 +234,7 @@ SparseCsrTensor ReshapeCsr(const Context& dev_ctx,
       phi::errors::InvalidArgument("size of shape must be equal to 2 or 3"));
   SparseCsrTensor csr;
   ReshapeCsrKernel<T, Context>(dev_ctx, x, shape, &csr);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   return csr;
 }
 

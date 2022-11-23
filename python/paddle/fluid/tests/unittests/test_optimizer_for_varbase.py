@@ -21,6 +21,7 @@ from paddle.fluid.framework import _test_eager_guard, _in_legacy_dygraph
 
 
 class TestOptimizerForVarBase(unittest.TestCase):
+
     def setUp(self):
         self.lr = 0.01
 
@@ -31,9 +32,15 @@ class TestOptimizerForVarBase(unittest.TestCase):
 
         z = x + y
 
+<<<<<<< HEAD
+        opt = optimizer(learning_rate=self.lr,
+                        parameters=[x],
+                        weight_decay=0.01)
+=======
         opt = optimizer(
             learning_rate=self.lr, parameters=[x], weight_decay=0.01
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         z.backward()
         opt.step()

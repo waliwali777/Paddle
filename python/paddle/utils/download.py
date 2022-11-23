@@ -27,7 +27,12 @@ try:
     from tqdm import tqdm
 except:
 
+<<<<<<< HEAD
+    class tqdm(object):
+
+=======
     class tqdm:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def __init__(self, total=None):
             self.total = total
             self.n = 0
@@ -37,9 +42,14 @@ except:
             if self.total is None:
                 sys.stderr.write("\r{0:.1f} bytes".format(self.n))
             else:
+<<<<<<< HEAD
+                sys.stderr.write("\r{0:.1f}%".format(100 * self.n /
+                                                     float(self.total)))
+=======
                 sys.stderr.write(
                     "\r{0:.1f}%".format(100 * self.n / float(self.total))
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             sys.stderr.flush()
 
         def __enter__(self):
@@ -154,9 +164,14 @@ def get_path_from_url(
                 time.sleep(1)
 
     if ParallelEnv().current_endpoint in unique_endpoints:
+<<<<<<< HEAD
+        if decompress and (tarfile.is_tarfile(fullpath)
+                           or zipfile.is_zipfile(fullpath)):
+=======
         if decompress and (
             tarfile.is_tarfile(fullpath) or zipfile.is_zipfile(fullpath)
         ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             fullpath = _decompress(fullpath)
 
     return fullpath
@@ -205,12 +220,21 @@ def _wget_download(url, fullname):
     # using wget to download url
     tmp_fullname = fullname + "_tmp"
     # –user-agent
+<<<<<<< HEAD
+    command = 'wget -O {} -t {} {}'.format(tmp_fullname, DOWNLOAD_RETRY_LIMIT,
+                                           url)
+    subprc = subprocess.Popen(command,
+                              shell=True,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+=======
     command = 'wget -O {} -t {} {}'.format(
         tmp_fullname, DOWNLOAD_RETRY_LIMIT, url
     )
     subprc = subprocess.Popen(
         command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     _ = subprc.communicate()
 
     if subprc.returncode != 0:

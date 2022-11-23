@@ -26,11 +26,19 @@ namespace operators {
 template <typename T>
 struct ChannelDequantizeFunctorV2<phi::GPUContext, T> {
   void operator()(const phi::GPUContext& dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor* in,
+                  const framework::Tensor* scale,
+                  T max_range,
+                  const int quant_axis,
+                  framework::Tensor* out) {
+=======
                   const phi::DenseTensor* in,
                   const phi::DenseTensor* scale,
                   T max_range,
                   const int quant_axis,
                   phi::DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     auto in_dims = in->dims();
     const T* in_data = in->data<T>();
     T* out_data = out->mutable_data<T>(dev_ctx.GetPlace());

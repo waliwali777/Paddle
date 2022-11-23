@@ -37,11 +37,38 @@ class SoftmaxOp : public framework::OperatorWithKernel {
     std::string data_format = ctx.Attr<std::string>("data_format");
     phi::DataLayout layout_ = phi::StringToDataLayout(data_format);
     auto input_data_type = OperatorWithKernel::IndicateVarDataType(ctx, "X");
+<<<<<<< HEAD
+
+#if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
+    if (platform::CanCUDNNBeUsed(ctx)) {
+      library_ = framework::LibraryType::kCUDNN;
+    }
+#endif
+#ifdef PADDLE_WITH_MKLDNN
+    if (library_ == framework::LibraryType::kPlain &&
+        this->CanMKLDNNBeUsed(ctx, input_data_type)) {
+      library_ = framework::LibraryType::kMKLDNN;
+      layout_ = framework::DataLayout::kMKLDNN;
+    }
+#endif
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     if (input_data_type == framework::proto::VarType::FP16) {
       PADDLE_ENFORCE_EQ(
           platform::is_gpu_place(ctx.GetPlace()) ||
               platform::is_npu_place(ctx.GetPlace()) ||
               platform::is_xpu_place(ctx.GetPlace()) ||
+<<<<<<< HEAD
+              platform::is_mlu_place(ctx.GetPlace()),
+          true,
+          platform::errors::InvalidArgument(
+              "float16 can only be used on GPU/NPU/XPU/MLU place"));
+    }
+
+    return framework::OpKernelType(
+        input_data_type, ctx.GetPlace(), layout_, library_);
+=======
               platform::is_mlu_place(ctx.GetPlace()) ||
               platform::is_custom_place(ctx.GetPlace()),
           true,
@@ -49,6 +76,7 @@ class SoftmaxOp : public framework::OperatorWithKernel {
               "float16 can only be used on GPU/NPU/XPU/MLU and custom place"));
     }
     return framework::OpKernelType(input_data_type, ctx.GetPlace(), layout_);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 };
 
@@ -127,12 +155,22 @@ class SoftmaxOpGrad : public framework::OperatorWithKernel {
       if (!(platform::is_gpu_place(ctx.GetPlace()) ||
             platform::is_npu_place(ctx.GetPlace()) ||
             platform::is_xpu_place(ctx.GetPlace()) ||
+<<<<<<< HEAD
+            platform::is_mlu_place(ctx.GetPlace())))
+        PADDLE_THROW(platform::errors::InvalidArgument(
+            "float16 can only be used on GPU/NPU/XPU/MLU place"));
+    }
+
+    return framework::OpKernelType(
+        input_data_type, ctx.GetPlace(), layout_, library_);
+=======
             platform::is_mlu_place(ctx.GetPlace()) ||
             platform::is_custom_place(ctx.GetPlace())))
         PADDLE_THROW(platform::errors::InvalidArgument(
             "float16 can only be used on GPU/NPU/XPU/MLU and custom place"));
     }
     return framework::OpKernelType(input_data_type, ctx.GetPlace(), layout_);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 };
 

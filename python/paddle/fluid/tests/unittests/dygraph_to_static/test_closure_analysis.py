@@ -12,6 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD
+from __future__ import print_function
+
+import unittest
+
+import paddle
+from paddle.fluid.dygraph.dygraph_to_static.utils import FunctionNameLivenessAnalysis
+from paddle.utils import gast
+import inspect
+
+
+class JudgeVisitor(gast.NodeVisitor):
+
+=======
 import unittest
 
 import paddle
@@ -26,6 +40,7 @@ global_a = []
 
 
 class JudgeVisitor(gast.NodeVisitor):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, ans, mod):
         self.ans = ans
         self.mod = mod
@@ -35,6 +50,16 @@ class JudgeVisitor(gast.NodeVisitor):
         expected = self.ans.get(node.name, set())
         exp_mod = self.mod.get(node.name, set())
         assert scope.existed_vars() == expected, "Not Equals."
+<<<<<<< HEAD
+        assert scope.modified_vars(
+        ) == exp_mod, "Not Equals in function:{} . expect {} , but get {}".format(
+            node.name, exp_mod, scope.modified_vars())
+        self.generic_visit(node)
+
+
+def test_normal_0(x):
+
+=======
         assert (
             scope.modified_vars() == exp_mod
         ), "Not Equals in function:{} . expect {} , but get {}".format(
@@ -59,6 +84,7 @@ class JudgePushPopVisitor(gast.NodeVisitor):
 
 
 def test_normal_0(x):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def func():
         if True:
             i = 1
@@ -106,6 +132,11 @@ def test_nonlocal(x, *args, **kargs):
     return x
 
 
+<<<<<<< HEAD
+class TestClosureAnalysis(unittest.TestCase):
+
+    def setUp(self):
+=======
 def test_push_pop_1(x, *args, **kargs):
     """push_pop_vars in main_function is : `l`, `k`"""
     l = []
@@ -163,10 +194,20 @@ def test_push_pop_4(x, *args, **kargs):
 class TestClosureAnalysis(unittest.TestCase):
     def setUp(self):
         self.judge_type = "var and w_vars"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.init_dygraph_func()
 
     def init_dygraph_func(self):
         self.all_dygraph_funcs = [
+<<<<<<< HEAD
+            test_nonlocal, test_global, test_normal_0, test_normal_argument
+        ]
+        self.answer = [
+            {
+                'func': set('k'),
+                'test_nonlocal': set('i')
+            },
+=======
             test_nonlocal,
             test_global,
             test_normal_0,
@@ -174,6 +215,7 @@ class TestClosureAnalysis(unittest.TestCase):
         ]
         self.answer = [
             {'func': set('k'), 'test_nonlocal': set('i')},
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             {
                 'func': set({'i'}),
             },
@@ -186,6 +228,32 @@ class TestClosureAnalysis(unittest.TestCase):
         ]
 
         self.modified_var = [
+<<<<<<< HEAD
+            {
+                'func': set('ki'),
+                'test_nonlocal': set('i')
+            },
+            {
+                'func': set({'i'}),
+                'test_global': set({"t"})
+            },
+            {
+                'func': set('i'),
+            },
+            {
+                'func': set('i'),
+                'test_normal_argument': set('x')
+            },
+        ]
+
+    def test_main(self):
+        for mod, ans, func in zip(self.modified_var, self.answer,
+                                  self.all_dygraph_funcs):
+            test_func = inspect.getsource(func)
+            gast_root = gast.parse(test_func)
+            name_visitor = FunctionNameLivenessAnalysis(gast_root)
+            JudgeVisitor(ans, mod).visit(gast_root)
+=======
             {'func': set('ki'), 'test_nonlocal': set('i')},
             {'func': set({'i'}), 'test_global': set({"t"})},
             {
@@ -211,6 +279,7 @@ class TestClosureAnalysis(unittest.TestCase):
                 gast_root = gast.parse(test_func)
                 name_visitor = FunctionNameLivenessAnalysis(gast_root)
                 JudgeVisitor(ans, mod).visit(gast_root)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 def TestClosureAnalysis_Attribute_func():
@@ -220,10 +289,20 @@ def TestClosureAnalysis_Attribute_func():
 
 
 class TestClosureAnalysis_Attribute(TestClosureAnalysis):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def init_dygraph_func(self):
 
         self.all_dygraph_funcs = [TestClosureAnalysis_Attribute_func]
         self.answer = [{"TestClosureAnalysis_Attribute_func": set({'i'})}]
+<<<<<<< HEAD
+        self.modified_var = [{
+            "TestClosureAnalysis_Attribute_func":
+            set({'i', 'self.current.function'})
+        }]
+=======
         self.modified_var = [
             {
                 "TestClosureAnalysis_Attribute_func": set(
@@ -323,6 +402,7 @@ class TestPushPopTrans(unittest.TestCase):
         x = paddle.to_tensor([3])
         print(paddle.jit.to_static(vlist_of_dict).code)
         print(paddle.jit.to_static(vlist_of_dict)(x))
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

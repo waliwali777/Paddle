@@ -17,7 +17,10 @@ limitations under the License. */
 #include "paddle/fluid/framework/op_registry.h"
 #include "paddle/fluid/framework/op_version_registry.h"
 #include "paddle/fluid/framework/scope_guard.h"
+<<<<<<< HEAD
+=======
 #include "paddle/fluid/platform/bfloat16.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/fluid/platform/dynload/cublasLt.h"
 #include "paddle/fluid/platform/float16.h"
 
@@ -115,7 +118,12 @@ class FusedGemmEpilogueKernel : public framework::OpKernel<T> {
       } else {
         reserve_space_size = phi::product(out->dims()) * sizeof(T);
       }
+<<<<<<< HEAD
+      reserve_space->mutable_data(
+          ctx.GetPlace(), out->type(), reserve_space_size);
+=======
       dev_ctx.Alloc(reserve_space, out->type(), reserve_space_size);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       void* aux_data = reinterpret_cast<void*>(reserve_space->data<T>());
 
       PADDLE_ENFORCE_GPU_SUCCESS(
@@ -321,6 +329,19 @@ class FusedGemmEpilogueGradKernel : public framework::OpKernel<T> {
       }
     }
   }
+<<<<<<< HEAD
+
+ private:
+  template <bool TransX, bool TransY>
+  static void ComputeImpl(const framework::ExecutionContext& ctx) {
+    using Trait = FusedGEMMGradTrait<TransX, TransY>;
+    auto& dev_ctx = ctx.template device_context<phi::GPUContext>();
+    const Tensor* dout = ctx.Input<Tensor>("DOut");
+    const Tensor* x = ctx.Input<Tensor>("X");
+    const Tensor* y = ctx.Input<Tensor>("Y");
+    const Tensor* reserve_space = ctx.Input<Tensor>("ReserveSpace");
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
  private:
   template <bool TransX, bool TransY>
@@ -496,12 +517,18 @@ class FusedGemmEpilogueGradKernel : public framework::OpKernel<T> {
                 sizeof(aux_ld)));
       }
 
+<<<<<<< HEAD
+      auto dx_workspace = memory::Alloc(dev_ctx, workspace_size);
+
+      auto* dx_data = dx->mutable_data<T>(ctx.GetPlace());
+=======
       auto dx_workspace = memory::Alloc(
           dev_ctx.GetPlace(),
           workspace_size,
           phi::Stream(reinterpret_cast<phi::StreamId>(dev_ctx.stream())));
 
       auto* dx_data = dev_ctx.Alloc<T>(dx, dx->numel() * sizeof(T));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       const auto* y_data = y->data<T>();
       const auto* dout_data = dout->data<T>();
       const auto* a_data = kXGradAIsDZ ? dout_data : y_data;
@@ -609,7 +636,11 @@ class FusedGemmEpilogueGradKernel : public framework::OpKernel<T> {
               sizeof(epiloque_func_for_dy)));
 
       if (dbias) {
+<<<<<<< HEAD
+        auto* dbias_data = dbias->mutable_data<T>(ctx.GetPlace());
+=======
         auto* dbias_data = dev_ctx.Alloc<T>(dbias, dbias->numel() * sizeof(T));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         PADDLE_ENFORCE_GPU_SUCCESS(
             platform::dynload::cublasLtMatmulDescSetAttribute(
                 dy_operation_desc,
@@ -618,11 +649,16 @@ class FusedGemmEpilogueGradKernel : public framework::OpKernel<T> {
                 sizeof(dbias_data)));
       }
 
+<<<<<<< HEAD
+      auto dy_workspace = memory::Alloc(dev_ctx, workspace_size);
+      auto* dy_data = dy->mutable_data<T>(ctx.GetPlace());
+=======
       auto dy_workspace = memory::Alloc(
           dev_ctx.GetPlace(),
           workspace_size,
           phi::Stream(reinterpret_cast<phi::StreamId>(dev_ctx.stream())));
       auto* dy_data = dev_ctx.Alloc<T>(dy, dy->numel() * sizeof(T));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       const auto* dout_data = dout->data<T>();
       const auto* x_data = x->data<T>();
       const auto* a_data = kYGradAIsDZ ? dout_data : x_data;
@@ -695,14 +731,22 @@ REGISTER_OP_CUDA_KERNEL(
     fused_gemm_epilogue,
     ops::FusedGemmEpilogueKernel<phi::GPUContext, float>,
     ops::FusedGemmEpilogueKernel<phi::GPUContext, double>,
+<<<<<<< HEAD
+    ops::FusedGemmEpilogueKernel<phi::GPUContext, paddle::platform::float16>);
+=======
     ops::FusedGemmEpilogueKernel<phi::GPUContext, paddle::platform::float16>,
     ops::FusedGemmEpilogueKernel<phi::GPUContext, paddle::platform::bfloat16>);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 REGISTER_OP_CUDA_KERNEL(
     fused_gemm_epilogue_grad,
     ops::FusedGemmEpilogueGradKernel<phi::GPUContext, float>,
     ops::FusedGemmEpilogueGradKernel<phi::GPUContext, double>,
     ops::FusedGemmEpilogueGradKernel<phi::GPUContext,
+<<<<<<< HEAD
+                                     paddle::platform::float16>);
+=======
                                      paddle::platform::float16>,
     ops::FusedGemmEpilogueKernel<phi::GPUContext, paddle::platform::bfloat16>);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #endif

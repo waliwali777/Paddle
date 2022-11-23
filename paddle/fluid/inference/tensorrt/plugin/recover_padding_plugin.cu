@@ -118,6 +118,9 @@ int RecoverPaddingPlugin::enqueue(const nvinfer1::PluginTensorDesc* inputDesc,
   const int32_t* input1 =
       static_cast<const int32_t*>(inputs[1]);  // pos_id_tensor
   float* output = static_cast<float*>(outputs[0]);
+<<<<<<< HEAD
+  const int32_t num_threads = 256;
+=======
   int32_t num_threads;
   if (input0_desc.dims.d[1] % 512 == 0) {
     num_threads = 512;
@@ -140,6 +143,7 @@ int RecoverPaddingPlugin::enqueue(const nvinfer1::PluginTensorDesc* inputDesc,
   } else {
     num_threads = 1;
   }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const dim3 num_blocks(
       input1_desc.dims.d[0] - 1,
       input2_desc.dims.d[1],

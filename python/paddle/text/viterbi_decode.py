@@ -84,6 +84,19 @@ def viterbi_decode(
     attrs = {'include_bos_eos_tag': include_bos_eos_tag}
     scores = helper.create_variable_for_type_inference(potentials.dtype)
     path = helper.create_variable_for_type_inference('int64')
+<<<<<<< HEAD
+    helper.append_op(type='viterbi_decode',
+                     inputs={
+                         'Input': potentials,
+                         'Transition': transition_params,
+                         'Length': lengths
+                     },
+                     outputs={
+                         'Scores': scores,
+                         'Path': path
+                     },
+                     attrs=attrs)
+=======
     helper.append_op(
         type='viterbi_decode',
         inputs={
@@ -94,6 +107,7 @@ def viterbi_decode(
         outputs={'Scores': scores, 'Path': path},
         attrs=attrs,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return scores, path
 
 

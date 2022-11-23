@@ -79,14 +79,20 @@ def call_lambda_with_ifExpr2(x):
 
 
 class TestLambda(unittest.TestCase):
+
     def setUp(self):
         self.x = np.random.random([10, 16]).astype('float32')
         self.x = np.array([1, 3]).astype('float32')
+<<<<<<< HEAD
+        self.place = fluid.CUDAPlace(
+            0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
+=======
         self.place = (
             fluid.CUDAPlace(0)
             if fluid.is_compiled_with_cuda()
             else fluid.CPUPlace()
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.init_func()
 
     def init_func(self):
@@ -114,8 +120,12 @@ class TestLambda(unittest.TestCase):
     def test_ast_to_func(self):
         for func in self.dyfuncs:
             self.assertTrue(
+<<<<<<< HEAD
+                (self.run_dygraph(func) == self.run_static(func)).all())
+=======
                 (self.run_dygraph(func) == self.run_static(func)).all()
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

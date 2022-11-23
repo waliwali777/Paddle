@@ -32,6 +32,7 @@ from paddle.fluid.reader import (
 
 
 class TestDygraphDataLoaderCleanUpFunc(unittest.TestCase):
+
     def setUp(self):
         self.capacity = 10
 
@@ -68,9 +69,14 @@ class TestRegisterExitFunc(unittest.TestCase):
         self.func_test_not_callable_func()
 
     def func_test_old_handler_for_sigint(self):
+<<<<<<< HEAD
+        CleanupFuncRegistrar.register(function=self.none_func,
+                                      signals=[signal.SIGINT])
+=======
         CleanupFuncRegistrar.register(
             function=self.none_func, signals=[signal.SIGINT]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_old_handler_for_sigint(self):
         with _test_eager_guard():
@@ -82,9 +88,14 @@ class TestRegisterExitFunc(unittest.TestCase):
         def __test_process__():
             pass
 
+<<<<<<< HEAD
+        CleanupFuncRegistrar.register(function=self.none_func,
+                                      signals=[signal.SIGCHLD])
+=======
         CleanupFuncRegistrar.register(
             function=self.none_func, signals=[signal.SIGCHLD]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         exception = None
         try:

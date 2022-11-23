@@ -132,6 +132,11 @@ class TraceBackFrameRange(OriginInfo):
         for i in range(len(self.source_code)):
             # if source_code[i] is empty line between two code line, dont add blank
             if self.source_code[i]:
+<<<<<<< HEAD
+                self.source_code[i] = ' ' * (
+                    blank_count[i] - min_black_count +
+                    BLANK_COUNT_BEFORE_FILE_STR * 2) + self.source_code[i]
+=======
                 self.source_code[i] = (
                     ' '
                     * (
@@ -141,6 +146,7 @@ class TraceBackFrameRange(OriginInfo):
                     )
                     + self.source_code[i]
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def formated_message(self):
         msg = (
@@ -153,7 +159,12 @@ class TraceBackFrameRange(OriginInfo):
         return msg + '\n'.join(self.source_code)
 
 
+<<<<<<< HEAD
+class SuggestionDict(object):
+
+=======
 class SuggestionDict:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self):
         # {(keywords): (suggestions)}
         self.suggestion_dict = {
@@ -294,11 +305,17 @@ class ErrorData:
             else 0
         )
         for filepath, lineno, funcname, code in self.origin_traceback[
+<<<<<<< HEAD
+                paddle_traceback_start_index:]:
+            traceback_frame = TraceBackFrame(Location(filepath, lineno),
+                                             funcname, code)
+=======
             paddle_traceback_start_index:
         ]:
             traceback_frame = TraceBackFrame(
                 Location(filepath, lineno), funcname, code
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             message_lines.append(traceback_frame.formated_message())
         message_lines.append("")
 
@@ -306,6 +323,9 @@ class ErrorData:
         # NOTE: `format_exception` is a list, its length is 1 in most cases, but sometimes its length
         # is gather than 1, for example, the error_type is IndentationError.
         format_exception = traceback.format_exception_only(
+<<<<<<< HEAD
+            self.error_type, self.error_value)
+=======
             self.error_type, self.error_value
         )
         if error_line is not None:
@@ -313,6 +333,7 @@ class ErrorData:
                 format_exception, error_line
             )
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         error_message = [
             " " * BLANK_COUNT_BEFORE_FILE_STR + line
             for line in format_exception
@@ -385,11 +406,16 @@ class ErrorData:
             if error_value_lines_strip[i].startswith("File "):
                 re_result = re.search(pattern, error_value_lines_strip[i])
                 tmp_filepath, lineno_str, function_name = re_result.groups()
+<<<<<<< HEAD
+                code = error_value_lines_strip[
+                    i + 1] if i + 1 < len(error_value_lines_strip) else ''
+=======
                 code = (
                     error_value_lines_strip[i + 1]
                     if i + 1 < len(error_value_lines_strip)
                     else ''
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                 if static_info_map.get((tmp_filepath, int(lineno_str))):
                     user_code_traceback_index.append(len(error_traceback))
@@ -407,9 +433,14 @@ class ErrorData:
                     Location(filepath, lineno), funcname
                 )
             else:
+<<<<<<< HEAD
+                traceback_frame = TraceBackFrame(Location(filepath, lineno),
+                                                 funcname, code)
+=======
                 traceback_frame = TraceBackFrame(
                     Location(filepath, lineno), funcname, code
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             error_frame.append(traceback_frame.formated_message())
         error_frame.append("")
 
@@ -420,11 +451,17 @@ class ErrorData:
             else 0
         )
         for filepath, lineno, funcname, code in error_traceback[
+<<<<<<< HEAD
+                paddle_traceback_start_index:]:
+            traceback_frame = TraceBackFrame(Location(filepath, lineno),
+                                             funcname, code)
+=======
             paddle_traceback_start_index:
         ]:
             traceback_frame = TraceBackFrame(
                 Location(filepath, lineno), funcname, code
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             error_frame.append(traceback_frame.formated_message())
         error_frame.append("")
 

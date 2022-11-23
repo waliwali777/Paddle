@@ -121,7 +121,11 @@ class AnchorGeneratorOpCUDAKernel : public framework::OpKernel<T> {
                                               width,
                                               offset);
 
+<<<<<<< HEAD
+    framework::Tensor v;
+=======
     phi::DenseTensor v;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     framework::TensorFromVector(variances, ctx.device_context(), &v);
     grid = (box_num * 4 + block - 1) / block;
     SetVariance<T><<<grid, block, 0, stream>>>(

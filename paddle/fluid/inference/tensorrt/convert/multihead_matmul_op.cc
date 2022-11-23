@@ -292,6 +292,72 @@ class MultiheadMatMulOpConverter : public OpConverter {
           layer = plugin_layer;
         }
       } else {
+<<<<<<< HEAD
+        PADDLE_ENFORCE_EQ(
+            input->getDimensions().nbDims,
+            3,
+            platform::errors::InvalidArgument(
+                "The Input dim of the MultiheadMatMul should be 3, "
+                "but it's (%d) now.",
+                input->getDimensions().nbDims));
+        // transpose weight_data from m * n to  n * m
+        auto* input_bias_qk =
+            engine_->GetITensor(op_desc.Input("BiasQK").front());
+
+        TensorRTEngine::Weight weight{nvinfer1::DataType::kFLOAT,
+                                      static_cast<void*>(weight_data),
+                                      static_cast<size_t>(weight_t->numel())};
+        weight.dims.assign({n, m});
+
+        TensorRTEngine::Weight bias{nvinfer1::DataType::kFLOAT,
+                                    static_cast<void*>(bias_data),
+                                    static_cast<size_t>(bias_t->numel())};
+
+        // add shuffle before fc
+        std::vector<nvinfer1::ITensor*> reshape_before_fc_shape_tensor;
+        nvinfer1::ITensor* input_shape_tensor = Shape(input);
+
+        for (int i = 0; i < 5; i++) {
+          reshape_before_fc_shape_tensor.push_back(Add1DConstantLayer(1));
+        }
+        for (int i = 0; i < 3; i++) {
+          reshape_before_fc_shape_tensor[i] =
+              GetEleTensorOfShape(input_shape_tensor, i);
+        }
+        auto* reshape_before_fc_layer =
+            TRT_ENGINE_ADD_LAYER(engine_, Shuffle, *input);
+        if (op_desc.HasAttr("Input_scale")) {
+          engine_->SetTensorDynamicRange(reshape_before_fc_layer->getOutput(0),
+                                         in_scale);
+        }
+        reshape_before_fc_layer->setInput(
+            1, *Concat(reshape_before_fc_shape_tensor));
+        reshape_before_fc_layer->setName(
+            ("shuffle_before_multihead_mamul(Output: " + output_name + ")")
+                .c_str());
+
+        // add layer fc
+        nvinfer1::ILayer* fc_layer = nullptr;
+        if (op_desc.HasAttr("Input_scale")) {
+          nvinfer1::DimsHW nv_ksize(1, 1);
+          fc_layer =
+              TRT_ENGINE_ADD_LAYER(engine_,
+                                   Convolution,
+                                   *reshape_before_fc_layer->getOutput(0),
+                                   n,
+                                   nv_ksize,
+                                   weight.get(),
+                                   bias.get());
+        } else {
+          fc_layer =
+              TRT_ENGINE_ADD_LAYER(engine_,
+                                   FullyConnected,
+                                   *reshape_before_fc_layer->getOutput(0),
+                                   n,
+                                   weight.get(),
+                                   bias.get());
+        }
+=======
         if (input_dims.d[1] <= 384 && !bias_qk_attr &&
             engine_->precision() != AnalysisConfig::Precision::kFloat32) {
           /*
@@ -545,6 +611,7 @@ class MultiheadMatMulOpConverter : public OpConverter {
           // plugin_layer
           auto plugin_layer = engine_->network()->addPluginV2(
               plugin_inputs.data(), plugin_inputs.size(), *plugin);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
           // add shuffle
           auto* reshape_after_mha_layer = TRT_ENGINE_ADD_LAYER(
@@ -562,6 +629,18 @@ class MultiheadMatMulOpConverter : public OpConverter {
           layer = reshape_after_mha_layer;
         } else {
           PADDLE_ENFORCE_EQ(
+<<<<<<< HEAD
+              op_desc.HasAttr("fc_out_threshold"),
+              true,
+              platform::errors::InvalidArgument(
+                  "must have out threshold in multihead layers in int8 mode"));
+          float out_scale =
+              PADDLE_GET_CONST(float, op_desc.GetAttr("fc_out_threshold"));
+          engine_->SetTensorDynamicRange(fc_layer->getOutput(0), out_scale);
+        }
+        fc_layer->setName(
+            ("multihead_mamul_fc(Output: " + output_name + ")").c_str());
+=======
               input->getDimensions().nbDims,
               3,
               platform::errors::InvalidArgument(
@@ -623,6 +702,7 @@ class MultiheadMatMulOpConverter : public OpConverter {
                                      weight.get(),
                                      bias.get());
           }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
           if (op_desc.HasAttr("fc_out_threshold")) {
             PADDLE_ENFORCE_EQ(op_desc.HasAttr("fc_out_threshold"),
@@ -637,8 +717,14 @@ class MultiheadMatMulOpConverter : public OpConverter {
           fc_layer->setName(
               ("multihead_mamul_fc(Output: " + output_name + ")").c_str());
 
+<<<<<<< HEAD
+        // add qkv to context
+        int head_size = hidden_out / head_number;
+        float scale = PADDLE_GET_CONST(float, op_desc.GetAttr("alpha"));
+=======
           // no need to add shuffle after fc, just change it in
           // QkvToContextPluginDynamic
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
           // add qkv to context
           int head_size = hidden_out / head_number;
@@ -669,6 +755,13 @@ class MultiheadMatMulOpConverter : public OpConverter {
                   hidden_in, head_number, head_size, scale, with_fp16);
           layer = engine_->AddDynamicPlugin(plugin_inputs.data(), 2, plugin);
         }
+<<<<<<< HEAD
+        plugin::DynamicPluginTensorRT* plugin =
+            new plugin::QkvToContextPluginDynamic(
+                hidden_in, head_number, head_size, scale, with_fp16);
+        layer = engine_->AddDynamicPlugin(plugin_inputs.data(), 2, plugin);
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       }
     } else {
       PADDLE_THROW(platform::errors::Fatal(

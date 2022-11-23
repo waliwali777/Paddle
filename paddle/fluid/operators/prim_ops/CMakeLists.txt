@@ -42,4 +42,11 @@ set(PRIM_OP_SRCS
     rsqrt_p_op.cc
     uniform_random_p_op.cc)
 
+<<<<<<< HEAD
+cc_test(
+  prim_op_test
+  SRCS prim_op_test.cc ${PRIM_OP_SRCS}
+  DEPS op_registry)
+=======
 cc_test_old(prim_op_test SRCS prim_op_test.cc ${PRIM_OP_SRCS} DEPS op_registry)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

@@ -30,10 +30,17 @@ namespace operators {
 template <typename DeviceContext, typename T>
 struct DequantizeFunctor {
   void operator()(const DeviceContext& dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor* in,
+                  const framework::Tensor* scale,
+                  float max_range,
+                  framework::Tensor* out);
+=======
                   const phi::DenseTensor* in,
                   const phi::DenseTensor* scale,
                   float max_range,
                   phi::DenseTensor* out);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 };
 
 template <typename DeviceContext, typename T>

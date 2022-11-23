@@ -16,6 +16,11 @@
 
 #include <string>
 
+<<<<<<< HEAD
+#include "paddle/phi/core/dense_tensor.h"
+
+namespace phi {
+=======
 #include "paddle/phi/backends/c_comm_lib.h"
 #include "paddle/phi/core/dense_tensor.h"
 
@@ -33,10 +38,24 @@ namespace detail {
 ccl::CCLComm GetCCLComm(const Place& place, int global_gid = 0);
 
 }  // namespace detail
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 template <typename T, typename Context>
 void SyncBatchNormKernel(const Context& dev_ctx,
                          const DenseTensor& x,
+<<<<<<< HEAD
+                         const DenseTensor& scale,
+                         const DenseTensor& bias,
+                         const DenseTensor& mean,
+                         const DenseTensor& variance,
+                         float momentum,
+                         float epsilon,
+                         const std::string& data_layout,
+                         bool is_test,
+                         bool use_global_stats,
+                         bool trainable_statistics,
+                         bool fuse_with_relu,
+=======
                          const DenseTensor& mean,
                          const DenseTensor& variance,
                          const DenseTensor& scale,
@@ -47,6 +66,7 @@ void SyncBatchNormKernel(const Context& dev_ctx,
                          const std::string& data_layout,
                          bool use_global_stats,
                          bool trainable_statistics,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                          DenseTensor* y,
                          DenseTensor* mean_out,
                          DenseTensor* variance_out,

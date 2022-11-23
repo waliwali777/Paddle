@@ -47,6 +47,11 @@ from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     ElementwiseSubOpCost,
 )
 from paddle.distributed.auto_parallel.cost.comp_op_cost import EmbeddingOpCost
+<<<<<<< HEAD
+from paddle.distributed.auto_parallel.cost.comp_op_cost import EmbeddingGradOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import FillConstantOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import FillConstantBatchSizeLikeOpCost
+=======
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     EmbeddingGradOpCost,
 )
@@ -56,6 +61,7 @@ from paddle.distributed.auto_parallel.cost.comp_op_cost import (
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     FillConstantBatchSizeLikeOpCost,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 from paddle.distributed.auto_parallel.cost.comp_op_cost import GatherOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import GeluOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import GeluGradOpCost
@@ -81,13 +87,26 @@ from paddle.distributed.auto_parallel.cost.comp_op_cost import (
 )
 from paddle.distributed.auto_parallel.cost.comp_op_cost import MatmulOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import MatmulV2OpCost
+<<<<<<< HEAD
+from paddle.distributed.auto_parallel.cost.comp_op_cost import MatmulV2GradOpCost
+=======
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     MatmulV2GradOpCost,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 from paddle.distributed.auto_parallel.cost.comp_op_cost import MemcpyOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import MulOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import MulGradOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import OneHotOpCost
+<<<<<<< HEAD
+from paddle.distributed.auto_parallel.cost.comp_op_cost import ReadFromArrayOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import ReduceSumOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import ReduceSumGradOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import Reshape2OpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import Reshape2GradOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import ReduceMeanOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import ReduceMeanGradOpCost
+=======
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     ReadFromArrayOpCost,
 )
@@ -103,17 +122,23 @@ from paddle.distributed.auto_parallel.cost.comp_op_cost import ReduceMeanOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     ReduceMeanGradOpCost,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 from paddle.distributed.auto_parallel.cost.comp_op_cost import SamplingIdOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import ScaleOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import SliceOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import SoftmaxOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import SoftmaxGradOpCost
+<<<<<<< HEAD
+from paddle.distributed.auto_parallel.cost.comp_op_cost import SoftmaxWithCrossEntropyOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import SoftmaxWithCrossEntropyGradOpCost
+=======
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     SoftmaxWithCrossEntropyOpCost,
 )
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     SoftmaxWithCrossEntropyGradOpCost,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 from paddle.distributed.auto_parallel.cost.comp_op_cost import SplitOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import Squeeze2OpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import SquareOpCost
@@ -121,6 +146,11 @@ from paddle.distributed.auto_parallel.cost.comp_op_cost import SquareGradOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import SumOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import TopKOpCost
 from paddle.distributed.auto_parallel.cost.comp_op_cost import Transpose2OpCost
+<<<<<<< HEAD
+from paddle.distributed.auto_parallel.cost.comp_op_cost import Transpose2GradOpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import Unsqueeze2OpCost
+from paddle.distributed.auto_parallel.cost.comp_op_cost import WriteToArrayOpCost
+=======
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     Transpose2GradOpCost,
 )
@@ -135,11 +165,13 @@ from paddle.distributed.auto_parallel.cost.comp_op_cost import (
 from paddle.distributed.auto_parallel.cost.comp_op_cost import (
     FusedSoftmaxMaskUpperTriangleGradOpCost,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 from test_cluster import cluster_json
 
 
 class TestCompOpCost(unittest.TestCase):
+
     def test_comp_cost(self):
         # Build cluster
         file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -469,6 +501,8 @@ class TestCompOpCost(unittest.TestCase):
         self.assertTrue(op_cost.flops >= 0)
         self.assertTrue(op_cost.time >= 0)
         self.assertTrue(op_cost.memory >= 0)
+<<<<<<< HEAD
+=======
 
         op_cost = DropoutGradOpCost(cluster=cluster)
         self.assertTrue(op_cost.flops >= 0)
@@ -485,6 +519,7 @@ class TestCompOpCost(unittest.TestCase):
         self.assertTrue(op_cost.time >= 0)
         self.assertTrue(op_cost.memory >= 0)
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         # Remove unnecessary files
         if os.path.exists(cluster_json_path):
             os.remove(cluster_json_path)

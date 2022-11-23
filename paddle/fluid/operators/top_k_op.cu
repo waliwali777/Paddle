@@ -110,6 +110,20 @@ class TopkOpCUDAKernel : public framework::OpKernel<T> {
     // TODO(typhoonzero): refine this kernel.
     const int kMaxHeight = 2048;
     int gridx = input_height < kMaxHeight ? input_height : kMaxHeight;
+<<<<<<< HEAD
+    switch (GetDesiredBlockDim(input_width)) {
+      FIXED_BLOCK_DIM(
+          KeMatrixTopK<T, 5, kBlockDim>
+          <<<gridx, kBlockDim, 0, dev_ctx.stream()>>>(output_data,
+                                                      k,
+                                                      indices_data,
+                                                      input_data,
+                                                      input_width,
+                                                      input_width,
+                                                      static_cast<int>(k),
+                                                      gridx,
+                                                      input_height));
+=======
     paddle::platform::GpuLaunchConfig config =
         paddle::platform::GetGpuLaunchConfig1D(dev_ctx, input_width);
     switch (config.thread_per_block.x) {
@@ -130,6 +144,7 @@ class TopkOpCUDAKernel : public framework::OpKernel<T> {
               "the input k has error when use getMaxLength function to get the "
               "maxLength."));
       });
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       default:
         PADDLE_THROW(platform::errors::Unavailable(
             "Calculation error occurred in TopK Operator's CUDA Kernel."));

@@ -21,6 +21,9 @@ import paddle.distributed.fleet as fleet
 from auto_parallel_pass_test_base import AutoPallelPassTestBase
 
 
+<<<<<<< HEAD
+class TestPF16Pass(TestAMPPass):
+=======
 class TestPF16Pass(AutoPallelPassTestBase):
     def init(self):
         if paddle.is_compiled_with_cuda():
@@ -31,6 +34,7 @@ class TestPF16Pass(AutoPallelPassTestBase):
         paddle.seed(2021)
         random.seed(2021)
         np.random.seed(2021)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def apply_passes(self):
         dist_strategy = fleet.DistributedStrategy()

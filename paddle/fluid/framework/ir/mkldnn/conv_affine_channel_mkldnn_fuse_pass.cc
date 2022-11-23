@@ -62,6 +62,18 @@ void recompute_bias_and_weights(const Scope* scope,
       Eigen::Array<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>;
 
   // Re-compute bias of conv2d from AffineChannel
+<<<<<<< HEAD
+  PADDLE_ENFORCE_EQ(
+      eltwise_y_in_tensor->dims(),
+      ac_bias_tensor.dims(),
+      platform::errors::InvalidArgument(
+          "Tensor elementwise y(%d) and activation bias(%d) must have same "
+          "dimension.",
+          eltwise_y_in_tensor->dims().size(),
+          ac_bias_tensor.dims().size()));
+
+  auto* scale_tensor = scope->FindVar(ac_scale.Name())->GetMutable<LoDTensor>();
+=======
   PADDLE_ENFORCE_EQ(eltwise_y_in_tensor->dims(),
                     ac_bias_tensor.dims(),
                     platform::errors::InvalidArgument(
@@ -73,6 +85,7 @@ void recompute_bias_and_weights(const Scope* scope,
 
   auto* scale_tensor =
       scope->FindVar(ac_scale.Name())->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   ConstEigenVectorArrayMap scale_array(
       scale_tensor->data<float>(), scale_tensor->numel(), 1);

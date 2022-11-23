@@ -533,12 +533,19 @@ void DeviceManager::CCLReduce(const std::string& device_type,
                               size_t num,
                               ccl::CCLDataType data_type,
                               ccl::CCLReduceOp reduce_op,
+<<<<<<< HEAD
+=======
                               size_t root_id,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                               const ccl::CCLComm& ccl_comm,
                               const stream::Stream& stream) {
   auto dev_impl = GetDeviceInterfaceWithType(device_type);
   dev_impl->CCLReduce(
+<<<<<<< HEAD
+      in_data, out_data, num, data_type, reduce_op, ccl_comm, stream);
+=======
       in_data, out_data, num, data_type, reduce_op, root_id, ccl_comm, stream);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 void DeviceManager::CCLAllGather(const std::string& device_type,
@@ -597,6 +604,8 @@ void DeviceManager::CCLRecv(const std::string& device_type,
   dev_impl->CCLRecv(recvbuf, num, data_type, src_rank, ccl_comm, stream);
 }
 
+<<<<<<< HEAD
+=======
 // profiler
 void DeviceManager::ProfilerInitialize(
     const std::string& dev_type,
@@ -647,6 +656,7 @@ void DeviceManager::ProfilerCollectTraceData(
   dev_impl->ProfilerCollectTraceData(collector, start_ns, context);
 }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 DeviceManager& DeviceManager::Instance() {
   static DeviceManager platform_manager;
   return platform_manager;

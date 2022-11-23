@@ -86,7 +86,11 @@ We provide [English](https://www.paddlepaddle.org.cn/documentation/docs/en/guide
 - [Github Issues](https://github.com/PaddlePaddle/Paddle/issues): bug reports, feature requests, install issues, usage issues, etc.
 - QQ discussion group: 441226485 (PaddlePaddle).
 - [Forums](https://aistudio.baidu.com/paddle/forum): discuss implementations, research, etc.
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 ## Courses
 
 - [Server Deployments](https://aistudio.baidu.com/aistudio/course/introduce/19084): Courses introducing high performance server deployments via local and remote services.

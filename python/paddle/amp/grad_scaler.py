@@ -75,6 +75,20 @@ class GradScaler(AmpScaler):
             optimizer.clear_grad()
     """
 
+<<<<<<< HEAD
+    def __init__(self,
+                 enable=True,
+                 init_loss_scaling=2.**15,
+                 incr_ratio=2.0,
+                 decr_ratio=0.5,
+                 incr_every_n_steps=1000,
+                 decr_every_n_nan_or_inf=2,
+                 use_dynamic_loss_scaling=True):
+        super(GradScaler,
+              self).__init__(enable, init_loss_scaling, incr_ratio, decr_ratio,
+                             incr_every_n_steps, decr_every_n_nan_or_inf,
+                             use_dynamic_loss_scaling)
+=======
     def __init__(
         self,
         enable=True,
@@ -94,6 +108,7 @@ class GradScaler(AmpScaler):
             decr_every_n_nan_or_inf,
             use_dynamic_loss_scaling,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def scale(self, var):
         """

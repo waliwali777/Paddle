@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD
+import six
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 import os
 
 __all__ = []
@@ -49,9 +53,14 @@ def collective_compatible(ctx):
         ctx.args.master = eps[0] if ':' in eps[0] else '{}:6768'.format(eps[0])
         ctx.args.nnodes = len(hosts)
         ctx.logger.info(
+<<<<<<< HEAD
+            'args reset by env PADDLE_TRAINER_ENDPOINTS\n{}'.format(eps))
+    '''
+=======
             'args reset by env PADDLE_TRAINER_ENDPOINTS\n{}'.format(eps)
         )
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     if 'DISTRIBUTED_TRAINER_ENDPOINTS' in ctx.envs:
         eps = ctx.envs['DISTRIBUTED_TRAINER_ENDPOINTS'].split(',')
         hosts = set([h.split(':')[0] for h in eps])
@@ -74,6 +83,13 @@ def test_mode(ctx):
         if int(ctx.args.nnodes) < 2:
             ctx.args.nnodes = 2
         ctx.args.training_script = '{}/test.py'.format(
+<<<<<<< HEAD
+            os.path.dirname(__file__))
+
+
+enabled_plugins = [
+    test_mode, collective_compatible, rewrite_host_ip, process_args
+=======
             os.path.dirname(__file__)
         )
 
@@ -83,4 +99,5 @@ enabled_plugins = [
     collective_compatible,
     rewrite_host_ip,
     process_args,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 ]

@@ -113,7 +113,11 @@ void SparseAllReduceOpHandle::RunImplEncoded() {
         in_var,
         platform::errors::NotFound("Variable %s is not found in scope.",
                                    encode_var_name));
+<<<<<<< HEAD
+    auto &in = in_var->Get<LoDTensor>();
+=======
     auto &in = in_var->Get<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     ins.emplace_back(&in);
 
     auto gather_var_name = original_name + g_dgc_gather;
@@ -122,7 +126,11 @@ void SparseAllReduceOpHandle::RunImplEncoded() {
         gather_var,
         platform::errors::NotFound("Variable %s is not found in scope.",
                                    gather_var));
+<<<<<<< HEAD
+    auto *gather = gather_var->GetMutable<LoDTensor>();
+=======
     auto *gather = gather_var->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     gathers.emplace_back(gather);
 
     auto *out = local_scope->FindVar(out_var_handles[i]->name())
@@ -269,7 +277,11 @@ int SparseAllReduceOpHandle::GetKValue(const std::string &grad_name) {
   PADDLE_ENFORCE_NOT_NULL(var,
                           platform::errors::NotFound(
                               "Variable %s is not found in scope.", var_name));
+<<<<<<< HEAD
+  auto tensor = var->Get<LoDTensor>().data<float>();
+=======
   auto tensor = var->Get<phi::DenseTensor>().data<float>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   return *tensor;
 }
 
@@ -298,8 +310,13 @@ bool SparseAllReduceOpHandle::IsEncoded() {
                           platform::errors::NotFound(
                               "Variable %s is not found in scope.", step_var));
 
+<<<<<<< HEAD
+  float count = *count_var->Get<LoDTensor>().data<float>();
+  float step = *step_var->Get<LoDTensor>().data<float>();
+=======
   float count = *count_var->Get<phi::DenseTensor>().data<float>();
   float step = *step_var->Get<phi::DenseTensor>().data<float>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   if (static_cast<int>(count) < static_cast<int>(step)) {
     VLOG(10) << "in all_reduce currentstep:" << count
              << " < rampup_begin_step:" << step

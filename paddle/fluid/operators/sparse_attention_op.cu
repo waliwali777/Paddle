@@ -210,6 +210,17 @@ output: sparse C after softmax operation
 */
 template <typename DeviceContext, typename T>
 void SparseSoftmaxForward(const phi::GPUContext& ctx,
+<<<<<<< HEAD
+                          const Tensor* offset,
+                          const Tensor* columns,
+                          Tensor* input,
+                          Tensor* output,
+                          const int blocksize,
+                          const int num_rows,
+                          const int num_cols,
+                          const Tensor* key_padding_mask,
+                          const Tensor* attn_mask) {
+=======
                           const phi::DenseTensor* offset,
                           const phi::DenseTensor* columns,
                           phi::DenseTensor* input,
@@ -219,6 +230,7 @@ void SparseSoftmaxForward(const phi::GPUContext& ctx,
                           const int num_cols,
                           const phi::DenseTensor* key_padding_mask,
                           const phi::DenseTensor* attn_mask) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const int* offset_data = offset->data<int>();
   const int* columns_data = columns->data<int>();
   T* input_data = input->data<T>();
@@ -323,11 +335,19 @@ void SparseSoftmaxForward(const phi::GPUContext& ctx,
 
 template <typename DeviceContext, typename T>
 void SparseSoftmaxBackward(const phi::GPUContext& ctx,
+<<<<<<< HEAD
+                           const Tensor* offset,
+                           const Tensor* columns,
+                           Tensor* dx,
+                           const Tensor* dout,
+                           const Tensor* out,
+=======
                            const phi::DenseTensor* offset,
                            const phi::DenseTensor* columns,
                            phi::DenseTensor* dx,
                            const phi::DenseTensor* dout,
                            const phi::DenseTensor* out,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                            const int blocksize,
                            const int num_rows,
                            const int num_cols) {
@@ -454,11 +474,19 @@ output: sparse C in CSR format (num_rows,num_rows)
 */
 template <typename DeviceContext, typename T>
 void DotSdd(const phi::GPUContext& ctx,
+<<<<<<< HEAD
+            const Tensor* a,
+            const Tensor* b,
+            const Tensor* c_offset,
+            const Tensor* c_columns,
+            Tensor* c_value,
+=======
             const phi::DenseTensor* a,
             const phi::DenseTensor* b,
             const phi::DenseTensor* c_offset,
             const phi::DenseTensor* c_columns,
             phi::DenseTensor* c_value,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             const int num_rows,
             const int num_cols,
             const bool a_transpose,
@@ -522,10 +550,14 @@ void DotSdd(const phi::GPUContext& ctx,
       gpu_type,
       CUSPARSE_SDDMM_ALG_DEFAULT,
       &buffer_size);
+<<<<<<< HEAD
+  auto d_buffer_ptr = paddle::memory::Alloc(ctx, buffer_size);
+=======
   auto d_buffer_ptr = paddle::memory::Alloc(
       ctx.GetPlace(),
       buffer_size,
       phi::Stream(reinterpret_cast<phi::StreamId>(ctx.stream())));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   void* d_buffer = static_cast<void*>(d_buffer_ptr->ptr());
 
   platform::dynload::cusparseSDDMM(handle,
@@ -550,11 +582,19 @@ output: dense C (num_rows,num_cols)
 */
 template <typename DeviceContext, typename T>
 void DotDsd(const phi::GPUContext& ctx,
+<<<<<<< HEAD
+            const Tensor* a_offset,
+            const Tensor* a_columns,
+            const Tensor* a_value,
+            const Tensor* b,
+            Tensor* c,
+=======
             const phi::DenseTensor* a_offset,
             const phi::DenseTensor* a_columns,
             const phi::DenseTensor* a_value,
             const phi::DenseTensor* b,
             phi::DenseTensor* c,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             const int num_rows,
             const int num_cols,
             const bool a_transpose,
@@ -619,10 +659,14 @@ void DotDsd(const phi::GPUContext& ctx,
                                              gpu_type,
                                              CUSPARSE_SPMM_ALG_DEFAULT,
                                              &buffer_size);
+<<<<<<< HEAD
+  auto d_buffer_ptr = paddle::memory::Alloc(ctx, buffer_size);
+=======
   auto d_buffer_ptr = paddle::memory::Alloc(
       ctx.GetPlace(),
       buffer_size,
       phi::Stream(reinterpret_cast<phi::StreamId>(ctx.stream())));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   void* d_buffer = static_cast<void*>(d_buffer_ptr->ptr());
 
   platform::dynload::cusparseSpMM(handle,

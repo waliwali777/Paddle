@@ -16,7 +16,11 @@ limitations under the License. */
 #include "paddle/fluid/operators/cvm_op.h"
 #include "paddle/fluid/framework/eigen.h"
 #include "paddle/fluid/framework/op_registry.h"
+<<<<<<< HEAD
+#include "paddle/fluid/platform/device/gpu/gpu_primitives.h"
+=======
 #include "paddle/phi/backends/gpu/gpu_primitives.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace paddle {
 namespace operators {

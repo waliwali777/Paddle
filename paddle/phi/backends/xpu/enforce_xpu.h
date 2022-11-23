@@ -18,7 +18,10 @@ limitations under the License. */
 #include "paddle/phi/backends/xpu/xpu_header.h"
 #ifdef PADDLE_WITH_XPU_BKCL
 #include "xpu/bkcl.h"
+<<<<<<< HEAD
+=======
 #endif
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace phi {
 namespace backends {

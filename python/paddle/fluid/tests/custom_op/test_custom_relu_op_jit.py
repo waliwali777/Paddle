@@ -50,6 +50,7 @@ custom_module = load(
 
 
 class TestJITLoad(unittest.TestCase):
+
     def setUp(self):
         self.custom_ops = [
             custom_module.custom_relu,
@@ -90,6 +91,20 @@ class TestJITLoad(unittest.TestCase):
                     continue
                 x = np.random.uniform(-1, 1, [4, 8]).astype(dtype)
                 for custom_op in self.custom_ops:
+<<<<<<< HEAD
+                    out, x_grad = custom_relu_dynamic(custom_op, device, dtype,
+                                                      x)
+                    pd_out, pd_x_grad = custom_relu_dynamic(
+                        custom_op, device, dtype, x, False)
+                    self.assertTrue(
+                        np.array_equal(out, pd_out),
+                        "custom op out: {},\n paddle api out: {}".format(
+                            out, pd_out))
+                    self.assertTrue(
+                        np.array_equal(x_grad, pd_x_grad),
+                        "custom op x grad: {},\n paddle api x grad: {}".format(
+                            x_grad, pd_x_grad))
+=======
                     out, x_grad = custom_relu_dynamic(
                         custom_op, device, dtype, x
                     )
@@ -110,6 +125,7 @@ class TestJITLoad(unittest.TestCase):
                             x_grad, pd_x_grad
                         ),
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_dynamic(self):
         with _test_eager_guard():
@@ -136,9 +152,18 @@ class TestJITLoad(unittest.TestCase):
             custom_relu_dynamic(custom_module.custom_relu, 'gpu', 'int32', x)
         except OSError as e:
             caught_exception = True
+<<<<<<< HEAD
+            self.assertTrue(
+                "function \"relu_cuda_forward_kernel\" is not implemented for data type `int32`"
+                in str(e))
+            self.assertTrue(
+                "python/paddle/fluid/tests/custom_op/custom_relu_op.cu" in str(
+                    e))
+=======
             self.assertTrue("relu_cuda_forward_kernel" in str(e))
             self.assertTrue("int32" in str(e))
             self.assertTrue("custom_relu_op.cu" in str(e))
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.assertTrue(caught_exception)
 
     def test_exception(self):

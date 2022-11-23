@@ -34,6 +34,7 @@ micro_batch_size = 2
 
 
 class TestDistPPTraning(unittest.TestCase):
+
     def setUp(self):
         strategy = fleet.DistributedStrategy()
         self.model_parallel_size = 1
@@ -51,12 +52,20 @@ class TestDistPPTraning(unittest.TestCase):
         fleet.init(is_collective=True, strategy=strategy)
 
     def build_optimizer(self, model):
+<<<<<<< HEAD
+        scheduler = paddle.optimizer.lr.PiecewiseDecay(boundaries=[2],
+                                                       values=[0.001, 0.002],
+                                                       verbose=True)
+        optimizer = paddle.optimizer.SGD(learning_rate=scheduler,
+                                         parameters=model.parameters())
+=======
         scheduler = paddle.optimizer.lr.PiecewiseDecay(
             boundaries=[2], values=[0.001, 0.002], verbose=True
         )
         optimizer = paddle.optimizer.SGD(
             learning_rate=scheduler, parameters=model.parameters()
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         return scheduler, optimizer
 
     def test_pp_model(self):
@@ -87,6 +96,17 @@ class TestDistPPTraning(unittest.TestCase):
             param.set_value(parameters[idx + pp_id * (param_len // 2)])
 
         # construct reader
+<<<<<<< HEAD
+        train_reader = paddle.batch(paddle.dataset.mnist.train(),
+                                    batch_size=batch_size,
+                                    drop_last=True)
+
+        for step_id, data in enumerate(train_reader()):
+            x_data = np.array([x[0] for x in data]).astype('float32').reshape(
+                batch_size, 1, 28, 28)
+            y_data = np.array([x[1] for x in data
+                               ]).astype('int64').reshape(batch_size, 1)
+=======
         train_reader = paddle.batch(
             paddle.dataset.mnist.train(), batch_size=batch_size, drop_last=True
         )
@@ -102,6 +122,7 @@ class TestDistPPTraning(unittest.TestCase):
                 .astype('int64')
                 .reshape(batch_size, 1)
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             img = paddle.to_tensor(x_data)
             label = paddle.to_tensor(y_data)
             img.stop_gradient = True
@@ -119,9 +140,15 @@ class TestDistPPTraning(unittest.TestCase):
             loss_b = model_b.train_batch([img, label], optimizer_b, scheduler_b)
 
             print("loss: ", loss_a.numpy(), loss_b.numpy())
+<<<<<<< HEAD
+            np.testing.assert_allclose(loss_a.numpy(),
+                                       loss_b.numpy(),
+                                       rtol=5e-5)
+=======
             np.testing.assert_allclose(
                 loss_a.numpy(), loss_b.numpy(), rtol=5e-5
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

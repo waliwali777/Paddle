@@ -32,6 +32,7 @@ paddle.enable_static()
 
 
 class TestFleetWithASPSharding(unittest.TestCase):
+
     def setUp(self):
         os.environ["PADDLE_TRAINER_ENDPOINTS"] = "127.0.0.1:36213"
         os.environ["PADDLE_CURRENT_ENDPOINTS"] = "127.0.0.1:36213"
@@ -48,9 +49,15 @@ class TestFleetWithASPSharding(unittest.TestCase):
 
     def net(self, main_prog, startup_prog):
         with fluid.program_guard(main_prog, startup_prog):
+<<<<<<< HEAD
+            input_x = paddle.static.data(name="x",
+                                         shape=[-1, 32],
+                                         dtype='float32')
+=======
             input_x = paddle.static.data(
                 name="x", shape=[-1, 32], dtype='float32'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             input_y = paddle.static.data(name="y", shape=[-1, 1], dtype='int64')
 
             fc_1 = fluid.layers.fc(input=input_x, size=64, act='tanh')
@@ -85,9 +92,14 @@ class TestFleetWithASPSharding(unittest.TestCase):
 
         with fluid.program_guard(train_prog, startup_prog):
             optimizer = paddle.fluid.optimizer.SGD(learning_rate=0.01)
+<<<<<<< HEAD
+            optimizer = fleet.distributed_optimizer(optimizer,
+                                                    strategy=strategy)
+=======
             optimizer = fleet.distributed_optimizer(
                 optimizer, strategy=strategy
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             optimizer.minimize(avg_cost)
 
         if paddle.fluid.is_compiled_with_cuda():
@@ -108,6 +120,22 @@ class TestFleetWithASPSharding(unittest.TestCase):
 
         for param in train_prog.global_block().all_parameters():
             if ASPHelper._is_supported_layer(train_prog, param.name):
+<<<<<<< HEAD
+                mat = np.array(fluid.global_scope().find_var(
+                    param.name).get_tensor())
+                if (len(param.shape) == 4
+                        and param.shape[1] < 4) or (len(param.shape) == 2
+                                                    and param.shape[0] < 4):
+                    self.assertFalse(
+                        paddle.fluid.contrib.sparsity.check_sparsity(mat.T,
+                                                                     n=2,
+                                                                     m=4))
+                else:
+                    self.assertTrue(
+                        paddle.fluid.contrib.sparsity.check_sparsity(mat.T,
+                                                                     n=2,
+                                                                     m=4))
+=======
                 mat = np.array(
                     fluid.global_scope().find_var(param.name).get_tensor()
                 )
@@ -125,6 +153,7 @@ class TestFleetWithASPSharding(unittest.TestCase):
                             mat.T, n=2, m=4
                         )
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

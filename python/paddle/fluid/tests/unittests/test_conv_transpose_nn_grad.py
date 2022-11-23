@@ -25,6 +25,7 @@ from decorator_helper import prog_scope
 
 
 class TestConvTransposeDoubleGradCheck(unittest.TestCase):
+
     def conv_transpose_wrapper(self, x):
         return paddle.nn.functional.conv2d_transpose(x[0], x[1], groups=1)
 
@@ -36,9 +37,17 @@ class TestConvTransposeDoubleGradCheck(unittest.TestCase):
         if core.is_compiled_with_rocm():
             dtype = np.float32
         x = layers.data('x', shape, False, dtype)
+<<<<<<< HEAD
+        y = layers.conv2d_transpose(x,
+                                    2,
+                                    filter_size=1,
+                                    groups=1,
+                                    bias_attr=False)
+=======
         y = paddle.static.nn.conv2d_transpose(
             x, 2, filter_size=1, groups=1, bias_attr=False
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         x_arr = np.random.uniform(-1, 1, shape).astype(dtype)
 
         w = fluid.default_main_program().global_block().all_parameters()
@@ -47,6 +56,20 @@ class TestConvTransposeDoubleGradCheck(unittest.TestCase):
             w_arr.append(np.random.uniform(-1, 1, p.shape).astype(dtype))
         if core.is_compiled_with_rocm():
             # HIP will sometimes fail if no atol
+<<<<<<< HEAD
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps,
+                                               atol=1e-4)
+        else:
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps)
+=======
             gradient_checker.double_grad_check(
                 [x] + w,
                 y,
@@ -59,6 +82,7 @@ class TestConvTransposeDoubleGradCheck(unittest.TestCase):
             gradient_checker.double_grad_check(
                 [x] + w, y, x_init=[x_arr] + w_arr, place=place, eps=eps
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         gradient_checker.double_grad_check_for_dygraph(
             self.conv_transpose_wrapper,
             [x] + w,
@@ -77,12 +101,22 @@ class TestConvTransposeDoubleGradCheck(unittest.TestCase):
 
 
 class TestConvTranspose2DoubleGradCheck_AsyPadding(
+<<<<<<< HEAD
+        TestConvTransposeDoubleGradCheck):
+
+    def conv_transpose_wrapper(self, x):
+        return paddle.nn.functional.conv2d_transpose(x[0],
+                                                     x[1],
+                                                     groups=1,
+                                                     padding=[1, 0, 0, 1])
+=======
     TestConvTransposeDoubleGradCheck
 ):
     def conv_transpose_wrapper(self, x):
         return paddle.nn.functional.conv2d_transpose(
             x[0], x[1], groups=1, padding=[1, 0, 0, 1]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     @prog_scope()
     def func(self, place):
@@ -92,6 +126,14 @@ class TestConvTranspose2DoubleGradCheck_AsyPadding(
         if core.is_compiled_with_rocm():
             dtype = np.float32
         x = layers.data('x', shape, False, dtype)
+<<<<<<< HEAD
+        y = layers.conv2d_transpose(input=x,
+                                    num_filters=2,
+                                    filter_size=1,
+                                    padding=[1, 0, 0, 1],
+                                    bias_attr=False,
+                                    use_cudnn=True)
+=======
         y = paddle.static.nn.conv2d_transpose(
             input=x,
             num_filters=2,
@@ -100,6 +142,7 @@ class TestConvTranspose2DoubleGradCheck_AsyPadding(
             bias_attr=False,
             use_cudnn=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         x_arr = np.random.uniform(-1, 1, shape).astype(dtype)
 
         w = fluid.default_main_program().global_block().all_parameters()
@@ -108,6 +151,20 @@ class TestConvTranspose2DoubleGradCheck_AsyPadding(
             w_arr.append(np.random.uniform(-1, 1, p.shape).astype(dtype))
         if core.is_compiled_with_rocm():
             # HIP will sometimes fail if no atol
+<<<<<<< HEAD
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps,
+                                               atol=1e-4)
+        else:
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps)
+=======
             gradient_checker.double_grad_check(
                 [x] + w,
                 y,
@@ -120,6 +177,7 @@ class TestConvTranspose2DoubleGradCheck_AsyPadding(
             gradient_checker.double_grad_check(
                 [x] + w, y, x_init=[x_arr] + w_arr, place=place, eps=eps
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         gradient_checker.double_grad_check_for_dygraph(
             self.conv_transpose_wrapper,
             [x] + w,
@@ -130,12 +188,22 @@ class TestConvTranspose2DoubleGradCheck_AsyPadding(
 
 
 class TestConvTranspose2DoubleGradCheck_PaddingSAME(
+<<<<<<< HEAD
+        TestConvTransposeDoubleGradCheck):
+
+    def conv_transpose_wrapper(self, x):
+        return paddle.nn.functional.conv2d_transpose(x[0],
+                                                     x[1],
+                                                     groups=1,
+                                                     padding="SAME")
+=======
     TestConvTransposeDoubleGradCheck
 ):
     def conv_transpose_wrapper(self, x):
         return paddle.nn.functional.conv2d_transpose(
             x[0], x[1], groups=1, padding="SAME"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     @prog_scope()
     def func(self, place):
@@ -145,6 +213,14 @@ class TestConvTranspose2DoubleGradCheck_PaddingSAME(
         if core.is_compiled_with_rocm():
             dtype = np.float32
         x = layers.data('x', shape, False, dtype)
+<<<<<<< HEAD
+        y = layers.conv2d_transpose(input=x,
+                                    num_filters=2,
+                                    filter_size=1,
+                                    padding="SAME",
+                                    bias_attr=False,
+                                    use_cudnn=True)
+=======
         y = paddle.static.nn.conv2d_transpose(
             input=x,
             num_filters=2,
@@ -153,6 +229,7 @@ class TestConvTranspose2DoubleGradCheck_PaddingSAME(
             bias_attr=False,
             use_cudnn=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         x_arr = np.random.uniform(-1, 1, shape).astype(dtype)
 
         w = fluid.default_main_program().global_block().all_parameters()
@@ -161,6 +238,20 @@ class TestConvTranspose2DoubleGradCheck_PaddingSAME(
             w_arr.append(np.random.uniform(-1, 1, p.shape).astype(dtype))
         if core.is_compiled_with_rocm():
             # HIP will sometimes fail if no atol
+<<<<<<< HEAD
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps,
+                                               atol=1e-4)
+        else:
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps)
+=======
             gradient_checker.double_grad_check(
                 [x] + w,
                 y,
@@ -173,6 +264,7 @@ class TestConvTranspose2DoubleGradCheck_PaddingSAME(
             gradient_checker.double_grad_check(
                 [x] + w, y, x_init=[x_arr] + w_arr, place=place, eps=eps
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         gradient_checker.double_grad_check_for_dygraph(
             self.conv_transpose_wrapper,
             [x] + w,
@@ -183,12 +275,22 @@ class TestConvTranspose2DoubleGradCheck_PaddingSAME(
 
 
 class TestConvTranspose2DoubleGradCheck_PaddingVALID(
+<<<<<<< HEAD
+        TestConvTransposeDoubleGradCheck):
+
+    def conv_transpose_wrapper(self, x):
+        return paddle.nn.functional.conv2d_transpose(x[0],
+                                                     x[1],
+                                                     groups=1,
+                                                     padding="VALID")
+=======
     TestConvTransposeDoubleGradCheck
 ):
     def conv_transpose_wrapper(self, x):
         return paddle.nn.functional.conv2d_transpose(
             x[0], x[1], groups=1, padding="VALID"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     @prog_scope()
     def func(self, place):
@@ -198,6 +300,14 @@ class TestConvTranspose2DoubleGradCheck_PaddingVALID(
         if core.is_compiled_with_rocm():
             dtype = np.float32
         x = layers.data('x', shape, False, dtype)
+<<<<<<< HEAD
+        y = layers.conv2d_transpose(input=x,
+                                    num_filters=2,
+                                    filter_size=1,
+                                    padding="VALID",
+                                    bias_attr=False,
+                                    use_cudnn=True)
+=======
         y = paddle.static.nn.conv2d_transpose(
             input=x,
             num_filters=2,
@@ -206,6 +316,7 @@ class TestConvTranspose2DoubleGradCheck_PaddingVALID(
             bias_attr=False,
             use_cudnn=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         x_arr = np.random.uniform(-1, 1, shape).astype(dtype)
 
         w = fluid.default_main_program().global_block().all_parameters()
@@ -214,6 +325,20 @@ class TestConvTranspose2DoubleGradCheck_PaddingVALID(
             w_arr.append(np.random.uniform(-1, 1, p.shape).astype(dtype))
         if core.is_compiled_with_rocm():
             # HIP will sometimes fail if no atol
+<<<<<<< HEAD
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps,
+                                               atol=1e-4)
+        else:
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps)
+=======
             gradient_checker.double_grad_check(
                 [x] + w,
                 y,
@@ -226,6 +351,7 @@ class TestConvTranspose2DoubleGradCheck_PaddingVALID(
             gradient_checker.double_grad_check(
                 [x] + w, y, x_init=[x_arr] + w_arr, place=place, eps=eps
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         gradient_checker.double_grad_check_for_dygraph(
             self.conv_transpose_wrapper,
             [x] + w,
@@ -236,12 +362,23 @@ class TestConvTranspose2DoubleGradCheck_PaddingVALID(
 
 
 class TestConvTranspose2DoubleGradCheck_ChannelLast(
+<<<<<<< HEAD
+        TestConvTransposeDoubleGradCheck):
+
+    def conv_transpose_wrapper(self, x):
+        return paddle.nn.functional.conv2d_transpose(x[0],
+                                                     x[1],
+                                                     groups=1,
+                                                     padding=[1, 1],
+                                                     data_format="NHWC")
+=======
     TestConvTransposeDoubleGradCheck
 ):
     def conv_transpose_wrapper(self, x):
         return paddle.nn.functional.conv2d_transpose(
             x[0], x[1], groups=1, padding=[1, 1], data_format="NHWC"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     @prog_scope()
     def func(self, place):
@@ -251,6 +388,16 @@ class TestConvTranspose2DoubleGradCheck_ChannelLast(
         if core.is_compiled_with_rocm():
             dtype = np.float32
         x = layers.data('x', shape, False, dtype)
+<<<<<<< HEAD
+        y = layers.conv2d_transpose(input=x,
+                                    num_filters=2,
+                                    filter_size=1,
+                                    padding=[1, 1],
+                                    bias_attr=False,
+                                    use_cudnn=True,
+                                    groups=1,
+                                    data_format="NHWC")
+=======
         y = paddle.static.nn.conv2d_transpose(
             input=x,
             num_filters=2,
@@ -261,6 +408,7 @@ class TestConvTranspose2DoubleGradCheck_ChannelLast(
             groups=1,
             data_format="NHWC",
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         x_arr = np.random.uniform(-1, 1, shape).astype(dtype)
 
         w = fluid.default_main_program().global_block().all_parameters()
@@ -269,6 +417,20 @@ class TestConvTranspose2DoubleGradCheck_ChannelLast(
             w_arr.append(np.random.uniform(-1, 1, p.shape).astype(dtype))
         if core.is_compiled_with_rocm():
             # HIP will sometimes fail if no atol
+<<<<<<< HEAD
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps,
+                                               atol=1e-4)
+        else:
+            gradient_checker.double_grad_check([x] + w,
+                                               y,
+                                               x_init=[x_arr] + w_arr,
+                                               place=place,
+                                               eps=eps)
+=======
             gradient_checker.double_grad_check(
                 [x] + w,
                 y,
@@ -281,6 +443,7 @@ class TestConvTranspose2DoubleGradCheck_ChannelLast(
             gradient_checker.double_grad_check(
                 [x] + w, y, x_init=[x_arr] + w_arr, place=place, eps=eps
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         gradient_checker.double_grad_check_for_dygraph(
             self.conv_transpose_wrapper,
             [x] + w,

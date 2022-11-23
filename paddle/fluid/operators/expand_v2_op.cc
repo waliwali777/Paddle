@@ -37,12 +37,28 @@ class ExpandV2Op : public framework::OperatorWithKernel {
       const framework::ExecutionContext& ctx) const override {
     auto input_data_type =
         framework::OperatorWithKernel::IndicateVarDataType(ctx, "X");
+<<<<<<< HEAD
+
+#ifdef PADDLE_WITH_MKLDNN
+    if (this->CanMKLDNNBeUsed(ctx, input_data_type)) {
+      return framework::OpKernelType(input_data_type,
+                                     ctx.GetPlace(),
+                                     framework::DataLayout::kMKLDNN,
+                                     framework::LibraryType::kMKLDNN);
+    }
+#endif
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return framework::OpKernelType(input_data_type, ctx.GetPlace());
   }
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       const framework::OpKernelType& expected_kernel_type) const override {
     if (var_name == "expand_shapes_tensor" || var_name == "Shape") {
       return expected_kernel_type;
@@ -154,12 +170,28 @@ class ExpandV2GradOp : public framework::OperatorWithKernel {
       const framework::ExecutionContext& ctx) const override {
     auto input_data_type = framework::OperatorWithKernel::IndicateVarDataType(
         ctx, framework::GradVarName("Out"));
+<<<<<<< HEAD
+
+#ifdef PADDLE_WITH_MKLDNN
+    if (this->CanMKLDNNBeUsed(ctx, input_data_type)) {
+      return framework::OpKernelType(input_data_type,
+                                     ctx.GetPlace(),
+                                     framework::DataLayout::kMKLDNN,
+                                     framework::LibraryType::kMKLDNN);
+    }
+#endif
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return framework::OpKernelType(input_data_type, ctx.GetPlace());
   }
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       const framework::OpKernelType& expected_kernel_type) const override {
     if (var_name == "expand_shapes_tensor" || var_name == "Shape") {
       return expected_kernel_type;

@@ -18,6 +18,7 @@ import paddle.fluid as fluid
 
 
 class TestCCommInitAllOp(unittest.TestCase):
+
     def setUp(self):
         self.place = fluid.CUDAPlace(0)
         self.exe = fluid.Executor(self.place)
@@ -38,9 +39,17 @@ class TestCCommInitAllOp(unittest.TestCase):
     def test_specifying_devices(self):
         program = fluid.Program()
         block = program.global_block()
+<<<<<<< HEAD
+        block.append_op(type='c_comm_init_all',
+                        attrs={
+                            'devices': [0],
+                            'ring_id': 1
+                        })
+=======
         block.append_op(
             type='c_comm_init_all', attrs={'devices': [0], 'ring_id': 1}
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.exe.run(program)
 
 

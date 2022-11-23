@@ -18,9 +18,13 @@ from paddle.fluid.dygraph.dygraph_to_static.static_analysis import (
     AstNodeWrapper,
 )
 from paddle.fluid.dygraph.dygraph_to_static.utils import ast_to_source_code
+<<<<<<< HEAD
+from paddle.fluid.dygraph.dygraph_to_static.base_transformer import BaseTransformer
+=======
 from paddle.fluid.dygraph.dygraph_to_static.base_transformer import (
     BaseTransformer,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class AssertTransformer(BaseTransformer):
@@ -39,6 +43,11 @@ class AssertTransformer(BaseTransformer):
         self.visit(self.root)
 
     def visit_Assert(self, node):
+<<<<<<< HEAD
+        convert_assert_node = gast.parse('_jst.Assert({test}, {msg})'.format(
+            test=ast_to_source_code(node.test),
+            msg=ast_to_source_code(node.msg) if node.msg else "")).body[0].value
+=======
         convert_assert_node = (
             gast.parse(
                 '_jst.Assert({test}, {msg})'.format(
@@ -49,5 +58,6 @@ class AssertTransformer(BaseTransformer):
             .body[0]
             .value
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         return gast.Expr(value=convert_assert_node)

@@ -22,7 +22,12 @@ limitations under the License. */
 #include "paddle/fluid/framework/convert_utils.h"
 #include "paddle/fluid/framework/scope.h"
 #include "paddle/fluid/framework/scope_guard.h"
+<<<<<<< HEAD
+#include "paddle/fluid/jit/executor_function.h"
+#include "paddle/fluid/jit/pe_function.h"
+=======
 #include "paddle/fluid/jit/function.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/fluid/memory/allocation/allocator.h"
 #include "paddle/fluid/operators/py_func_op.h"
 #include "paddle/fluid/operators/utils.h"
@@ -53,7 +58,12 @@ extern PyTypeObject* g_customplace_pytype;
 extern PyTypeObject* g_framework_tensor_pytype;
 extern PyTypeObject* g_framework_lodtensorarray_pytype;
 extern PyTypeObject* g_custom_op_kernel_ctx_pytype;
+<<<<<<< HEAD
+extern PyTypeObject* g_executor_function_pytype;
+extern PyTypeObject* g_pe_function_pytype;
+=======
 extern PyTypeObject* g_jit_function_pytype;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 int TensorDtype2NumpyDtype(phi::DataType dtype) {
   switch (dtype) {
@@ -230,6 +240,21 @@ std::shared_ptr<imperative::VarBase> CastPyArg2VarBase(PyObject* obj,
   return py::cast<std::shared_ptr<imperative::VarBase>>(obj);
 }
 
+<<<<<<< HEAD
+std::shared_ptr<jit::BaseFunction> CastPyArg2BaseFunction(PyObject* obj,
+                                                          ssize_t arg_pos) {
+  if (PyObject_IsInstance(
+          obj, reinterpret_cast<PyObject*>(g_executor_function_pytype))) {
+    return ::pybind11::handle(obj)
+        .cast<std::shared_ptr<jit::ExecutorFunction>>();
+  } else if (PyObject_IsInstance(
+                 obj, reinterpret_cast<PyObject*>(g_pe_function_pytype))) {
+    return ::pybind11::handle(obj).cast<std::shared_ptr<jit::PEFunction>>();
+  } else {
+    PADDLE_THROW(platform::errors::InvalidArgument(
+        "argument (position %d) must be "
+        "BaseFunction, but got %s",
+=======
 std::shared_ptr<jit::Function> CastPyArg2JitFunction(PyObject* obj,
                                                      ssize_t arg_pos) {
   if (PyObject_IsInstance(obj,
@@ -239,6 +264,7 @@ std::shared_ptr<jit::Function> CastPyArg2JitFunction(PyObject* obj,
     PADDLE_THROW(platform::errors::InvalidArgument(
         "argument (position %d) must be "
         "BaseEngine, but got %s",
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         arg_pos + 1,
         reinterpret_cast<PyTypeObject*>(obj->ob_type)->tp_name));
   }
@@ -481,10 +507,14 @@ std::vector<phi::DenseTensor> CastPyArg2VectorOfTensorBase(PyObject* obj,
   } else if (PyObject_IsInstance(obj,
                                  reinterpret_cast<PyObject*>(
                                      g_framework_lodtensorarray_pytype))) {
+<<<<<<< HEAD
+    return ::pybind11::handle(obj).cast<framework::LoDTensorArray>();
+=======
     for (auto& tensor :
          (::pybind11::handle(obj).cast<framework::LoDTensorArray>())) {
       result.emplace_back(tensor);
     }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   } else if (obj == Py_None) {
     return {};
   } else {
@@ -979,6 +1009,8 @@ std::vector<paddle::experimental::Tensor> GetTensorListFromArgs(
         op_type,
         arg_name,
         arg_idx,
+<<<<<<< HEAD
+=======
         (reinterpret_cast<PyTypeObject*>(list->ob_type))->tp_name));
   }
 
@@ -1044,6 +1076,7 @@ GetOptionalTensorListFromArgs(const std::string& op_type,
         op_type,
         arg_name,
         arg_idx,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         (reinterpret_cast<PyTypeObject*>(list->ob_type))->tp_name));
   }
 
@@ -1348,7 +1381,11 @@ std::vector<phi::Scalar> CastPyArg2ScalarArray(PyObject* obj,
 
   PyTypeObject* type = obj->ob_type;
   auto type_name = std::string(type->tp_name);
+<<<<<<< HEAD
+  VLOG(1) << "type_name: " << type_name;
+=======
   VLOG(4) << "type_name: " << type_name;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   if (PyList_Check(obj)) {
     Py_ssize_t len = PyList_Size(obj);
     PyObject* item = nullptr;
@@ -1528,8 +1565,13 @@ paddle::experimental::Tensor PyTensorHook::operator()(
   }
 
   PADDLE_ENFORCE_NOT_NULL(res,
+<<<<<<< HEAD
+                          platform::errors::Unavailable(
+                              "Hook function of Tensor return a nullptr."));
+=======
                           paddle::platform::errors::External(
                               pybind11::detail::error_string().c_str()));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   if (res == Py_None) {
     return var;
   }

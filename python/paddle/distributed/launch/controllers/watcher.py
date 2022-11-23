@@ -19,7 +19,12 @@ import os
 from threading import Thread
 
 
+<<<<<<< HEAD
+class Watcher(object):
+
+=======
 class Watcher:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, ctx):
         self.ctx = ctx
 

@@ -289,6 +289,11 @@ class LayerDict(Layer):
             # handle this format [(key1, layer1), (key2, layer2)...]
             for i, kv in enumerate(sublayers):
                 if len(kv) != 2:
+<<<<<<< HEAD
+                    raise ValueError("The length of the " + str(i) +
+                                     "'s element in sublayers is " +
+                                     str(len(kv)) + ", which must be 2.")
+=======
                     raise ValueError(
                         "The length of the "
                         + str(i)
@@ -296,6 +301,7 @@ class LayerDict(Layer):
                         + str(len(kv))
                         + ", which must be 2."
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 self.add_sublayer(kv[0], kv[1])
 
 

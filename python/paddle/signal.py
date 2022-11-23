@@ -19,7 +19,11 @@ from .fft import fft_r2c, fft_c2r, fft_c2c
 from .fluid.data_feeder import check_variable_and_dtype
 from .fluid.framework import _non_static_mode
 from .fluid.layer_helper import LayerHelper
+<<<<<<< HEAD
+from paddle import _C_ops
+=======
 from paddle import _C_ops, _legacy_C_ops
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 from paddle.fluid.framework import in_dygraph_mode, _in_legacy_dygraph
 
 __all__ = [
@@ -128,6 +132,30 @@ def frame(x, frame_length, hop_length, axis=-1, name=None):
     op_type = 'frame'
 
     if in_dygraph_mode():
+<<<<<<< HEAD
+        return _C_ops.final_state_frame(x, frame_length, hop_length, axis)
+
+    if _in_legacy_dygraph():
+        attrs = ('frame_length', frame_length, 'hop_length', hop_length, 'axis',
+                 axis)
+        op = getattr(_C_ops, op_type)
+        out = op(x, *attrs)
+    else:
+        check_variable_and_dtype(
+            x, 'x', ['int32', 'int64', 'float16', 'float32', 'float64'],
+            op_type)
+        helper = LayerHelper(op_type, **locals())
+        dtype = helper.input_dtype(input_param_name='x')
+        out = helper.create_variable_for_type_inference(dtype=dtype)
+        helper.append_op(type=op_type,
+                         inputs={'X': x},
+                         attrs={
+                             'frame_length': frame_length,
+                             'hop_length': hop_length,
+                             'axis': axis
+                         },
+                         outputs={'Out': out})
+=======
         return _C_ops.frame(x, frame_length, hop_length, axis)
 
     if _in_legacy_dygraph():
@@ -158,6 +186,7 @@ def frame(x, frame_length, hop_length, axis=-1, name=None):
             },
             outputs={'Out': out},
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
@@ -225,13 +254,31 @@ def overlap_add(x, hop_length, axis=-1, name=None):
     op_type = 'overlap_add'
 
     if in_dygraph_mode():
+<<<<<<< HEAD
+        out = _C_ops.final_state_overlap_add(x, hop_length, axis)
+=======
         out = _C_ops.overlap_add(x, hop_length, axis)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     elif paddle.in_dynamic_mode():
         attrs = ('hop_length', hop_length, 'axis', axis)
         op = getattr(_legacy_C_ops, op_type)
         out = op(x, *attrs)
     else:
         check_variable_and_dtype(
+<<<<<<< HEAD
+            x, 'x', ['int32', 'int64', 'float16', 'float32', 'float64'],
+            op_type)
+        helper = LayerHelper(op_type, **locals())
+        dtype = helper.input_dtype(input_param_name='x')
+        out = helper.create_variable_for_type_inference(dtype=dtype)
+        helper.append_op(type=op_type,
+                         inputs={'X': x},
+                         attrs={
+                             'hop_length': hop_length,
+                             'axis': axis
+                         },
+                         outputs={'Out': out})
+=======
             x, 'x', ['int32', 'int64', 'float16', 'float32', 'float64'], op_type
         )
         helper = LayerHelper(op_type, **locals())
@@ -243,6 +290,7 @@ def overlap_add(x, hop_length, axis=-1, name=None):
             attrs={'hop_length': hop_length, 'axis': axis},
             outputs={'Out': out},
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
@@ -325,9 +373,15 @@ def stft(
             y1 = stft(x, n_fft=512, center=False, onesided=False)  # [8, 512, 372]
 
     """
+<<<<<<< HEAD
+    check_variable_and_dtype(x, 'x',
+                             ['float32', 'float64', 'complex64', 'complex128'],
+                             'stft')
+=======
     check_variable_and_dtype(
         x, 'x', ['float32', 'float64', 'complex64', 'complex128'], 'stft'
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     x_rank = len(x.shape)
     assert x_rank in [
@@ -399,6 +453,22 @@ def stft(
         ), 'onesided should be False when input or window is a complex Tensor.'
 
     if not is_complex(x):
+<<<<<<< HEAD
+        out = fft_r2c(x=x_frames,
+                      n=None,
+                      axis=-1,
+                      norm=norm,
+                      forward=True,
+                      onesided=onesided,
+                      name=name)
+    else:
+        out = fft_c2c(x=x_frames,
+                      n=None,
+                      axis=-1,
+                      norm=norm,
+                      forward=True,
+                      name=name)
+=======
         out = fft_r2c(
             x=x_frames,
             n=None,
@@ -412,6 +482,7 @@ def stft(
         out = fft_c2c(
             x=x_frames, n=None, axis=-1, norm=norm, forward=True, name=name
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     out = out.transpose(perm=[0, 2, 1])  # (batch, n_fft, num_frames)
 
@@ -598,19 +669,30 @@ def istft(
         out = fft_c2r(x=x, n=None, axis=-1, norm=norm, forward=False, name=None)
 
     out = paddle.multiply(out, window).transpose(
+<<<<<<< HEAD
+        perm=[0, 2, 1])  # (batch, n_fft, num_frames)
+    out = overlap_add(x=out, hop_length=hop_length,
+                      axis=-1)  # (batch, seq_length)
+=======
         perm=[0, 2, 1]
     )  # (batch, n_fft, num_frames)
     out = overlap_add(
         x=out, hop_length=hop_length, axis=-1
     )  # (batch, seq_length)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     window_envelop = overlap_add(
         x=paddle.tile(
             x=paddle.multiply(window, window).unsqueeze(0),
+<<<<<<< HEAD
+            repeat_times=[n_frames,
+                          1]).transpose(perm=[1, 0]),  # (n_fft, num_frames)
+=======
             repeat_times=[n_frames, 1],
         ).transpose(
             perm=[1, 0]
         ),  # (n_fft, num_frames)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         hop_length=hop_length,
         axis=-1,
     )  # (seq_length, )

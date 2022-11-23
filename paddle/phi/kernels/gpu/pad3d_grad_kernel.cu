@@ -509,5 +509,9 @@ PD_REGISTER_KERNEL(pad3d_grad,
                    phi::Pad3dGradKernel,
                    float,
                    double,
+<<<<<<< HEAD
+                   phi::dtype::float16) {}
+=======
                    phi::dtype::float16,
                    phi::dtype::bfloat16) {}
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

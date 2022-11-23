@@ -17,7 +17,12 @@ from paddle.fluid import framework as framework
 __all__ = ["extend_with_decoupled_weight_decay"]
 
 
+<<<<<<< HEAD
+class DecoupledWeightDecay(object):
+
+=======
 class DecoupledWeightDecay:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, coeff=0.0, apply_decay_param_fun=None, **kwargs):
         if not isinstance(coeff, float) and not isinstance(
             coeff, framework.Variable
@@ -80,6 +85,17 @@ class DecoupledWeightDecay:
     def apply_optimize(self, **kargs):
         return super().apply_optimize(**kargs)
 
+<<<<<<< HEAD
+    def minimize(self,
+                 loss,
+                 startup_program=None,
+                 parameter_list=None,
+                 no_grad_set=None):
+        params_grads = self.backward(loss=loss,
+                                     startup_program=startup_program,
+                                     parameter_list=parameter_list,
+                                     no_grad_set=no_grad_set)
+=======
     def minimize(
         self, loss, startup_program=None, parameter_list=None, no_grad_set=None
     ):
@@ -89,6 +105,7 @@ class DecoupledWeightDecay:
             parameter_list=parameter_list,
             no_grad_set=no_grad_set,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         scaled_params = self._scale_parameters(params_grads)
         for p_grad_sgrad in scaled_params:
             param, grad, scaled_param = p_grad_sgrad
@@ -100,11 +117,17 @@ class DecoupledWeightDecay:
                 )
                 paddle.fluid.layers.assign(input=updated_param, output=param)
 
+<<<<<<< HEAD
+        optimize_ops = self.apply_optimize(loss=loss,
+                                           params_grads=params_grads,
+                                           startup_program=startup_program)
+=======
         optimize_ops = self.apply_optimize(
             loss=loss,
             params_grads=params_grads,
             startup_program=startup_program,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         return optimize_ops, params_grads
 
     def __str__(self):
@@ -160,6 +183,11 @@ def extend_with_decoupled_weight_decay(base_optimizer):
         """
 
         def __init__(self, weight_decay, apply_decay_param_fun=None, **kwargs):
+<<<<<<< HEAD
+            super(OptimizerWithDecoupledWeightDecay,
+                  self).__init__(weight_decay, apply_decay_param_fun, **kwargs)
+=======
             super().__init__(weight_decay, apply_decay_param_fun, **kwargs)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     return OptimizerWithDecoupledWeightDecay

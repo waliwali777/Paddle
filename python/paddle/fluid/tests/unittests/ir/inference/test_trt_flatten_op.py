@@ -22,11 +22,18 @@ from paddle.fluid.core import AnalysisConfig
 
 
 class TRTFlattenTest(InferencePassTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 6, 64, 64],
+                              dtype="float32")
+=======
             data = fluid.data(
                 name="data", shape=[-1, 6, 64, 64], dtype="float32"
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             flatten_out = self.append_flatten(data)
             out = fluid.layers.batch_norm(flatten_out, is_test=True)
         self.feeds = {
@@ -51,11 +58,18 @@ class TRTFlattenTest(InferencePassTest):
 
 
 class TRTFlattenDynamicTest(InferencePassTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 6, 64, 64],
+                              dtype="float32")
+=======
             data = fluid.data(
                 name="data", shape=[-1, 6, 64, 64], dtype="float32"
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             flatten_out = self.append_flatten(data)
             out = fluid.layers.batch_norm(flatten_out, is_test=True)
         self.feeds = {
@@ -63,6 +77,20 @@ class TRTFlattenDynamicTest(InferencePassTest):
         }
         self.enable_trt = True
         self.trt_parameters = TRTFlattenDynamicTest.TensorRTParam(
+<<<<<<< HEAD
+            1 << 30, 32, 0, AnalysisConfig.Precision.Float32, False, False)
+        self.dynamic_shape_params = TRTFlattenDynamicTest.DynamicShapeParam(
+            {
+                'data': [2, 6, 64, 64],
+                'flatten_0.tmp_0': [2, 6 * 64 * 64]
+            }, {
+                'data': [2, 6, 64, 64],
+                'flatten_0.tmp_0': [2, 6 * 64 * 64]
+            }, {
+                'data': [2, 6, 64, 64],
+                'flatten_0.tmp_0': [2, 6 * 64 * 64]
+            }, False)
+=======
             1 << 30, 32, 0, AnalysisConfig.Precision.Float32, False, False
         )
         self.dynamic_shape_params = TRTFlattenDynamicTest.DynamicShapeParam(
@@ -71,6 +99,7 @@ class TRTFlattenDynamicTest(InferencePassTest):
             {'data': [2, 6, 64, 64], 'flatten_0.tmp_0': [2, 6 * 64 * 64]},
             False,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.fetch_list = [out]
 
     def append_flatten(self, data):

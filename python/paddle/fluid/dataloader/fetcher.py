@@ -19,7 +19,12 @@ from collections.abc import Sequence, Mapping
 _WARNING_TO_LOG = True
 
 
+<<<<<<< HEAD
+class _DatasetFetcher(object):
+
+=======
 class _DatasetFetcher:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, dataset, auto_collate_batch, collate_fn, drop_last):
         self.dataset = dataset
         self.auto_collate_batch = auto_collate_batch
@@ -74,15 +79,27 @@ class _DatasetFetcher:
             " 'Tensor(shape=(1, 2, 3), dtype=float32)'\n"
         )
 
+<<<<<<< HEAD
+        logger = get_logger("DataLoader",
+                            logging.INFO,
+                            fmt='%(levelname)s: %(message)s')
+=======
         logger = get_logger(
             "DataLoader", logging.INFO, fmt='%(levelname)s: %(message)s'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         logger.warning(warn_str)
 
 
 class _IterableDatasetFetcher(_DatasetFetcher):
+
     def __init__(self, dataset, auto_collate_batch, collate_fn, drop_last):
+<<<<<<< HEAD
+        super(_IterableDatasetFetcher,
+              self).__init__(dataset, auto_collate_batch, collate_fn, drop_last)
+=======
         super().__init__(dataset, auto_collate_batch, collate_fn, drop_last)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.dataset_iter = iter(dataset)
 
     def fetch(self, batch_indices, done_event=None):
@@ -98,9 +115,14 @@ class _IterableDatasetFetcher(_DatasetFetcher):
                 else:
                     return None
 
+<<<<<<< HEAD
+            if len(data) == 0 or (self.drop_last
+                                  and len(data) < len(batch_indices)):
+=======
             if len(data) == 0 or (
                 self.drop_last and len(data) < len(batch_indices)
             ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 raise StopIteration
 
             global _WARNING_TO_LOG
@@ -116,6 +138,7 @@ class _IterableDatasetFetcher(_DatasetFetcher):
 
 
 class _MapDatasetFetcher(_DatasetFetcher):
+
     def __init__(self, dataset, auto_collate_batch, collate_fn, drop_last):
         super().__init__(dataset, auto_collate_batch, collate_fn, drop_last)
 

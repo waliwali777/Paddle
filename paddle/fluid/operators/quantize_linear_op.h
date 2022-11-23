@@ -31,12 +31,21 @@ namespace operators {
 template <typename DeviceContext, typename T>
 struct ChannelDequantizeFunctorV2 {
   void operator()(const DeviceContext& dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor* in,
+                  const framework::Tensor** scales,
+                  const int scale_num,
+                  T max_range,
+                  const int quant_axis,
+                  framework::Tensor* out);
+=======
                   const phi::DenseTensor* in,
                   const phi::DenseTensor** scales,
                   const int scale_num,
                   T max_range,
                   const int quant_axis,
                   phi::DenseTensor* out);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 };
 
 template <typename DeviceContext, typename T>
@@ -57,6 +66,12 @@ class QuantizeLinearKernel : public framework::OpKernel<T> {
 
     if (quant_axis < 0) {
       if (!is_test) {
+<<<<<<< HEAD
+        auto* out_scale = context.Output<framework::Tensor>("OutScale");
+        T* out_s = out_scale->mutable_data<T>(context.GetPlace());
+        FindAbsMaxFunctor<DeviceContext, T>()(
+            dev_ctx, in->data<T>(), in->numel(), out_s);
+=======
         // training
         auto* in_accum = context.Input<phi::DenseTensor>("InAccum");
         auto* in_state = context.Input<phi::DenseTensor>("InState");
@@ -83,6 +98,7 @@ class QuantizeLinearKernel : public framework::OpKernel<T> {
                                                            out_state,
                                                            out_accum,
                                                            out_scale);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         ClipAndFakeQuantFunctor<DeviceContext, T>()(
             dev_ctx, *in, *out_scale, bin_cnt, round_type, out);
       } else {

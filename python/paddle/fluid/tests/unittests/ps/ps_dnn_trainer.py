@@ -46,7 +46,12 @@ def is_distributed_env():
         return True
 
 
+<<<<<<< HEAD
+class YamlHelper(object):
+
+=======
 class YamlHelper:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def load_yaml(self, yaml_file, other_part=None):
         part_list = ["runner", "hyper_parameters"]
         if other_part:
@@ -118,8 +123,12 @@ class YamlHelper:
             max_k = max(max_k, len(k))
 
         h_format = "    " + "|{{:>{}s}}{}{{:^{}s}}|\n".format(
+<<<<<<< HEAD
+            max_k, " " * spacing, max_v)
+=======
             max_k, " " * spacing, max_v
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         l_format = "    " + "|{{:>{}s}}{{}}{{:^{}s}}|\n".format(max_k, max_v)
         length = max_k + max_v + spacing
 
@@ -164,15 +173,25 @@ def get_user_defined_strategy(config):
     elif sync_mode == "async":
         strategy = paddle.distributed.fleet.DistributedStrategy()
         strategy.a_sync = True
+<<<<<<< HEAD
+        strategy.is_fl_ps_mode = True if config.get(
+            "runner.is_fl_ps_mode") == 1 else False
+        if strategy.is_fl_ps_mode == True:
+=======
         strategy.is_fl_ps_mode = (
             True if config.get("runner.is_fl_ps_mode") == 1 else False
         )
         if strategy.is_fl_ps_mode:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             strategy.pipeline = False
             micro_num = 1
             strategy.pipeline_configs = {
                 "accumulate_steps": micro_num
+<<<<<<< HEAD
+            }  ## num_microbatches
+=======
             }  # num_microbatches
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     elif sync_mode == "geo":
         strategy = paddle.distributed.fleet.DistributedStrategy()
         strategy.a_sync = True
@@ -231,9 +250,13 @@ def get_user_defined_strategy(config):
 
 
 def get_distributed_strategy(user_defined_strategy):  # pslib
+<<<<<<< HEAD
+    from paddle.fluid.incubate.fleet.parameter_server.distribute_transpiler.distributed_strategy import StrategyFactory
+=======
     from paddle.fluid.incubate.fleet.parameter_server.distribute_transpiler.distributed_strategy import (
         StrategyFactory,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     k_steps = user_defined_strategy.a_sync_configs["k_steps"]
     strategy = None
@@ -262,6 +285,47 @@ def get_model(config):
 
 def parse_args():
     parser = argparse.ArgumentParser("PsTest train script")
+<<<<<<< HEAD
+    parser.add_argument('-m',
+                        '--config_yaml',
+                        type=str,
+                        required=True,
+                        help='config file path')
+    parser.add_argument('-bf16',
+                        '--pure_bf16',
+                        type=ast.literal_eval,
+                        default=False,
+                        help="whether use bf16")
+
+    parser.add_argument('--run_minimize',
+                        type=int,
+                        default=0,
+                        help="test single pass")
+    parser.add_argument('--run_single_pass',
+                        type=int,
+                        default=0,
+                        help="test single pass")
+    parser.add_argument('--run_the_one_ps',
+                        type=int,
+                        default=0,
+                        help="test the_one_ps")
+    parser.add_argument('--debug_new_minimize',
+                        type=int,
+                        default=0,
+                        help="test single pass")
+    parser.add_argument('--debug_new_pass',
+                        type=int,
+                        default=0,
+                        help="test single pass")
+    parser.add_argument('--applied_pass_name',
+                        type=str,
+                        default="",
+                        help="test single pass")
+    parser.add_argument('--debug_the_one_ps',
+                        type=int,
+                        default=0,
+                        help="test the_one_ps")
+=======
     parser.add_argument(
         '-m', '--config_yaml', type=str, required=True, help='config file path'
     )
@@ -294,6 +358,7 @@ def parse_args():
     parser.add_argument(
         '--debug_the_one_ps', type=int, default=0, help="test the_one_ps"
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     args = parser.parse_args()
     args.abs_dir = os.path.dirname(os.path.abspath(args.config_yaml))
@@ -317,7 +382,12 @@ def bf16_to_fp32(val):
     return np.float32(struct.unpack('<f', struct.pack('<I', val << 16))[0])
 
 
+<<<<<<< HEAD
+class DnnTrainer(object):
+
+=======
 class DnnTrainer:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, config):
         self.metrics = {}
         self.config = config
@@ -359,10 +429,14 @@ class DnnTrainer:
         self.role_maker._generate_role()  # 必要
         if self.config['debug_new_minimize'] == 1:
             print("entering run_minimize -- new")
+<<<<<<< HEAD
+            from paddle.distributed.fleet.meta_optimizers.ps_optimizer import ParameterServerOptimizer
+=======
             from paddle.distributed.fleet.meta_optimizers.ps_optimizer import (
                 ParameterServerOptimizer,
             )
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             ps_optimizer = ParameterServerOptimizer(inner_optimizer)
             ps_optimizer._set_basic_info(
                 loss, self.role_maker, inner_optimizer, user_defined_strategy
@@ -396,6 +470,11 @@ class DnnTrainer:
             )
             debug_program(_main_file, loss.block.program)
         elif self.role_maker._is_heter_worker():
+<<<<<<< HEAD
+            _main_file = ps_log_root_dir + sync_mode + '_run_minimize' + '_debug:_' + str(
+                self.config['debug_new_minimize']
+            ) + '_heter_worker_main.prototxt'
+=======
             _main_file = (
                 ps_log_root_dir
                 + sync_mode
@@ -404,6 +483,7 @@ class DnnTrainer:
                 + str(self.config['debug_new_minimize'])
                 + '_heter_worker_main.prototxt'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             debug_program(_main_file, loss.block.program)
 
     def run_single_pass(self):
@@ -419,6 +499,11 @@ class DnnTrainer:
         startup_program = paddle.static.default_startup_program()
         inner_optimizer.minimize(loss, startup_program)
         if self.config['debug_new_pass'] == 1:
+<<<<<<< HEAD
+            print("entering run {} - new".format(
+                str(config["applied_pass_name"])))
+            from paddle.distributed.fleet.meta_optimizers.ps_optimizer import ParameterServerOptimizer
+=======
             print(
                 "entering run {} - new".format(str(config["applied_pass_name"]))
             )
@@ -426,6 +511,7 @@ class DnnTrainer:
                 ParameterServerOptimizer,
             )
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             ps_optimizer = ParameterServerOptimizer(inner_optimizer)
             ps_optimizer._set_basic_info(
                 loss, self.role_maker, inner_optimizer, user_defined_strategy
@@ -439,6 +525,11 @@ class DnnTrainer:
             )
             append_send_ops_pass.apply([_main], [None], ps_optimizer.pass_ctx)
         else:
+<<<<<<< HEAD
+            print("entering run {} - old".format(
+                str(config["applied_pass_name"])))
+            from paddle.fluid.incubate.fleet.parameter_server.ir import public as public
+=======
             print(
                 "entering run {} - old".format(str(config["applied_pass_name"]))
             )
@@ -446,6 +537,7 @@ class DnnTrainer:
                 public as public,
             )
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             dist_strategy = get_distributed_strategy(user_defined_strategy)
             compiled_config = public.CompileTimeStrategy(
                 loss.block.program,
@@ -463,6 +555,16 @@ class DnnTrainer:
             _main = worker.append_send_ops_pass(_main, compiled_config)
 
         if fleet.is_server():
+<<<<<<< HEAD
+            _main_file = ps_log_root_dir + sync_mode + "_" + str(
+                config["applied_pass_name"]) + '_debug:_' + str(
+                    self.config['debug_new_pass']) + '_server_main.prototxt'
+            debug_program(_main_file, _main)
+        elif fleet.is_worker():
+            _main_file = ps_log_root_dir + sync_mode + "_" + str(
+                config["applied_pass_name"]) + '_debug:_' + str(
+                    self.config['debug_new_pass']) + '_worker_main.prototxt'
+=======
             _main_file = (
                 ps_log_root_dir
                 + sync_mode
@@ -483,6 +585,7 @@ class DnnTrainer:
                 + str(self.config['debug_new_pass'])
                 + '_worker_main.prototxt'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             debug_program(_main_file, _main)
 
     def run_the_one_ps(self):
@@ -501,10 +604,13 @@ class DnnTrainer:
         self.role_maker._generate_role()  # 必要
         if self.config['debug_the_one_ps'] == 1:
             print("entering run_the_one_ps -- new")
+<<<<<<< HEAD
+=======
 
             from paddle.distributed.fleet.meta_optimizers.ps_optimizer import (
                 ParameterServerOptimizer,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             ps_optimizer = ParameterServerOptimizer(inner_optimizer)
             ps_optimizer._set_basic_info(
@@ -521,23 +627,37 @@ class DnnTrainer:
                     _runtime_handle.ps_desc_builder.build_worker_desc()
                 )
                 with open(
+<<<<<<< HEAD
+                        ps_log_root_dir + sync_mode + '_' +
+                        'new_worker_ps_desc', 'w') as f:
+=======
                     ps_log_root_dir + sync_mode + '_' + 'new_worker_ps_desc',
                     'w',
                 ) as f:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     f.write(worker_desc)
             if fleet.is_server():
                 server_desc = (
                     _runtime_handle.ps_desc_builder.build_server_desc()
                 )
                 with open(
+<<<<<<< HEAD
+                        ps_log_root_dir + sync_mode + '_' +
+                        'new_server_ps_desc', 'w') as f:
+=======
                     ps_log_root_dir + sync_mode + '_' + 'new_server_ps_desc',
                     'w',
                 ) as f:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     f.write(server_desc)
 
         else:
             pass
+<<<<<<< HEAD
+        '''          
+=======
         '''
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             print("entering run_the_one_ps -- old")
             fleet_obj = fleet.distributed_optimizer(
                 inner_optimizer, user_defined_strategy)

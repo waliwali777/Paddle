@@ -19,7 +19,10 @@
 #include "paddle/phi/common/place.h"
 #include "paddle/phi/core/kernel_registry.h"
 #include "paddle/phi/core/tensor_utils.h"
+<<<<<<< HEAD
+=======
 #include "paddle/phi/core/utils/data_type.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace phi {
 

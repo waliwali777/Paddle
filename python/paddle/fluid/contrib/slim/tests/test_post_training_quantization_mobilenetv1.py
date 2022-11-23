@@ -77,6 +77,15 @@ def process_image(sample, mode, color_jitter, rotate):
     return img, sample[1]
 
 
+<<<<<<< HEAD
+def _reader_creator(file_list,
+                    mode,
+                    shuffle=False,
+                    color_jitter=False,
+                    rotate=False,
+                    data_dir=DATA_DIR):
+
+=======
 def _reader_creator(
     file_list,
     mode,
@@ -85,6 +94,7 @@ def _reader_creator(
     rotate=False,
     data_dir=DATA_DIR,
 ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def reader():
         with open(file_list) as flist:
             full_lines = [line.strip() for line in flist]
@@ -99,9 +109,16 @@ def _reader_creator(
                     continue
                 yield img_path, int(label)
 
+<<<<<<< HEAD
+    mapper = functools.partial(process_image,
+                               mode=mode,
+                               color_jitter=color_jitter,
+                               rotate=rotate)
+=======
     mapper = functools.partial(
         process_image, mode=mode, color_jitter=color_jitter, rotate=rotate
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     return paddle.reader.xmap_readers(mapper, reader, THREAD, BUF_SIZE)
 
@@ -112,6 +129,7 @@ def val(data_dir=DATA_DIR):
 
 
 class TestPostTrainingQuantization(unittest.TestCase):
+
     def setUp(self):
         self.int8_download = 'int8/download'
         self.cache_folder = os.path.expanduser(
@@ -154,9 +172,14 @@ class TestPostTrainingQuantization(unittest.TestCase):
         )
 
         self.root_path = tempfile.TemporaryDirectory()
+<<<<<<< HEAD
+        self.int8_model = os.path.join(self.root_path.name,
+                                       "post_training_quantization")
+=======
         self.int8_model = os.path.join(
             self.root_path.name, "post_training_quantization"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def tearDown(self):
         self.root_path.cleanup()
@@ -164,8 +187,12 @@ class TestPostTrainingQuantization(unittest.TestCase):
     def cache_unzipping(self, target_folder, zip_path):
         if not os.path.exists(target_folder):
             cmd = 'mkdir {0} && tar xf {1} -C {0}'.format(
+<<<<<<< HEAD
+                target_folder, zip_path)
+=======
                 target_folder, zip_path
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             os.system(cmd)
 
     def download_data(self, data_urls, data_md5s, folder_name, is_model=True):
@@ -217,18 +244,32 @@ class TestPostTrainingQuantization(unittest.TestCase):
         cnt = 0
         periods = []
         for batch_id, data in enumerate(val_reader()):
+<<<<<<< HEAD
+            image = np.array([x[0].reshape(image_shape)
+                              for x in data]).astype("float32")
+=======
             image = np.array([x[0].reshape(image_shape) for x in data]).astype(
                 "float32"
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             label = np.array([x[1] for x in data]).astype("int64")
             label = label.reshape([-1, 1])
 
             t1 = time.time()
+<<<<<<< HEAD
+            _, acc1, _ = exe.run(infer_program,
+                                 feed={
+                                     feed_dict[0]: image,
+                                     feed_dict[1]: label
+                                 },
+                                 fetch_list=fetch_targets)
+=======
             _, acc1, _ = exe.run(
                 infer_program,
                 feed={feed_dict[0]: image, feed_dict[1]: label},
                 fetch_list=fetch_targets,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             t2 = time.time()
             period = t2 - t1
             periods.append(period)
@@ -263,9 +304,14 @@ class TestPostTrainingQuantization(unittest.TestCase):
         try:
             os.system("mkdir " + self.int8_model)
         except Exception as e:
+<<<<<<< HEAD
+            print("Failed to create {} due to {}".format(
+                self.int8_model, str(e)))
+=======
             print(
                 "Failed to create {} due to {}".format(self.int8_model, str(e))
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             sys.exit(-1)
 
         place = fluid.CPUPlace()
@@ -273,6 +319,18 @@ class TestPostTrainingQuantization(unittest.TestCase):
         scope = fluid.global_scope()
         val_reader = val()
 
+<<<<<<< HEAD
+        ptq = PostTrainingQuantization(executor=exe,
+                                       sample_generator=val_reader,
+                                       model_dir=model_path,
+                                       algo=algo,
+                                       quantizable_op_type=quantizable_op_type,
+                                       round_type=round_type,
+                                       is_full_quantize=is_full_quantize,
+                                       optimize_model=is_optimize_model,
+                                       onnx_format=onnx_format,
+                                       is_use_cache_file=is_use_cache_file)
+=======
         ptq = PostTrainingQuantization(
             executor=exe,
             sample_generator=val_reader,
@@ -287,6 +345,7 @@ class TestPostTrainingQuantization(unittest.TestCase):
             onnx_format=onnx_format,
             is_use_cache_file=is_use_cache_file,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         ptq.quantize()
         ptq.save_quantized_model(self.int8_model)
 
@@ -310,6 +369,13 @@ class TestPostTrainingQuantization(unittest.TestCase):
 
         model_cache_folder = self.download_data(data_urls, data_md5s, model)
 
+<<<<<<< HEAD
+        print("Start FP32 inference for {0} on {1} images ...".format(
+            model, infer_iterations * batch_size))
+        (fp32_throughput, fp32_latency,
+         fp32_acc1) = self.run_program(model_cache_folder + "/model",
+                                       batch_size, infer_iterations)
+=======
         print(
             "Start FP32 inference for {0} on {1} images ...".format(
                 model, infer_iterations * batch_size
@@ -320,6 +386,7 @@ class TestPostTrainingQuantization(unittest.TestCase):
             batch_size,
             infer_iterations,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         print(
             "Start INT8 post training quantization for {0} on {1} images ...".format(
@@ -339,6 +406,23 @@ class TestPostTrainingQuantization(unittest.TestCase):
             onnx_format,
         )
 
+<<<<<<< HEAD
+        print("Start INT8 inference for {0} on {1} images ...".format(
+            model, infer_iterations * batch_size))
+        (int8_throughput, int8_latency,
+         int8_acc1) = self.run_program(self.int8_model, batch_size,
+                                       infer_iterations)
+
+        print("---Post training quantization of {} method---".format(algo))
+        print(
+            "FP32 {0}: batch_size {1}, throughput {2} images/second, latency {3} second, accuracy {4}."
+            .format(model, batch_size, fp32_throughput, fp32_latency,
+                    fp32_acc1))
+        print(
+            "INT8 {0}: batch_size {1}, throughput {2} images/second, latency {3} second, accuracy {4}.\n"
+            .format(model, batch_size, int8_throughput, int8_latency,
+                    int8_acc1))
+=======
         print(
             "Start INT8 inference for {0} on {1} images ...".format(
                 model, infer_iterations * batch_size
@@ -359,6 +443,7 @@ class TestPostTrainingQuantization(unittest.TestCase):
                 model, batch_size, int8_throughput, int8_latency, int8_acc1
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         sys.stdout.flush()
 
         delta_value = fp32_acc1 - int8_acc1
@@ -366,6 +451,7 @@ class TestPostTrainingQuantization(unittest.TestCase):
 
 
 class TestPostTrainingKLForMobilenetv1(TestPostTrainingQuantization):
+
     def test_post_training_kl_mobilenetv1(self):
         model = "MobileNet-V1"
         algo = "KL"
@@ -400,6 +486,7 @@ class TestPostTrainingKLForMobilenetv1(TestPostTrainingQuantization):
 
 
 class TestPostTrainingavgForMobilenetv1(TestPostTrainingQuantization):
+
     def test_post_training_avg_mobilenetv1(self):
         model = "MobileNet-V1"
         algo = "avg"
@@ -432,6 +519,7 @@ class TestPostTrainingavgForMobilenetv1(TestPostTrainingQuantization):
 
 
 class TestPostTraininghistForMobilenetv1(TestPostTrainingQuantization):
+
     def test_post_training_hist_mobilenetv1(self):
         model = "MobileNet-V1"
         algo = "hist"
@@ -466,6 +554,7 @@ class TestPostTraininghistForMobilenetv1(TestPostTrainingQuantization):
 
 
 class TestPostTrainingAbsMaxForMobilenetv1(TestPostTrainingQuantization):
+
     def test_post_training_abs_max_mobilenetv1(self):
         model = "MobileNet-V1"
         algo = "abs_max"
@@ -498,6 +587,7 @@ class TestPostTrainingAbsMaxForMobilenetv1(TestPostTrainingQuantization):
 
 
 class TestPostTrainingAvgONNXFormatForMobilenetv1(TestPostTrainingQuantization):
+
     def test_post_training_onnx_format_mobilenetv1(self):
         model = "MobileNet-V1"
         algo = "emd"
@@ -516,6 +606,19 @@ class TestPostTrainingAvgONNXFormatForMobilenetv1(TestPostTrainingQuantization):
         is_optimize_model = True
         onnx_format = True
         diff_threshold = 0.05
+<<<<<<< HEAD
+        self.run_test(model,
+                      algo,
+                      round_type,
+                      data_urls,
+                      data_md5s,
+                      quantizable_op_type,
+                      is_full_quantize,
+                      is_use_cache_file,
+                      is_optimize_model,
+                      diff_threshold,
+                      onnx_format=onnx_format)
+=======
         batch_nums = 3
         self.run_test(
             model,
@@ -531,6 +634,7 @@ class TestPostTrainingAvgONNXFormatForMobilenetv1(TestPostTrainingQuantization):
             onnx_format=onnx_format,
             batch_nums=batch_nums,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

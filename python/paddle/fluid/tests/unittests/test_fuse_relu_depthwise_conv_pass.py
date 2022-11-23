@@ -26,6 +26,17 @@ def norm(*args, **kargs):
 
 def sep_conv(input, channel, stride, filter, dilation=1, act=None):
     # with scope('depthwise'):
+<<<<<<< HEAD
+    input = fluid.layers.conv2d(input,
+                                input.shape[1],
+                                filter,
+                                stride,
+                                groups=input.shape[1],
+                                padding=(filter // 2) * dilation,
+                                dilation=dilation,
+                                use_cudnn=False,
+                                bias_attr=False)
+=======
     input = fluid.layers.conv2d(
         input,
         input.shape[1],
@@ -37,13 +48,24 @@ def sep_conv(input, channel, stride, filter, dilation=1, act=None):
         use_cudnn=False,
         bias_attr=False,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     input = norm(input)
     if act:
         input = act(input)
     # with scope('pointwise'):
+<<<<<<< HEAD
+    input = fluid.layers.conv2d(input,
+                                channel,
+                                1,
+                                1,
+                                groups=1,
+                                padding=0,
+                                bias_attr=False)
+=======
     input = fluid.layers.conv2d(
         input, channel, 1, 1, groups=1, padding=0, bias_attr=False
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     input = norm(input)
     if act:
         input = act(input)
@@ -65,6 +87,7 @@ def simple_depthwise_net(use_feed):
 
 
 class TestMNIST(TestParallelExecutorBase):
+
     def _init_data(self, random=True):
         np.random.seed(5)
         if random:
@@ -89,6 +112,24 @@ class TestMNIST(TestParallelExecutorBase):
         if only_forward:
             _optimizer = None
 
+<<<<<<< HEAD
+        fuse_op_first_loss, fuse_op_last_loss, _ = self.check_network_convergence(
+            model,
+            feed_dict={
+                "image": img,
+                "label": label
+            },
+            use_device=use_device,
+            fuse_relu_depthwise_conv=True,
+            use_ir_memory_optimize=True,
+            optimizer=_optimizer)
+        not_fuse_op_first_loss, not_fuse_op_last_loss, _ = self.check_network_convergence(
+            model,
+            feed_dict={
+                "image": img,
+                "label": label
+            },
+=======
         (
             fuse_op_first_loss,
             fuse_op_last_loss,
@@ -108,6 +149,7 @@ class TestMNIST(TestParallelExecutorBase):
         ) = self.check_network_convergence(
             model,
             feed_dict={"image": img, "label": label},
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             use_device=use_device,
             fuse_relu_depthwise_conv=False,
             optimizer=_optimizer,

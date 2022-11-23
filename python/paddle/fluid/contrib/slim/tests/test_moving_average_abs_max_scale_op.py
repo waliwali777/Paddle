@@ -37,13 +37,20 @@ def init_data(batch_size=32, img_shape=[784], label_range=9):
 
 
 class TestMovingAverageAbsMaxScaleOp(unittest.TestCase):
+
     def check_backward(self, use_cuda):
         main_program = fluid.Program()
         startup_program = fluid.Program()
         with fluid.program_guard(main_program, startup_program):
+<<<<<<< HEAD
+            image = fluid.layers.data(name='image',
+                                      shape=[784],
+                                      dtype='float32')
+=======
             image = fluid.layers.data(
                 name='image', shape=[784], dtype='float32'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             label = fluid.layers.data(name='label', shape=[1], dtype='int64')
             fc_tmp = fluid.layers.fc(image, size=10, act='softmax')
             out_scale = quant_layers.MovingAverageAbsMaxScale(
@@ -51,8 +58,12 @@ class TestMovingAverageAbsMaxScaleOp(unittest.TestCase):
             )
             fc_tmp_1 = out_scale(fc_tmp)
             cross_entropy = fluid.layers.softmax_with_cross_entropy(
+<<<<<<< HEAD
+                fc_tmp, label)
+=======
                 fc_tmp, label
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             loss = fluid.layers.reduce_mean(cross_entropy)
             sgd = fluid.optimizer.SGD(learning_rate=1e-3)
             sgd.minimize(loss)

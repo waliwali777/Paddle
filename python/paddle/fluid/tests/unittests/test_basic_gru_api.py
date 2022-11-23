@@ -40,6 +40,23 @@ def sigmoid(x):
 def tanh(x):
     y = -2.0 * x
     y[y > EXP_MAX_INPUT] = EXP_MAX_INPUT
+<<<<<<< HEAD
+    return (2. / (1. + np.exp(y))) - 1.
+
+
+def gru_np(input,
+           init_h,
+           hidden_size,
+           gate_weight,
+           gate_bias,
+           candidate_weight,
+           candidate_bias,
+           num_layers=1,
+           batch_first=False,
+           is_bidirect=False,
+           sequence_length=None):
+
+=======
     return (2.0 / (1.0 + np.exp(y))) - 1.0
 
 
@@ -56,6 +73,7 @@ def gru_np(
     is_bidirect=False,
     sequence_length=None,
 ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def step(step_in, pre_hidden, gate_w, gate_b, candidate_w, candidate_b):
         concat_1 = np.concatenate([step_in, pre_hidden], 1)
 
@@ -66,9 +84,14 @@ def gru_np(
 
         r_hidden = r * pre_hidden
 
+<<<<<<< HEAD
+        candidate = np.matmul(np.concatenate([step_in, r_hidden], 1),
+                              candidate_w)
+=======
         candidate = np.matmul(
             np.concatenate([step_in, r_hidden], 1), candidate_w
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         candidate += candidate_b
         c = tanh(candidate)
@@ -96,9 +119,14 @@ def gru_np(
     if is_bidirect:
         direc_num = 2
     if init_h:
+<<<<<<< HEAD
+        init_h = np.reshape(init_h,
+                            shape=[num_layers, direc_num, -1, hidden_size])
+=======
         init_h = np.reshape(
             init_h, shape=[num_layers, direc_num, -1, hidden_size]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     else:
         init_h = np.zeros([num_layers, direc_num, batch_size, hidden_size])
 
@@ -148,9 +176,15 @@ def gru_np(
 
         return rnn_out, last_hidden_out
 
+<<<<<<< HEAD
+    fw_rnn_out, fw_last_hidden = get_single_direction_output(input,
+                                                             mask,
+                                                             direc_index=0)
+=======
     fw_rnn_out, fw_last_hidden = get_single_direction_output(
         input, mask, direc_index=0
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     if is_bidirect:
         bw_input = input[::-1]
@@ -158,9 +192,15 @@ def gru_np(
         if mask is not None:
             bw_mask = mask[::-1]
 
+<<<<<<< HEAD
+        bw_rnn_out, bw_last_hidden = get_single_direction_output(bw_input,
+                                                                 bw_mask,
+                                                                 direc_index=1)
+=======
         bw_rnn_out, bw_last_hidden = get_single_direction_output(
             bw_input, bw_mask, direc_index=1
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         bw_rnn_out = bw_rnn_out[::-1]
 
@@ -185,6 +225,7 @@ def gru_np(
 
 
 class TestBasicGRUApi(unittest.TestCase):
+
     def setUp(self):
         self.hidden_size = 10
         self.batch_size = 5
@@ -194,6 +235,14 @@ class TestBasicGRUApi(unittest.TestCase):
         self.batch_first = False
 
     def test_run(self):
+<<<<<<< HEAD
+        x = layers.data(name='x',
+                        shape=[-1, self.batch_size, self.hidden_size],
+                        dtype='float32')
+        sequence_length = layers.data(name="sequence_length",
+                                      shape=[-1],
+                                      dtype='float32')
+=======
         x = layers.data(
             name='x',
             shape=[-1, self.batch_size, self.hidden_size],
@@ -202,6 +251,7 @@ class TestBasicGRUApi(unittest.TestCase):
         sequence_length = layers.data(
             name="sequence_length", shape=[-1], dtype='float32'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         rnn_out, last_hidden = basic_gru(
             x,
@@ -235,6 +285,29 @@ class TestBasicGRUApi(unittest.TestCase):
         for i in range(self.num_layers):
             gate_w_name = "basic_gru_layers_" + str(i) + "/BasicGRUUnit_0.w_0"
             gate_b_name = "basic_gru_layers_" + str(i) + "/BasicGRUUnit_0.b_0"
+<<<<<<< HEAD
+            candidate_w_name = "basic_gru_layers_" + str(
+                i) + "/BasicGRUUnit_0.w_1"
+            candidate_b_name = "basic_gru_layers_" + str(
+                i) + "/BasicGRUUnit_0.b_1"
+
+            gate_w = np.array(
+                fluid.global_scope().find_var(gate_w_name).get_tensor())
+            gate_w = np.random.uniform(-0.1, 0.1,
+                                       size=gate_w.shape).astype('float32')
+            fluid.global_scope().find_var(gate_w_name).get_tensor().set(
+                gate_w, place)
+
+            gate_b = np.array(
+                fluid.global_scope().find_var(gate_b_name).get_tensor())
+            gate_b = np.random.uniform(-0.1, 0.1,
+                                       size=gate_b.shape).astype('float32')
+            fluid.global_scope().find_var(gate_b_name).get_tensor().set(
+                gate_b, place)
+
+            candidate_w = np.array(
+                fluid.global_scope().find_var(candidate_w_name).get_tensor())
+=======
             candidate_w_name = (
                 "basic_gru_layers_" + str(i) + "/BasicGRUUnit_0.w_1"
             )
@@ -265,6 +338,7 @@ class TestBasicGRUApi(unittest.TestCase):
             candidate_w = np.array(
                 fluid.global_scope().find_var(candidate_w_name).get_tensor()
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             candidate_w = np.random.uniform(
                 -0.1, 0.1, size=candidate_w.shape
             ).astype('float32')
@@ -273,8 +347,12 @@ class TestBasicGRUApi(unittest.TestCase):
             )
 
             candidate_b = np.array(
+<<<<<<< HEAD
+                fluid.global_scope().find_var(candidate_b_name).get_tensor())
+=======
                 fluid.global_scope().find_var(candidate_b_name).get_tensor()
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             candidate_b = np.random.uniform(
                 -0.1, 0.1, size=candidate_b.shape
             ).astype('float32')
@@ -289,6 +367,28 @@ class TestBasicGRUApi(unittest.TestCase):
 
         if self.is_bidirect:
             for i in range(self.num_layers):
+<<<<<<< HEAD
+                gate_w_name = "basic_gru_reverse_layers_" + str(
+                    i) + "/BasicGRUUnit_0.w_0"
+                gate_b_name = "basic_gru_reverse_layers_" + str(
+                    i) + "/BasicGRUUnit_0.b_0"
+                candidate_w_name = "basic_gru_reverse_layers_" + str(
+                    i) + "/BasicGRUUnit_0.w_1"
+                candidate_b_name = "basic_gru_reverse_layers_" + str(
+                    i) + "/BasicGRUUnit_0.b_1"
+
+                gate_w = np.array(
+                    fluid.global_scope().find_var(gate_w_name).get_tensor())
+                gate_w = np.random.uniform(-0.1, 0.1,
+                                           size=gate_w.shape).astype('float32')
+                fluid.global_scope().find_var(gate_w_name).get_tensor().set(
+                    gate_w, place)
+
+                gate_b = np.array(
+                    fluid.global_scope().find_var(gate_b_name).get_tensor())
+                gate_b = np.random.uniform(-0.1, 0.1,
+                                           size=gate_b.shape).astype('float32')
+=======
                 gate_w_name = (
                     "basic_gru_reverse_layers_" + str(i) + "/BasicGRUUnit_0.w_0"
                 )
@@ -318,6 +418,7 @@ class TestBasicGRUApi(unittest.TestCase):
                 gate_b = np.random.uniform(-0.1, 0.1, size=gate_b.shape).astype(
                     'float32'
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 fluid.global_scope().find_var(gate_b_name).get_tensor().set(
                     gate_b, place
                 )
@@ -326,6 +427,18 @@ class TestBasicGRUApi(unittest.TestCase):
                     fluid.global_scope().find_var(candidate_w_name).get_tensor()
                 )
                 candidate_w = np.random.uniform(
+<<<<<<< HEAD
+                    -0.1, 0.1, size=candidate_w.shape).astype('float32')
+                fluid.global_scope().find_var(
+                    candidate_w_name).get_tensor().set(candidate_w, place)
+
+                candidate_b = np.array(fluid.global_scope().find_var(
+                    candidate_b_name).get_tensor())
+                candidate_b = np.random.uniform(
+                    -0.1, 0.1, size=candidate_b.shape).astype('float32')
+                fluid.global_scope().find_var(
+                    candidate_b_name).get_tensor().set(candidate_b, place)
+=======
                     -0.1, 0.1, size=candidate_w.shape
                 ).astype('float32')
                 fluid.global_scope().find_var(
@@ -341,6 +454,7 @@ class TestBasicGRUApi(unittest.TestCase):
                 fluid.global_scope().find_var(
                     candidate_b_name
                 ).get_tensor().set(candidate_b, place)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                 gate_weight.append(gate_w)
                 gate_bias.append(gate_b)
@@ -348,20 +462,46 @@ class TestBasicGRUApi(unittest.TestCase):
                 candidate_bias.append(candidate_b)
 
         step_input_np = np.random.uniform(
+<<<<<<< HEAD
+            -0.1, 0.1,
+            (self.seq_len, self.batch_size, self.hidden_size)).astype('float32')
+=======
             -0.1, 0.1, (self.seq_len, self.batch_size, self.hidden_size)
         ).astype('float32')
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         sequence_length_np = np.random.randint(
             self.seq_len // 2, self.seq_len, size=(self.batch_size)
         ).astype('int64')
 
+<<<<<<< HEAD
+        out = exe.run(feed={
+            'x': step_input_np,
+            'sequence_length': sequence_length_np
+        },
+                      fetch_list=[rnn_out, last_hidden])
+=======
         out = exe.run(
             feed={'x': step_input_np, 'sequence_length': sequence_length_np},
             fetch_list=[rnn_out, last_hidden],
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         api_rnn_out = out[0]
         api_last_hidden = out[1]
 
+<<<<<<< HEAD
+        np_out = gru_np(step_input_np,
+                        None,
+                        self.hidden_size,
+                        gate_weight,
+                        gate_bias,
+                        candidate_weight,
+                        candidate_bias,
+                        num_layers=self.num_layers,
+                        batch_first=self.batch_first,
+                        is_bidirect=self.is_bidirect,
+                        sequence_length=sequence_length_np)
+=======
         np_out = gru_np(
             step_input_np,
             None,
@@ -375,12 +515,18 @@ class TestBasicGRUApi(unittest.TestCase):
             is_bidirect=self.is_bidirect,
             sequence_length=sequence_length_np,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         np.testing.assert_allclose(api_rnn_out, np_out[0], rtol=0.0001, atol=0)
 
+<<<<<<< HEAD
+        self.assertTrue(
+            np.allclose(api_last_hidden, np_out[1], rtol=1e-4, atol=0))
+=======
         np.testing.assert_allclose(
             api_last_hidden, np_out[1], rtol=0.0001, atol=0
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

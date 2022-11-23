@@ -20,6 +20,7 @@ from paddle.fluid.dygraph.dygraph_to_static.utils import is_paddle_func
 
 
 class TestIndexInList(unittest.TestCase):
+
     def test_index_in_list(self):
         list_to_test = [1, 2, 3, 4, 5]
         self.assertEqual(index_in_list(list_to_test, 4), 3)
@@ -36,7 +37,12 @@ def dyfunc_assign(input):
     [x, y] = m, n = z
 
 
+<<<<<<< HEAD
+class StaticCode():
+
+=======
 class StaticCode:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def dyfunc_assign(input):
         b = 1
         a = b
@@ -50,7 +56,20 @@ class StaticCode:
         y = n
 
 
+<<<<<<< HEAD
+class TestSplitAssignTransformer(unittest.TestCase):
+
+    def test_code(self):
+        answer = get_source_code(StaticCode.dyfunc_assign)
+        program_translator = ProgramTranslator()
+        code = program_translator.get_code(dyfunc_assign)
+        self.assertEqual(answer, code)
+
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIsPaddle(unittest.TestCase):
+
     def fake_module(self):
         return types.ModuleType('paddlenlp')
 

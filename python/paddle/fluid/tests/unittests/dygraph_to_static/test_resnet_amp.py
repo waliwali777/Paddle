@@ -59,6 +59,12 @@ def train(to_static, build_strategy=None):
             for batch_id in range(100):
                 start_time = time.time()
                 img = paddle.to_tensor(
+<<<<<<< HEAD
+                    np.random.random([batch_size, 3, 224,
+                                      224]).astype('float32'))
+                label = paddle.to_tensor(
+                    np.random.randint(0, 100, [batch_size, 1], dtype='int64'))
+=======
                     np.random.random([batch_size, 3, 224, 224]).astype(
                         'float32'
                     )
@@ -66,6 +72,7 @@ def train(to_static, build_strategy=None):
                 label = paddle.to_tensor(
                     np.random.randint(0, 100, [batch_size, 1], dtype='int64')
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 img.stop_gradient = True
                 label.stop_gradient = True
 
@@ -109,6 +116,7 @@ def train(to_static, build_strategy=None):
 
 
 class TestResnet(unittest.TestCase):
+
     def train(self, to_static):
         program_translator.enable(to_static)
         return train(to_static)
@@ -116,6 +124,11 @@ class TestResnet(unittest.TestCase):
     def test_resnet(self):
         static_loss = self.train(to_static=True)
         dygraph_loss = self.train(to_static=False)
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(static_loss, dygraph_loss),
+                        msg="static_loss: {} \n dygraph_loss: {}".format(
+                            static_loss, dygraph_loss))
+=======
         np.testing.assert_allclose(
             static_loss,
             dygraph_loss,
@@ -124,6 +137,7 @@ class TestResnet(unittest.TestCase):
                 static_loss, dygraph_loss
             ),
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

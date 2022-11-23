@@ -38,11 +38,18 @@ class CinnCacheKey {
 
   explicit CinnCacheKey(GraphHashStrategy graph_hash);
 
+<<<<<<< HEAD
+  CinnCacheKey(const ir::Graph& graph,
+               const std::map<std::string, const LoDTensor*>& input_tensors,
+               const std::string& arch_str,
+               GraphHashStrategy graph_hash);
+=======
   CinnCacheKey(
       const ir::Graph& graph,
       const std::map<std::string, const phi::DenseTensor*>& input_tensors,
       const std::string& arch_str,
       GraphHashStrategy graph_hash);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   CinnCacheKey(const ir::Graph& graph,
                const std::map<std::string, DDim>& input_shapes,
                const std::string& arch_str,

@@ -82,11 +82,16 @@ class UserInfo:
 
     def __str__(self):
         return "<UserInfo id(%d), gender(%s), age(%d), job(%d)>" % (
+<<<<<<< HEAD
+            self.index, "M" if self.is_male else "F", age_table[self.age],
+            self.job_id)
+=======
             self.index,
             "M" if self.is_male else "F",
             age_table[self.age],
             self.job_id,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def __repr__(self):
         return str(self)
@@ -202,9 +207,16 @@ class Movielens(Dataset):
                     for line in user_file:
                         line = line.decode(encoding='latin')
                         uid, gender, age, job, _ = line.strip().split("::")
+<<<<<<< HEAD
+                        self.user_info[int(uid)] = UserInfo(index=uid,
+                                                            gender=gender,
+                                                            age=age,
+                                                            job_id=job)
+=======
                         self.user_info[int(uid)] = UserInfo(
                             index=uid, gender=gender, age=age, job_id=job
                         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def _load_data(self):
         self.data = []

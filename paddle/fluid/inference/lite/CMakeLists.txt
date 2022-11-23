@@ -14,6 +14,16 @@ cc_library(
   lite_tensor_utils
   SRCS tensor_utils.cc
   DEPS memcpy ${LITE_DEPS} framework_proto device_context ${XPU_DEPS})
+<<<<<<< HEAD
+cc_test(
+  test_lite_engine
+  SRCS test_engine_lite.cc
+  DEPS lite_engine protobuf framework_proto glog gtest analysis)
+cc_test(
+  test_lite_tensor_utils
+  SRCS test_tensor_utils.cc
+  DEPS lite_engine lite_tensor_utils)
+=======
 cc_test_old(
   test_lite_engine
   SRCS
@@ -27,3 +37,4 @@ cc_test_old(
   analysis)
 cc_test_old(test_lite_tensor_utils SRCS test_tensor_utils.cc DEPS lite_engine
             lite_tensor_utils)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

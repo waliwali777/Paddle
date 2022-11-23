@@ -12,18 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD
+from __future__ import print_function
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 import unittest
 from operator import __add__, __sub__, __mul__, __truediv__
 
 import numpy as np
 import paddle
+<<<<<<< HEAD
+from paddle.fluid.framework import _test_eager_guard
+=======
 import paddle.sparse as sparse
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 op_list = [__add__, __sub__, __mul__, __truediv__]
 
 
 def get_actual_res(x, y, op):
     if op == __add__:
+<<<<<<< HEAD
+        res = paddle.incubate.sparse.add(x, y)
+    elif op == __sub__:
+        res = paddle.incubate.sparse.subtract(x, y)
+    elif op == __mul__:
+        res = paddle.incubate.sparse.multiply(x, y)
+    elif op == __truediv__:
+        res = paddle.incubate.sparse.divide(x, y)
+=======
         res = paddle.sparse.add(x, y)
     elif op == __sub__:
         res = paddle.sparse.subtract(x, y)
@@ -31,6 +48,7 @@ def get_actual_res(x, y, op):
         res = paddle.sparse.multiply(x, y)
     elif op == __truediv__:
         res = paddle.sparse.divide(x, y)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     else:
         raise ValueError("unsupported op")
     return res
@@ -63,10 +81,29 @@ class TestSparseElementWiseAPI(unittest.TestCase):
             csr_y = s_dense_y.to_sparse_csr()
 
             actual_res = get_actual_res(csr_x, csr_y, op)
+<<<<<<< HEAD
+            actual_res.backward(actual_res)
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             expect_res = op(dense_x, dense_y)
             expect_res.backward(expect_res)
 
+<<<<<<< HEAD
+            self.assertTrue(
+                np.allclose(expect_res.numpy(),
+                            actual_res.to_dense().numpy(),
+                            equal_nan=True))
+            if not (op == __truediv__ and dtype in ['int32', 'int64']):
+                self.assertTrue(
+                    np.allclose(dense_x.grad.numpy(),
+                                csr_x.grad.to_dense().numpy(),
+                                equal_nan=True))
+                self.assertTrue(
+                    np.allclose(dense_y.grad.numpy(),
+                                csr_y.grad.to_dense().numpy(),
+                                equal_nan=True))
+=======
             np.testing.assert_allclose(
                 expect_res.numpy(),
                 actual_res.to_dense().numpy(),
@@ -87,26 +124,43 @@ class TestSparseElementWiseAPI(unittest.TestCase):
                     rtol=1e-05,
                     equal_nan=True,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def func_test_coo(self, op):
         for sparse_dim in range(len(self.coo_shape) - 1, len(self.coo_shape)):
             for dtype in self.support_dtypes:
+<<<<<<< HEAD
+                x = np.random.randint(-255, 255,
+                                      size=self.coo_shape).astype(dtype)
+                y = np.random.randint(-255, 255,
+                                      size=self.coo_shape).astype(dtype)
+=======
                 x = np.random.randint(-255, 255, size=self.coo_shape).astype(
                     dtype
                 )
                 y = np.random.randint(-255, 255, size=self.coo_shape).astype(
                     dtype
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                 dense_x = paddle.to_tensor(x, dtype=dtype, stop_gradient=False)
                 dense_y = paddle.to_tensor(y, dtype=dtype, stop_gradient=False)
 
+<<<<<<< HEAD
+                s_dense_x = paddle.to_tensor(x,
+                                             dtype=dtype,
+                                             stop_gradient=False)
+                s_dense_y = paddle.to_tensor(y,
+                                             dtype=dtype,
+                                             stop_gradient=False)
+=======
                 s_dense_x = paddle.to_tensor(
                     x, dtype=dtype, stop_gradient=False
                 )
                 s_dense_y = paddle.to_tensor(
                     y, dtype=dtype, stop_gradient=False
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 coo_x = s_dense_x.to_sparse_coo(sparse_dim)
                 coo_y = s_dense_y.to_sparse_coo(sparse_dim)
 
@@ -116,6 +170,20 @@ class TestSparseElementWiseAPI(unittest.TestCase):
                 expect_res = op(dense_x, dense_y)
                 expect_res.backward(expect_res)
 
+<<<<<<< HEAD
+                self.assertTrue(
+                    np.allclose(expect_res.numpy(),
+                                actual_res.to_dense().numpy(),
+                                equal_nan=True))
+                self.assertTrue(
+                    np.allclose(dense_x.grad.numpy(),
+                                coo_x.grad.to_dense().numpy(),
+                                equal_nan=True))
+                self.assertTrue(
+                    np.allclose(dense_y.grad.numpy(),
+                                coo_y.grad.to_dense().numpy(),
+                                equal_nan=True))
+=======
                 np.testing.assert_allclose(
                     expect_res.numpy(),
                     actual_res.to_dense().numpy(),
@@ -134,6 +202,7 @@ class TestSparseElementWiseAPI(unittest.TestCase):
                     rtol=1e-05,
                     equal_nan=True,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_support_dtypes_csr(self):
         paddle.device.set_device('cpu')
@@ -147,6 +216,8 @@ class TestSparseElementWiseAPI(unittest.TestCase):
             for op in op_list:
                 self.func_test_coo(op)
 
+<<<<<<< HEAD
+=======
     def test_add_same_indices(self):
         indices_data = [[0, 1], [0, 3]]
         values1_data = [[1.0], [2.0]]
@@ -202,6 +273,7 @@ class TestSparseElementWiseAPI(unittest.TestCase):
         )
         np.testing.assert_allclose(values2.grad.numpy(), values3.grad.numpy())
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 if __name__ == "__main__":
     paddle.device.set_device('cpu')

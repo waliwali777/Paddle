@@ -39,6 +39,7 @@ from paddle.fluid.layers.learning_rate_scheduler import (
 
 @register_pass("add_lr_decay_table_pass")
 class AddLrDecayTablePass(PassBase):
+
     def __init__(self):
         super().__init__()
 
@@ -131,10 +132,15 @@ class AddLrDecayTablePass(PassBase):
                 )
         else:
             raise ValueError(
+<<<<<<< HEAD
+                "Not supported current LearningRate strategy, please use follow decay strategy: {}"
+                .format(schedler_decay))
+=======
                 "Not supported current LearningRate strategy, please use follow decay strategy: {}".format(
                     schedler_decay
                 )
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         return decay_main_program, decay_startup_program, lr_name
 
@@ -168,6 +174,7 @@ class AddLrDecayTablePass(PassBase):
 
 @register_pass("add_listen_and_serv_pass")
 class AddListenAndServPass(PassBase):
+
     def __init__(self):
         super().__init__()
 
@@ -194,13 +201,21 @@ class AddListenAndServPass(PassBase):
             "rpc_send_thread_num": -1,
             "rpc_prefetch_thread_num": -1,
         }
+<<<<<<< HEAD
+        main_program.global_block().append_op(type="listen_and_serv",
+                                              inputs={'X': []},
+                                              outputs={},
+                                              attrs=opt)
+=======
         main_program.global_block().append_op(
             type="listen_and_serv", inputs={'X': []}, outputs={}, attrs=opt
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 @register_pass("add_rpc_global_flags_pass")
 class AddRpcGlobalFlagsPass(PassBase):
+
     def __init__(self):
         super().__init__()
 
@@ -216,6 +231,7 @@ class AddRpcGlobalFlagsPass(PassBase):
 
 @register_pass("add_optimizer_pass")
 class AddOptimizerPass(PassBase):
+
     def __init__(self):
         super().__init__()
 
@@ -231,6 +247,7 @@ class AddOptimizerPass(PassBase):
 
 @register_pass("add_geo_optimizer_pass")
 class AddGeoOptimizerPass(PassBase):
+
     def __init__(self):
         super().__init__()
 
@@ -246,6 +263,7 @@ class AddGeoOptimizerPass(PassBase):
 
 @register_pass("build_pserver_startup_program_pass")
 class BuildPserverStartupProgramPass(PassBase):
+
     def __init__(self):
         super().__init__()
 
@@ -261,6 +279,7 @@ class BuildPserverStartupProgramPass(PassBase):
 
 @register_pass("delete_unused_in_startup_pass")
 class DeleteUnusedInStartupPass(PassBase):
+
     def __init__(self):
         super().__init__()
 

@@ -18,6 +18,13 @@ limitations under the License. */
 #include "paddle/phi/common/float16.h"
 #include "paddle/phi/core/compat/convert_utils.h"
 #include "paddle/phi/core/dense_tensor.h"
+<<<<<<< HEAD
+
+#ifdef PADDLE_WITH_MKLDNN
+#include "paddle/fluid/platform/mkldnn_utils.h"
+#endif
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace phi {
 /* --------------------------- */

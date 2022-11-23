@@ -29,6 +29,7 @@ SEED = 2021
 
 
 class TestTruncatedNormal(unittest.TestCase):
+
     def _test(self, run_npu=True):
         main_prog = paddle.static.Program()
         startup_prog = paddle.static.Program()
@@ -43,6 +44,14 @@ class TestTruncatedNormal(unittest.TestCase):
             with paddle.static.program_guard(main_prog, startup_prog):
                 weight_attr = paddle.framework.ParamAttr(
                     name="linear_weight",
+<<<<<<< HEAD
+                    initializer=paddle.nn.initializer.TruncatedNormal(mean=0.0,
+                                                                      std=2.0))
+                linear = paddle.nn.Linear(2,
+                                          2,
+                                          weight_attr=weight_attr,
+                                          bias_attr=False)
+=======
                     initializer=paddle.nn.initializer.TruncatedNormal(
                         mean=0.0, std=2.0
                     ),
@@ -50,6 +59,7 @@ class TestTruncatedNormal(unittest.TestCase):
                 linear = paddle.nn.Linear(
                     2, 2, weight_attr=weight_attr, bias_attr=False
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             if run_npu:
                 place = paddle.NPUPlace(0)

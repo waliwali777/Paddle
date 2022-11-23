@@ -126,6 +126,16 @@ def _keep_fp32_output(op, out_name):
     return False
 
 
+<<<<<<< HEAD
+class FP16State(object):
+
+    def __init__(self,
+                 program,
+                 amp_list,
+                 dist_context,
+                 use_fp16_guard,
+                 input_data_var_names=None):
+=======
 class FP16State:
     def __init__(
         self,
@@ -135,6 +145,7 @@ class FP16State:
         use_fp16_guard,
         input_data_var_names=None,
     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.program = program
         self.amp_list = amp_list
         self.use_fp16_guard = use_fp16_guard
@@ -201,6 +212,10 @@ class FP16State:
             if op.type == "assign" and "array_" in op.input_arg_names[0]:
                 self._op_fp16_dict[op.desc.original_id()] = False
                 return
+<<<<<<< HEAD
+            if _need_keep_fp32(op, self.amp_list.unsupported_list,
+                               self.use_fp16_guard):
+=======
             # If assign op is inplace-operation, assign op exec mode should be same with the created op of output_var.
             if op.type == "assign":
                 out_name = op.output_arg_names[0]
@@ -216,6 +231,7 @@ class FP16State:
             if _need_keep_fp32(
                 op, self.amp_list.unsupported_list, self.use_fp16_guard
             ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 self._op_fp16_dict[op.desc.original_id()] = False
             else:
                 self._op_fp16_dict[op.desc.original_id()] = True
@@ -228,9 +244,14 @@ class FP16State:
             if op.desc.original_id() in self.grad_op_to_op_map:
                 fwd_op_id = self.grad_op_to_op_map[op.desc.original_id()]
                 assert fwd_op_id in self._op_fp16_dict, "{}".format(str(op))
+<<<<<<< HEAD
+                self._op_fp16_dict[
+                    op.desc.original_id()] = self._op_fp16_dict[fwd_op_id]
+=======
                 self._op_fp16_dict[op.desc.original_id()] = self._op_fp16_dict[
                     fwd_op_id
                 ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         if int(op.attr('op_role')) == 257:
             self.is_train = True
@@ -256,10 +277,15 @@ class FP16State:
         for op in block.ops:
             if is_forward_op(op):
                 # NOTE (JZ-LIANG) un-expected cast op when user call "+, -, *, /" in python
+<<<<<<< HEAD
+                if self._is_fp16_op(op.desc.original_id()) == True \
+                    or op.type == "cast":
+=======
                 if (
                     self._is_fp16_op(op.desc.original_id()) is True
                     or op.type == "cast"
                 ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     for in_name in op.input_names:
                         if _keep_fp32_input(op, in_name):
                             continue
@@ -276,7 +302,11 @@ class FP16State:
                             self.set_var_to_fp16(out_var_name, block)
                     set_op_dtype_to_fp16(op)
                 # NOTE (JZ-LIANG) un-expected cast op when user call "+, -, *, /" in python
+<<<<<<< HEAD
+                elif self._is_fp16_op(op.desc.original_id()) == False:
+=======
                 elif self._is_fp16_op(op.desc.original_id()) is False:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     for out_var_name in op.output_arg_names:
                         out_var = block.vars.get(out_var_name)
                         if out_var is None or out_var.type not in _valid_types:
@@ -284,7 +314,11 @@ class FP16State:
                         if out_var.dtype == core.VarDesc.VarType.FP16:
                             out_var.desc.set_dtype(core.VarDesc.VarType.FP32)
             elif is_backward_op(op):
+<<<<<<< HEAD
+                if self._is_fp16_op(op.desc.original_id()) == True:
+=======
                 if self._is_fp16_op(op.desc.original_id()) is True:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     for out_name in op.output_names:
                         if _keep_fp32_output(op, out_name):
                             continue
@@ -292,7 +326,11 @@ class FP16State:
                             self.set_var_to_fp16(out_var_name, block)
                     set_op_dtype_to_fp16(op)
                 # NOTE (JZ-LIANG) un-expected cast op when user call "+, -, *, /" in python
+<<<<<<< HEAD
+                elif self._is_fp16_op(op.desc.original_id()) == False:
+=======
                 elif self._is_fp16_op(op.desc.original_id()) is False:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     for out_var_name in op.output_arg_names:
                         out_var = block.vars.get(out_var_name)
                         if out_var is None or out_var.type not in _valid_types:
@@ -311,6 +349,13 @@ class FP16State:
                 idx += 1
                 continue
             elif is_forward_op(op):
+<<<<<<< HEAD
+                if self._is_fp16_op(op.desc.original_id()) == False:
+                    num_cast_ops = self._insert_forward_cast_ops(
+                        op, idx, block, core.VarDesc.VarType.FP16,
+                        core.VarDesc.VarType.FP32, self.dist_context)
+                elif self._is_fp16_op(op.desc.original_id()) == True:
+=======
                 if self._is_fp16_op(op.desc.original_id()) is False:
                     num_cast_ops = self._insert_forward_cast_ops(
                         op,
@@ -321,6 +366,7 @@ class FP16State:
                         self.dist_context,
                     )
                 elif self._is_fp16_op(op.desc.original_id()) is True:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     num_cast_ops = self._insert_forward_cast_ops(
                         op,
                         idx,
@@ -331,6 +377,13 @@ class FP16State:
                     )
             elif is_backward_op(op):
                 if op.desc.original_id() in dist_op_context.grad_op_id_to_op_id:
+<<<<<<< HEAD
+                    if self._is_fp16_op(op.desc.original_id()) == False:
+                        num_cast_ops = self._insert_backward_cast_ops(
+                            op, idx, block, core.VarDesc.VarType.FP16,
+                            core.VarDesc.VarType.FP32, self.dist_context)
+                    elif self._is_fp16_op(op.desc.original_id()) == True:
+=======
                     if self._is_fp16_op(op.desc.original_id()) is False:
                         num_cast_ops = self._insert_backward_cast_ops(
                             op,
@@ -341,6 +394,7 @@ class FP16State:
                             self.dist_context,
                         )
                     elif self._is_fp16_op(op.desc.original_id()) is True:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         num_cast_ops = self._insert_backward_cast_ops(
                             op,
                             idx,
@@ -481,8 +535,13 @@ class FP16State:
 
             # rename input
             assert src_name in op.input(
+<<<<<<< HEAD
+                slot_name), "var: {} not in op's {}. {}".format(
+                    src_name, slot_name, str(op))
+=======
                 slot_name
             ), "var: {} not in op's {}. {}".format(src_name, slot_name, str(op))
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             src_var_dist_attr = grad_op_attr.get_input_dist_attr(src_name)
             assert src_var_dist_attr is not None
             op._rename_input(src_name, cast_name)
@@ -514,11 +573,17 @@ class FP16State:
                 shape=grad.shape,
                 type=grad.type,
                 persistable=grad.persistable,
+<<<<<<< HEAD
+                stop_gradient=grad.stop_gradient)
+            dist_context.set_tensor_dist_attr_for_program(
+                cast_grad, grad_dist_attr)
+=======
                 stop_gradient=grad.stop_gradient,
             )
             dist_context.set_tensor_dist_attr_for_program(
                 cast_grad, grad_dist_attr
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             op._rename_output(grad_name, cast_grad.name)
             grad_op_attr.set_output_dist_attr(cast_grad.name, grad_dist_attr)
 
@@ -572,6 +637,13 @@ def _check_and_update_gradient(grads, loss_scaling, name, dist_context):
 
     inputs = {'X': grads, 'Scale': loss_scaling}
     outputs = {'Out': grads, 'FoundInfinite': found_inf}
+<<<<<<< HEAD
+    attrs = {'op_role': OpRole.Backward}
+    new_op = main_block.append_op(type='check_finite_and_unscale',
+                                  inputs=inputs,
+                                  outputs=outputs,
+                                  attrs=attrs)
+=======
     attrs = {'op_role': OpRole.Optimize}
     new_op = main_block.append_op(
         type='check_finite_and_unscale',
@@ -579,6 +651,7 @@ def _check_and_update_gradient(grads, loss_scaling, name, dist_context):
         outputs=outputs,
         attrs=attrs,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     new_op_dist_attr = OperatorDistributedAttribute()
     new_op_dist_attr.process_mesh = world_process_group.ranks
@@ -721,6 +794,7 @@ def cast_startup_program():
 
 @register_pass("auto_parallel_fp16")
 class FP16Pass(AMPPass):
+
     def __init__(self):
         super().__init__()
 
@@ -761,10 +835,15 @@ class FP16Pass(AMPPass):
 
                 grads, fp32_grads, fp16_grads = _split_grads(params_grads)
 
+<<<<<<< HEAD
+                if self.get_attr("use_dynamic_loss_scaling"
+                                 ) or self.get_attr("init_loss_scaling") != 1.0:
+=======
                 if (
                     self.get_attr("use_dynamic_loss_scaling")
                     or self.get_attr("init_loss_scaling") != 1.0
                 ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     found_infs = []
                     if fp32_grads:
                         with main_program._optimized_guard([]):
@@ -866,6 +945,13 @@ class FP16Pass(AMPPass):
             if self.get_attr("use_optimizer_fp16"):
                 base_opt._multi_precision = False
             if isinstance(
+<<<<<<< HEAD
+                    base_opt,
+                (paddle.fluid.optimizer.Adam, paddle.optimizer.AdamW)):
+                # with main_program._optimized_guard([]):
+                #     found_inf = paddle.tensor.creation._memcpy(
+                #         found_inf, paddle.CPUPlace())
+=======
                 base_opt, (paddle.fluid.optimizer.Adam, paddle.optimizer.AdamW)
             ):
                 with main_program._optimized_guard([]):
@@ -875,6 +961,7 @@ class FP16Pass(AMPPass):
                     found_inf = _insert_memcopy(
                         block, insert_idx, found_inf, self.dist_context
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 base_opt._set_auxiliary_var('found_inf', found_inf.name)
             elif hasattr(base_opt, "_set_auxiliary_var"):
                 base_opt._set_auxiliary_var('found_inf', found_inf.name)

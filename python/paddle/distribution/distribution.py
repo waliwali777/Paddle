@@ -180,10 +180,15 @@ class Distribution:
                 arg = [arg]
             if not isinstance(arg, (list, tuple, np.ndarray, tensor.Variable)):
                 raise TypeError(
+<<<<<<< HEAD
+                    "Type of input args must be float, list, numpy.ndarray or Tensor, but received type {}"
+                    .format(type(arg)))
+=======
                     "Type of input args must be float, list, numpy.ndarray or Tensor, but received type {}".format(
                         type(arg)
                     )
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             arg_np = np.array(arg)
             arg_dtype = arg_np.dtype

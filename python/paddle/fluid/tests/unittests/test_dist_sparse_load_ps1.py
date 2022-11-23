@@ -25,6 +25,7 @@ from test_dist_sparse_load_ps0 import SparseLoadOp
 
 @unittest.skip(reason="Skip unstable ut, need rewrite with new implement")
 class TestSparseLoadOpCase2(SparseLoadOp):
+
     def test_2ps_0_load(self):
         # init No.1 server env
         env = {}
@@ -63,8 +64,12 @@ class TestSparseLoadOpCase2(SparseLoadOp):
         optimizer.minimize(loss)
         fleet.init_server(model_path)
         emb = np.array(
+<<<<<<< HEAD
+            fluid.global_scope().find_var("embedding.block1").get_tensor())
+=======
             fluid.global_scope().find_var("embedding.block1").get_tensor()
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         assert emb.all() == emb_array[1::2].all()
         shutil.rmtree(model_path)
 

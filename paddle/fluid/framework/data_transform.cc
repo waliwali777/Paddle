@@ -38,8 +38,13 @@ static void PassTensorData(phi::DenseTensor *from, phi::DenseTensor *to) {
 
 void TransformData(const OpKernelType &expected_kernel_type,
                    const OpKernelType &kernel_type_for_var,
+<<<<<<< HEAD
+                   const Tensor &input_tensor,
+                   Tensor *output_tensor) {
+=======
                    const phi::DenseTensor &input_tensor,
                    phi::DenseTensor *output_tensor) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   bool transformed = false;
   phi::DenseTensor in;
   in.ShareDataWith(input_tensor);
@@ -51,7 +56,11 @@ void TransformData(const OpKernelType &expected_kernel_type,
 #ifdef PADDLE_WITH_MKLDNN
     if (lin == DataLayout::ONEDNN || lout == DataLayout::ONEDNN) {
       PADDLE_ENFORCE_EQ(
+<<<<<<< HEAD
+          !(lin == DataLayout::kMKLDNN && lout == DataLayout::kMKLDNN),
+=======
           !(lin == DataLayout::ONEDNN && lout == DataLayout::ONEDNN),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
           true,
           platform::errors::PreconditionNotMet(
               "No layout transform needed between two oneDNN OPKernels."));
@@ -120,7 +129,11 @@ void TransformData(const OpKernelType &expected_kernel_type,
 }
 
 void SetTensorToVariable(const Variable &in_var,
+<<<<<<< HEAD
+                         const Tensor &tensor,
+=======
                          const phi::DenseTensor &tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                          Variable *out_var) {
   if (in_var.IsType<phi::DenseTensor>()) {
     auto &in_lod_tensor = in_var.Get<phi::DenseTensor>();

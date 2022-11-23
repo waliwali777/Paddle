@@ -22,6 +22,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class TestDLPack(unittest.TestCase):
+
     def func_test_dlpack_dygraph(self):
         paddle.disable_static()
         tensor = paddle.to_tensor(np.array([1, 2, 3, 4]).astype('int'))
@@ -33,9 +34,15 @@ class TestDLPack(unittest.TestCase):
             )
         else:
             self.assertTrue(isinstance(out_from_dlpack, paddle.Tensor))
+<<<<<<< HEAD
+        self.assertTrue(
+            np.array_equal(np.array(out_from_dlpack),
+                           np.array([1, 2, 3, 4]).astype('int')))
+=======
         np.testing.assert_array_equal(
             np.array(out_from_dlpack), np.array([1, 2, 3, 4]).astype('int')
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_dlpack_dygraph(self):
         with _test_eager_guard():
@@ -66,10 +73,16 @@ class TestDLPack(unittest.TestCase):
         dlpack = paddle.utils.dlpack.to_dlpack(tensor)
         out_from_dlpack = paddle.utils.dlpack.from_dlpack(dlpack)
         self.assertTrue(isinstance(out_from_dlpack, fluid.core.Tensor))
+<<<<<<< HEAD
+        self.assertTrue(
+            np.array_equal(np.array(out_from_dlpack),
+                           np.array([[1], [2], [3], [4]]).astype('int')))
+=======
         np.testing.assert_array_equal(
             np.array(out_from_dlpack),
             np.array([[1], [2], [3], [4]]).astype('int'),
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         # when build with cuda
         if core.is_compiled_with_cuda():
@@ -81,10 +94,16 @@ class TestDLPack(unittest.TestCase):
             gdlpack = paddle.utils.dlpack.to_dlpack(gtensor)
             gout_from_dlpack = paddle.utils.dlpack.from_dlpack(gdlpack)
             self.assertTrue(isinstance(gout_from_dlpack, fluid.core.Tensor))
+<<<<<<< HEAD
+            self.assertTrue(
+                np.array_equal(np.array(gout_from_dlpack),
+                               np.array([[1], [2], [3], [4]]).astype('int')))
+=======
             np.testing.assert_array_equal(
                 np.array(gout_from_dlpack),
                 np.array([[1], [2], [3], [4]]).astype('int'),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def func_test_dlpack_dtype_conversion(self):
         paddle.disable_static()
@@ -133,6 +152,7 @@ class TestDLPack(unittest.TestCase):
 
 
 class TestRaiseError(unittest.TestCase):
+
     def func_test_from_dlpack_raise_type_error(self):
         self.assertRaises(
             TypeError, paddle.utils.dlpack.from_dlpack, np.zeros(5)

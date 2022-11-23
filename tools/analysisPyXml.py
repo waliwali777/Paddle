@@ -46,6 +46,15 @@ def analysisPyXml(rootPath, ut):
                 command = 'sed -n %sp %s' % (line_number, clazz_filename)
                 _code, output = commands.getstatusoutput(command)
                 if _code == 0:
+<<<<<<< HEAD
+                    if output.strip().startswith(
+                        ('from', 'import', '__all__', 'def', 'class', '"""',
+                         '@', '\'\'\'', 'logger', '_logger', 'logging', 'r"""',
+                         'pass', 'try', 'except',
+                         'if __name__ == "__main__"')) == False:
+                        pattern = "(.*) = ('*')|(.*) = (\"*\")|(.*) = (\d)|(.*) = (-\d)|(.*) = (None)|(.*) = (True)|(.*) = (False)|(.*) = (URL_PREFIX*)|(.*) = (\[)|(.*) = (\{)|(.*) = (\()"  #a='b'/a="b"/a=0
+                        if re.match(pattern, output.strip()) == None:
+=======
                     if not output.strip().startswith(
                         (
                             'from',
@@ -68,6 +77,7 @@ def analysisPyXml(rootPath, ut):
                     ):
                         pattern = r"""(.*) = ('*')|(.*) = ("*")|(.*) = (\d)|(.*) = (-\d)|(.*) = (None)|(.*) = (True)|(.*) = (False)|(.*) = (URL_PREFIX*)|(.*) = (\[)|(.*) = (\{)|(.*) = (\()"""  # a='b'/a="b"/a=0
                         if re.match(pattern, output.strip()) is None:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             pyCov_file.append(clazz_filename)
                             coverageMessage = 'RELATED'
                             break

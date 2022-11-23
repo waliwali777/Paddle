@@ -17,9 +17,15 @@ import math
 import numpy as np
 from ....log_helper import get_logger
 
+<<<<<<< HEAD
+_logger = get_logger(__name__,
+                     logging.INFO,
+                     fmt='%(asctime)s-%(levelname)s: %(message)s')
+=======
 _logger = get_logger(
     __name__, logging.INFO, fmt='%(asctime)s-%(levelname)s: %(message)s'
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 __all__ = ['cal_kl_threshold']
 
@@ -38,9 +44,14 @@ def expand_quantized_bins(quantized_bins, reference_bins):
         if zero_count == num_merged_bins:
             avg_bin_ele = 0
         else:
+<<<<<<< HEAD
+            avg_bin_ele = quantized_bins[idx] / (num_merged_bins - zero_count +
+                                                 0.0)
+=======
             avg_bin_ele = quantized_bins[idx] / (
                 num_merged_bins - zero_count + 0.0
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         for idx1 in range(j_start, j_end):
             expanded_quantized_bins[idx1] = (
                 0 if reference_bins[idx1] == 0 else avg_bin_ele
@@ -111,8 +122,12 @@ def cal_kl_threshold(hist, bin_width, bits):
         j_end = num_merged_bins
         for idx in range(quant_range):
             candidate_distr_Q_quantized[idx] = sum(
+<<<<<<< HEAD
+                candidate_distr_Q[j_start:j_end])
+=======
                 candidate_distr_Q[j_start:j_end]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             j_start += num_merged_bins
             j_end += num_merged_bins
             if (idx + 1) == quant_range - 1:

@@ -21,17 +21,25 @@ from test_eager_deletion_padding_rnn import RNNConfig, PaddingRNNTestBase
 
 
 class TestExecutor(unittest.TestCase):
+
     def test_mul(self):
         main_program = fluid.Program()
         startup_program = fluid.Program()
         with fluid.program_guard(main_program, startup_program):
             a = fluid.layers.data(name='a', shape=[784], dtype='float32')
+<<<<<<< HEAD
+            b = fluid.layers.data(name='b',
+                                  shape=[784, 100],
+                                  dtype='float32',
+                                  append_batch_size=False)
+=======
             b = fluid.layers.data(
                 name='b',
                 shape=[784, 100],
                 dtype='float32',
                 append_batch_size=False,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             output = fluid.layers.mul(x=a, y=b)
 
         # Compute with numpy
@@ -48,12 +56,22 @@ class TestExecutor(unittest.TestCase):
             run_time = 0.0
             for i in range(max_iters):
                 begin = time.time()
+<<<<<<< HEAD
+                outs = exe.run(program=main_program,
+                               feed={
+                                   'a': a_np,
+                                   'b': b_np
+                               },
+                               fetch_list=[output.name],
+                               use_program_cache=use_program_cache)
+=======
                 outs = exe.run(
                     program=main_program,
                     feed={'a': a_np, 'b': b_np},
                     fetch_list=[output.name],
                     use_program_cache=use_program_cache,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 end = time.time()
                 run_time += end - begin
                 out = outs[0]
@@ -62,6 +80,22 @@ class TestExecutor(unittest.TestCase):
             return run_time
 
         max_iters = 3
+<<<<<<< HEAD
+        run_time_with_cache = _train(use_program_cache=True,
+                                     max_iters=max_iters)
+        print("run time with program cache: %f" % run_time_with_cache)
+
+        run_time_without_cache = _train(use_program_cache=False,
+                                        max_iters=max_iters)
+        print("run time without program cache: %f" % run_time_without_cache)
+
+        run_time_with_cache = _train(use_program_cache=True,
+                                     max_iters=max_iters)
+        print("run time with program cache: %f" % run_time_with_cache)
+
+        run_time_with_cache = _train(use_program_cache=True,
+                                     max_iters=max_iters)
+=======
         run_time_with_cache = _train(
             use_program_cache=True, max_iters=max_iters
         )
@@ -80,13 +114,22 @@ class TestExecutor(unittest.TestCase):
         run_time_with_cache = _train(
             use_program_cache=True, max_iters=max_iters
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         print("run time with program cache: %f" % run_time_with_cache)
 
 
 class ExecutorPaddingRNNTest(PaddingRNNTestBase):
+<<<<<<< HEAD
+
+    def train_and_save_inference_program(self,
+                                         rnn_model="static",
+                                         parallel=True,
+                                         use_program_cache=True):
+=======
     def train_and_save_inference_program(
         self, rnn_model="static", parallel=True, use_program_cache=True
     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         config = RNNConfig("test", rnn_model)
         with fluid.scope_guard(fluid.Scope()):
             self.train(config, parallel, use_program_cache)
@@ -102,6 +145,24 @@ class ExecutorPaddingRNNTest(PaddingRNNTestBase):
     def test_inference_output(self):
         for rnn_model in ["static", "padding"]:
             # Set parallel to False to use the default executor.
+<<<<<<< HEAD
+            self.train_and_save_inference_program(rnn_model=rnn_model,
+                                                  parallel=True,
+                                                  use_program_cache=True)
+
+            x_np = numpy.random.random(
+                (self.config.batch_size, self.config.num_steps,
+                 1)).astype("int64")
+            y_np = numpy.random.random(
+                (self.config.batch_size * self.config.num_steps,
+                 1)).astype("int64")
+            init_hidden_np = numpy.random.random(
+                (self.config.num_layers, self.config.batch_size,
+                 self.config.hidden_size)).astype("float32")
+            init_cell_np = numpy.random.random(
+                (self.config.num_layers, self.config.batch_size,
+                 self.config.hidden_size)).astype("float32")
+=======
             self.train_and_save_inference_program(
                 rnn_model=rnn_model, parallel=True, use_program_cache=True
             )
@@ -126,6 +187,7 @@ class ExecutorPaddingRNNTest(PaddingRNNTestBase):
                     self.config.hidden_size,
                 )
             ).astype("float32")
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             for use_program_cache in [False, True]:
                 with fluid.scope_guard(fluid.Scope()):
@@ -155,6 +217,16 @@ class ExecutorPaddingRNNTest(PaddingRNNTestBase):
                         results_with_cache = results
                     else:
                         results_without_cache = results
+<<<<<<< HEAD
+            self.assertEqual(len(results_with_cache),
+                             len(results_without_cache))
+            for i in range(len(results_with_cache)):
+                self.assertEqual(results_with_cache[i].shape,
+                                 results_without_cache[i].shape)
+                self.assertTrue(
+                    numpy.allclose(results_with_cache[i],
+                                   results_without_cache[i]))
+=======
             self.assertEqual(
                 len(results_with_cache), len(results_without_cache)
             )
@@ -165,6 +237,7 @@ class ExecutorPaddingRNNTest(PaddingRNNTestBase):
                 np.testing.assert_allclose(
                     results_with_cache[i], results_without_cache[i], rtol=1e-05
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

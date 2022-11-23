@@ -47,6 +47,19 @@ def stgraph(func, place, x, n, axes, norm):
 
 
 @place(DEVICES)
+<<<<<<< HEAD
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
+              [('test_x_float64', rand_x(5, np.float64), None, -1, 'backward'),
+               ('test_x_complex64', rand_x(5, np.float64,
+                                           complex=True), None, -1, 'backward'),
+               ('test_n_grater_than_input_length', rand_x(
+                   5, max_dim_len=5), 11, -1, 'backward'),
+               ('test_n_smaller_than_input_length', rand_x(
+                   5, min_dim_len=5), 3, -1, 'backward'),
+               ('test_axis_not_last', rand_x(5), None, 3, 'backward'),
+               ('test_norm_forward', rand_x(5), None, 3, 'forward'),
+               ('test_norm_ortho', rand_x(5), None, 3, 'ortho')])
+=======
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
     [
@@ -77,8 +90,19 @@ def stgraph(func, place, x, n, axes, norm):
         ('test_norm_ortho', rand_x(5), None, 3, 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestFft(unittest.TestCase):
+
     def test_static_rfft(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.fft, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.fft(self.x, self.n, self.axis,
+                                                     self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+=======
         with stgraph(
             paddle.fft.fft, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -88,11 +112,19 @@ class TestFft(unittest.TestCase):
                 rtol=RTOL.get(str(self.x.dtype)),
                 atol=ATOL.get(str(self.x.dtype)),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
+<<<<<<< HEAD
+    [('test_n_nagative', rand_x(2), -1, -1, 'backward', ValueError),
+     ('test_n_zero', rand_x(2), 0, -1, 'backward', ValueError),
+     ('test_axis_out_of_range', rand_x(1), None, 10, 'backward', ValueError),
+     ('test_axis_with_array', rand_x(1), None, (0, 1), 'backward', ValueError),
+     ('test_norm_not_in_enum_value', rand_x(2), None, -1, 'random', ValueError)]
+=======
     [
         ('test_n_nagative', rand_x(2), -1, -1, 'backward', ValueError),
         ('test_n_zero', rand_x(2), 0, -1, 'backward', ValueError),
@@ -114,8 +146,10 @@ class TestFft(unittest.TestCase):
             ValueError,
         ),
     ],
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 )
 class TestFftException(unittest.TestCase):
+
     def test_fft(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -125,6 +159,20 @@ class TestFftException(unittest.TestCase):
 
 
 @place(DEVICES)
+<<<<<<< HEAD
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'), [
+    ('test_x_float64', rand_x(5), None, (0, 1), 'backward'),
+    ('test_x_complex128', rand_x(5, complex=True), None, (0, 1), 'backward'),
+    ('test_n_grater_input_length', rand_x(5, max_dim_len=5), (6, 6),
+     (0, 1), 'backward'),
+    ('test_n_smaller_than_input_length', rand_x(5, min_dim_len=5), (4, 4),
+     (0, 1), 'backward'),
+    ('test_axis_random', rand_x(5), None, (1, 2), 'backward'),
+    ('test_axis_none', rand_x(5), None, None, 'backward'),
+    ('test_norm_forward', rand_x(5), None, (0, 1), 'forward'),
+    ('test_norm_ortho', rand_x(5), None, (0, 1), 'ortho'),
+])
+=======
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
     [
@@ -156,8 +204,19 @@ class TestFftException(unittest.TestCase):
         ('test_norm_ortho', rand_x(5), None, (0, 1), 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestFft2(unittest.TestCase):
+
     def test_static_fft2(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.fft2, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.fft2(self.x, self.n, self.axis,
+                                                      self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+=======
         with stgraph(
             paddle.fft.fft2, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -167,6 +226,7 @@ class TestFft2(unittest.TestCase):
                 rtol=RTOL.get(str(self.x.dtype)),
                 atol=ATOL.get(str(self.x.dtype)),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 @place(DEVICES)
@@ -177,6 +237,16 @@ class TestFft2(unittest.TestCase):
         ('test_x_1dim_tensor', rand_x(1), None, (0, 1), 'backward', ValueError),
         ('test_n_nagative', rand_x(2), -1, (0, 1), 'backward', ValueError),
         ('test_n_zero', rand_x(2), 0, (0, 1), 'backward', ValueError),
+<<<<<<< HEAD
+        ('test_axis_out_of_range', rand_x(2), None,
+         (0, 1, 2), 'backward', ValueError),
+        ('test_axis_with_array', rand_x(1), None,
+         (0, 1), 'backward', ValueError),
+        ('test_axis_not_sequence', rand_x(5), None, -10, 'backward',
+         ValueError),
+        ('test_norm_not_enum', rand_x(2), None, -1, 'random', ValueError)
+    ])
+=======
         (
             'test_axis_out_of_range',
             rand_x(2),
@@ -204,7 +274,9 @@ class TestFft2(unittest.TestCase):
         ('test_norm_not_enum', rand_x(2), None, -1, 'random', ValueError),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestFft2Exception(unittest.TestCase):
+
     def test_static_fft2(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -221,6 +293,18 @@ class TestFft2Exception(unittest.TestCase):
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
+<<<<<<< HEAD
+    [('test_x_float64', rand_x(5, np.float64), None, None, 'backward'),
+     ('test_x_complex128', rand_x(5, np.float64,
+                                  complex=True), None, None, 'backward'),
+     ('test_n_grater_input_length', rand_x(5, max_dim_len=5), (6, 6),
+      (1, 2), 'backward'),
+     ('test_n_smaller_input_length', rand_x(5, min_dim_len=5), (3, 3),
+      (1, 2), 'backward'),
+     ('test_axis_not_default', rand_x(5), None, (1, 2), 'backward'),
+     ('test_norm_forward', rand_x(5), None, None, 'forward'),
+     ('test_norm_ortho', rand_x(5), None, None, 'ortho')])
+=======
     [
         ('test_x_float64', rand_x(5, np.float64), None, None, 'backward'),
         (
@@ -249,8 +333,31 @@ class TestFft2Exception(unittest.TestCase):
         ('test_norm_ortho', rand_x(5), None, None, 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestFftn(unittest.TestCase):
+
     def test_static_fftn(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.fftn, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.fftn(self.x, self.n, self.axis,
+                                                      self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'), [
+    ('test_x_complex', rand_x(4,
+                              complex=True), None, None, 'backward', TypeError),
+    ('test_n_nagative', rand_x(4), (-1, -1), (1, 2), 'backward', ValueError),
+    ('test_n_not_sequence', rand_x(4), -1, None, 'backward', ValueError),
+    ('test_n_zero', rand_x(4), 0, None, 'backward', ValueError),
+    ('test_axis_out_of_range', rand_x(1), None, [0, 1], 'backward', ValueError),
+    ('test_norm_not_in_enum', rand_x(2), None, -1, 'random', ValueError)
+])
+=======
         with stgraph(
             paddle.fft.fftn, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -295,7 +402,9 @@ class TestFftn(unittest.TestCase):
         ('test_norm_not_in_enum', rand_x(2), None, -1, 'random', ValueError),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestRfftnException(unittest.TestCase):
+
     def test_static_rfftn(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -310,6 +419,23 @@ class TestRfftnException(unittest.TestCase):
 
 
 @place(DEVICES)
+<<<<<<< HEAD
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'), [
+    ('test_x_complex128',
+     (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+         np.complex128), None, -1, "backward"),
+    ('test_n_grater_than_input_length', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), 4, -1, "backward"),
+    ('test_n_smaller_than_input_length', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), 2, -1, "backward"),
+    ('test_axis_not_last', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, 1, "backward"),
+    ('test_norm_forward', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, 1, "forward"),
+    ('test_norm_ortho', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, -1, "ortho"),
+])
+=======
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
     [
@@ -359,10 +485,38 @@ class TestRfftnException(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestHfft(unittest.TestCase):
     """Test hfft with norm condition"""
 
     def test_hfft(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.hfft, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.hfft(self.x, self.n, self.axis,
+                                                      self.norm),
+                                       y,
+                                       rtol=1e-5,
+                                       atol=0)
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'), [
+    ('test_x_complex128',
+     (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+         np.complex128), None, -1, "backward"),
+    ('test_n_grater_than_input_length', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), 4, -1, "backward"),
+    ('test_n_smaller_than_input_length', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), 2, -1, "backward"),
+    ('test_axis_not_last', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, -1, "backward"),
+    ('test_norm_forward', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, -1, "forward"),
+    ('test_norm_ortho', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, -1, "ortho"),
+])
+=======
         with stgraph(
             paddle.fft.hfft, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -424,10 +578,38 @@ class TestHfft(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIrfft(unittest.TestCase):
     """Test irfft with norm condition"""
 
     def test_irfft(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.irfft, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.irfft(self.x, self.n,
+                                                       self.axis, self.norm),
+                                       y,
+                                       rtol=1e-5,
+                                       atol=0)
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'), [
+    ('test_x_complex128',
+     (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+         np.complex128), None, None, "backward"),
+    ('test_n_grater_than_input_length', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), [4], None, "backward"),
+    ('test_n_smaller_than_input_length', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), [2], None, "backward"),
+    ('test_axis_not_last', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, None, "backward"),
+    ('test_norm_forward', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, None, "forward"),
+    ('test_norm_ortho', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, None, "ortho"),
+])
+=======
         with stgraph(
             paddle.fft.irfft, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -489,10 +671,38 @@ class TestIrfft(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class Testirfftn(unittest.TestCase):
     """Test irfftn with norm condition"""
 
     def test_static_irfftn(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.irfftn, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.irfftn(self.x, self.n,
+                                                        self.axis, self.norm),
+                                       y,
+                                       rtol=1e-5,
+                                       atol=0)
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'), [
+    ('test_x_complex128',
+     (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+         np.complex128), None, None, "backward"),
+    ('test_n_grater_than_input_length', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), [4], None, "backward"),
+    ('test_n_smaller_than_input_length', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), [2], None, "backward"),
+    ('test_axis_not_last', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, None, "backward"),
+    ('test_norm_forward', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, None, "forward"),
+    ('test_norm_ortho', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), None, None, "ortho"),
+])
+=======
         with stgraph(
             paddle.fft.irfftn, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -554,10 +764,43 @@ class Testirfftn(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class Testhfftn(unittest.TestCase):
     """Test hfftn with norm condition"""
 
     def test_static_hfftn(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.hfftn, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.hfftn(self.x, self.n,
+                                                       self.axis, self.norm),
+                                       y,
+                                       rtol=1e-5,
+                                       atol=0)
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 's', 'axis', 'norm'), [
+    ('test_x_complex128',
+     (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+         np.complex128), None, (-2, -1), "backward"),
+    ('test_n_grater_input_length',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), [4, 8],
+     (-2, -1), "backward"),
+    ('test_n_smaller_input_length',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), [2, 4],
+     (-2, -1), "backward"),
+    ('test_axis_not_last',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), None,
+     (-2, -1), "backward"),
+    ('test_norm_forward',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), None,
+     (-2, -1), "forward"),
+    ('test_norm_ortho',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), None,
+     (-2, -1), "ortho"),
+])
+=======
         with stgraph(
             paddle.fft.hfftn, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -619,10 +862,40 @@ class Testhfftn(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class Testhfft2(unittest.TestCase):
     """Test hfft2 with norm condition"""
 
     def test_static_hfft2(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.hfft2, self.place, self.x, self.s, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.hfft2(self.x, self.s,
+                                                       self.axis, self.norm),
+                                       y,
+                                       rtol=1e-5,
+                                       atol=0)
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 's', 'axis', 'norm'), [
+    ('test_x_complex128',
+     (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+         np.complex128), None, (-2, -1), "backward"),
+    ('test_n_equal_input_length',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (2, 4),
+     (-2, -1), "backward"),
+    ('test_axis_not_last',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), None,
+     (-2, -1), "backward"),
+    ('test_norm_forward',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), None,
+     (-2, -1), "forward"),
+    ('test_norm_ortho',
+     np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), None,
+     (-2, -1), "ortho"),
+])
+=======
         with stgraph(
             paddle.fft.hfft2, self.place, self.x, self.s, self.axis, self.norm
         ) as y:
@@ -677,10 +950,42 @@ class Testhfft2(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIrfft2(unittest.TestCase):
     """Test irfft2 with norm condition"""
 
     def test_static_irfft2(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.irfft2, self.place, self.x, self.s, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.irfft2(self.x, self.s,
+                                                        self.axis, self.norm),
+                                       y,
+                                       rtol=1e-5,
+                                       atol=0)
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'), [
+    ('test_input_dtype', np.random.randn(4, 4,
+                                         4), None, -1, 'backward', TypeError),
+    ('test_bool_input',
+     (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+         np.bool_), None, -1, 'backward', TypeError),
+    ('test_n_nagative', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), -1, -1, 'backward', ValueError),
+    ('test_n_zero', np.random.randn(4, 4) + 1j * np.random.randn(4, 4), 0, -1,
+     'backward', ValueError),
+    ('test_n_type', np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4),
+     (1, 2, 3), -1, 'backward', ValueError),
+    ('test_axis_out_of_range', np.random.randn(4) + 1j * np.random.randn(4),
+     None, 10, 'backward', ValueError),
+    ('test_axis_with_array', np.random.randn(4) + 1j * np.random.randn(4), None,
+     (0, 1), 'backward', ValueError),
+    ('test_norm_not_in_enum_value', np.random.randn(4, 4) +
+     1j * np.random.randn(4, 4), None, -1, 'random', ValueError)
+])
+=======
         with stgraph(
             paddle.fft.irfft2, self.place, self.x, self.s, self.axis, self.norm
         ) as y:
@@ -764,6 +1069,7 @@ class TestIrfft2(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestHfftException(unittest.TestCase):
     '''Test hfft with buoudary condition
     Test case include:
@@ -787,6 +1093,27 @@ class TestHfftException(unittest.TestCase):
 
 
 @place(DEVICES)
+<<<<<<< HEAD
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'), [
+    ('test_input_dtype', np.random.randn(4, 4,
+                                         4), None, -1, 'backward', TypeError),
+    ('test_bool_input',
+     (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+         np.bool_), None, -1, 'backward', TypeError),
+    ('test_n_nagative', np.random.randn(4, 4, 4) +
+     1j * np.random.randn(4, 4, 4), -1, -1, 'backward', ValueError),
+    ('test_n_zero', np.random.randn(4, 4) + 1j * np.random.randn(4, 4), 0, -1,
+     'backward', ValueError),
+    ('test_n_type', np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4),
+     (1, 2), -1, 'backward', ValueError),
+    ('test_axis_out_of_range', np.random.randn(4) + 1j * np.random.randn(4),
+     None, 10, 'backward', ValueError),
+    ('test_axis_with_array', np.random.randn(4) + 1j * np.random.randn(4), None,
+     (0, 1), 'backward', ValueError),
+    ('test_norm_not_in_enum_value', np.random.randn(4, 4) +
+     1j * np.random.randn(4, 4), None, None, 'random', ValueError)
+])
+=======
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
     [
@@ -858,6 +1185,7 @@ class TestHfftException(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIrfftException(unittest.TestCase):
     '''Test Irfft with buoudary condition
     Test case include:
@@ -884,6 +1212,29 @@ class TestIrfftException(unittest.TestCase):
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
+<<<<<<< HEAD
+    [('test_input_dtype', np.random.randn(
+        4, 4, 4), None, None, 'backward', TypeError),
+     ('test_bool_input',
+      (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+          np.bool_), None, (-2, -1), 'backward', TypeError),
+     ('test_n_nagative',
+      np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (-1, -2),
+      (-2, -1), 'backward', ValueError),
+     ('test_n_zero', np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4),
+      (0, 0), (-2, -1), 'backward', ValueError),
+     ('test_n_type', np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4),
+      3, None, 'backward', ValueError),
+     ('test_n_axis_dim',
+      np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (1, 2),
+      (-1), 'backward', ValueError),
+     ('test_axis_out_of_range', np.random.randn(4) + 1j * np.random.randn(4),
+      None, (1, 2), 'backward', ValueError),
+     ('test_axis_type', np.random.randn(4) + 1j * np.random.randn(4), None, -1,
+      'backward', ValueError),
+     ('test_norm_not_in_enum_value', np.random.randn(4, 4) +
+      1j * np.random.randn(4, 4), None, None, 'random', ValueError)])
+=======
     [
         (
             'test_input_dtype',
@@ -961,6 +1312,7 @@ class TestIrfftException(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestHfft2Exception(unittest.TestCase):
     '''Test hfft2 with buoudary condition
     Test case include:
@@ -987,6 +1339,29 @@ class TestHfft2Exception(unittest.TestCase):
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
+<<<<<<< HEAD
+    [('test_input_dtype', np.random.randn(
+        4, 4, 4), None, None, 'backward', TypeError),
+     ('test_bool_input',
+      (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+          np.bool_), None, (-2, -1), 'backward', TypeError),
+     ('test_n_nagative',
+      np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (-1, -2),
+      (-2, -1), 'backward', ValueError),
+     ('test_n_zero', np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4),
+      (0, 0), (-2, -1), 'backward', ValueError),
+     ('test_n_type', np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4),
+      3, -1, 'backward', ValueError),
+     ('test_n_axis_dim',
+      np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (1, 2),
+      (-3, -2, -1), 'backward', ValueError),
+     ('test_axis_out_of_range', np.random.randn(4) + 1j * np.random.randn(4),
+      None, (1, 2), 'backward', ValueError),
+     ('test_axis_type', np.random.randn(4) + 1j * np.random.randn(4), None, 1,
+      'backward', ValueError),
+     ('test_norm_not_in_enum_value', np.random.randn(4, 4) +
+      1j * np.random.randn(4, 4), None, None, 'random', ValueError)])
+=======
     [
         (
             'test_input_dtype',
@@ -1064,6 +1439,7 @@ class TestHfft2Exception(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIrfft2Exception(unittest.TestCase):
     '''Test irfft2 with buoudary condition
     Test case include:
@@ -1090,6 +1466,29 @@ class TestIrfft2Exception(unittest.TestCase):
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
+<<<<<<< HEAD
+    [('test_input_dtype', np.random.randn(
+        4, 4, 4), None, None, 'backward', TypeError),
+     ('test_bool_input',
+      (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)).astype(
+          np.bool_), None, (-2, -1), 'backward', TypeError),
+     ('test_n_nagative',
+      np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (-1, -2),
+      (-2, -1), 'backward', ValueError),
+     ('test_n_zero', np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4),
+      (0, 0), (-2, -1), 'backward', ValueError),
+     ('test_n_type', np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4),
+      3, -1, 'backward', ValueError),
+     ('test_n_axis_dim',
+      np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (1, 2),
+      (-3, -2, -1), 'backward', ValueError),
+     ('test_axis_out_of_range', np.random.randn(4) + 1j * np.random.randn(4),
+      None, (10, 20), 'backward', ValueError),
+     ('test_axis_type', np.random.randn(4) + 1j * np.random.randn(4), None, 1,
+      'backward', ValueError),
+     ('test_norm_not_in_enum_value', np.random.randn(4, 4) +
+      1j * np.random.randn(4, 4), None, None, 'random', ValueError)])
+=======
     [
         (
             'test_input_dtype',
@@ -1167,6 +1566,7 @@ class TestIrfft2Exception(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestHfftnException(unittest.TestCase):
     '''Test hfftn with buoudary condition
     Test case include:
@@ -1194,6 +1594,31 @@ class TestHfftnException(unittest.TestCase):
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
     [
+<<<<<<< HEAD
+        ('test_input_dtype', np.random.randn(
+            4, 4, 4), None, None, 'backward', TypeError),
+        #  ('test_bool_input',
+        #                (np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4)
+        #                 ).astype(np.bool_), None, (-2, -1), 'backward', ValueError),
+        ('test_n_nagative',
+         np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (-1, -2),
+         (-2, -1), 'backward', ValueError),
+        ('test_n_zero',
+         np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (0, 0),
+         (-2, -1), 'backward', ValueError),
+        ('test_n_type', np.random.randn(4, 4, 4) +
+         1j * np.random.randn(4, 4, 4), 3, -1, 'backward', ValueError),
+        ('test_n_axis_dim',
+         np.random.randn(4, 4, 4) + 1j * np.random.randn(4, 4, 4), (1, 2),
+         (-3, -2, -1), 'backward', ValueError),
+        ('test_axis_out_of_range', np.random.randn(4) + 1j * np.random.randn(4),
+         None, (10, 20), 'backward', ValueError),
+        ('test_axis_type', np.random.randn(4) + 1j * np.random.randn(4), None,
+         1, 'backward', ValueError),
+        ('test_norm_not_in_enum_value', np.random.randn(4, 4) +
+         1j * np.random.randn(4, 4), None, None, 'random', ValueError)
+    ])
+=======
         (
             'test_input_dtype',
             np.random.randn(4, 4, 4),
@@ -1263,6 +1688,7 @@ class TestHfftnException(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIrfftnException(unittest.TestCase):
     '''Test irfftn with buoudary condition
     Test case include:
@@ -1287,6 +1713,17 @@ class TestIrfftnException(unittest.TestCase):
 
 
 @place(DEVICES)
+<<<<<<< HEAD
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
+              [('test_x_float64', rand_x(5, np.float64), None, -1, 'backward'),
+               ('test_n_grater_than_input_length', rand_x(
+                   5, max_dim_len=5), 11, -1, 'backward'),
+               ('test_n_smaller_than_input_length', rand_x(
+                   5, min_dim_len=5), 3, -1, 'backward'),
+               ('test_axis_not_last', rand_x(5), None, 3, 'backward'),
+               ('test_norm_forward', rand_x(5), None, 3, 'forward'),
+               ('test_norm_ortho', rand_x(5), None, 3, 'ortho')])
+=======
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
     [
@@ -1310,8 +1747,19 @@ class TestIrfftnException(unittest.TestCase):
         ('test_norm_ortho', rand_x(5), None, 3, 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestRfft(unittest.TestCase):
+
     def test_static_rfft(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.rfft, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.rfft(self.x, self.n, self.axis,
+                                                      self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+=======
         with stgraph(
             paddle.fft.rfft, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -1321,11 +1769,19 @@ class TestRfft(unittest.TestCase):
                 rtol=RTOL.get(str(self.x.dtype)),
                 atol=ATOL.get(str(self.x.dtype)),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
+<<<<<<< HEAD
+    [('test_n_nagative', rand_x(2), -1, -1, 'backward', ValueError),
+     ('test_n_zero', rand_x(2), 0, -1, 'backward', ValueError),
+     ('test_axis_out_of_range', rand_x(1), None, 10, 'backward', ValueError),
+     ('test_axis_with_array', rand_x(1), None, (0, 1), 'backward', ValueError),
+     ('test_norm_not_in_enum_value', rand_x(2), None, -1, 'random', ValueError)]
+=======
     [
         ('test_n_nagative', rand_x(2), -1, -1, 'backward', ValueError),
         ('test_n_zero', rand_x(2), 0, -1, 'backward', ValueError),
@@ -1347,8 +1803,10 @@ class TestRfft(unittest.TestCase):
             ValueError,
         ),
     ],
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 )
 class TestRfftException(unittest.TestCase):
+
     def test_rfft(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -1363,6 +1821,19 @@ class TestRfftException(unittest.TestCase):
 
 
 @place(DEVICES)
+<<<<<<< HEAD
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'), [
+    ('test_x_float64', rand_x(5), None, (0, 1), 'backward'),
+    ('test_n_grater_input_length', rand_x(5, max_dim_len=5), (6, 6),
+     (0, 1), 'backward'),
+    ('test_n_smaller_than_input_length', rand_x(5, min_dim_len=5), (4, 4),
+     (0, 1), 'backward'),
+    ('test_axis_random', rand_x(5), None, (1, 2), 'backward'),
+    ('test_axis_none', rand_x(5), None, None, 'backward'),
+    ('test_norm_forward', rand_x(5), None, (0, 1), 'forward'),
+    ('test_norm_ortho', rand_x(5), None, (0, 1), 'ortho'),
+])
+=======
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
     [
@@ -1387,8 +1858,19 @@ class TestRfftException(unittest.TestCase):
         ('test_norm_ortho', rand_x(5), None, (0, 1), 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestRfft2(unittest.TestCase):
+
     def test_static_rfft2(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.rfft2, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.rfft2(self.x, self.n,
+                                                       self.axis, self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+=======
         with stgraph(
             paddle.fft.rfft2, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -1398,12 +1880,17 @@ class TestRfft2(unittest.TestCase):
                 rtol=RTOL.get(str(self.x.dtype)),
                 atol=ATOL.get(str(self.x.dtype)),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
     [
+<<<<<<< HEAD
+        ('test_x_complex_input', rand_x(2, complex=True), None,
+         (0, 1), 'backward', TypeError),
+=======
         (
             'test_x_complex_input',
             rand_x(2, complex=True),
@@ -1412,10 +1899,21 @@ class TestRfft2(unittest.TestCase):
             'backward',
             TypeError,
         ),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         # ('test_x_not_tensor', [0, 1], None, (0, 1), 'backward', ValueError),
         ('test_x_1dim_tensor', rand_x(1), None, (0, 1), 'backward', ValueError),
         ('test_n_nagative', rand_x(2), -1, (0, 1), 'backward', ValueError),
         ('test_n_zero', rand_x(2), 0, (0, 1), 'backward', ValueError),
+<<<<<<< HEAD
+        ('test_axis_out_of_range', rand_x(2), None,
+         (0, 1, 2), 'backward', ValueError),
+        ('test_axis_with_array', rand_x(1), None,
+         (0, 1), 'backward', ValueError),
+        ('test_axis_not_sequence', rand_x(5), None, -10, 'backward',
+         ValueError),
+        ('test_norm_not_enum', rand_x(2), None, -1, 'random', ValueError)
+    ])
+=======
         (
             'test_axis_out_of_range',
             rand_x(2),
@@ -1443,7 +1941,9 @@ class TestRfft2(unittest.TestCase):
         ('test_norm_not_enum', rand_x(2), None, -1, 'random', ValueError),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestRfft2Exception(unittest.TestCase):
+
     def test_static_rfft(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -1460,6 +1960,16 @@ class TestRfft2Exception(unittest.TestCase):
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
+<<<<<<< HEAD
+    [('test_x_float64', rand_x(5, np.float64), None, None, 'backward'),
+     ('test_n_grater_input_length', rand_x(5, max_dim_len=5), (6, 6),
+      (1, 2), 'backward'),
+     ('test_n_smaller_input_length', rand_x(5, min_dim_len=5), (3, 3),
+      (1, 2), 'backward'),
+     ('test_axis_not_default', rand_x(5), None, (1, 2), 'backward'),
+     ('test_norm_forward', rand_x(5), None, None, 'forward'),
+     ('test_norm_ortho', rand_x(5), None, None, 'ortho')])
+=======
     [
         ('test_x_float64', rand_x(5, np.float64), None, None, 'backward'),
         (
@@ -1481,8 +1991,31 @@ class TestRfft2Exception(unittest.TestCase):
         ('test_norm_ortho', rand_x(5), None, None, 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestRfftn(unittest.TestCase):
+
     def test_static_rfft(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.rfftn, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.rfftn(self.x, self.n,
+                                                       self.axis, self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'), [
+    ('test_x_complex', rand_x(4,
+                              complex=True), None, None, 'backward', TypeError),
+    ('test_n_nagative', rand_x(4), (-1, -1), (1, 2), 'backward', ValueError),
+    ('test_n_not_sequence', rand_x(4), -1, None, 'backward', ValueError),
+    ('test_n_zero', rand_x(4), 0, None, 'backward', ValueError),
+    ('test_axis_out_of_range', rand_x(1), None, [0, 1], 'backward', ValueError),
+    ('test_norm_not_in_enum', rand_x(2), None, -1, 'random', ValueError)
+])
+=======
         with stgraph(
             paddle.fft.rfftn, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -1527,7 +2060,9 @@ class TestRfftn(unittest.TestCase):
         ('test_norm_not_in_enum', rand_x(2), None, -1, 'random', ValueError),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestRfftnException(unittest.TestCase):
+
     def test_static_rfftn(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -1542,6 +2077,17 @@ class TestRfftnException(unittest.TestCase):
 
 
 @place(DEVICES)
+<<<<<<< HEAD
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
+              [('test_x_float64', rand_x(5, np.float64), None, -1, 'backward'),
+               ('test_n_grater_than_input_length', rand_x(
+                   5, max_dim_len=5), 11, -1, 'backward'),
+               ('test_n_smaller_than_input_length', rand_x(
+                   5, min_dim_len=5), 3, -1, 'backward'),
+               ('test_axis_not_last', rand_x(5), None, 3, 'backward'),
+               ('test_norm_forward', rand_x(5), None, 3, 'forward'),
+               ('test_norm_ortho', rand_x(5), None, 3, 'ortho')])
+=======
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
     [
@@ -1565,8 +2111,19 @@ class TestRfftnException(unittest.TestCase):
         ('test_norm_ortho', rand_x(5), None, 3, 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIhfft(unittest.TestCase):
+
     def test_static_ihfft(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.ihfft, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.ihfft(self.x, self.n,
+                                                       self.axis, self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+=======
         with stgraph(
             paddle.fft.ihfft, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -1576,11 +2133,19 @@ class TestIhfft(unittest.TestCase):
                 rtol=RTOL.get(str(self.x.dtype)),
                 atol=ATOL.get(str(self.x.dtype)),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
+<<<<<<< HEAD
+    [('test_n_nagative', rand_x(2), -1, -1, 'backward', ValueError),
+     ('test_n_zero', rand_x(2), 0, -1, 'backward', ValueError),
+     ('test_axis_out_of_range', rand_x(1), None, 10, 'backward', ValueError),
+     ('test_axis_with_array', rand_x(1), None, (0, 1), 'backward', ValueError),
+     ('test_norm_not_in_enum_value', rand_x(2), None, -1, 'random', ValueError)]
+=======
     [
         ('test_n_nagative', rand_x(2), -1, -1, 'backward', ValueError),
         ('test_n_zero', rand_x(2), 0, -1, 'backward', ValueError),
@@ -1602,8 +2167,10 @@ class TestIhfft(unittest.TestCase):
             ValueError,
         ),
     ],
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 )
 class TestIhfftException(unittest.TestCase):
+
     def test_static_ihfft(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -1618,6 +2185,19 @@ class TestIhfftException(unittest.TestCase):
 
 
 @place(DEVICES)
+<<<<<<< HEAD
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'), [
+    ('test_x_float64', rand_x(5), None, (0, 1), 'backward'),
+    ('test_n_grater_input_length', rand_x(5, max_dim_len=5), (11, 11),
+     (0, 1), 'backward'),
+    ('test_n_smaller_than_input_length', rand_x(5, min_dim_len=5), (1, 1),
+     (0, 1), 'backward'),
+    ('test_axis_random', rand_x(5), None, (1, 2), 'backward'),
+    ('test_axis_none', rand_x(5), None, None, 'backward'),
+    ('test_norm_forward', rand_x(5), None, (0, 1), 'forward'),
+    ('test_norm_ortho', rand_x(5), None, (0, 1), 'ortho'),
+])
+=======
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
     [
@@ -1642,8 +2222,19 @@ class TestIhfftException(unittest.TestCase):
         ('test_norm_ortho', rand_x(5), None, (0, 1), 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIhfft2(unittest.TestCase):
+
     def test_static_ihfft2(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.ihfft2, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.ihfft2(self.x, self.n,
+                                                        self.axis, self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+=======
         with stgraph(
             paddle.fft.ihfft2, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -1653,12 +2244,31 @@ class TestIhfft2(unittest.TestCase):
                 rtol=RTOL.get(str(self.x.dtype)),
                 atol=ATOL.get(str(self.x.dtype)),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'),
     [
+<<<<<<< HEAD
+        ('test_x_complex_input', rand_x(2, complex=True), None,
+         (0, 1), None, ValueError),
+        # ('test_x_not_tensor', [0, 1], None, (0, 1), None, ValueError),
+        ('test_x_1dim_tensor', rand_x(1), None, (0, 1), None, ValueError),
+        ('test_n_nagative', rand_x(2), -1, (0, 1), 'backward', ValueError),
+        ('test_n_len_not_equal_axis', rand_x(5, max_dim_len=5), 11,
+         (0, 1), 'backward', ValueError),
+        ('test_n_zero', rand_x(2), (0, 0), (0, 1), 'backward', ValueError),
+        ('test_axis_out_of_range', rand_x(2), None,
+         (0, 1, 2), 'backward', ValueError),
+        ('test_axis_with_array', rand_x(1), None,
+         (0, 1), 'backward', ValueError),
+        ('test_axis_not_sequence', rand_x(5), None, -10, 'backward',
+         ValueError),
+        ('test_norm_not_enum', rand_x(2), None, -1, 'random', ValueError)
+    ])
+=======
         (
             'test_x_complex_input',
             rand_x(2, complex=True),
@@ -1706,7 +2316,9 @@ class TestIhfft2(unittest.TestCase):
         ('test_norm_not_enum', rand_x(2), None, -1, 'random', ValueError),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIhfft2Exception(unittest.TestCase):
+
     def test_static_ihfft2(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -1723,6 +2335,16 @@ class TestIhfft2Exception(unittest.TestCase):
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'n', 'axis', 'norm'),
+<<<<<<< HEAD
+    [('test_x_float64', rand_x(5, np.float64), None, None, 'backward'),
+     ('test_n_grater_input_length', rand_x(5, max_dim_len=5), (11, 11),
+      (0, 1), 'backward'),
+     ('test_n_smaller_input_length', rand_x(5, min_dim_len=5), (1, 1),
+      (0, 1), 'backward'),
+     ('test_axis_not_default', rand_x(5), None, (1, 2), 'backward'),
+     ('test_norm_forward', rand_x(5), None, None, 'forward'),
+     ('test_norm_ortho', rand_x(5), None, None, 'ortho')])
+=======
     [
         ('test_x_float64', rand_x(5, np.float64), None, None, 'backward'),
         (
@@ -1744,8 +2366,30 @@ class TestIhfft2Exception(unittest.TestCase):
         ('test_norm_ortho', rand_x(5), None, None, 'ortho'),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIhfftn(unittest.TestCase):
+
     def test_static_ihfftn(self):
+<<<<<<< HEAD
+        with stgraph(paddle.fft.ihfftn, self.place, self.x, self.n, self.axis,
+                     self.norm) as y:
+            np.testing.assert_allclose(scipy.fft.ihfftn(self.x, self.n,
+                                                        self.axis, self.norm),
+                                       y,
+                                       rtol=RTOL.get(str(self.x.dtype)),
+                                       atol=ATOL.get(str(self.x.dtype)))
+
+
+@place(DEVICES)
+@parameterize((TEST_CASE_NAME, 'x', 'n', 'axis', 'norm', 'expect_exception'), [
+    ('test_x_complex', rand_x(4,
+                              complex=True), None, None, 'backward', TypeError),
+    ('test_n_nagative', rand_x(4), -1, None, 'backward', ValueError),
+    ('test_n_zero', rand_x(4), 0, None, 'backward', ValueError),
+    ('test_axis_out_of_range', rand_x(1), None, [0, 1], 'backward', ValueError),
+    ('test_norm_not_in_enum', rand_x(2), None, -1, 'random', ValueError)
+])
+=======
         with stgraph(
             paddle.fft.ihfftn, self.place, self.x, self.n, self.axis, self.norm
         ) as y:
@@ -1782,7 +2426,9 @@ class TestIhfftn(unittest.TestCase):
         ('test_norm_not_in_enum', rand_x(2), None, -1, 'random', ValueError),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIhfftnException(unittest.TestCase):
+
     def test_static_ihfftn(self):
         with self.assertRaises(self.expect_exception):
             with stgraph(
@@ -1812,6 +2458,7 @@ class TestIhfftnException(unittest.TestCase):
     ],
 )
 class TestFftShift(unittest.TestCase):
+
     def test_fftshift(self):
         """Test fftshift with norm condition"""
         paddle.enable_static()
@@ -1831,6 +2478,13 @@ class TestFftShift(unittest.TestCase):
 @place(DEVICES)
 @parameterize(
     (TEST_CASE_NAME, 'x', 'axes'),
+<<<<<<< HEAD
+    [('test_1d', np.random.randn(10), (0, ), 'float64'),
+     ('test_2d', np.random.randn(10, 10), (0, 1), 'float64'),
+     ('test_2d_with_all_axes', np.random.randn(10, 10), None, 'float64'),
+     ('test_2d_odd_with_all_axes',
+      np.random.randn(5, 5) + 1j * np.random.randn(5, 5), None, 'complex128')])
+=======
     [
         ('test_1d', np.random.randn(10), (0,), 'float64'),
         ('test_2d', np.random.randn(10, 10), (0, 1), 'float64'),
@@ -1843,7 +2497,9 @@ class TestFftShift(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestIfftShift(unittest.TestCase):
+
     def test_ifftshift(self):
         """Test ifftshift with norm condition"""
         paddle.enable_static()

@@ -30,7 +30,19 @@ out_dim = 20
 
 
 class SimpleNet(fluid.Layer):
+
     def __init__(self, train_id):
+<<<<<<< HEAD
+        super(SimpleNet, self).__init__()
+        self.w1 = self.create_parameter(shape=[in_dim, out_dim],
+                                        dtype="float32")
+        self.w2 = self.create_parameter(shape=[in_dim, out_dim],
+                                        dtype="float32")
+        self.share_net = Linear(out_dim, 10)
+
+        self.unused_param = self.create_parameter(shape=[out_dim, in_dim],
+                                                  dtype="float64")
+=======
         super().__init__()
         self.w1 = self.create_parameter(
             shape=[in_dim, out_dim], dtype="float32"
@@ -43,6 +55,7 @@ class SimpleNet(fluid.Layer):
         self.unused_param = self.create_parameter(
             shape=[out_dim, in_dim], dtype="float64"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         # just for test sync_params_buffers
         # self.register_buffer("queue", paddle.randn([10, 5]))
@@ -52,10 +65,16 @@ class SimpleNet(fluid.Layer):
         self.trainer_id = train_id
 
     def forward(self, x):
+<<<<<<< HEAD
+        is_use = (paddle.equal_all(
+            x, paddle.ones(shape=(batch, in_dim))).numpy()[0]
+                  and self.trainer_id == 1)
+=======
         is_use = (
             paddle.equal_all(x, paddle.ones(shape=(batch, in_dim))).numpy()[0]
             and self.trainer_id == 1
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         if is_use:
             tmp = paddle.matmul(x, self.w1)
@@ -66,6 +85,7 @@ class SimpleNet(fluid.Layer):
 
 
 class TestDistTraning(unittest.TestCase):
+
     def test_multiple_gpus(self):
         self.trainer_id = dist.get_rank()
         with _test_eager_guard():
@@ -77,12 +97,21 @@ class TestDistTraning(unittest.TestCase):
             state_dict = model_a.state_dict()
             model_b.set_state_dict(state_dict)
 
+<<<<<<< HEAD
+            model_a = paddle.DataParallel(model_a,
+                                          find_unused_parameters=True,
+                                          group=self.pg)
+            model_b = paddle.DataParallel(model_b,
+                                          find_unused_parameters=True,
+                                          group=self.pg)
+=======
             model_a = paddle.DataParallel(
                 model_a, find_unused_parameters=True, group=self.pg
             )
             model_b = paddle.DataParallel(
                 model_b, find_unused_parameters=True, group=self.pg
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             ones_input = paddle.ones(shape=(batch, in_dim))
             ones_input.stop_gradient = True

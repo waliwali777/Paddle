@@ -25,7 +25,12 @@ def crepr(v):
     return str(v)
 
 
+<<<<<<< HEAD
+class Rank(object):
+
+=======
 class Rank:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, kind, name, priority):
         '''
         kind: str
@@ -87,6 +92,15 @@ class Graph:
     def compile(self, dot_path):
         file = open(dot_path, 'w')
         file.write(self.__str__())
+<<<<<<< HEAD
+        image_path = os.path.join(os.path.dirname(dot_path),
+                                  dot_path[:-3] + "pdf")
+        cmd = ["dot", "-Tpdf", dot_path, "-o", image_path]
+        subprocess.Popen(cmd,
+                         stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+=======
         image_path = os.path.join(
             os.path.dirname(dot_path), dot_path[:-3] + "pdf"
         )
@@ -97,12 +111,24 @@ class Graph:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         logging.warning("write block debug graph to {}".format(image_path))
         return image_path
 
     def show(self, dot_path):
         image = self.compile(dot_path)
         cmd = ["open", image]
+<<<<<<< HEAD
+        subprocess.Popen(cmd,
+                         stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+
+    def _rank_repr(self):
+        ranks = sorted(six.iteritems(self.rank_groups),
+                       key=functools.cmp_to_key(
+                           lambda a, b: a[1].priority > b[1].priority))
+=======
         subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
@@ -117,6 +143,7 @@ class Graph:
                 lambda a, b: a[1].priority > b[1].priority
             ),
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         repr = []
         for x in ranks:
             repr.append(str(x[1]))
@@ -129,9 +156,14 @@ class Graph:
         ]
 
         for attr in self.attrs:
+<<<<<<< HEAD
+            reprs.append("{key}={value};".format(key=attr,
+                                                 value=crepr(self.attrs[attr])))
+=======
             reprs.append(
                 "{key}={value};".format(key=attr, value=crepr(self.attrs[attr]))
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         reprs.append(self._rank_repr())
 
@@ -170,7 +202,12 @@ class Node:
         return reprs
 
 
+<<<<<<< HEAD
+class Edge(object):
+
+=======
 class Edge:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, source, target, **attrs):
         '''
         Link source to target.
@@ -187,6 +224,11 @@ class Edge:
         repr = "{source} -> {target} {extra}".format(
             source=self.source.name,
             target=self.target.name,
+<<<<<<< HEAD
+            extra="" if not self.attrs else "[" +
+            ','.join("{}={}".format(attr[0], crepr(attr[1]))
+                     for attr in six.iteritems(self.attrs)) + "]")
+=======
             extra=""
             if not self.attrs
             else "["
@@ -196,6 +238,7 @@ class Edge:
             )
             + "]",
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         return repr
 
 
@@ -224,6 +267,33 @@ class GraphPreviewGenerator:
             self.graph.show(path)
 
     def add_param(self, name, data_type, highlight=False):
+<<<<<<< HEAD
+        label = '\n'.join([
+            '<<table cellpadding="5">',
+            '  <tr>',
+            '    <td bgcolor="#2b787e">',
+            '    <b>',
+            name,
+            '    </b>',
+            '    </td>',
+            '  </tr>',
+            '  <tr>',
+            '    <td>',
+            str(data_type),
+            '    </td>'
+            '  </tr>',
+            '</table>>',
+        ])
+        return self.graph.node(label,
+                               prefix="param",
+                               description=name,
+                               shape="none",
+                               style="rounded,filled,bold",
+                               width="1.3",
+                               color="#148b97" if not highlight else "orange",
+                               fontcolor="#ffffff",
+                               fontname="Arial")
+=======
         label = '\n'.join(
             [
                 '<<table cellpadding="5">',
@@ -252,6 +322,7 @@ class GraphPreviewGenerator:
             fontcolor="#ffffff",
             fontname="Arial",
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def add_op(self, opType, **kwargs):
         highlight = False
@@ -272,6 +343,16 @@ class GraphPreviewGenerator:
         )
 
     def add_arg(self, name, highlight=False):
+<<<<<<< HEAD
+        return self.graph.node(crepr(name),
+                               prefix="arg",
+                               description=name,
+                               shape="box",
+                               style="rounded,filled,bold",
+                               fontname="Arial",
+                               fontcolor="#999999",
+                               color="#dddddd" if not highlight else "orange")
+=======
         return self.graph.node(
             crepr(name),
             prefix="arg",
@@ -282,15 +363,23 @@ class GraphPreviewGenerator:
             fontcolor="#999999",
             color="#dddddd" if not highlight else "orange",
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def add_edge(self, source, target, **kwargs):
         highlight = False
         if 'highlight' in kwargs:
             highlight = kwargs['highlight']
             del kwargs['highlight']
+<<<<<<< HEAD
+        return self.graph.edge(source,
+                               target,
+                               color="#00000" if not highlight else "orange",
+                               **kwargs)
+=======
         return self.graph.edge(
             source,
             target,
             color="#00000" if not highlight else "orange",
             **kwargs
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

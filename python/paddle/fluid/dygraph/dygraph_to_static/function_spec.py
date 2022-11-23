@@ -73,12 +73,17 @@ class FunctionSpec:
         """
         if len(self._arg_names) < len(args):
             error_msg = "The decorated function `{}` requires {} arguments: {}, but received {} with {}.".format(
+<<<<<<< HEAD
+                self._dygraph_function.__name__, len(self._arg_names),
+                self._arg_names, len(args), args)
+=======
                 self._dygraph_function.__name__,
                 len(self._arg_names),
                 self._arg_names,
                 len(args),
                 args,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             if args and inspect.isclass(args[0]):
                 error_msg += "\n\tMaybe the function has more than one decorator, we don't support this for now."
                 raise NotImplementedError(error_msg)
@@ -95,6 +100,11 @@ class FunctionSpec:
             else:
                 if arg_name not in self._default_kwargs:
                     raise ValueError(
+<<<<<<< HEAD
+                        "`{}()` requires `{}` arguments, but not found in input `args`: {} and `kwargs`: {}."
+                        .format(self._dygraph_function.__name__, arg_name, args,
+                                kwargs))
+=======
                         "`{}()` requires `{}` arguments, but not found in input `args`: {} and `kwargs`: {}.".format(
                             self._dygraph_function.__name__,
                             arg_name,
@@ -102,6 +112,7 @@ class FunctionSpec:
                             kwargs,
                         )
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 args.append(self._default_kwargs[arg_name])
 
         return tuple(args), kwargs
@@ -144,20 +155,30 @@ class FunctionSpec:
             # So we don't support to deal this case while specificing `input_spec` currently.
             if kwargs:
                 raise ValueError(
+<<<<<<< HEAD
+                    "{} got unexpected keyword arguments: {}. Cannot trace the function when `input_spec` is specificed."
+                    .format(self._dygraph_function.__name__, kwargs))
+=======
                     "{} got unexpected keyword arguments: {}. Cannot trace the function when `input_spec` is specificed.".format(
                         self._dygraph_function.__name__, kwargs
                     )
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             # Note: The length of `input_spec` can be greater than `args`,
             # because `args` may contains non-tensor value merged form `kwargs`
             # after `unified_args_and_kwargs`.
             if len(args) < len(self._input_spec):
                 raise ValueError(
+<<<<<<< HEAD
+                    "Requires len(arguments) >= len(input_spec), but received len(args):{} < len(InputSpec): {}"
+                    .format(len(args), len(self._input_spec)))
+=======
                     "Requires len(arguments) >= len(input_spec), but received len(args):{} < len(InputSpec): {}".format(
                         len(args), len(self._input_spec)
                     )
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             # replace argument with corresponding InputSpec.
             args_with_spec = convert_to_input_spec(args, self._input_spec)
@@ -210,10 +231,15 @@ class FunctionSpec:
         """
         if not isinstance(input_spec, (tuple, list)):
             raise TypeError(
+<<<<<<< HEAD
+                "The type(input_spec) should be one of (tuple, list), but received {}."
+                .format(type_name(input_spec)))
+=======
                 "The type(input_spec) should be one of (tuple, list), but received {}.".format(
                     type_name(input_spec)
                 )
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         return tuple(input_spec)
 
@@ -314,10 +340,15 @@ def convert_to_input_spec(inputs, input_spec):
             )
         if check_length and len(input) < len(spec):
             raise ValueError(
+<<<<<<< HEAD
+                'Requires len(inputs) >= len(input_spec), but received len(inputs):{} < len(input_spec):{}'
+                .format(len(inputs), len(input_spec)))
+=======
                 'Requires len(inputs) >= len(input_spec), but received len(inputs):{} < len(input_spec):{}'.format(
                     len(inputs), len(input_spec)
                 )
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     if isinstance(input_spec, (tuple, list)):
         input_with_spec = []
@@ -334,11 +365,17 @@ def convert_to_input_spec(inputs, input_spec):
                 if isinstance(rest_input, (core.VarBase, np.ndarray)):
                     logging_utils.warn(
                         "The inputs constain `{}` without specificing InputSpec, its shape and dtype will be treated immutable. "
+<<<<<<< HEAD
+                        "Please specific InputSpec information in `@to_static` if you expect them as mutable inputs."
+                        .format(type_name(rest_input)))
+        input_with_spec.extend(inputs[len(input_spec):])
+=======
                         "Please specific InputSpec information in `@to_static` if you expect them as mutable inputs.".format(
                             type_name(rest_input)
                         )
                     )
         input_with_spec.extend(inputs[len(input_spec) :])
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         return input_with_spec
     elif isinstance(input_spec, dict):
@@ -347,8 +384,12 @@ def convert_to_input_spec(inputs, input_spec):
         for name, input in inputs.items():
             if name in input_spec:
                 input_with_spec[name] = convert_to_input_spec(
+<<<<<<< HEAD
+                    input, input_spec[name])
+=======
                     input, input_spec[name]
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             else:
                 input_with_spec[name] = input
         return input_with_spec

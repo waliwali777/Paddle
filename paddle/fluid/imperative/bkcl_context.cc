@@ -33,8 +33,13 @@
 namespace paddle {
 namespace imperative {
 
+<<<<<<< HEAD
+static void AllReduce(const framework::Tensor &src,
+                      framework::Tensor *dst,
+=======
 static void AllReduce(const phi::DenseTensor &src,
                       phi::DenseTensor *dst,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                       const XPUStream stream,
                       const platform::BKCLComm *comm) {
   const auto &place = src.place();
@@ -167,8 +172,13 @@ void BKCLParallelContext::AllReduceByStream(const framework::Variable &src,
     if (!dst->IsType<phi::DenseTensor>()) {
       dst->Clear();
     }
+<<<<<<< HEAD
+    AllReduce(src.Get<framework::LoDTensor>(),
+              dst->GetMutable<framework::LoDTensor>(),
+=======
     AllReduce(src.Get<phi::DenseTensor>(),
               dst->GetMutable<phi::DenseTensor>(),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
               stream,
               comm);
   } else {

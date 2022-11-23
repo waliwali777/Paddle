@@ -195,7 +195,11 @@ class FilterDescriptor {
   T* desc() { return desc_.get(); }
   T* desc() const { return desc_.get(); }
 
+<<<<<<< HEAD
+  void set(const Tensor& tensor,
+=======
   void set(const phi::DenseTensor& tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
            const miopenTensorFormat_t format,
            const int groups = 1) {
     PADDLE_ENFORCE_EQ(format,

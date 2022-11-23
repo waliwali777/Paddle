@@ -47,7 +47,11 @@ void ConvertConv3d(TensorRTEngine* engine,
       Y_v,
       platform::errors::NotFound("Can not find %s presistale var in scope.",
                                  filter_var_name));
+<<<<<<< HEAD
+  auto* Y_t = Y_v->GetMutable<framework::LoDTensor>();
+=======
   auto* Y_t = Y_v->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   bool enable_int8 = op_desc.HasAttr("enable_int8");
 
   if (enable_int8) {
@@ -77,6 +81,8 @@ void ConvertConv3d(TensorRTEngine* engine,
   if (op_desc.HasAttr("padding_algorithm"))
     padding_algorithm =
         PADDLE_GET_CONST(std::string, op_desc.GetAttr("padding_algorithm"));
+<<<<<<< HEAD
+=======
 
   // for conv3d_transpose
   std::vector<int> output_padding;
@@ -84,6 +90,7 @@ void ConvertConv3d(TensorRTEngine* engine,
     output_padding =
         PADDLE_GET_CONST(std::vector<int>, op_desc.GetAttr("output_padding"));
   }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   nvinfer1::Dims3 nv_ksize(filter_d, filter_h, filter_w);
   nvinfer1::Dims3 nv_dilations(dilations[0], dilations[1], dilations[2]);

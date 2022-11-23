@@ -157,18 +157,30 @@ static void PrintNanInf(const T* value,
     }
 
     if (count < static_cast<size_t>(print_num)) {
+<<<<<<< HEAD
+      printf("numel:%lu index:%lu value:%f\n",
+             static_cast<uint64_t>(numel),
+             static_cast<uint64_t>(i),
+=======
       printf("numel:%zu index:%zu value:%f\n",
              numel,
              i,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
              static_cast<float>(value[i]));
     }
   }
   printf(
       "In cpu, there has %zu,%zu,%zu nan,inf,num. "
       "And in num, min_value is %f, max_value is %f\n",
+<<<<<<< HEAD
+      static_cast<uint64_t>(nan_count),
+      static_cast<uint64_t>(inf_count),
+      static_cast<uint64_t>(num_count),
+=======
       nan_count,
       inf_count,
       num_count,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       static_cast<double>(min_value),
       static_cast<double>(max_value));
   if (abort) {
@@ -332,7 +344,11 @@ void TensorCheckerVisitor<phi::CPUContext>::apply(
 template <>
 void tensor_check<phi::CPUContext>(const std::string& op_type,
                                    const std::string& var_name,
+<<<<<<< HEAD
+                                   const framework::Tensor& tensor,
+=======
                                    const phi::DenseTensor& tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                    const platform::Place& place) {
   TensorCheckerVisitor<phi::CPUContext> vistor(
       op_type, var_name, tensor, place);
@@ -401,9 +417,13 @@ void CheckVarHasNanOrInf(const std::string& op_type,
         flag,
         true,
         platform::errors::Fatal(
+<<<<<<< HEAD
+            "Operator %s output Tensor %s contains Inf.", op_type, var_name));
+=======
             "Operator %s output phi::DenseTensor %s contains Inf.",
             op_type,
             var_name));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #else
     PADDLE_THROW(platform::errors::PreconditionNotMet(
         "phi::DenseTensor[%s] use xpu place. PaddlePaddle must compile with "
@@ -435,9 +455,13 @@ void CheckVarHasNanOrInf(const std::string& op_type,
         flag,
         true,
         platform::errors::Fatal(
+<<<<<<< HEAD
+            "Operator %s output Tensor %s contains Inf.", op_type, var_name));
+=======
             "Operator %s output phi::DenseTensor %s contains Inf.",
             op_type,
             var_name));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #else
     PADDLE_THROW(platform::errors::PreconditionNotMet(
         "phi::DenseTensor[%s] use npu place. PaddlePaddle must compile with "

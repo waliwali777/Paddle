@@ -23,6 +23,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class TestComplexSumLayer(unittest.TestCase):
+
     def setUp(self):
         self._dtypes = ["float32", "float64"]
         self._places = [paddle.CPUPlace()]
@@ -31,9 +32,15 @@ class TestComplexSumLayer(unittest.TestCase):
 
     def test_complex_basic_api(self):
         for dtype in self._dtypes:
+<<<<<<< HEAD
+            input = rand([
+                2, 10, 10
+            ]).astype(dtype) + 1j * rand([2, 10, 10]).astype(dtype)
+=======
             input = rand([2, 10, 10]).astype(dtype) + 1j * rand(
                 [2, 10, 10]
             ).astype(dtype)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             for place in self._places:
                 with dg.guard(place):
                     var_x = dg.to_variable(input)

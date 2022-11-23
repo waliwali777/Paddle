@@ -35,7 +35,11 @@ class LookupTableV2NPUKernel : public framework::OpKernel<T> {
 
     auto *table_var = ctx.InputVar("W");
     PADDLE_ENFORCE_EQ(
+<<<<<<< HEAD
+        table_var->IsType<framework::LoDTensor>(),
+=======
         table_var->IsType<phi::DenseTensor>(),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         true,
         platform::errors::InvalidArgument("npu only accept LoDTensor"));
     output_t->mutable_data<T>(ctx.GetPlace());

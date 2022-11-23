@@ -56,7 +56,11 @@ class MemcpyOp : public framework::OperatorWithKernel {
  protected:
   framework::OpKernelType GetKernelTypeForVar(
       const std::string &var_name,
+<<<<<<< HEAD
+      const framework::Tensor &tensor,
+=======
       const phi::DenseTensor &tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       const framework::OpKernelType &expected_kernel_type) const override {
     return framework::OpKernelType(expected_kernel_type.data_type_,
                                    expected_kernel_type.place_,
@@ -133,6 +137,45 @@ raise error if the type is not listed above.
 
 namespace ops = paddle::operators;
 namespace plat = paddle::platform;
+<<<<<<< HEAD
+REGISTER_OPERATOR(
+    memcpy,
+    ops::MemcpyOp,
+    ops::MemcpyOpProtoMaker,
+    ops::MemcpyInferVarType,
+    paddle::framework::EmptyGradOpMaker<paddle::framework::OpDesc>,
+    paddle::framework::EmptyGradOpMaker<paddle::imperative::OpBase>);
+
+REGISTER_OP_CPU_KERNEL_FUNCTOR(memcpy,
+                               float,
+                               ops::MemcpyKernel,
+                               double,
+                               ops::MemcpyKernel,
+                               int,
+                               ops::MemcpyKernel,
+                               int64_t,
+                               ops::MemcpyKernel,
+                               bool,
+                               ops::MemcpyKernel,
+                               plat::float16,
+                               ops::MemcpyKernel);
+
+#if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
+REGISTER_OP_CUDA_KERNEL_FUNCTOR(memcpy,
+                                float,
+                                ops::MemcpyKernel,
+                                double,
+                                ops::MemcpyKernel,
+                                int,
+                                ops::MemcpyKernel,
+                                int64_t,
+                                ops::MemcpyKernel,
+                                bool,
+                                ops::MemcpyKernel,
+                                plat::float16,
+                                ops::MemcpyKernel);
+#endif
+=======
 
 DECLARE_INFER_SHAPE_FUNCTOR(memcpy,
                             MemcpyInferShapeFunctor,
@@ -146,6 +189,7 @@ REGISTER_OPERATOR(
     paddle::framework::EmptyGradOpMaker<paddle::framework::OpDesc>,
     paddle::framework::EmptyGradOpMaker<paddle::imperative::OpBase>,
     MemcpyInferShapeFunctor);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 #ifdef PADDLE_WITH_ASCEND_CL
 REGISTER_OP_NPU_KERNEL_FUNCTOR(memcpy,

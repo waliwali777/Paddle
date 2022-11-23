@@ -59,7 +59,11 @@ class CBroadcastOPMLUKernel : public framework::OpKernel<T> {
 
       if (out != x) {
         framework::TensorCopy(
+<<<<<<< HEAD
+            *static_cast<const framework::Tensor*>(x),
+=======
             *static_cast<const phi::DenseTensor*>(x),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             place,
             *platform::DeviceContextPool::Instance().Get(place),
             static_cast<phi::DenseTensor*>(out));

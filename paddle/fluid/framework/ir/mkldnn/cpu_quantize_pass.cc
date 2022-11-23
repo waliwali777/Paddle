@@ -693,6 +693,10 @@ void CPUQuantizePass::QuantizeConcat(Graph* graph) const {
 
     DequantizeOutput(
         g, concat_op, concat_out, "Out", output_scale, are_all_inputs_unsigned);
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     ++quantize_concat_count;
   };
 
@@ -776,6 +780,8 @@ void CPUQuantizePass::QuantizeImmutable(Graph* graph,
       return;
     }
 
+<<<<<<< HEAD
+=======
     // skip if the dtype of immutable_in is not float32
     auto dtype = immutable_in->Var()->GetDataType();
     if (dtype != proto::VarType::FP32) {
@@ -783,6 +789,7 @@ void CPUQuantizePass::QuantizeImmutable(Graph* graph,
       return;
     }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     if (!AreScalesPresentForNodes({immutable_out})) {
       MarkAndLogCannotQuantizeOp(immutable_op,
                                  "No scale available for the operator");
@@ -802,6 +809,15 @@ void CPUQuantizePass::QuantizeImmutable(Graph* graph,
     bool is_output_unsigned{false};
     auto output_scale =
         GetScaleValueForNode(immutable_out, &is_output_unsigned);
+<<<<<<< HEAD
+    DequantizeOutput(g,
+                     immutable_op,
+                     immutable_out,
+                     "Out",
+                     output_scale,
+                     is_output_unsigned);
+
+=======
     if (immutable_type == "split") {  // ops with multiple outputs
       DequantizeOutputs(
           g, immutable_op, "Out", output_scale, is_output_unsigned);
@@ -813,6 +829,7 @@ void CPUQuantizePass::QuantizeImmutable(Graph* graph,
                        output_scale,
                        is_output_unsigned);
     }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     ++quantize_immutable_count;
   };
 
@@ -877,6 +894,8 @@ void CPUQuantizePass::QuantizeMatmul(Graph* graph, bool with_residual) const {
                           "are different: x(%d), y(%d).",
                           is_x_unsigned,
                           is_y_unsigned));
+<<<<<<< HEAD
+=======
 
     if (with_residual) {
       GET_IR_NODE_FROM_SUBGRAPH(
@@ -899,6 +918,7 @@ void CPUQuantizePass::QuantizeMatmul(Graph* graph, bool with_residual) const {
                     "Scale_in_eltwise");
     }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     QuantizeInput(g,
                   matmul_op,
                   matmul_in_x,
@@ -961,7 +981,11 @@ void CPUQuantizePass::QuantizeElementwise(
 
     auto x_name = elementwise_op->Op()->Input("X");
     auto y_name = elementwise_op->Op()->Input("Y");
+<<<<<<< HEAD
+    Node *elementwise_x, *elementwise_y;
+=======
     Node *elementwise_x{nullptr}, *elementwise_y{nullptr};
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     for (auto& input : elementwise_op->inputs) {
       if (input->Name() == x_name[0]) elementwise_x = input;
@@ -1252,6 +1276,16 @@ void CPUQuantizePass::ApplyImpl(ir::Graph* graph) const {
   QuantizePool(graph);
   QuantizeConcat(graph);
   QuantizePriorBox(graph);
+<<<<<<< HEAD
+  QuantizeFc(graph);
+  QuantizeMatmul(graph);
+  QuantizeImmutable(graph, "reshape2", "X");
+  QuantizeImmutable(graph, "transpose2", "X");
+  QuantizeImmutable(graph, "slice", "Input");
+  QuantizeImmutable(graph, "shape", "Input");
+  QuantizeImmutable(graph, "nearest_interp", "X");
+  QuantizeImmutable(graph, "nearest_interp_v2", "X");
+=======
   QuantizeFc(graph, false /* with_residual_data */);
   QuantizeFc(graph, true /* with_residual_data */);
   QuantizeMatmul(graph, false /* with_residual_data */);
@@ -1262,6 +1296,7 @@ void CPUQuantizePass::ApplyImpl(ir::Graph* graph) const {
   QuantizeImmutable(graph, "nearest_interp", "X");
   QuantizeImmutable(graph, "nearest_interp_v2", "X");
   QuantizeImmutable(graph, "split", "X");
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   QuantizeElementwise(graph, "elementwise_add");
   QuantizeElementwise(graph, "elementwise_mul");
   QuantizeElementwise(graph, "elementwise_sub");

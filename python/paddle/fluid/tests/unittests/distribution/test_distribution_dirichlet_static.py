@@ -31,6 +31,7 @@ paddle.enable_static()
     [('test-one-dim', np.random.rand(89) + 5.0)],
 )
 class TestDirichlet(unittest.TestCase):
+
     def setUp(self):
         self.program = paddle.static.Program()
         self.executor = paddle.static.Executor()
@@ -109,11 +110,17 @@ class TestDirichlet(unittest.TestCase):
 
     def test_entropy(self):
         with paddle.static.program_guard(self.program):
+<<<<<<< HEAD
+            [out] = self.executor.run(self.program,
+                                      feed=self.feeds,
+                                      fetch_list=[self._paddle_diric.entropy()])
+=======
             [out] = self.executor.run(
                 self.program,
                 feed=self.feeds,
                 fetch_list=[self._paddle_diric.entropy()],
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             np.testing.assert_allclose(
                 out,
                 scipy.stats.dirichlet.entropy(self.concentration),

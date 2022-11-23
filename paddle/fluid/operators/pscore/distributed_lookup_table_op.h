@@ -75,7 +75,11 @@ class DistributedLookupTableKernel : public framework::OpKernel<T> {
       for (size_t idx = 0; idx < input_var_size; ++idx) {
         tmp_tensors.emplace_back(std::make_shared<phi::DenseTensor>());
         auto *p = tmp_tensors.back().get();
+<<<<<<< HEAD
+        framework::TensorCopy(inputs_variable[idx]->Get<framework::LoDTensor>(),
+=======
         framework::TensorCopy(inputs_variable[idx]->Get<phi::DenseTensor>(),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                               cpu_place,
                               context.device_context(),
                               p);
@@ -105,7 +109,11 @@ class DistributedLookupTableKernel : public framework::OpKernel<T> {
             *tmp_output_vec[idx],
             context.GetPlace(),
             context.device_context(),
+<<<<<<< HEAD
+            outputs_variable[idx]->GetMutable<framework::LoDTensor>());
+=======
             outputs_variable[idx]->GetMutable<phi::DenseTensor>());
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       }
     }
 

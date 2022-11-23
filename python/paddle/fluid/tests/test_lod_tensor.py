@@ -23,6 +23,7 @@ import unittest
 
 
 class TestLoDTensor(unittest.TestCase):
+
     def test_pybind_recursive_seq_lens(self):
         tensor = fluid.LoDTensor()
         recursive_seq_lens = []
@@ -63,10 +64,15 @@ class TestLoDTensor(unittest.TestCase):
 
     def test_create_lod_tensor(self):
         # Create LoDTensor from a list
+<<<<<<< HEAD
+        data = [[np.int64(1), np.int64(2),
+                 np.int64(3)], [np.int64(3), np.int64(4)]]
+=======
         data = [
             [np.int64(1), np.int64(2), np.int64(3)],
             [np.int64(3), np.int64(4)],
         ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         wrong_recursive_seq_lens = [[2, 2]]
         correct_recursive_seq_lens = [[3, 2]]
         self.assertRaises(
@@ -84,10 +90,18 @@ class TestLoDTensor(unittest.TestCase):
         )
         self.assertEqual(tensor._dtype(), core.VarDesc.VarType.INT64)
         self.assertEqual(tensor.shape(), [5, 1])
+<<<<<<< HEAD
+        self.assertTrue(
+            np.array_equal(
+                np.array(tensor),
+                np.array([1, 2, 3, 3,
+                          4]).reshape(tensor.shape()).astype('int64')))
+=======
         np.testing.assert_array_equal(
             np.array(tensor),
             np.array([1, 2, 3, 3, 4]).reshape(tensor.shape()).astype('int64'),
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         # Create LoDTensor from numpy array
         data = np.random.random([10, 1]).astype('float64')
@@ -155,10 +169,16 @@ class TestLoDTensor(unittest.TestCase):
         dltensor = tensor._to_dlpack()
         tensor_from_dlpack = fluid.core.from_dlpack(dltensor)
         self.assertTrue(isinstance(tensor_from_dlpack, fluid.core.Tensor))
+<<<<<<< HEAD
+        self.assertTrue(
+            np.array_equal(np.array(tensor_from_dlpack),
+                           np.array([[1], [2], [3], [4]]).astype('int')))
+=======
         np.testing.assert_array_equal(
             np.array(tensor_from_dlpack),
             np.array([[1], [2], [3], [4]]).astype('int'),
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         # when build with cuda
         if core.is_compiled_with_cuda():
             gtensor = fluid.create_lod_tensor(
@@ -169,10 +189,16 @@ class TestLoDTensor(unittest.TestCase):
             gdltensor = gtensor._to_dlpack()
             gtensor_from_dlpack = fluid.core.from_dlpack(gdltensor)
             self.assertTrue(isinstance(gtensor_from_dlpack, fluid.core.Tensor))
+<<<<<<< HEAD
+            self.assertTrue(
+                np.array_equal(np.array(gtensor_from_dlpack),
+                               np.array([[1], [2], [3], [4]]).astype('int')))
+=======
             np.testing.assert_array_equal(
                 np.array(gtensor_from_dlpack),
                 np.array([[1], [2], [3], [4]]).astype('int'),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_as_type(self):
         tensor = fluid.create_lod_tensor(

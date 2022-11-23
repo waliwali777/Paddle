@@ -37,7 +37,11 @@ class VGG(nn.Layer):
 
     Args:
         features (nn.Layer): Vgg features create by function make_layers.
+<<<<<<< HEAD
+        num_classes (int, optional): Output dim of last fc layer. If num_classes <= 0, last fc layer 
+=======
         num_classes (int, optional): Output dim of last fc layer. If num_classes <= 0, last fc layer
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             will not be defined. Default: 1000.
         with_pool (bool, optional): Use pool before the last three fc layer or not. Default: True.
 
@@ -200,7 +204,11 @@ def _vgg(arch, cfg, batch_norm, pretrained, **kwargs):
 def vgg11(pretrained=False, batch_norm=False, **kwargs):
     """VGG 11-layer model from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     Args:
         pretrained (bool, optional): Whether to load pre-trained weights. If True, returns a model pre-trained
                             on ImageNet. Default: False.
@@ -237,7 +245,11 @@ def vgg11(pretrained=False, batch_norm=False, **kwargs):
 def vgg13(pretrained=False, batch_norm=False, **kwargs):
     """VGG 13-layer model from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     Args:
         pretrained (bool, optional): Whether to load pre-trained weights. If True, returns a model pre-trained
                             on ImageNet. Default: False.
@@ -274,7 +286,11 @@ def vgg13(pretrained=False, batch_norm=False, **kwargs):
 def vgg16(pretrained=False, batch_norm=False, **kwargs):
     """VGG 16-layer model from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     Args:
         pretrained (bool, optional): Whether to load pre-trained weights. If True, returns a model pre-trained
                             on ImageNet. Default: False.
@@ -311,7 +327,11 @@ def vgg16(pretrained=False, batch_norm=False, **kwargs):
 def vgg19(pretrained=False, batch_norm=False, **kwargs):
     """VGG 19-layer model from
     `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     Args:
         pretrained (bool, optional): Whether to load pre-trained weights. If True, returns a model pre-trained
                             on ImageNet. Default: False.

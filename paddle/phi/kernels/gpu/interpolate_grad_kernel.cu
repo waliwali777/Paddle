@@ -1566,16 +1566,31 @@ PD_REGISTER_KERNEL(bilinear_interp_grad,
                    ALL_LAYOUT,
                    phi::BilinearInterpGradKernel,
                    float,
+<<<<<<< HEAD
+                   double) {
+  kernel->InputAt(2).SetBackend(phi::Backend::ALL_BACKEND);
+  kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
+}
+PD_REGISTER_KERNEL(nearest_interp_v2_grad,
+=======
                    double,
                    phi::dtype::float16) {
   kernel->InputAt(2).SetBackend(phi::Backend::ALL_BACKEND);
   kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
 }
 PD_REGISTER_KERNEL(nearest_interp_grad,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                    GPU,
                    ALL_LAYOUT,
                    phi::NearestInterpGradKernel,
                    float,
+<<<<<<< HEAD
+                   double) {
+  kernel->InputAt(2).SetBackend(phi::Backend::ALL_BACKEND);
+  kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
+}
+PD_REGISTER_KERNEL(trilinear_interp_v2_grad,
+=======
                    double,
                    phi::dtype::float16,
                    phi::dtype::bfloat16) {
@@ -1583,32 +1598,53 @@ PD_REGISTER_KERNEL(nearest_interp_grad,
   kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
 }
 PD_REGISTER_KERNEL(trilinear_interp_grad,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                    GPU,
                    ALL_LAYOUT,
                    phi::TrilinearInterpGradKernel,
                    float,
+<<<<<<< HEAD
+                   double) {
+  kernel->InputAt(2).SetBackend(phi::Backend::ALL_BACKEND);
+  kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
+}
+PD_REGISTER_KERNEL(linear_interp_v2_grad,
+=======
                    double,
                    phi::dtype::float16) {
   kernel->InputAt(2).SetBackend(phi::Backend::ALL_BACKEND);
   kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
 }
 PD_REGISTER_KERNEL(linear_interp_grad,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                    GPU,
                    ALL_LAYOUT,
                    phi::LinearInterpGradKernel,
                    float,
+<<<<<<< HEAD
+                   double) {
+  kernel->InputAt(2).SetBackend(phi::Backend::ALL_BACKEND);
+  kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
+}
+PD_REGISTER_KERNEL(bicubic_interp_v2_grad,
+=======
                    double,
                    phi::dtype::float16) {
   kernel->InputAt(2).SetBackend(phi::Backend::ALL_BACKEND);
   kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
 }
 PD_REGISTER_KERNEL(bicubic_interp_grad,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                    GPU,
                    ALL_LAYOUT,
                    phi::BicubicInterpGradKernel,
                    float,
+<<<<<<< HEAD
+                   double) {
+=======
                    double,
                    phi::dtype::float16) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   kernel->InputAt(2).SetBackend(phi::Backend::ALL_BACKEND);
   kernel->InputAt(3).SetBackend(phi::Backend::ALL_BACKEND);
 }

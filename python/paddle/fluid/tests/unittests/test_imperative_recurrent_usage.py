@@ -23,6 +23,7 @@ import numpy as np
 
 
 class RecurrentTest(fluid.Layer):
+
     def __init__(self, name_scope):
         super().__init__(name_scope)
 
@@ -33,6 +34,7 @@ class RecurrentTest(fluid.Layer):
 
 
 class TestRecurrentFeed(unittest.TestCase):
+
     def test_recurrent_feed(self):
 
         seed = 90
@@ -82,12 +84,21 @@ class TestRecurrentFeed(unittest.TestCase):
         with new_program_scope():
             fluid.default_startup_program().random_seed = seed
             fluid.default_main_program().random_seed = seed
+<<<<<<< HEAD
+            in1 = fluid.layers.data(name="inp1",
+                                    shape=[2, 2],
+                                    append_batch_size=False)
+            in2 = fluid.layers.data(name="inp2",
+                                    shape=[2, 2],
+                                    append_batch_size=False)
+=======
             in1 = fluid.layers.data(
                 name="inp1", shape=[2, 2], append_batch_size=False
             )
             in2 = fluid.layers.data(
                 name="inp2", shape=[2, 2], append_batch_size=False
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             rt1 = RecurrentTest("RecurrentTest")
             static_sum_out, static_out = rt1(in1, in2)
             fluid.backward.append_backward(static_sum_out)
@@ -104,11 +115,20 @@ class TestRecurrentFeed(unittest.TestCase):
             )
             fetch_list = [static_sum_out, static_out, static_dout]
             for i in range(3):
+<<<<<<< HEAD
+                out = exe.run(fluid.default_main_program(),
+                              feed={
+                                  "inp1": original_np1,
+                                  "inp2": original_np2
+                              },
+                              fetch_list=fetch_list)
+=======
                 out = exe.run(
                     fluid.default_main_program(),
                     feed={"inp1": original_np1, "inp2": original_np2},
                     fetch_list=fetch_list,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 static_out_value = out[1]
                 static_sum_out = out[0]
                 static_dout = out[2]

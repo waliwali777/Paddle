@@ -57,7 +57,11 @@ class MLUMergedMomentumOpKernel : public framework::OpKernel<T> {
             grads.size(),
             n));
 
+<<<<<<< HEAD
+    auto velocitys = ctx.MultiInput<framework::Tensor>("Velocity");
+=======
     auto velocitys = ctx.MultiInput<phi::DenseTensor>("Velocity");
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     PADDLE_ENFORCE_EQ(n,
                       velocitys.size(),
                       platform::errors::InvalidArgument(

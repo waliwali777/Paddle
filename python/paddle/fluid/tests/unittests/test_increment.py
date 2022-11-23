@@ -20,11 +20,18 @@ import paddle.fluid as fluid
 
 
 class TestIncrement(unittest.TestCase):
+
     def test_api(self):
         with fluid.program_guard(fluid.Program(), fluid.Program()):
+<<<<<<< HEAD
+            input = fluid.layers.fill_constant(shape=[1],
+                                               dtype='int64',
+                                               value=5)
+=======
             input = fluid.layers.fill_constant(
                 shape=[1], dtype='int64', value=5
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             expected_result = np.array([8], dtype='int64')
 
             output = paddle.tensor.math.increment(input, value=3)
@@ -40,6 +47,7 @@ class TestIncrement(unittest.TestCase):
 
 
 class TestInplaceApiWithDataTransform(unittest.TestCase):
+
     def test_increment(self):
         if fluid.core.is_compiled_with_cuda():
             paddle.enable_static()

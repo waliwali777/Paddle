@@ -19,6 +19,7 @@ import unittest
 
 
 class TestClass(unittest.TestCase):
+
     def setUp(self):
         self.use_double_buffer = True
         self.use_py_reader = True
@@ -48,12 +49,21 @@ class TestClass(unittest.TestCase):
             main_prog = fluid.Program()
             startup_prog = fluid.Program()
             with fluid.program_guard(main_prog, startup_prog):
+<<<<<<< HEAD
+                img = fluid.layers.data(shape=img_shape,
+                                        dtype='float32',
+                                        name='image')
+                label = fluid.layers.data(shape=label_shape,
+                                          dtype='int64',
+                                          name='label')
+=======
                 img = fluid.layers.data(
                     shape=img_shape, dtype='float32', name='image'
                 )
                 label = fluid.layers.data(
                     shape=label_shape, dtype='int64', name='label'
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                 feeder = fluid.DataFeeder(feed_list=[img, label], place=p)
 
@@ -69,17 +79,27 @@ class TestClass(unittest.TestCase):
                         feed_list=[img, label],
                         capacity=4,
                         iterable=True,
+<<<<<<< HEAD
+                        use_double_buffer=use_double_buffer)
+                    py_reader.decorate_sample_list_generator(batch_reader,
+                                                             places=p)
+=======
                         use_double_buffer=use_double_buffer,
                     )
                     py_reader.decorate_sample_list_generator(
                         batch_reader, places=p
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 else:
                     py_reader = fluid.io.DataLoader.from_generator(
                         feed_list=[img, label],
                         capacity=4,
                         iterable=True,
+<<<<<<< HEAD
+                        use_double_buffer=use_double_buffer
+=======
                         use_double_buffer=use_double_buffer,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     ).set_sample_list_generator(batch_reader, places=p)
 
                 for break_beforehand in [True, False]:
@@ -101,8 +121,12 @@ class TestClass(unittest.TestCase):
 
                             batch_id += 1
                             if break_beforehand and batch_id >= int(
+<<<<<<< HEAD
+                                    batch_num / 2):
+=======
                                 batch_num / 2
                             ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                 break
 
                         if break_beforehand:
@@ -112,18 +136,21 @@ class TestClass(unittest.TestCase):
 
 
 class TestClass2(TestClass):
+
     def setUp(self):
         self.use_double_buffer = False
         self.use_py_reader = True
 
 
 class TestClass3(TestClass):
+
     def setUp(self):
         self.use_double_buffer = True
         self.use_py_reader = False
 
 
 class TestClass4(TestClass):
+
     def setUp(self):
         self.use_double_buffer = False
         self.use_py_reader = False

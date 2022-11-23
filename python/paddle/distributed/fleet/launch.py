@@ -177,6 +177,14 @@ see: http://www.paddlepaddle.org/documentation/docs/zh/1.6/user_guides/howto/tra
         )
         base_group.add_argument("--selected_mlus", dest="mlus")
 
+<<<<<<< HEAD
+    base_group.add_argument("training_script",
+                            type=str,
+                            help="The full path to the single GPU training "
+                            "program/script to be launched in parallel, "
+                            "followed by all the arguments for the "
+                            "training script")
+=======
     base_group.add_argument(
         "training_script",
         type=str,
@@ -185,6 +193,7 @@ see: http://www.paddlepaddle.org/documentation/docs/zh/1.6/user_guides/howto/tra
         "followed by all the arguments for the "
         "training script",
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     base_group.add_argument('training_script_args', nargs=REMAINDER)
 
@@ -220,6 +229,20 @@ see: http://www.paddlepaddle.org/documentation/docs/zh/1.6/user_guides/howto/tra
 
     ps_group = parser.add_argument_group("Parameter-Server Parameters")
     # for parameter server
+<<<<<<< HEAD
+    ps_group.add_argument("--servers",
+                          type=str,
+                          default="",
+                          help="User defined servers ip:port")
+    ps_group.add_argument("--workers",
+                          type=str,
+                          default="",
+                          help="User defined workers ip:port")
+    ps_group.add_argument("--coordinators",
+                          type=str,
+                          default="",
+                          help="User defined coordinators ip:port")
+=======
     ps_group.add_argument(
         "--servers", type=str, default="", help="User defined servers ip:port"
     )
@@ -232,6 +255,7 @@ see: http://www.paddlepaddle.org/documentation/docs/zh/1.6/user_guides/howto/tra
         default="",
         help="User defined coordinators ip:port",
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     ps_group.add_argument(
         "--heter_workers",
         type=str,
@@ -246,6 +270,15 @@ see: http://www.paddlepaddle.org/documentation/docs/zh/1.6/user_guides/howto/tra
     )
 
     ps_group.add_argument("--worker_num", type=int, help="number of workers")
+<<<<<<< HEAD
+    ps_group.add_argument("--coordinator_num",
+                          type=int,
+                          help="number of coordinators")
+    ps_group.add_argument("--server_num", type=int, help="number of servers")
+    ps_group.add_argument("--heter_worker_num",
+                          type=str,
+                          help="number of heter_workers in each stage 1;2;3")
+=======
     ps_group.add_argument(
         "--coordinator_num", type=int, help="number of coordinators"
     )
@@ -255,26 +288,46 @@ see: http://www.paddlepaddle.org/documentation/docs/zh/1.6/user_guides/howto/tra
         type=str,
         help="number of heter_workers in each stage 1;2;3",
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     ps_group.add_argument("--http_port", type=int, help="Gloo http Port")
 
     # parameter elastic mode
     elastic_group = parser.add_argument_group("Elastic Parameters")
+<<<<<<< HEAD
+    elastic_group.add_argument("--elastic_server",
+                               type=str,
+                               help="etcd server host:port")
+    elastic_group.add_argument("--elastic_pre_hook",
+                               type=str,
+                               help="elastic pre_hook shell cmd")
+=======
     elastic_group.add_argument(
         "--elastic_server", type=str, help="etcd server host:port"
     )
     elastic_group.add_argument(
         "--elastic_pre_hook", type=str, help="elastic pre_hook shell cmd"
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     elastic_group.add_argument("--job_id", type=str, help="job unique id")
     elastic_group.add_argument("--np", type=int, help="job pod/node number")
     elastic_group.add_argument("--scale", type=int, default=0, help="scale np")
+<<<<<<< HEAD
+    elastic_group.add_argument("--host",
+                               type=str,
+                               help="bind host, default to POD_IP env")
+    elastic_group.add_argument("--force",
+                               type=bool,
+                               default=False,
+                               help="update np force")
+=======
     elastic_group.add_argument(
         "--host", type=str, help="bind host, default to POD_IP env"
     )
     elastic_group.add_argument(
         "--force", type=bool, default=False, help="update np force"
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     known_args, _ = parser.parse_known_args()
     return known_args
@@ -417,6 +470,18 @@ def get_cluster_info(args):
                 args, device_mode
             )
     elif cloud_utils.use_paddlecloud() and trainers_num != 1:
+<<<<<<< HEAD
+        cluster, pod = cloud_utils.get_cloud_cluster(args.ips, device_mode,
+                                                     devices_per_proc,
+                                                     start_port)
+        logger.debug("get cluster from cloud:{}".format(cluster))
+    elif device_mode == DeviceMode.ASCEND_NPU:
+        # for ascend
+        cluster, pod = ascend_utils.get_cloud_cluster(rank_table_file=os.getenv(
+            "RANK_TABLE_FILE", None),
+                                                      device_mode=device_mode,
+                                                      start_port=start_port)
+=======
         cluster, pod = cloud_utils.get_cloud_cluster(
             args.ips, device_mode, devices_per_proc, start_port
         )
@@ -428,6 +493,7 @@ def get_cluster_info(args):
             device_mode=device_mode,
             start_port=start_port,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     else:
         # trainers_num = 1 or not use paddlecloud ips="a,b"
         cluster, pod = get_cluster_from_args(
@@ -452,6 +518,14 @@ def launch_collective(args):
     cluster, pod = get_cluster_info(args)
     global_envs = get_global_envs(args, tmp_dir)
 
+<<<<<<< HEAD
+    procs = start_local_trainers(cluster,
+                                 pod,
+                                 training_script=args.training_script,
+                                 training_script_args=args.training_script_args,
+                                 log_dir=args.log_dir,
+                                 envs=global_envs)
+=======
     procs = start_local_trainers(
         cluster,
         pod,
@@ -460,6 +534,7 @@ def launch_collective(args):
         log_dir=args.log_dir,
         envs=global_envs,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     for idx, proc in enumerate(procs):
         print("launch proc_id:{} idx:{}".format(proc.proc.pid, idx))
@@ -572,10 +647,15 @@ def which_distributed_mode(args):
 
     if len(has_ps_args) > 0:
         logger.info(
+<<<<<<< HEAD
+            "Run parameter-sever mode. pserver arguments:{}, accelerators count:{}"
+            .format(has_ps_args, accelerators))
+=======
             "Run parameter-sever mode. pserver arguments:{}, accelerators count:{}".format(
                 has_ps_args, accelerators
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         has_ps_heter_args = list(set(has_ps_args) & set(ps_heter_args))
         has_coordinator_args = list(set(has_ps_args) & set(coordinator_args))
         if len(has_ps_heter_args) > 0:
@@ -585,9 +665,13 @@ def which_distributed_mode(args):
     elif len(has_collective_args) > 0:
         logger.info(
             "Run collective mode. gpu arguments:{}, cuda count:{}".format(
+<<<<<<< HEAD
+                has_collective_args, accelerators))
+=======
                 has_collective_args, accelerators
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         return DistributeMode.COLLECTIVE
     else:
         if (

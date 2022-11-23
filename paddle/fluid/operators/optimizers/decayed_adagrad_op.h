@@ -24,7 +24,11 @@ class DecayedAdagradOpKernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext& ctx) const override {
     const auto* param_var = ctx.InputVar("Param");
+<<<<<<< HEAD
+    PADDLE_ENFORCE_EQ(param_var->IsType<framework::LoDTensor>(),
+=======
     PADDLE_ENFORCE_EQ(param_var->IsType<phi::DenseTensor>(),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                       true,
                       platform::errors::InvalidArgument(
                           "The Var(%s)'s type should be LoDTensor, "
@@ -32,7 +36,11 @@ class DecayedAdagradOpKernel : public framework::OpKernel<T> {
                           ctx.InputNames("Param").front(),
                           framework::ToTypeName(param_var->Type())));
     const auto* grad_var = ctx.InputVar("Grad");
+<<<<<<< HEAD
+    PADDLE_ENFORCE_EQ(grad_var->IsType<framework::LoDTensor>(),
+=======
     PADDLE_ENFORCE_EQ(grad_var->IsType<phi::DenseTensor>(),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                       true,
                       platform::errors::InvalidArgument(
                           "The Var(%s)'s type should be LoDTensor, "

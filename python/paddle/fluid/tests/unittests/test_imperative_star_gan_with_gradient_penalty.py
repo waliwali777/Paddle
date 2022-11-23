@@ -23,7 +23,12 @@ if fluid.is_compiled_with_cuda():
     fluid.core.globals()['FLAGS_cudnn_deterministic'] = True
 
 
+<<<<<<< HEAD
+class Config(object):
+
+=======
 class Config:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, place, sort_sum_gradient=True):
         self.place = place
 
@@ -59,6 +64,7 @@ class Config:
 
 
 def create_mnist_dataset(cfg):
+
     def create_target_label(label):
         return label
         # return (label + 1) % cfg.c_dim # fake label target
@@ -105,6 +111,7 @@ def create_mnist_dataset(cfg):
 
 
 class InstanceNorm(fluid.dygraph.Layer):
+
     def __init__(self, num_channels, epsilon=1e-5):
         super().__init__()
         self.epsilon = epsilon
@@ -128,6 +135,25 @@ class InstanceNorm(fluid.dygraph.Layer):
 
 
 class Conv2DLayer(fluid.dygraph.Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 num_channels,
+                 num_filters=64,
+                 filter_size=7,
+                 stride=1,
+                 padding=0,
+                 norm=None,
+                 use_bias=False,
+                 relufactor=None):
+        super(Conv2DLayer, self).__init__()
+        self._conv = fluid.dygraph.Conv2D(num_channels=num_channels,
+                                          num_filters=num_filters,
+                                          filter_size=filter_size,
+                                          stride=stride,
+                                          padding=padding,
+                                          bias_attr=None if use_bias else False)
+=======
     def __init__(
         self,
         num_channels,
@@ -148,6 +174,7 @@ class Conv2DLayer(fluid.dygraph.Layer):
             padding=padding,
             bias_attr=None if use_bias else False,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         if norm is not None:
             self._norm = InstanceNorm(num_filters)
@@ -169,6 +196,19 @@ class Conv2DLayer(fluid.dygraph.Layer):
 
 
 class Deconv2DLayer(fluid.dygraph.Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 num_channels,
+                 num_filters=64,
+                 filter_size=7,
+                 stride=1,
+                 padding=0,
+                 norm=None,
+                 use_bias=False,
+                 relufactor=None):
+        super(Deconv2DLayer, self).__init__()
+=======
     def __init__(
         self,
         num_channels,
@@ -181,6 +221,7 @@ class Deconv2DLayer(fluid.dygraph.Layer):
         relufactor=None,
     ):
         super().__init__()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self._deconv = fluid.dygraph.Conv2DTranspose(
             num_channels=num_channels,
@@ -211,7 +252,26 @@ class Deconv2DLayer(fluid.dygraph.Layer):
 
 
 class ResidualBlock(fluid.dygraph.Layer):
+
     def __init__(self, num_channels, num_filters):
+<<<<<<< HEAD
+        super(ResidualBlock, self).__init__()
+        self._conv0 = Conv2DLayer(num_channels=num_channels,
+                                  num_filters=num_filters,
+                                  filter_size=3,
+                                  stride=1,
+                                  padding=1,
+                                  norm=True,
+                                  relufactor=0)
+
+        self._conv1 = Conv2DLayer(num_channels=num_filters,
+                                  num_filters=num_filters,
+                                  filter_size=3,
+                                  stride=1,
+                                  padding=1,
+                                  norm=True,
+                                  relufactor=None)
+=======
         super().__init__()
         self._conv0 = Conv2DLayer(
             num_channels=num_channels,
@@ -232,6 +292,7 @@ class ResidualBlock(fluid.dygraph.Layer):
             norm=True,
             relufactor=None,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def forward(self, input):
         conv0 = self._conv0(input)
@@ -240,7 +301,18 @@ class ResidualBlock(fluid.dygraph.Layer):
 
 
 class Generator(fluid.dygraph.Layer):
+
     def __init__(self, cfg, num_channels=3):
+<<<<<<< HEAD
+        super(Generator, self).__init__()
+        conv_base = Conv2DLayer(num_channels=cfg.c_dim + num_channels,
+                                num_filters=cfg.g_base_dims,
+                                filter_size=7,
+                                stride=1,
+                                padding=3,
+                                norm=True,
+                                relufactor=0)
+=======
         super().__init__()
         conv_base = Conv2DLayer(
             num_channels=cfg.c_dim + num_channels,
@@ -251,10 +323,20 @@ class Generator(fluid.dygraph.Layer):
             norm=True,
             relufactor=0,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         sub_layers = [conv_base]
         cur_channels = cfg.g_base_dims
         for i in range(2):
+<<<<<<< HEAD
+            sub_layer = Conv2DLayer(num_channels=cur_channels,
+                                    num_filters=cur_channels * 2,
+                                    filter_size=4,
+                                    stride=2,
+                                    padding=1,
+                                    norm=True,
+                                    relufactor=0)
+=======
             sub_layer = Conv2DLayer(
                 num_channels=cur_channels,
                 num_filters=cur_channels * 2,
@@ -264,6 +346,7 @@ class Generator(fluid.dygraph.Layer):
                 norm=True,
                 relufactor=0,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             cur_channels *= 2
             sub_layers.append(sub_layer)
@@ -273,9 +356,14 @@ class Generator(fluid.dygraph.Layer):
         repeat_num = cfg.g_repeat_num
         sub_layers = []
         for i in range(repeat_num):
+<<<<<<< HEAD
+            res_block = ResidualBlock(num_channels=cur_channels,
+                                      num_filters=cfg.g_base_dims * 4)
+=======
             res_block = ResidualBlock(
                 num_channels=cur_channels, num_filters=cfg.g_base_dims * 4
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             sub_layers.append(res_block)
 
         self._res_block = paddle.nn.Sequential(*sub_layers)
@@ -283,6 +371,16 @@ class Generator(fluid.dygraph.Layer):
         cur_channels = cfg.g_base_dims * 4
         sub_layers = []
         for i in range(2):
+<<<<<<< HEAD
+            rate = 2**(1 - i)
+            deconv = Deconv2DLayer(num_channels=cur_channels,
+                                   num_filters=cfg.g_base_dims * rate,
+                                   filter_size=4,
+                                   stride=2,
+                                   padding=1,
+                                   relufactor=0,
+                                   norm=True)
+=======
             rate = 2 ** (1 - i)
             deconv = Deconv2DLayer(
                 num_channels=cur_channels,
@@ -293,11 +391,20 @@ class Generator(fluid.dygraph.Layer):
                 relufactor=0,
                 norm=True,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             cur_channels = cfg.g_base_dims * rate
             sub_layers.append(deconv)
 
         self._deconv = paddle.nn.Sequential(*sub_layers)
 
+<<<<<<< HEAD
+        self._conv1 = Conv2DLayer(num_channels=cur_channels,
+                                  num_filters=3,
+                                  filter_size=7,
+                                  stride=1,
+                                  padding=3,
+                                  relufactor=None)
+=======
         self._conv1 = Conv2DLayer(
             num_channels=cur_channels,
             num_filters=3,
@@ -306,6 +413,7 @@ class Generator(fluid.dygraph.Layer):
             padding=3,
             relufactor=None,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def forward(self, input, label_trg):
         shape = input.shape
@@ -325,11 +433,20 @@ class Generator(fluid.dygraph.Layer):
 
 
 class Discriminator(fluid.dygraph.Layer):
+
     def __init__(self, cfg, num_channels=3):
         super().__init__()
 
         cur_dim = cfg.d_base_dims
 
+<<<<<<< HEAD
+        conv_base = Conv2DLayer(num_channels=num_channels,
+                                num_filters=cur_dim,
+                                filter_size=4,
+                                stride=2,
+                                padding=1,
+                                relufactor=0.2)
+=======
         conv_base = Conv2DLayer(
             num_channels=num_channels,
             num_filters=cur_dim,
@@ -338,10 +455,19 @@ class Discriminator(fluid.dygraph.Layer):
             padding=1,
             relufactor=0.2,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         repeat_num = cfg.d_repeat_num
         sub_layers = [conv_base]
         for i in range(1, repeat_num):
+<<<<<<< HEAD
+            sub_layer = Conv2DLayer(num_channels=cur_dim,
+                                    num_filters=cur_dim * 2,
+                                    filter_size=4,
+                                    stride=2,
+                                    padding=1,
+                                    relufactor=0.2)
+=======
             sub_layer = Conv2DLayer(
                 num_channels=cur_dim,
                 num_filters=cur_dim * 2,
@@ -350,6 +476,7 @@ class Discriminator(fluid.dygraph.Layer):
                 padding=1,
                 relufactor=0.2,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             cur_dim *= 2
             sub_layers.append(sub_layer)
 
@@ -357,6 +484,17 @@ class Discriminator(fluid.dygraph.Layer):
 
         kernel_size = int(cfg.image_size / np.power(2, repeat_num))
 
+<<<<<<< HEAD
+        self._conv1 = Conv2DLayer(num_channels=cur_dim,
+                                  num_filters=1,
+                                  filter_size=3,
+                                  stride=1,
+                                  padding=1)
+
+        self._conv2 = Conv2DLayer(num_channels=cur_dim,
+                                  num_filters=cfg.c_dim,
+                                  filter_size=kernel_size)
+=======
         self._conv1 = Conv2DLayer(
             num_channels=cur_dim,
             num_filters=1,
@@ -368,6 +506,7 @@ class Discriminator(fluid.dygraph.Layer):
         self._conv2 = Conv2DLayer(
             num_channels=cur_dim, num_filters=cfg.c_dim, filter_size=kernel_size
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def forward(self, input):
         conv = self._conv0(input)
@@ -378,6 +517,13 @@ class Discriminator(fluid.dygraph.Layer):
 
 def loss_cls(cls, label, cfg):
     cls_shape = cls.shape
+<<<<<<< HEAD
+    cls = fluid.layers.reshape(cls,
+                               [-1, cls_shape[1] * cls_shape[2] * cls_shape[3]])
+    return fluid.layers.reduce_sum(
+        fluid.layers.sigmoid_cross_entropy_with_logits(cls,
+                                                       label)) / cfg.batch_size
+=======
     cls = paddle.reshape(cls, [-1, cls_shape[1] * cls_shape[2] * cls_shape[3]])
     return (
         fluid.layers.reduce_sum(
@@ -385,10 +531,21 @@ def loss_cls(cls, label, cfg):
         )
         / cfg.batch_size
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 def calc_gradients(outputs, inputs, no_grad_set):
     if fluid._non_static_mode():
+<<<<<<< HEAD
+        return fluid.dygraph.grad(outputs=outputs,
+                                  inputs=inputs,
+                                  no_grad_vars=no_grad_set,
+                                  create_graph=True)
+    else:
+        return fluid.gradients(targets=outputs,
+                               inputs=inputs,
+                               no_grad_set=no_grad_set)
+=======
         return fluid.dygraph.grad(
             outputs=outputs,
             inputs=inputs,
@@ -399,14 +556,24 @@ def calc_gradients(outputs, inputs, no_grad_set):
         return fluid.gradients(
             targets=outputs, inputs=inputs, no_grad_set=no_grad_set
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 def gradient_penalty(f, real, fake, no_grad_set, cfg):
+
     def _interpolate(a, b):
         shape = [a.shape[0]]
+<<<<<<< HEAD
+        alpha = fluid.layers.uniform_random_batch_size_like(input=a,
+                                                            shape=shape,
+                                                            min=0.1,
+                                                            max=1.0,
+                                                            seed=cfg.seed)
+=======
         alpha = fluid.layers.uniform_random_batch_size_like(
             input=a, shape=shape, min=0.1, max=1.0, seed=cfg.seed
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         inner = fluid.layers.elementwise_mul(
             b, 1.0 - alpha, axis=0
@@ -418,9 +585,15 @@ def gradient_penalty(f, real, fake, no_grad_set, cfg):
     if isinstance(pred, tuple):
         pred = pred[0]
 
+<<<<<<< HEAD
+    gradient = calc_gradients(outputs=[pred],
+                              inputs=[x],
+                              no_grad_set=no_grad_set)
+=======
     gradient = calc_gradients(
         outputs=[pred], inputs=[x], no_grad_set=no_grad_set
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     if gradient is None:
         return None
@@ -433,7 +606,12 @@ def gradient_penalty(f, real, fake, no_grad_set, cfg):
     )
 
     epsilon = 1e-16
+<<<<<<< HEAD
+    norm = fluid.layers.sqrt(
+        fluid.layers.reduce_sum(fluid.layers.square(gradient), dim=1) + epsilon)
+=======
     norm = paddle.sqrt(paddle.sum(paddle.square(gradient), axis=1) + epsilon)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     gp = paddle.mean(paddle.square(norm - 1.0))
     return gp
@@ -485,6 +663,16 @@ def build_optimizer(layer, cfg, loss=None):
     beta1 = 0.5
     beta2 = 0.999
     if fluid._non_static_mode():
+<<<<<<< HEAD
+        return fluid.optimizer.Adam(learning_rate=learning_rate,
+                                    beta1=beta1,
+                                    beta2=beta2,
+                                    parameter_list=layer.parameters())
+    else:
+        optimizer = fluid.optimizer.Adam(learning_rate=learning_rate,
+                                         beta1=beta1,
+                                         beta2=beta2)
+=======
         return fluid.optimizer.Adam(
             learning_rate=learning_rate,
             beta1=beta1,
@@ -495,12 +683,18 @@ def build_optimizer(layer, cfg, loss=None):
         optimizer = fluid.optimizer.Adam(
             learning_rate=learning_rate, beta1=beta1, beta2=beta2
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         optimizer.minimize(loss, parameter_list=layer.parameters())
         return optimizer
 
 
+<<<<<<< HEAD
+class DyGraphTrainModel(object):
+
+=======
 class DyGraphTrainModel:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, cfg):
         paddle.seed(1)
         paddle.framework.random._manual_program_seed(1)
@@ -558,7 +752,12 @@ class DyGraphTrainModel:
         return g_loss.numpy()[0], d_loss.numpy()[0]
 
 
+<<<<<<< HEAD
+class StaticGraphTrainModel(object):
+
+=======
 class StaticGraphTrainModel:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, cfg):
         self.cfg = cfg
 
@@ -566,6 +765,15 @@ class StaticGraphTrainModel:
             image_real = fluid.data(
                 shape=[None, 3, cfg.image_size, cfg.image_size],
                 dtype='float32',
+<<<<<<< HEAD
+                name='image_real')
+            label_org = fluid.data(shape=[None, cfg.c_dim],
+                                   dtype='float32',
+                                   name='label_org')
+            label_trg = fluid.data(shape=[None, cfg.c_dim],
+                                   dtype='float32',
+                                   name='label_trg')
+=======
                 name='image_real',
             )
             label_org = fluid.data(
@@ -574,6 +782,7 @@ class StaticGraphTrainModel:
             label_trg = fluid.data(
                 shape=[None, cfg.c_dim], dtype='float32', name='label_trg'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             return image_real, label_org, label_trg
 
         paddle.seed(cfg.seed)
@@ -640,6 +849,7 @@ class StaticGraphTrainModel:
 
 
 class TestStarGANWithGradientPenalty(unittest.TestCase):
+
     def func_main(self):
         self.place_test(fluid.CPUPlace())
 
@@ -673,9 +883,15 @@ class TestStarGANWithGradientPenalty(unittest.TestCase):
                     )
                     eager_dygraph_loss.append(loss)
 
+<<<<<<< HEAD
+        for (g_loss_f, d_loss_f), (g_loss_e,
+                                   d_loss_e) in zip(fluid_dygraph_loss,
+                                                    eager_dygraph_loss):
+=======
         for (g_loss_f, d_loss_f), (g_loss_e, d_loss_e) in zip(
             fluid_dygraph_loss, eager_dygraph_loss
         ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             self.assertEqual(g_loss_f, g_loss_e)
             self.assertEqual(d_loss_f, d_loss_e)
 
@@ -684,6 +900,7 @@ class TestStarGANWithGradientPenalty(unittest.TestCase):
 
 
 class TestStarGANWithGradientPenaltyLegacy(unittest.TestCase):
+
     def func_main(self):
         self.place_test(fluid.CPUPlace())
 
@@ -713,9 +930,14 @@ class TestStarGANWithGradientPenaltyLegacy(unittest.TestCase):
                 loss = dygraph_model.run(image_real, label_org, label_trg)
                 dygraph_loss.append(loss)
 
+<<<<<<< HEAD
+        for (g_loss_s, d_loss_s), (g_loss_d,
+                                   d_loss_d) in zip(static_loss, dygraph_loss):
+=======
         for (g_loss_s, d_loss_s), (g_loss_d, d_loss_d) in zip(
             static_loss, dygraph_loss
         ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             self.assertEqual(g_loss_s, g_loss_d)
             self.assertEqual(d_loss_s, d_loss_d)
 

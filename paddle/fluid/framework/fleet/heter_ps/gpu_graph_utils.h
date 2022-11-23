@@ -17,11 +17,59 @@
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
 #include <stdio.h>
+<<<<<<< HEAD
+#include <time.h>
+#include <algorithm>
+#include <random>
+#include <vector>
+#include "paddle/fluid/platform/enforce.h"
+
+DECLARE_bool(gpugraph_debug_gpu_memory);
+
+namespace paddle {
+namespace framework {
+
+/**
+ * @brief wrapper of the std::default_random_engine each construction will have
+ * different seeds.
+ */
+struct random_engine_wrapper_t {
+  std::default_random_engine engine;
+  random_engine_wrapper_t() {
+    timespec tp;
+    clock_gettime(CLOCK_REALTIME, &tp);
+    static std::atomic<unsigned long> x(static_cast<unsigned long>(1));
+    std::seed_seq sseq = {
+        x++, x++, x++, (unsigned long)(tp.tv_sec * 1e9 + tp.tv_nsec)};
+    engine.seed(sseq);
+  }
+};
+
+/**
+ * @brief Get a n-size vector<int>, but its element has unique shuffled int
+ * value (from 0 to n-1).
+ * @param n vector size
+ * @return the shuffled vector.
+ */
+inline std::vector<int> shuffle_int_vector(int n) {
+  random_engine_wrapper_t random_engine_wrapper;
+  std::vector<int> ret(n);
+  int i = 0;
+
+  for (auto& e : ret) {
+    e = i++;
+  }
+  std::shuffle(ret.begin(), ret.end(), random_engine_wrapper.engine);
+  return std::move(ret);
+}
+
+=======
 #include "paddle/fluid/platform/enforce.h"
 
 namespace paddle {
 namespace framework {
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #define CUDA_CHECK(cmd)                                                       \
   do {                                                                        \
     cudaError_t e = cmd;                                                      \
@@ -39,6 +87,12 @@ class CudaDeviceRestorer {
 };
 
 inline void debug_gpu_memory_info(int gpu_id, const char* desc) {
+<<<<<<< HEAD
+  if (!FLAGS_gpugraph_debug_gpu_memory) {
+    return;
+  }
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   CudaDeviceRestorer r;
 
   size_t avail{0};
@@ -57,6 +111,12 @@ inline void debug_gpu_memory_info(int gpu_id, const char* desc) {
 }
 
 inline void debug_gpu_memory_info(const char* desc) {
+<<<<<<< HEAD
+  if (!FLAGS_gpugraph_debug_gpu_memory) {
+    return;
+  }
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   CudaDeviceRestorer r;
 
   int device_num = 0;

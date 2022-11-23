@@ -111,9 +111,16 @@ def mean(x, axis=None, keepdim=False, name=None):
 
     attrs = {'dim': axis, 'keep_dim': keepdim, 'reduce_all': reduce_all}
     out = helper.create_variable_for_type_inference(x.dtype)
+<<<<<<< HEAD
+    helper.append_op(type='reduce_mean',
+                     inputs={'X': x},
+                     outputs={'Out': out},
+                     attrs=attrs)
+=======
     helper.append_op(
         type='reduce_mean', inputs={'X': x}, outputs={'Out': out}, attrs=attrs
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
@@ -284,6 +291,10 @@ def nanmedian(x, axis=None, keepdim=True, name=None):
 
     Examples:
         .. code-block:: python
+<<<<<<< HEAD
+            :name: nanmedian-example
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             import paddle
             x = paddle.to_tensor([[float('nan'), 2. , 3. ], [0. , 1. , 2. ]])
@@ -320,9 +331,14 @@ def nanmedian(x, axis=None, keepdim=True, name=None):
         )
 
     for i in range(len(axis)):
+<<<<<<< HEAD
+        if not isinstance(axis[i], int) or not (axis[i] < dims
+                                                and axis[i] >= -dims):
+=======
         if not isinstance(axis[i], int) or not (
             axis[i] < dims and axis[i] >= -dims
         ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             raise ValueError(
                 "Axis should be None, int, or a list, element should in range [-rank(x), rank(x))."
             )
@@ -333,6 +349,15 @@ def nanmedian(x, axis=None, keepdim=True, name=None):
         raise ValueError("Axis has duplicated elements.")
 
     if _in_legacy_dygraph():
+<<<<<<< HEAD
+        median_index, out = _C_ops.nanmedian(x, 'axis', axis, 'keepdim',
+                                             keepdim)
+        return out
+
+    check_variable_and_dtype(
+        x, 'X', ['int32', 'int64', 'float16', 'float32', 'float64'],
+        'nanmedian')
+=======
         median_index, out = _legacy_C_ops.nanmedian(
             x, 'axis', axis, 'keepdim', keepdim
         )
@@ -341,17 +366,28 @@ def nanmedian(x, axis=None, keepdim=True, name=None):
     check_variable_and_dtype(
         x, 'X', ['int32', 'int64', 'float16', 'float32', 'float64'], 'nanmedian'
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     helper = LayerHelper('nanmedian', **locals())
     attrs = {'axis': axis, 'keepdim': keepdim}
     out = helper.create_variable_for_type_inference(x.dtype)
     medians = helper.create_variable_for_type_inference(x.dtype)
+<<<<<<< HEAD
+    helper.append_op(type='nanmedian',
+                     inputs={'X': x},
+                     outputs={
+                         'Out': out,
+                         'MedianIndex': medians
+                     },
+                     attrs=attrs)
+=======
     helper.append_op(
         type='nanmedian',
         inputs={'X': x},
         outputs={'Out': out, 'MedianIndex': medians},
         attrs=attrs,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
@@ -428,6 +464,15 @@ def median(x, axis=None, keepdim=False, name=None):
         ) + paddle.slice(tensor_topk, axes=[axis], starts=[kth], ends=[kth + 1])
         out_tensor = paddle.cast(out_tensor, dtype=dtype) / 2
     else:
+<<<<<<< HEAD
+        out_tensor = paddle.cast(paddle.slice(tensor_topk,
+                                              axes=[axis],
+                                              starts=[kth],
+                                              ends=[kth + 1]),
+                                 dtype=dtype)
+    out_tensor = out_tensor + paddle.sum(
+        paddle.cast(paddle.isnan(x), dtype=dtype) * x, axis=axis, keepdim=True)
+=======
         out_tensor = paddle.cast(
             paddle.slice(
                 tensor_topk, axes=[axis], starts=[kth], ends=[kth + 1]
@@ -437,6 +482,7 @@ def median(x, axis=None, keepdim=False, name=None):
     out_tensor = out_tensor + paddle.sum(
         paddle.cast(paddle.isnan(x), dtype=dtype) * x, axis=axis, keepdim=True
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     if not keepdim or is_flatten:
         if not is_flatten:
             newshape = x.shape[:axis] + x.shape[axis + 1 :]
@@ -555,6 +601,17 @@ def _compute_quantile(x, q, axis=None, keepdim=False, ignore_nan=False):
     for index in indices:
         indices_below = paddle.floor(index).astype(paddle.int32)
         indices_upper = paddle.ceil(index).astype(paddle.int32)
+<<<<<<< HEAD
+        tensor_upper = paddle.take_along_axis(sorted_tensor,
+                                              indices_upper,
+                                              axis=axis)
+        tensor_below = paddle.take_along_axis(sorted_tensor,
+                                              indices_below,
+                                              axis=axis)
+        weights = (index - indices_below.astype('float64'))
+        out = paddle.lerp(tensor_below.astype('float64'),
+                          tensor_upper.astype('float64'), weights)
+=======
         tensor_upper = paddle.take_along_axis(
             sorted_tensor, indices_upper, axis=axis
         )
@@ -567,6 +624,7 @@ def _compute_quantile(x, q, axis=None, keepdim=False, ignore_nan=False):
             tensor_upper.astype('float64'),
             weights,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         if not keepdim:
             out = paddle.squeeze(out, axis=axis)
         else:

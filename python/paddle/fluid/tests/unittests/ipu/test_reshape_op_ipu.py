@@ -21,6 +21,7 @@ from paddle.fluid.tests.unittests.ipu.op_test_ipu import IPUOpTest
 
 
 class TestBase(IPUOpTest):
+
     def setUp(self):
         self.set_atol()
         self.set_training()
@@ -44,10 +45,17 @@ class TestBase(IPUOpTest):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+        out = paddle.fluid.layers.reshape(x=x, **self.attrs)
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
         out = paddle.reshape(x=x, **self.attrs)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.fetch_list = [out.name]
 
     def run_model(self, exec_mode):
@@ -62,6 +70,7 @@ class TestBase(IPUOpTest):
 
 
 class TestCase1(TestBase):
+
     def set_op_attrs(self):
         self.attrs = {}
         self.attrs['shape'] = [2, 3, -1, 2]
@@ -69,6 +78,7 @@ class TestCase1(TestBase):
 
 
 class TestCase2(TestBase):
+
     def set_op_attrs(self):
         self.attrs = {}
         self.attrs['shape'] = [-1, 0, 3, 2]

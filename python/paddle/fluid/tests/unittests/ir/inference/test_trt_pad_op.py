@@ -21,14 +21,24 @@ from paddle.fluid.core import AnalysisConfig
 
 
 class PadOpTRTTest(InferencePassTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[1, 3, 128, 128],
+                              dtype="float32")
+            pad_out = fluid.layers.pad(x=data,
+                                       paddings=[0, 0, 0, 0, 0, 1, 1, 2],
+                                       pad_value=0.0)
+=======
             data = fluid.data(
                 name="data", shape=[1, 3, 128, 128], dtype="float32"
             )
             pad_out = fluid.layers.pad(
                 x=data, paddings=[0, 0, 0, 0, 0, 1, 1, 2], pad_value=0.0
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             out = fluid.layers.batch_norm(pad_out, is_test=True)
 
         self.feeds = {

@@ -21,6 +21,7 @@ import os
 
 
 class TestShuffleBatchOpBase(OpTest):
+
     def gen_random_array(self, shape, low=0, high=1):
         rnd = (high - low) * np.random.random(shape) + low
         return rnd.astype(self.dtype)
@@ -39,9 +40,14 @@ class TestShuffleBatchOpBase(OpTest):
         self.dtype = np.float64
         self.shape = self.get_shape()
         x = self.gen_random_array(self.shape)
+<<<<<<< HEAD
+        seed = np.random.random_integers(low=10, high=100,
+                                         size=(1, )).astype('int64')
+=======
         seed = np.random.random_integers(low=10, high=100, size=(1,)).astype(
             'int64'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.inputs = {'X': x, 'Seed': seed}
         self.outputs = {
             'Out': np.array([]).astype(x.dtype),
@@ -78,6 +84,7 @@ class TestShuffleBatchOpBase(OpTest):
 
 
 class TestShuffleBatchOp2(TestShuffleBatchOpBase):
+
     def get_shape(self):
         return (4, 30)
 

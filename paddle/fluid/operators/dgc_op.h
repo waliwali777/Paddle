@@ -67,8 +67,13 @@ class DGCOpKernel : public framework::OpKernel<T> {
     auto rampup_step = ctx.Attr<float>("rampup_step");
 
     // nranks
+<<<<<<< HEAD
+    auto nranks_tensor = ctx.Input<framework::Tensor>("nranks");
+    const int nranks = static_cast<const int>(*nranks_tensor->data<float>());
+=======
     auto nranks_tensor = ctx.Input<phi::DenseTensor>("nranks");
     const int nranks = static_cast<int>(*nranks_tensor->data<float>());
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     PADDLE_ENFORCE_GT(nranks,
                       1,
                       platform::errors::PreconditionNotMet(

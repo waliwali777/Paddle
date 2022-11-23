@@ -398,6 +398,17 @@ class TestJitSaveInCompiletime(TestErrorBase):
         self.exception_type = TypeError
 
     def set_message(self):
+<<<<<<< HEAD
+        self.expected_message = \
+            ['File "{}", line 80, in forward'.format(self.filepath),
+             'def forward(self, x):',
+             'y = self._linear(x)',
+             'z = fluid.layers.fill_constant(shape=[1, 2], value=9, dtype="int")',
+             '<--- HERE',
+             'out = paddle.mean(y[z])',
+             'return out'
+             ]
+=======
         self.expected_message = [
             'File "{}", line 78, in forward'.format(self.filepath),
             'def forward(self, x):',
@@ -407,6 +418,7 @@ class TestJitSaveInCompiletime(TestErrorBase):
             'out = paddle.mean(y[z])',
             'return out',
         ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def set_func_call(self):
         layer = LayerErrorInCompiletime()

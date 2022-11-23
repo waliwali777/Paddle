@@ -138,9 +138,14 @@ class TransformedDistribution(distribution.Distribution):
                 t.forward_log_det_jacobian(x), event_rank - t._domain.event_rank
             )
             y = x
+<<<<<<< HEAD
+        log_prob += _sum_rightmost(self._base.log_prob(y),
+                                   event_rank - len(self._base.event_shape))
+=======
         log_prob += _sum_rightmost(
             self._base.log_prob(y), event_rank - len(self._base.event_shape)
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         return log_prob
 
 

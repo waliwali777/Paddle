@@ -96,6 +96,9 @@ void QuantDequantMkldnnPass::CollectInfoFromFake(
   }
 }
 
+<<<<<<< HEAD
+void QuantDequantMkldnnPass::CollectInputScalesFromFake(
+=======
 void QuantDequantMkldnnPass::CollectWeightScalesInfoFromONNXFormatDequantize(
     ir::Graph* graph,
     Scope* scope,
@@ -146,6 +149,7 @@ void QuantDequantMkldnnPass::CollectWeightScalesInfoFromONNXFormatDequantize(
 }
 
 void QuantDequantMkldnnPass::CollectInputScalesFromQuantize(
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     ir::Graph* graph,
     Scope* scope,
     const std::unordered_set<std::string>& fake_quantize_types,
@@ -169,12 +173,15 @@ void QuantDequantMkldnnPass::CollectInputScalesFromQuantize(
                             "bits: %d, only 8 is supported now.",
                             bit_length));
 
+<<<<<<< HEAD
+=======
       std::string scale_name = "InScale";
       std::string out_name = "Out";
       if (op_node->Name() == "quantize_linear") {
         scale_name = "Scale";
         out_name = "Y";
       }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       auto x_var_name = op_desc->Input("X")[0];
       auto scale_var_name = op_desc->Input(scale_name)[0];
       auto out_var_name = op_desc->Output(out_name)[0];
@@ -458,7 +465,11 @@ bool QuantDequantMkldnnPass::IsInt8Weight(
   if (var == nullptr) {
     return false;
   }
+<<<<<<< HEAD
+  auto* weight_tensor = var->GetMutable<LoDTensor>();
+=======
   auto* weight_tensor = var->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   auto* weight_data = weight_tensor->data<float>();
   bool is_int8 = true;
   for (int i = 0; i < weight_tensor->numel(); i++) {
@@ -470,12 +481,45 @@ bool QuantDequantMkldnnPass::IsInt8Weight(
   return is_int8;
 }
 
+<<<<<<< HEAD
+void QuantDequantMkldnnPass::DequantizeOpWeights(
+    Node* op_node,
+    Scope* scope,
+    const std::string& weight_name,
+    const std::string& output_name,
+    const std::unordered_map<std::string, std::vector<float>>&
+        weight_thresholds) const {
+  auto* op_desc = op_node->Op();
+  std::string weight_var_name = op_desc->Input(weight_name)[0];
+  std::string output_var_name = op_desc->Output(output_name)[0];
+
+  std::vector<float> scales;
+  auto iter = weight_thresholds.find(output_var_name);
+  if (iter != weight_thresholds.end()) {
+    scales = iter->second;
+  } else {
+    PADDLE_THROW(paddle::platform::errors::Fatal(
+        "Could not find threshold information for [%s] var, please check if "
+        "the model is correct.",
+        output_var_name));
+  }
+
+  auto* var = scope->FindVar(weight_var_name);
+  PADDLE_ENFORCE_NOT_NULL(
+      var,
+      platform::errors::NotFound(
+          "The input persistable [%s] var of [%s] op is not found.",
+          weight_var_name,
+          op_desc->Type()));
+  auto* weight_tensor = var->GetMutable<LoDTensor>();
+=======
 void QuantDequantMkldnnPass::ConvertFromINT8ToFP32(
     const std::vector<float>& scales,
     phi::DenseTensor* weight_tensor,
     int8_t* int8_weight_data,
     float* fp32_weight_data,
     const std::string& weight_var_name) const {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const auto weight_dims = weight_tensor->dims();
 
   std::vector<float> weight_data;
@@ -552,11 +596,17 @@ void QuantDequantMkldnnPass::ConvertFromINT8ToFP32(
   weight_tensor->Resize(weight_dims);
 }
 
+<<<<<<< HEAD
+void QuantDequantMkldnnPass::DequantizeWeights(
+    ir::Graph* graph,
+    Scope* scope,
+=======
 void QuantDequantMkldnnPass::DequantizeOpWeights(
     Node* op_node,
     Scope* scope,
     const std::string& weight_name,
     const std::string& output_name,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     const std::unordered_map<std::string, std::vector<float>>&
         weight_thresholds) const {
   auto* op_desc = op_node->Op();
@@ -652,6 +702,9 @@ void QuantDequantMkldnnPass::DequantizeWeights(
        ir::TopologyVarientSort(*graph, static_cast<ir::SortKind>(0))) {
     if (!op_node->IsOp()) continue;
     if (op_node->Name() == "conv2d" || op_node->Name() == "depthwise_conv2d") {
+<<<<<<< HEAD
+      if (IsInt8Weight(op_node, scope, "Filter")) {
+=======
       if (onnx_format_quantize_model) {
         DequantizeOpWeightsFromONNXFormat(op_node,
                                           scope,
@@ -659,6 +712,7 @@ void QuantDequantMkldnnPass::DequantizeWeights(
                                           weight_thresholds,
                                           &dequantized_weights_names);
       } else if (IsInt8Weight(op_node, scope, "Filter")) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         DequantizeOpWeights(
             op_node, scope, "Filter", "Output", weight_thresholds);
       }
@@ -734,21 +788,30 @@ void QuantDequantMkldnnPass::ApplyImpl(ir::Graph* graph) const {
   auto* scope = param_scope();
   MarkSkipQuantizedOps(graph, skip_ops);
   CollectInfoFromFake(graph, scope, fake_dequantize_types, &weight_thresholds);
+<<<<<<< HEAD
+  CollectInputScalesFromFake(
+=======
   CollectWeightScalesInfoFromONNXFormatDequantize(graph,
                                                   scope,
                                                   &weight_thresholds,
                                                   &var_quant_scales,
                                                   &onnx_format_quantize_model);
   CollectInputScalesFromQuantize(
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       graph, scope, fake_quantize_types, &var_quant_scales);
   CollectOutputScalesFromAttr(graph, &var_quant_scales);
   RemoveFakeOps(graph,
                 fake_quantize_types,
                 fake_dequantize_types,
+<<<<<<< HEAD
+                fake_quantize_dequantize_types);
+  DequantizeWeights(graph, scope, weight_thresholds);
+=======
                 fake_quantize_dequantize_types,
                 onnx_format_quantize_dequantize_types);
   DequantizeWeights(
       graph, scope, weight_thresholds, onnx_format_quantize_model);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   UpdateActivations(graph);
   RemoveCtrlVars(graph);
 

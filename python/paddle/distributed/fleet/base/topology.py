@@ -48,12 +48,20 @@ class ParallelMode:
     SHARDING_PARALLEL = 3
 
 
+<<<<<<< HEAD
+class CommunicateTopology(object):
+
+    def __init__(self,
+                 hybrid_group_names=["data", "pipe", "sharding", "model"],
+                 dims=[1, 1, 1, 1]):
+=======
 class CommunicateTopology:
     def __init__(
         self,
         hybrid_group_names=["data", "pipe", "sharding", "model"],
         dims=[1, 1, 1, 1],
     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self._parallel_names = hybrid_group_names
         self._dims = dims
         self.coordinate = collections.namedtuple(
@@ -134,7 +142,12 @@ class CommunicateTopology:
         return self.get_rank(**tf)
 
 
+<<<<<<< HEAD
+class HybridCommunicateGroup(object):
+
+=======
 class HybridCommunicateGroup:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, topology):
         self.nranks = paddle.distributed.get_world_size()
         self.global_rank = paddle.distributed.get_rank()
@@ -406,9 +419,15 @@ class HybridCommunicateGroup:
         return self._check_comm_group
 
     def get_rank_from_stage(self, stage_id, **kwargs):
+<<<<<<< HEAD
+        return self._topo.get_rank_from_stage(self.global_rank,
+                                              pipe=stage_id,
+                                              **kwargs)
+=======
         return self._topo.get_rank_from_stage(
             self.global_rank, pipe=stage_id, **kwargs
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class _CommunicateGroup:

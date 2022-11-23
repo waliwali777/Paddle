@@ -13,7 +13,10 @@ limitations under the License. */
 
 #include <glog/logging.h>
 
+<<<<<<< HEAD
+=======
 #include "paddle/fluid/framework/infershape_utils.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/fluid/framework/op_registry.h"
 #include "paddle/phi/infermeta/ternary.h"
 #include "paddle/phi/kernels/funcs/detection/nms_util.h"
@@ -125,9 +128,15 @@ class MultiClassNMSOp : public framework::OperatorWithKernel {
 
 template <class T>
 void SliceOneClass(const platform::DeviceContext& ctx,
+<<<<<<< HEAD
+                   const framework::Tensor& items,
+                   const int class_id,
+                   framework::Tensor* one_class_item) {
+=======
                    const phi::DenseTensor& items,
                    const int class_id,
                    phi::DenseTensor* one_class_item) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   T* item_data = one_class_item->mutable_data<T>(ctx.GetPlace());
   const T* items_data = items.data<T>();
   const int64_t num_item = items.dims()[0];
@@ -149,8 +158,13 @@ void SliceOneClass(const platform::DeviceContext& ctx,
 template <typename T>
 class MultiClassNMSKernel : public framework::OpKernel<T> {
  public:
+<<<<<<< HEAD
+  void NMSFast(const Tensor& bbox,
+               const Tensor& scores,
+=======
   void NMSFast(const phi::DenseTensor& bbox,
                const phi::DenseTensor& scores,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                const T score_threshold,
                const T nms_threshold,
                const T eta,
@@ -183,18 +197,31 @@ class MultiClassNMSKernel : public framework::OpKernel<T> {
           T overlap = T(0.);
           // 4: [xmin ymin xmax ymax]
           if (box_size == 4) {
+<<<<<<< HEAD
+            overlap = JaccardOverlap<T>(bbox_data + idx * box_size,
+                                        bbox_data + kept_idx * box_size,
+                                        normalized);
+=======
             overlap =
                 phi::funcs::JaccardOverlap<T>(bbox_data + idx * box_size,
                                               bbox_data + kept_idx * box_size,
                                               normalized);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
           }
           // 8: [x1 y1 x2 y2 x3 y3 x4 y4] or 16, 24, 32
           if (box_size == 8 || box_size == 16 || box_size == 24 ||
               box_size == 32) {
+<<<<<<< HEAD
+            overlap = PolyIoU<T>(bbox_data + idx * box_size,
+                                 bbox_data + kept_idx * box_size,
+                                 box_size,
+                                 normalized);
+=======
             overlap = phi::funcs::PolyIoU<T>(bbox_data + idx * box_size,
                                              bbox_data + kept_idx * box_size,
                                              box_size,
                                              normalized);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
           }
           keep = overlap <= adaptive_threshold;
         } else {
@@ -212,8 +239,13 @@ class MultiClassNMSKernel : public framework::OpKernel<T> {
   }
 
   void MultiClassNMS(const framework::ExecutionContext& ctx,
+<<<<<<< HEAD
+                     const Tensor& scores,
+                     const Tensor& bboxes,
+=======
                      const phi::DenseTensor& scores,
                      const phi::DenseTensor& bboxes,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                      const int scores_size,
                      std::map<int, std::vector<int>>* indices,
                      int* num_nmsed_out) const {
@@ -279,7 +311,11 @@ class MultiClassNMSKernel : public framework::OpKernel<T> {
       // Keep top k results per image.
       std::stable_sort(score_index_pairs.begin(),
                        score_index_pairs.end(),
+<<<<<<< HEAD
+                       SortScorePairDescend<std::pair<int, int>>);
+=======
                        phi::funcs::SortScorePairDescend<std::pair<int, int>>);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       score_index_pairs.resize(keep_top_k);
 
       // Store the new indices.
@@ -302,11 +338,19 @@ class MultiClassNMSKernel : public framework::OpKernel<T> {
   }
 
   void MultiClassOutput(const platform::DeviceContext& ctx,
+<<<<<<< HEAD
+                        const Tensor& scores,
+                        const Tensor& bboxes,
+                        const std::map<int, std::vector<int>>& selected_indices,
+                        const int scores_size,
+                        Tensor* outs,
+=======
                         const phi::DenseTensor& scores,
                         const phi::DenseTensor& bboxes,
                         const std::map<int, std::vector<int>>& selected_indices,
                         const int scores_size,
                         phi::DenseTensor* outs,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         int* oindices = nullptr,
                         const int offset = 0) const {
     int64_t class_num = scores.dims()[1];
@@ -661,5 +705,12 @@ REGISTER_OPERATOR(
     ops::MultiClassNMS3Op,
     ops::MultiClassNMS3OpMaker,
     paddle::framework::EmptyGradOpMaker<paddle::framework::OpDesc>,
+<<<<<<< HEAD
+    paddle::framework::EmptyGradOpMaker<paddle::imperative::OpBase>);
+REGISTER_OP_CPU_KERNEL(multiclass_nms3,
+                       ops::MultiClassNMSKernel<float>,
+                       ops::MultiClassNMSKernel<double>);
+=======
     paddle::framework::EmptyGradOpMaker<paddle::imperative::OpBase>,
     MultiClassNMSShapeFunctor);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

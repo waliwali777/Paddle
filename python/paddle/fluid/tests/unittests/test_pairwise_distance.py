@@ -27,6 +27,40 @@ def np_pairwise_distance(x, y, p=2.0, epsilon=1e-6, keepdim=False):
     return distance
 
 
+<<<<<<< HEAD
+def call_pairwise_distance_layer(x, y, p=2., epsilon=1e-6, keepdim='False'):
+    pairwise_distance = paddle.nn.PairwiseDistance(p=p,
+                                                   epsilon=epsilon,
+                                                   keepdim=keepdim)
+    distance = pairwise_distance(x=x, y=y)
+    return distance
+
+
+def call_pairwise_distance_functional(x,
+                                      y,
+                                      p=2.,
+                                      epsilon=1e-6,
+                                      keepdim='False'):
+    distance = paddle.nn.functional.pairwise_distance(x=x,
+                                                      y=y,
+                                                      p=p,
+                                                      epsilon=epsilon,
+                                                      keepdim=keepdim)
+    return distance
+
+
+def test_static(place,
+                x_np,
+                y_np,
+                p=2.0,
+                epsilon=1e-6,
+                keepdim=False,
+                functional=False):
+    prog = paddle.static.Program()
+    startup_prog = paddle.static.Program()
+    place = fluid.CUDAPlace(
+        0) if paddle.fluid.core.is_compiled_with_cuda() else fluid.CPUPlace()
+=======
 def call_pairwise_distance_layer(x, y, p=2.0, epsilon=1e-6, keepdim='False'):
     pairwise_distance = paddle.nn.PairwiseDistance(
         p=p, epsilon=epsilon, keepdim=keepdim
@@ -54,12 +88,33 @@ def test_static(
         if paddle.fluid.core.is_compiled_with_cuda()
         else fluid.CPUPlace()
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     paddle.enable_static()
     with paddle.static.program_guard(prog, startup_prog):
         x = paddle.fluid.data(name='x', shape=x_np.shape, dtype=x_np.dtype)
         y = paddle.fluid.data(name='y', shape=y_np.shape, dtype=x_np.dtype)
 
         if functional:
+<<<<<<< HEAD
+            distance = call_pairwise_distance_functional(x=x,
+                                                         y=y,
+                                                         p=p,
+                                                         epsilon=epsilon,
+                                                         keepdim=keepdim)
+        else:
+            distance = call_pairwise_distance_layer(x=x,
+                                                    y=y,
+                                                    p=p,
+                                                    epsilon=epsilon,
+                                                    keepdim=keepdim)
+        exe = paddle.static.Executor(place)
+        static_ret = exe.run(prog,
+                             feed={
+                                 'x': x_np,
+                                 'y': y_np
+                             },
+                             fetch_list=[distance])
+=======
             distance = call_pairwise_distance_functional(
                 x=x, y=y, p=p, epsilon=epsilon, keepdim=keepdim
             )
@@ -71,11 +126,35 @@ def test_static(
         static_ret = exe.run(
             prog, feed={'x': x_np, 'y': y_np}, fetch_list=[distance]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         static_ret = static_ret[0]
     paddle.disable_static()
     return static_ret
 
 
+<<<<<<< HEAD
+def test_dygraph(place,
+                 x_np,
+                 y_np,
+                 p=2.0,
+                 epsilon=1e-6,
+                 keepdim=False,
+                 functional=False):
+    x = paddle.to_tensor(x_np)
+    y = paddle.to_tensor(y_np)
+    if functional:
+        dy_distance = call_pairwise_distance_functional(x=x,
+                                                        y=y,
+                                                        p=p,
+                                                        epsilon=epsilon,
+                                                        keepdim=keepdim)
+    else:
+        dy_distance = call_pairwise_distance_layer(x=x,
+                                                   y=y,
+                                                   p=p,
+                                                   epsilon=epsilon,
+                                                   keepdim=keepdim)
+=======
 def test_dygraph(
     place, x_np, y_np, p=2.0, epsilon=1e-6, keepdim=False, functional=False
 ):
@@ -89,17 +168,41 @@ def test_dygraph(
         dy_distance = call_pairwise_distance_layer(
             x=x, y=y, p=p, epsilon=epsilon, keepdim=keepdim
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     dygraph_ret = dy_distance.numpy()
     return dygraph_ret
 
 
+<<<<<<< HEAD
+def test_legacy_dygraph(place,
+                        x_np,
+                        y_np,
+                        p=2.0,
+                        epsilon=1e-6,
+                        keepdim=False,
+                        functional=False):
+=======
 def test_legacy_dygraph(
     place, x_np, y_np, p=2.0, epsilon=1e-6, keepdim=False, functional=False
 ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     paddle.fluid.framework._enable_legacy_dygraph()
     x = paddle.to_tensor(x_np)
     y = paddle.to_tensor(y_np)
     if functional:
+<<<<<<< HEAD
+        legacy_distance = call_pairwise_distance_functional(x=x,
+                                                            y=y,
+                                                            p=p,
+                                                            epsilon=epsilon,
+                                                            keepdim=keepdim)
+    else:
+        legacy_distance = call_pairwise_distance_layer(x=x,
+                                                       y=y,
+                                                       p=p,
+                                                       epsilon=epsilon,
+                                                       keepdim=keepdim)
+=======
         legacy_distance = call_pairwise_distance_functional(
             x=x, y=y, p=p, epsilon=epsilon, keepdim=keepdim
         )
@@ -107,12 +210,14 @@ def test_legacy_dygraph(
         legacy_distance = call_pairwise_distance_layer(
             x=x, y=y, p=p, epsilon=epsilon, keepdim=keepdim
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     legacy_ret = legacy_distance.numpy()
     paddle.fluid.framework._disable_legacy_dygraph()
     return legacy_ret
 
 
 class TestPairwiseDistance(unittest.TestCase):
+
     def test_pairwise_distance(self):
         epsilon = 1e-6
         all_shape = [[5], [100, 100]]
@@ -130,6 +235,49 @@ class TestPairwiseDistance(unittest.TestCase):
                             x_np = np.random.random(shape).astype(dtype)
                             y_np = np.random.random(shape).astype(dtype)
 
+<<<<<<< HEAD
+                            static_ret = test_static(place,
+                                                     x_np,
+                                                     y_np,
+                                                     p,
+                                                     epsilon=epsilon,
+                                                     keepdim=keepdim)
+                            dygraph_ret = test_dygraph(place,
+                                                       x_np,
+                                                       y_np,
+                                                       p,
+                                                       epsilon=epsilon,
+                                                       keepdim=keepdim)
+                            legacy_ret = test_legacy_dygraph(place,
+                                                             x_np,
+                                                             y_np,
+                                                             p,
+                                                             epsilon=epsilon,
+                                                             keepdim=keepdim)
+                            excepted_value = np_pairwise_distance(
+                                x_np, y_np, p, epsilon=epsilon, keepdim=keepdim)
+
+                            self.assertEqual(static_ret.shape,
+                                             excepted_value.shape)
+                            self.assertEqual(dygraph_ret.shape,
+                                             excepted_value.shape)
+                            self.assertEqual(legacy_ret.shape,
+                                             excepted_value.shape)
+
+                            self.assertTrue(
+                                np.allclose(static_ret, excepted_value))
+                            self.assertTrue(
+                                np.allclose(dygraph_ret, excepted_value))
+                            self.assertTrue(
+                                np.allclose(legacy_ret, excepted_value))
+
+                            static_functional_ret = test_static(place,
+                                                                x_np,
+                                                                y_np,
+                                                                p,
+                                                                epsilon=epsilon,
+                                                                keepdim=keepdim)
+=======
                             static_ret = test_static(
                                 place,
                                 x_np,
@@ -186,20 +334,45 @@ class TestPairwiseDistance(unittest.TestCase):
                                 epsilon=epsilon,
                                 keepdim=keepdim,
                             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             dygraph_functional_ret = test_dygraph(
                                 place,
                                 x_np,
                                 y_np,
                                 p,
                                 epsilon=epsilon,
+<<<<<<< HEAD
+                                keepdim=keepdim)
+=======
                                 keepdim=keepdim,
                             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             legacy_functional_ret = test_legacy_dygraph(
                                 place,
                                 x_np,
                                 y_np,
                                 p,
                                 epsilon=epsilon,
+<<<<<<< HEAD
+                                keepdim=keepdim)
+
+                            self.assertEqual(static_functional_ret.shape,
+                                             excepted_value.shape)
+                            self.assertEqual(dygraph_functional_ret.shape,
+                                             excepted_value.shape)
+                            self.assertEqual(legacy_functional_ret.shape,
+                                             excepted_value.shape)
+
+                            self.assertTrue(
+                                np.allclose(static_functional_ret,
+                                            excepted_value))
+                            self.assertTrue(
+                                np.allclose(dygraph_functional_ret,
+                                            excepted_value))
+                            self.assertTrue(
+                                np.allclose(legacy_functional_ret,
+                                            excepted_value))
+=======
                                 keepdim=keepdim,
                             )
 
@@ -231,6 +404,7 @@ class TestPairwiseDistance(unittest.TestCase):
                                 excepted_value,
                                 rtol=1e-05,
                             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_pairwise_distance_broadcast_1(self):
         shape_x = [100, 100]
@@ -240,6 +414,27 @@ class TestPairwiseDistance(unittest.TestCase):
         place = paddle.CPUPlace()
         x_np = np.random.random(shape_x).astype('float32')
         y_np = np.random.random(shape_y).astype('float32')
+<<<<<<< HEAD
+        static_ret = test_static(place=place,
+                                 x_np=x_np,
+                                 y_np=y_np,
+                                 epsilon=epsilon,
+                                 keepdim=keepdim)
+        dygraph_ret = test_dygraph(place=place,
+                                   x_np=x_np,
+                                   y_np=y_np,
+                                   epsilon=epsilon,
+                                   keepdim=keepdim)
+        legacy_ret = test_legacy_dygraph(place=place,
+                                         x_np=x_np,
+                                         y_np=y_np,
+                                         epsilon=epsilon,
+                                         keepdim=keepdim)
+        excepted_value = np_pairwise_distance(x_np,
+                                              y_np,
+                                              epsilon=epsilon,
+                                              keepdim=keepdim)
+=======
         static_ret = test_static(
             place=place, x_np=x_np, y_np=y_np, epsilon=epsilon, keepdim=keepdim
         )
@@ -252,11 +447,36 @@ class TestPairwiseDistance(unittest.TestCase):
         excepted_value = np_pairwise_distance(
             x_np, y_np, epsilon=epsilon, keepdim=keepdim
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertEqual(static_ret.shape, excepted_value.shape)
         self.assertEqual(dygraph_ret.shape, excepted_value.shape)
         self.assertEqual(legacy_ret.shape, excepted_value.shape)
 
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(static_ret, excepted_value))
+        self.assertTrue(np.allclose(dygraph_ret, excepted_value))
+        self.assertTrue(np.allclose(legacy_ret, excepted_value))
+
+        static_functional_ret = test_static(place=place,
+                                            x_np=x_np,
+                                            y_np=y_np,
+                                            epsilon=epsilon,
+                                            keepdim=keepdim,
+                                            functional=True)
+        dygraph_functional_ret = test_dygraph(place=place,
+                                              x_np=x_np,
+                                              y_np=y_np,
+                                              epsilon=epsilon,
+                                              keepdim=keepdim,
+                                              functional=True)
+        legacy_functional_ret = test_legacy_dygraph(place=place,
+                                                    x_np=x_np,
+                                                    y_np=y_np,
+                                                    epsilon=epsilon,
+                                                    keepdim=keepdim,
+                                                    functional=True)
+=======
         np.testing.assert_allclose(static_ret, excepted_value, rtol=1e-05)
         np.testing.assert_allclose(dygraph_ret, excepted_value, rtol=1e-05)
         np.testing.assert_allclose(legacy_ret, excepted_value, rtol=1e-05)
@@ -285,11 +505,17 @@ class TestPairwiseDistance(unittest.TestCase):
             keepdim=keepdim,
             functional=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertEqual(static_functional_ret.shape, excepted_value.shape)
         self.assertEqual(dygraph_functional_ret.shape, excepted_value.shape)
         self.assertEqual(legacy_functional_ret.shape, excepted_value.shape)
 
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(static_functional_ret, excepted_value))
+        self.assertTrue(np.allclose(dygraph_functional_ret, excepted_value))
+        self.assertTrue(np.allclose(legacy_functional_ret, excepted_value))
+=======
         np.testing.assert_allclose(
             static_functional_ret, excepted_value, rtol=1e-05
         )
@@ -299,6 +525,7 @@ class TestPairwiseDistance(unittest.TestCase):
         np.testing.assert_allclose(
             legacy_functional_ret, excepted_value, rtol=1e-05
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_pairwise_distance_broadcast_2(self):
         shape_x = [100, 100]
@@ -308,6 +535,27 @@ class TestPairwiseDistance(unittest.TestCase):
         place = paddle.CPUPlace()
         x_np = np.random.random(shape_x).astype('float32')
         y_np = np.random.random(shape_y).astype('float32')
+<<<<<<< HEAD
+        static_ret = test_static(place=place,
+                                 x_np=x_np,
+                                 y_np=y_np,
+                                 epsilon=epsilon,
+                                 keepdim=keepdim)
+        dygraph_ret = test_dygraph(place=place,
+                                   x_np=x_np,
+                                   y_np=y_np,
+                                   epsilon=epsilon,
+                                   keepdim=keepdim)
+        legacy_ret = test_legacy_dygraph(place=place,
+                                         x_np=x_np,
+                                         y_np=y_np,
+                                         epsilon=epsilon,
+                                         keepdim=keepdim)
+        excepted_value = np_pairwise_distance(x_np,
+                                              y_np,
+                                              epsilon=epsilon,
+                                              keepdim=keepdim)
+=======
         static_ret = test_static(
             place=place, x_np=x_np, y_np=y_np, epsilon=epsilon, keepdim=keepdim
         )
@@ -320,11 +568,36 @@ class TestPairwiseDistance(unittest.TestCase):
         excepted_value = np_pairwise_distance(
             x_np, y_np, epsilon=epsilon, keepdim=keepdim
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertEqual(static_ret.shape, excepted_value.shape)
         self.assertEqual(dygraph_ret.shape, excepted_value.shape)
         self.assertEqual(legacy_ret.shape, excepted_value.shape)
 
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(static_ret, excepted_value))
+        self.assertTrue(np.allclose(dygraph_ret, excepted_value))
+        self.assertTrue(np.allclose(legacy_ret, excepted_value))
+
+        static_functional_ret = test_static(place=place,
+                                            x_np=x_np,
+                                            y_np=y_np,
+                                            epsilon=epsilon,
+                                            keepdim=keepdim,
+                                            functional=True)
+        dygraph_functional_ret = test_dygraph(place=place,
+                                              x_np=x_np,
+                                              y_np=y_np,
+                                              epsilon=epsilon,
+                                              keepdim=keepdim,
+                                              functional=True)
+        legacy_functional_ret = test_legacy_dygraph(place=place,
+                                                    x_np=x_np,
+                                                    y_np=y_np,
+                                                    epsilon=epsilon,
+                                                    keepdim=keepdim,
+                                                    functional=True)
+=======
         np.testing.assert_allclose(static_ret, excepted_value, rtol=1e-05)
         np.testing.assert_allclose(dygraph_ret, excepted_value, rtol=1e-05)
         np.testing.assert_allclose(legacy_ret, excepted_value, rtol=1e-05)
@@ -353,11 +626,17 @@ class TestPairwiseDistance(unittest.TestCase):
             keepdim=keepdim,
             functional=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertEqual(static_functional_ret.shape, excepted_value.shape)
         self.assertEqual(dygraph_functional_ret.shape, excepted_value.shape)
         self.assertEqual(legacy_functional_ret.shape, excepted_value.shape)
 
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(static_functional_ret, excepted_value))
+        self.assertTrue(np.allclose(dygraph_functional_ret, excepted_value))
+        self.assertTrue(np.allclose(legacy_functional_ret, excepted_value))
+=======
         np.testing.assert_allclose(
             static_functional_ret, excepted_value, rtol=1e-05
         )
@@ -367,6 +646,7 @@ class TestPairwiseDistance(unittest.TestCase):
         np.testing.assert_allclose(
             legacy_functional_ret, excepted_value, rtol=1e-05
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

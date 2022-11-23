@@ -298,11 +298,19 @@ class FuisonLSTMKernel : public framework::OpKernel<T> {
 #define INIT_BASE_DEFINES                               \
   using DeviceContext = phi::CPUContext;                \
   auto* x = ctx.Input<LoDTensor>("X");                  \
+<<<<<<< HEAD
+  auto* h0 = ctx.Input<Tensor>("H0");                   \
+  auto* c0 = ctx.Input<Tensor>("C0");                   \
+  auto* wx = ctx.Input<Tensor>("WeightX");              \
+  auto* wh = ctx.Input<Tensor>("WeightH");              \
+  auto* bias = ctx.Input<Tensor>("Bias");               \
+=======
   auto* h0 = ctx.Input<phi::DenseTensor>("H0");         \
   auto* c0 = ctx.Input<phi::DenseTensor>("C0");         \
   auto* wx = ctx.Input<phi::DenseTensor>("WeightX");    \
   auto* wh = ctx.Input<phi::DenseTensor>("WeightH");    \
   auto* bias = ctx.Input<phi::DenseTensor>("Bias");     \
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   auto* xx = ctx.Output<LoDTensor>("XX");               \
   auto* hidden_out = ctx.Output<LoDTensor>("Hidden");   \
   auto* cell_out = ctx.Output<LoDTensor>("Cell");       \

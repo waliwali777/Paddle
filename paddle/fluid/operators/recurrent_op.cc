@@ -153,7 +153,11 @@ int64_t RecurrentBase::GetSequenceLength(const framework::Scope &scope) const {
     PADDLE_ENFORCE_NOT_NULL(var,
                             platform::errors::InvalidArgument(
                                 "RecurrentOp finds var %s is NULL", iname));
+<<<<<<< HEAD
+    PADDLE_ENFORCE_EQ(var->IsType<framework::LoDTensor>(),
+=======
     PADDLE_ENFORCE_EQ(var->IsType<phi::DenseTensor>(),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                       true,
                       platform::errors::InvalidArgument(
                           "RecurrentOp only accepts LoDTensor as input but "
@@ -192,7 +196,11 @@ void RecurrentBase::LinkTensor(const framework::Scope &src_scope,
       src_vars,
       dst_scope,
       dst_vars,
+<<<<<<< HEAD
+      [&](const framework::Tensor &src, framework::Tensor *dst) {
+=======
       [&](const phi::DenseTensor &src, phi::DenseTensor *dst) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         dst->ShareDataWith(src);
       });
 }
@@ -247,8 +255,13 @@ void RecurrentOp::RunImpl(const framework::Scope &scope,
         Inputs(kInputs),
         &cur_scope,
         Inputs(kInputs),
+<<<<<<< HEAD
+        [&seq_offset](const framework::Tensor &outside,
+                      framework::Tensor *inside) {
+=======
         [&seq_offset](const phi::DenseTensor &outside,
                       phi::DenseTensor *inside) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
           inside->ShareDataWith(outside.Slice(seq_offset, seq_offset + 1));
           auto dims = phi::vectorize(inside->dims());
           dims.erase(dims.begin());
@@ -288,8 +301,13 @@ void RecurrentOp::RunImpl(const framework::Scope &scope,
           Outputs(kOutputs),
           scope,
           Outputs(kOutputs),
+<<<<<<< HEAD
+          [&](const framework::LoDTensor &src_tensor,
+              framework::LoDTensor *dst_tensor) {
+=======
           [&](const phi::DenseTensor &src_tensor,
               phi::DenseTensor *dst_tensor) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             // create output tensor at begin
             dst_tensor->Resize(PrependDims(seq_len, src_tensor.dims()));
             dst_tensor->mutable_data(place, src_tensor.dtype());
@@ -305,8 +323,13 @@ void RecurrentOp::RunImpl(const framework::Scope &scope,
           Outputs(kOutputs),
           scope,
           Outputs(kOutputs),
+<<<<<<< HEAD
+          [&](const framework::LoDTensor &src_tensor,
+              framework::LoDTensor *dst_tensor) {
+=======
           [&](const phi::DenseTensor &src_tensor,
               phi::DenseTensor *dst_tensor) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             auto dst_out = dst_tensor->Slice(seq_offset, seq_offset + 1);
             framework::TensorCopy(src_tensor, place, dev_ctx, &dst_out);
           });
@@ -374,7 +397,11 @@ void RecurrentGradOp::RunImpl(const framework::Scope &scope,
         Inputs(kOutputGrads),
         &cur_scope,
         Inputs(kOutputGrads),
+<<<<<<< HEAD
+        [&](const framework::Tensor &outside, framework::Tensor *inside) {
+=======
         [&](const phi::DenseTensor &outside, phi::DenseTensor *inside) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
           inside->ShareDataWith(outside.Slice(seq_offset, seq_offset + 1));
           auto dims = phi::vectorize(inside->dims());
           dims.erase(dims.begin());
@@ -433,13 +460,22 @@ void RecurrentGradOp::RunImpl(const framework::Scope &scope,
           Outputs(kInputGrads),
           cur_scope,
           GradVarLists(Inputs(kInputs)),
+<<<<<<< HEAD
+          [&](const framework::LoDTensor &src_tensor,
+              framework::LoDTensor *dst_tensor) {
+=======
           [&](const phi::DenseTensor &src_tensor,
               phi::DenseTensor *dst_tensor) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             if (src_tensor.memory_size() ==
                 0) {  // Inside Gradient is not created.
               return;
             }
+<<<<<<< HEAD
+            framework::Tensor src_slice =
+=======
             phi::DenseTensor src_slice =
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 src_tensor.Slice(seq_offset, seq_offset + 1);
             dst_tensor->ShareDataWith(src_slice);
           },
@@ -521,7 +557,12 @@ void RecurrentGradOp::RunImpl(const framework::Scope &scope,
           GradVarLists(Inputs(kInputs)),
           scope,
           Outputs(kInputGrads),
+<<<<<<< HEAD
+          [&](const framework::LoDTensor &inside,
+              framework::LoDTensor *outside) {
+=======
           [&](const phi::DenseTensor &inside, phi::DenseTensor *outside) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             if (inside.memory_size() == 0) {  // IG is not created.
               return;
             }
@@ -544,7 +585,12 @@ void RecurrentGradOp::RunImpl(const framework::Scope &scope,
             GradVarLists(Attr<std::vector<std::string>>(kExStates)),
             scope,
             Outputs(kInitStateGrads),
+<<<<<<< HEAD
+            [&](const framework::LoDTensor &inside,
+                framework::LoDTensor *outside) {
+=======
             [&](const phi::DenseTensor &inside, phi::DenseTensor *outside) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
               outside->Resize(inside.dims());
               outside->mutable_data(place, inside.dtype());
               framework::TensorCopy(inside, place, dev_ctx, outside);

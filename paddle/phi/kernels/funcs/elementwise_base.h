@@ -563,7 +563,11 @@ int GetVectorizedSizeForTensors(const std::vector<const DenseTensor *> &ins,
 #ifdef PADDLE_WITH_XPU_KP
   int vec_size = 256;
 #else
+<<<<<<< HEAD
+  using Traits = paddle::platform::FunctionTraits<Functor>;
+=======
   using Traits = phi::funcs::FunctionTraits<Functor>;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   using ArgsT = typename Traits::ArgsTuple;
   const int Arity = Traits::arity;
   int vec_size = 4;
@@ -762,10 +766,15 @@ __global__ void VectorizedElementwiseKernel(
     kps::IndexType main_offset,
     int read_lens,
     Functor func) {
+<<<<<<< HEAD
+  kps::IndexType data_offset = BLOCK_ID_X * BLOCK_NUM_X * read_lens;
+  kps::IndexType stride = BLOCK_NUM_X * GRID_NUM_X * read_lens;
+=======
   kps::IndexType data_offset =
       static_cast<kps::IndexType>(BLOCK_ID_X) * BLOCK_NUM_X * read_lens;
   kps::IndexType stride =
       static_cast<kps::IndexType>(BLOCK_NUM_X) * GRID_NUM_X * read_lens;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   for (; data_offset < main_offset; data_offset += stride) {
     VectorizedElementwiseKernelImpl<OutT,
                                     Functor,

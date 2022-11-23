@@ -647,8 +647,12 @@ class GeneralRoleMaker(RoleMakerBase):
             self._is_barrier_all = 1
             if "PADDLE_IS_BARRIER_ALL_ROLE" in os.environ:
                 self._is_barrier_all = int(
+<<<<<<< HEAD
+                    os.environ["PADDLE_IS_BARRIER_ALL_ROLE"])
+=======
                     os.environ["PADDLE_IS_BARRIER_ALL_ROLE"]
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             if training_role == "TRAINER":
                 role = Role.WORKER
                 current_id = int(os.environ["PADDLE_TRAINER_ID"])
@@ -659,10 +663,16 @@ class GeneralRoleMaker(RoleMakerBase):
                         "all": len(worker_endpoints) + len(eplist),
                     }
                     # child process for http server
+<<<<<<< HEAD
+                    self._http_server = Process(target=self.__start_kv_server,
+                                                args=(self._http_server_d,
+                                                      size_d))
+=======
                     self._http_server = Process(
                         target=self.__start_kv_server,
                         args=(self._http_server_d, size_d),
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     self._http_server.daemon = True
                     # set running status to True
                     self._http_server_d["running"] = True

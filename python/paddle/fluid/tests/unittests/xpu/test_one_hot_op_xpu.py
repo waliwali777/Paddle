@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD
+from __future__ import print_function
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 import unittest
 import numpy as np
 import sys
@@ -19,22 +23,36 @@ import sys
 sys.path.append("..")
 import paddle
 import paddle.fluid.core as core
+<<<<<<< HEAD
+from op_test import OpTest
+from op_test_xpu import XPUOpTest
+from xpu.get_test_cover_info import create_test_class, get_xpu_op_support_types, XPUOpTestWrapper
+=======
 from op_test_xpu import XPUOpTest
 from xpu.get_test_cover_info import (
     create_test_class,
     get_xpu_op_support_types,
     XPUOpTestWrapper,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 paddle.enable_static()
 
 
 class XPUTestOneHotOP(XPUOpTestWrapper):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self):
         self.op_name = 'one_hot'
         self.use_dynamic_create_class = False
 
     class TestXPUOneHotOP(XPUOpTest):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def setUp(self):
             self.place = paddle.XPUPlace(0)
             self.init_dtype()
@@ -51,6 +69,13 @@ class XPUTestOneHotOP(XPUOpTestWrapper):
                 np.random.randint(0, self.depth - 1)
                 for i in range(sum(self.x_lod[0]))
             ]
+<<<<<<< HEAD
+            self.x = np.array(self.x).astype(self.dtype).reshape(
+                [sum(self.x_lod[0]), 1])
+
+            self.out = np.zeros(shape=(np.product(self.x.shape[:-1]),
+                                       self.depth)).astype('float32')
+=======
             self.x = (
                 np.array(self.x)
                 .astype(self.dtype)
@@ -60,6 +85,7 @@ class XPUTestOneHotOP(XPUOpTestWrapper):
             self.out = np.zeros(
                 shape=(np.product(self.x.shape[:-1]), self.depth)
             ).astype('float32')
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             for i in range(np.product(self.x.shape)):
                 self.out[i, self.x[i]] = 1.0
 
@@ -68,7 +94,11 @@ class XPUTestOneHotOP(XPUOpTestWrapper):
         def set_input(self):
             self.inputs = {
                 'X': (self.x, self.x_lod),
+<<<<<<< HEAD
+                'depth_tensor': self.depth_np
+=======
                 'depth_tensor': self.depth_np,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             }
             self.attrs = {'dtype': int(core.VarDesc.VarType.FP32)}
 
@@ -79,10 +109,25 @@ class XPUTestOneHotOP(XPUOpTestWrapper):
             self.dtype = self.in_type
 
     class TestXPUOneHotOP_attr(TestXPUOneHotOP):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def set_input(self):
             self.inputs = {'X': (self.x, self.x_lod)}
             self.attrs = {
                 'dtype': int(core.VarDesc.VarType.FP32),
+<<<<<<< HEAD
+                'depth': self.depth
+            }
+
+    class TestXPUOneHotOP_default_dtype(TestXPUOneHotOP):
+
+        def set_input(self):
+            self.inputs = {
+                'X': (self.x, self.x_lod),
+                'depth_tensor': self.depth_np
+=======
                 'depth': self.depth,
             }
 
@@ -91,15 +136,24 @@ class XPUTestOneHotOP(XPUOpTestWrapper):
             self.inputs = {
                 'X': (self.x, self.x_lod),
                 'depth_tensor': self.depth_np,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             }
             self.attrs = {}
 
     class TestXPUOneHotOP_default_dtype_attr(TestXPUOneHotOP):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def set_input(self):
             self.inputs = {'X': (self.x, self.x_lod)}
             self.attrs = {'depth': self.depth}
 
     class TestXPUOneHotOP_out_of_range(TestXPUOneHotOP):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def set_data(self):
             self.depth = 10
             self.x_lod = [[4, 1, 3, 3]]
@@ -107,6 +161,13 @@ class XPUTestOneHotOP(XPUOpTestWrapper):
                 np.random.choice([-1, self.depth])
                 for i in range(sum(self.x_lod[0]))
             ]
+<<<<<<< HEAD
+            self.x = np.array(self.x).astype(self.dtype).reshape(
+                [sum(self.x_lod[0]), 1])
+
+            self.out = np.zeros(shape=(np.product(self.x.shape[:-1]),
+                                       self.depth)).astype('float32')
+=======
             self.x = (
                 np.array(self.x)
                 .astype(self.dtype)
@@ -116,6 +177,7 @@ class XPUTestOneHotOP(XPUOpTestWrapper):
             self.out = np.zeros(
                 shape=(np.product(self.x.shape[:-1]), self.depth)
             ).astype('float32')
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.outputs = {'Out': (self.out, self.x_lod)}
 
@@ -125,6 +187,10 @@ class XPUTestOneHotOP(XPUOpTestWrapper):
 
 
 support_types = get_xpu_op_support_types('one_hot')
+<<<<<<< HEAD
+print("support_types: %s" % str(support_types))
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 for stype in support_types:
     create_test_class(globals(), XPUTestOneHotOP, stype)
 

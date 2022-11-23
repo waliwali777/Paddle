@@ -40,11 +40,13 @@ def huber_loss_forward(val, delta):
 
 
 class XPUTestHuberLossOp(XPUOpTestWrapper):
+
     def __init__(self):
         self.op_name = 'huber_loss'
         self.use_dynamic_create_class = False
 
     class TestHuberLossOp(XPUOpTest):
+
         def setUp(self):
             self.set_xpu()
             self.op_type = 'huber_loss'
@@ -92,6 +94,16 @@ class XPUTestHuberLossOp(XPUOpTestWrapper):
             self.check_grad_with_place(self.place, ['X', 'Y'], 'Out')
 
         def test_check_grad_ingore_x(self):
+<<<<<<< HEAD
+            self.check_grad_with_place(self.place, ['Y'],
+                                       'Out',
+                                       no_grad_set=set("residual"))
+
+        def test_check_grad_ingore_y(self):
+            self.check_grad_with_place(self.place, ['X'],
+                                       'Out',
+                                       no_grad_set=set('residual'))
+=======
             self.check_grad_with_place(
                 self.place, ['Y'], 'Out', no_grad_set=set("residual")
             )
@@ -100,16 +112,20 @@ class XPUTestHuberLossOp(XPUOpTestWrapper):
             self.check_grad_with_place(
                 self.place, ['X'], 'Out', no_grad_set=set('residual')
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     class TestHuberLossOp1(TestHuberLossOp):
+
         def set_shape(self):
             return 640
 
     class TestHuberLossOp2(TestHuberLossOp):
+
         def set_shape(self):
             return (10, 10)
 
     class TestHuberLossOp3(TestHuberLossOp):
+
         def set_shape(self):
             return (10, 10, 1)
 

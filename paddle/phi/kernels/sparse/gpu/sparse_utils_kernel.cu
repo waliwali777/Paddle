@@ -209,6 +209,16 @@ __global__ void ConvertCsrCrowsToCooRows(const IntT* crows_ptr,
 }
 
 template <typename T, typename IntT>
+<<<<<<< HEAD
+void SparseCsrToCooGPUKernel(const GPUContext& dev_ctx,
+                             const SparseCsrTensor& x,
+                             SparseCooTensor* out) {
+  const DDim& x_dims = x.dims();
+  const int64_t non_zero_num = x.non_zero_cols().numel();
+  const auto& csr_crows = x.non_zero_crows();
+  const auto& csr_cols = x.non_zero_cols();
+  const auto& csr_values = x.non_zero_elements();
+=======
 void CsrToCooGPUKernel(const GPUContext& dev_ctx,
                        const SparseCsrTensor& x,
                        SparseCooTensor* out) {
@@ -217,6 +227,7 @@ void CsrToCooGPUKernel(const GPUContext& dev_ctx,
   const auto& csr_crows = x.crows();
   const auto& csr_cols = x.cols();
   const auto& csr_values = x.values();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const IntT* csr_crows_data = csr_crows.data<IntT>();
   const IntT* csr_cols_data = csr_cols.data<IntT>();
   const T* csr_values_data = csr_values.data<T>();
@@ -275,12 +286,22 @@ void CsrToCooGPUKernel(const GPUContext& dev_ctx,
 }
 
 template <typename T, typename Context>
+<<<<<<< HEAD
+void SparseCsrToCooKernel(const Context& dev_ctx,
+                          const SparseCsrTensor& x,
+                          SparseCooTensor* out) {
+  PD_VISIT_INTEGRAL_TYPES(
+      x.non_zero_crows().dtype(), "SparseCsrToCooGPUKernel", ([&] {
+        SparseCsrToCooGPUKernel<T, data_t>(dev_ctx, x, out);
+      }));
+=======
 void CsrToCooKernel(const Context& dev_ctx,
                     const SparseCsrTensor& x,
                     SparseCooTensor* out) {
   PD_VISIT_BASE_INTEGRAL_TYPES(x.crows().dtype(), "CsrToCooGPUKernel", ([&] {
                                  CsrToCooGPUKernel<T, data_t>(dev_ctx, x, out);
                                }));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 template <typename IntT>
@@ -343,9 +364,15 @@ __global__ void ConvertCooRowsToCsrCrows(
 }
 
 template <typename T, typename IntT>
+<<<<<<< HEAD
+void SparseCooToCsrGPUKernel(const GPUContext& dev_ctx,
+                             const SparseCooTensor& x,
+                             SparseCsrTensor* out) {
+=======
 void CooToCsrGPUKernel(const GPUContext& dev_ctx,
                        const SparseCooTensor& x,
                        SparseCsrTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const auto& x_dims = x.dims();
   bool valid = x_dims.size() == 2 || x_dims.size() == 3;
   PADDLE_ENFORCE_EQ(valid,
@@ -358,6 +385,19 @@ void CooToCsrGPUKernel(const GPUContext& dev_ctx,
   int batchs = x_dims.size() == 2 ? 1 : x_dims[0];
   int rows = x_dims.size() == 2 ? x_dims[0] : x_dims[1];
 
+<<<<<<< HEAD
+  phi::DenseTensor non_zero_crows =
+      phi::Empty<IntT>(dev_ctx, {batchs * (rows + 1)});
+  phi::DenseTensor non_zero_cols = phi::Empty<IntT>(dev_ctx, {non_zero_num});
+  phi::DenseTensor non_zero_elements =
+      phi::EmptyLike<T, GPUContext>(dev_ctx, x.non_zero_elements());
+  IntT* csr_crows_data = non_zero_crows.data<IntT>();
+  IntT* csr_cols_data = non_zero_cols.data<IntT>();
+  T* csr_values_data = non_zero_elements.data<T>();
+
+  const auto& coo_indices = x.non_zero_indices();
+  const auto& coo_values = x.non_zero_elements();
+=======
   phi::DenseTensor crows = phi::Empty<IntT>(dev_ctx, {batchs * (rows + 1)});
   phi::DenseTensor cols = phi::Empty<IntT>(dev_ctx, {non_zero_num});
   phi::DenseTensor values = phi::EmptyLike<T, GPUContext>(dev_ctx, x.values());
@@ -367,6 +407,7 @@ void CooToCsrGPUKernel(const GPUContext& dev_ctx,
 
   const auto& coo_indices = x.indices();
   const auto& coo_values = x.values();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const IntT* batchs_ptr = coo_indices.data<IntT>();
   const IntT* coo_rows_data =
       x_dims.size() == 2 ? batchs_ptr : batchs_ptr + non_zero_num;
@@ -412,6 +453,9 @@ void CooToCsrGPUKernel(const GPUContext& dev_ctx,
                                      sizeof(T) * non_zero_num,
                                      gpuMemcpyDeviceToDevice,
                                      dev_ctx.stream());
+<<<<<<< HEAD
+  out->SetMember(non_zero_crows, non_zero_cols, non_zero_elements, x_dims);
+=======
   out->SetMember(crows, cols, values, x_dims);
 }
 
@@ -422,9 +466,29 @@ void CooToCsrKernel(const Context& dev_ctx,
   PD_VISIT_BASE_INTEGRAL_TYPES(x.indices().dtype(), "CooToCsrGPUKernel", ([&] {
                                  CooToCsrGPUKernel<T, data_t>(dev_ctx, x, out);
                                }));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
+}
+
+template <typename T, typename Context>
+void SparseCooToCsrKernel(const Context& dev_ctx,
+                          const SparseCooTensor& x,
+                          SparseCsrTensor* out) {
+  PD_VISIT_INTEGRAL_TYPES(
+      x.non_zero_indices().dtype(), "SparseCooToCsrGPUKernel", ([&] {
+        SparseCooToCsrGPUKernel<T, data_t>(dev_ctx, x, out);
+      }));
 }
 
 template <typename ValueT, typename IndicesT>
+<<<<<<< HEAD
+__global__ void KernelSparseCooToDense(const IndicesT* indices,
+                                       const int64_t* sparse_offsets,
+                                       const ValueT* data,
+                                       ValueT* dense_data,
+                                       const IndicesT non_zero_num,
+                                       const int64_t base_offset,
+                                       const int64_t sparse_dim) {
+=======
 __global__ void KernelCooToDense(const IndicesT* indices,
                                  const int64_t* sparse_offsets,
                                  const ValueT* data,
@@ -432,6 +496,7 @@ __global__ void KernelCooToDense(const IndicesT* indices,
                                  const IndicesT non_zero_num,
                                  const int64_t base_offset,
                                  const int64_t sparse_dim) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
   for (int i = tid; i < non_zero_num; i += gridDim.x * blockDim.x) {
     int64_t index = 0;
@@ -446,9 +511,15 @@ __global__ void KernelCooToDense(const IndicesT* indices,
 }
 
 template <typename T, typename IntT>
+<<<<<<< HEAD
+void SparseCooToDenseGPUKernel(const GPUContext& dev_ctx,
+                               const SparseCooTensor& x,
+                               DenseTensor* out) {
+=======
 void CooToDenseGPUKernel(const GPUContext& dev_ctx,
                          const SparseCooTensor& x,
                          DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const auto non_zero_num = x.nnz();
   const auto dense_dims = x.dims();
   const auto indices = x.indices();
@@ -489,7 +560,11 @@ void CooToDenseGPUKernel(const GPUContext& dev_ctx,
   auto config =
       phi::backends::gpu::GetGpuLaunchConfig1D(dev_ctx, non_zero_num, 1);
 
+<<<<<<< HEAD
+  KernelSparseCooToDense<T, IntT>
+=======
   KernelCooToDense<T, IntT>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       <<<config.block_per_grid.x,
          config.thread_per_block.x,
          0,
@@ -503,12 +578,21 @@ void CooToDenseGPUKernel(const GPUContext& dev_ctx,
 }
 
 template <typename T, typename Context>
+<<<<<<< HEAD
+void SparseCooToDenseKernel(const Context& dev_ctx,
+                            const SparseCooTensor& x,
+                            DenseTensor* out) {
+  PD_VISIT_INTEGRAL_TYPES(
+      x.non_zero_indices().dtype(), "SparseCooToDenseGPUKernel", ([&] {
+        SparseCooToDenseGPUKernel<T, data_t>(dev_ctx, x, out);
+=======
 void CooToDenseKernel(const Context& dev_ctx,
                       const SparseCooTensor& x,
                       DenseTensor* out) {
   PD_VISIT_BASE_INTEGRAL_TYPES(
       x.indices().dtype(), "CooToDenseGPUKernel", ([&] {
         CooToDenseGPUKernel<T, data_t>(dev_ctx, x, out);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       }));
 }
 

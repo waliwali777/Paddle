@@ -50,6 +50,24 @@ def yolo_box_post(
     }
     outputs = {'Out': output, 'NmsRoisNum': nms_rois_num}
 
+<<<<<<< HEAD
+    helper.append_op(type="yolo_box_post",
+                     inputs=inputs,
+                     attrs={
+                         'anchors0': anchors0,
+                         'anchors1': anchors1,
+                         'anchors2': anchors2,
+                         'class_num': class_num,
+                         'conf_thresh': conf_thresh,
+                         'downsample_ratio0': downsample_ratio0,
+                         'downsample_ratio1': downsample_ratio1,
+                         'downsample_ratio2': downsample_ratio2,
+                         'clip_bbox': clip_bbox,
+                         'scale_x_y': scale_x_y,
+                         'nms_threshold': nms_threshold
+                     },
+                     outputs=outputs)
+=======
     helper.append_op(
         type="yolo_box_post",
         inputs=inputs,
@@ -68,6 +86,7 @@ def yolo_box_post(
         },
         outputs=outputs,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     output.stop_gradient = True
     nms_rois_num.stop_gradient = True
     return output, nms_rois_num
@@ -77,6 +96,7 @@ def yolo_box_post(
     not paddle.is_compiled_with_cuda(), "only support cuda kernel."
 )
 class TestYoloBoxPost(unittest.TestCase):
+
     def test_yolo_box_post(self):
         place = paddle.CUDAPlace(0)
         program = paddle.static.Program()

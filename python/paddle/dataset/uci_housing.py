@@ -82,11 +82,16 @@ def load_data(filename, feature_num=14, ratio=0.8):
 
     data = np.fromfile(filename, sep=' ')
     data = data.reshape(data.shape[0] // feature_num, feature_num)
+<<<<<<< HEAD
+    maximums, minimums, avgs = data.max(axis=0), data.min(
+        axis=0), data.sum(axis=0) / data.shape[0]
+=======
     maximums, minimums, avgs = (
         data.max(axis=0),
         data.min(axis=0),
         data.sum(axis=0) / data.shape[0],
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     # if you want to print the distribution of input data, you could use function of feature_range
     # feature_range(maximums[:-1], minimums[:-1])
     for i in range(feature_num - 1):
@@ -149,9 +154,16 @@ def test():
 
 
 def fluid_model():
+<<<<<<< HEAD
+    parameter_tar = paddle.dataset.common.download(FLUID_URL_MODEL,
+                                                   'uci_housing',
+                                                   FLUID_MD5_MODEL,
+                                                   'fit_a_line.fluid.tar')
+=======
     parameter_tar = paddle.dataset.common.download(
         FLUID_URL_MODEL, 'uci_housing', FLUID_MD5_MODEL, 'fit_a_line.fluid.tar'
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     tar = tarfile.TarFile(parameter_tar, mode='r')
     dirpath = tempfile.mkdtemp()

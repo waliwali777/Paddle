@@ -34,14 +34,20 @@ def ref_view_as_real(x):
 
 
 class TestViewAsComplexOp(OpTest):
+
     def setUp(self):
         self.op_type = "as_complex"
         self.python_api = paddle.as_complex
         x = np.random.randn(10, 10, 2).astype("float64")
         out_ref = ref_view_as_complex(x)
+<<<<<<< HEAD
+        self.out_grad = np.ones(
+            [10, 10], dtype="float64") + 1j * np.ones([10, 10], dtype="float64")
+=======
         self.out_grad = np.ones([10, 10], dtype="float64") + 1j * np.ones(
             [10, 10], dtype="float64"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.inputs = {'X': x}
         self.outputs = {'Out': out_ref}
 
@@ -49,6 +55,13 @@ class TestViewAsComplexOp(OpTest):
         self.check_output(check_eager=True)
 
     def test_check_grad(self):
+<<<<<<< HEAD
+        self.check_grad(['X'],
+                        'Out',
+                        user_defined_grads=[ref_view_as_real(self.out_grad)],
+                        user_defined_grad_outputs=[self.out_grad],
+                        check_eager=True)
+=======
         self.check_grad(
             ['X'],
             'Out',
@@ -56,9 +69,11 @@ class TestViewAsComplexOp(OpTest):
             user_defined_grad_outputs=[self.out_grad],
             check_eager=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class TestViewAsRealOp(OpTest):
+
     def setUp(self):
         self.op_type = "as_real"
         real = np.random.randn(10, 10).astype("float64")
@@ -74,6 +89,13 @@ class TestViewAsRealOp(OpTest):
         self.check_output(check_eager=True)
 
     def test_check_grad(self):
+<<<<<<< HEAD
+        self.check_grad(['X'],
+                        'Out',
+                        user_defined_grads=[ref_view_as_complex(self.out_grad)],
+                        user_defined_grad_outputs=[self.out_grad],
+                        check_eager=True)
+=======
         self.check_grad(
             ['X'],
             'Out',
@@ -81,9 +103,11 @@ class TestViewAsRealOp(OpTest):
             user_defined_grad_outputs=[self.out_grad],
             check_eager=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class TestViewAsComplexAPI(unittest.TestCase):
+
     def setUp(self):
         self.x = np.random.randn(10, 10, 2)
         self.out = ref_view_as_complex(self.x)
@@ -111,6 +135,7 @@ class TestViewAsComplexAPI(unittest.TestCase):
 
 
 class TestViewAsRealAPI(unittest.TestCase):
+
     def setUp(self):
         self.x = np.random.randn(10, 10) + 1j * np.random.randn(10, 10)
         self.out = ref_view_as_real(self.x)

@@ -94,7 +94,11 @@ class GPUCollectFpnProposalsOpKernel : public framework::OpKernel<T> {
       auto roi_in = roi_ins[i];
       auto score_in = score_ins[i];
       if (multi_rois_num.size() > 0) {
+<<<<<<< HEAD
+        framework::Tensor temp;
+=======
         phi::DenseTensor temp;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         paddle::framework::TensorCopySync(
             *multi_rois_num[i], platform::CPUPlace(), &temp);
         const int* length_in = temp.data<int>();

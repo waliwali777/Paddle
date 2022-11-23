@@ -36,8 +36,12 @@ class Fleet:
     def init_pserver(self, opt_info):
         if "fleet_desc" in opt_info:
             self.dist_desc_str_ = text_format.MessageToString(
+<<<<<<< HEAD
+                opt_info["fleet_desc"])
+=======
                 opt_info["fleet_desc"]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             self.dist_desc_ = opt_info["fleet_desc"]
         else:
             print(
@@ -55,8 +59,12 @@ class Fleet:
     def init_worker(self, opt_info):
         if "fleet_desc" in opt_info:
             self.dist_desc_str_ = text_format.MessageToString(
+<<<<<<< HEAD
+                opt_info["fleet_desc"])
+=======
                 opt_info["fleet_desc"]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             self.dist_desc_ = opt_info["fleet_desc"]
         else:
             print(

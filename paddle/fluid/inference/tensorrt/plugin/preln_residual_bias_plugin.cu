@@ -1,5 +1,8 @@
 // Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserved.
+<<<<<<< HEAD
+=======
 // Copyright (c) 2019-2022, NVIDIA CORPORATION.  All rights reserved.
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +34,8 @@ namespace paddle {
 namespace inference {
 namespace tensorrt {
 namespace plugin {
+<<<<<<< HEAD
+=======
 #ifdef TRT_PLUGIN_FP16_AVALIABLE
 #define FINAL_MASK 0xffffffff
 template <typename T, int NUM>
@@ -158,6 +163,7 @@ __global__ void generalAddBiasResidualLayerNormOpt2(
 
 #endif
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 using half = phi::dtype::float16;
 
 #if IS_TRT_VERSION_GE(6000)
@@ -172,6 +178,22 @@ int PrelnResidualBiasPluginDynamic::initialize() TRT_NOEXCEPT {
              scale_.data(),
              scale_size_ * sizeof(float),
              cudaMemcpyHostToDevice);
+<<<<<<< HEAD
+
+  if (with_fp16_) {
+    cudaMalloc(&ele_bias_gpu_, sizeof(half) * ele_bias_size_);
+    cudaMemcpy(ele_bias_gpu_,
+               fp16_ele_bias_.data(),
+               ele_bias_size_ * sizeof(half),
+               cudaMemcpyHostToDevice);
+  } else {
+    cudaMalloc(&ele_bias_gpu_, sizeof(float) * ele_bias_size_);
+    cudaMemcpy(ele_bias_gpu_,
+               fp32_ele_bias_.data(),
+               ele_bias_size_ * sizeof(float),
+               cudaMemcpyHostToDevice);
+  }
+=======
   if (with_fp16_) {
     cudaMalloc(&fp16_bias_gpu_, sizeof(half) * bias_size_);
     cudaMemcpy(fp16_bias_gpu_,
@@ -201,6 +223,7 @@ int PrelnResidualBiasPluginDynamic::initialize() TRT_NOEXCEPT {
   } else {
     ele_bias_gpu_ = nullptr;
   }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   return 0;
 }
@@ -210,18 +233,24 @@ void PrelnResidualBiasPluginDynamic::terminate() TRT_NOEXCEPT {
     cudaFree(bias_gpu_);
     bias_gpu_ = nullptr;
   }
+<<<<<<< HEAD
+=======
   if (fp16_bias_gpu_) {
     cudaFree(fp16_bias_gpu_);
     fp16_bias_gpu_ = nullptr;
   }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   if (scale_gpu_) {
     cudaFree(scale_gpu_);
     scale_gpu_ = nullptr;
   }
+<<<<<<< HEAD
+=======
   if (fp16_scale_gpu_) {
     cudaFree(fp16_scale_gpu_);
     fp16_scale_gpu_ = nullptr;
   }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   if (ele_bias_gpu_) {
     cudaFree(ele_bias_gpu_);
     ele_bias_gpu_ = nullptr;
@@ -252,9 +281,13 @@ nvinfer1::IPluginV2DynamicExt *PrelnResidualBiasPluginDynamic::clone() const
   }
 
   ptr->bias_gpu_ = bias_gpu_;
+<<<<<<< HEAD
+  ptr->scale_gpu_ = scale_gpu_;
+=======
   ptr->fp16_bias_gpu_ = fp16_bias_gpu_;
   ptr->scale_gpu_ = scale_gpu_;
   ptr->fp16_scale_gpu_ = fp16_scale_gpu_;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   ptr->ele_bias_gpu_ = ele_bias_gpu_;
   return ptr;
 }
@@ -269,8 +302,12 @@ int PrelnResidualBiasPluginDynamic::getNbOutputs() const TRT_NOEXCEPT {
 
 size_t PrelnResidualBiasPluginDynamic::getSerializationSize() const
     TRT_NOEXCEPT {
+<<<<<<< HEAD
+  size_t ser_size = SerializedSize(bias_) + SerializedSize(scale_) +
+=======
   size_t ser_size = SerializedSize(bias_) + SerializedSize(fp16_bias_) +
                     SerializedSize(scale_) + SerializedSize(fp16_scale_) +
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     SerializedSize(fp32_ele_bias_) +
                     SerializedSize(fp16_ele_bias_) +
                     SerializedSize(bias_size_) + SerializedSize(scale_size_) +
@@ -281,9 +318,13 @@ size_t PrelnResidualBiasPluginDynamic::getSerializationSize() const
 void PrelnResidualBiasPluginDynamic::serialize(void *buffer) const
     TRT_NOEXCEPT {
   SerializeValue(&buffer, bias_);
+<<<<<<< HEAD
+  SerializeValue(&buffer, scale_);
+=======
   SerializeValue(&buffer, fp16_bias_);
   SerializeValue(&buffer, scale_);
   SerializeValue(&buffer, fp16_scale_);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   SerializeValue(&buffer, fp32_ele_bias_);
   SerializeValue(&buffer, fp16_ele_bias_);
   SerializeValue(&buffer, bias_size_);
@@ -459,6 +500,8 @@ int PrelnResidualBiasPluginDynamic::enqueue(
     float *mean = nullptr;
     float *var = nullptr;
     const int VecSize = 8;
+<<<<<<< HEAD
+=======
 #if CUDA_ARCH_FP16_SUPPORTED(__CUDA_ARCH__)
     // if hidden is even, use half2 kernel generalAddBiasResidualLayerNormOpt2
     if (hidden % 2 == 0) {
@@ -514,6 +557,7 @@ int PrelnResidualBiasPluginDynamic::enqueue(
           stream);
     }
 #else
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     paddle::operators::FusedLayernormResidualDropoutBiasFunctor<half,
                                                                 uint8_t,
                                                                 VecSize,
@@ -538,7 +582,10 @@ int PrelnResidualBiasPluginDynamic::enqueue(
         mean,
         var,
         stream);
+<<<<<<< HEAD
+=======
 #endif
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #else
     PADDLE_THROW(platform::errors::Fatal(
         "The Ernie(Bert) tensorRT plugin should be "

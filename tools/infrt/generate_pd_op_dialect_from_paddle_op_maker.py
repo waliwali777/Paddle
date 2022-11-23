@@ -350,13 +350,32 @@ def convert_op_proto_into_mlir(op_descs):
 
             # 2.3.2 attributes
             for attr in op_proto[ATTRS]:
+<<<<<<< HEAD
+                if (op_proto[ATTRS][attr][EXTRA]
+                        == True) or (attr in skipped_attr_list):
+=======
                 if (op_proto[ATTRS][attr][EXTRA]) or (
                     attr in skipped_attr_list
                 ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     continue
                 if op_proto[ATTRS][attr][DEFAULT_VALUE] is not None:
                     if op_proto[ATTRS][attr][TYPE] in attr_mlir_converter:
                         default_value = str(
+<<<<<<< HEAD
+                            op_proto[ATTRS][attr][DEFAULT_VALUE])
+                        if (attr_mlir_converter[op_proto[ATTRS][attr][TYPE]]
+                                in [
+                                    'I32ArrayAttr', 'F32ArrayAttr',
+                                    'StrArrayAttr', 'BoolArrayAttr',
+                                    'I64ArrayAttr'
+                                ]):
+                            default_value = default_value.replace('[',
+                                                                  '{').replace(
+                                                                      ']', '}')
+                        if (attr_mlir_converter[op_proto[ATTRS][attr][TYPE]]
+                                in ['BoolAttr', 'BoolArrayAttr']):
+=======
                             op_proto[ATTRS][attr][DEFAULT_VALUE]
                         )
                         if attr_mlir_converter[op_proto[ATTRS][attr][TYPE]] in [
@@ -373,15 +392,21 @@ def convert_op_proto_into_mlir(op_descs):
                             'BoolAttr',
                             'BoolArrayAttr',
                         ]:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             default_value = default_value.lower()
                         elif attr_mlir_converter[
                             op_proto[ATTRS][attr][TYPE]
                         ] in ['StrAttr', 'StrArrayAttr']:
                             default_value = default_value.replace('\'', '\\\"')
+<<<<<<< HEAD
+                            if attr_mlir_converter[op_proto[ATTRS][attr]
+                                                   [TYPE]] == "StrAttr":
+=======
                             if (
                                 attr_mlir_converter[op_proto[ATTRS][attr][TYPE]]
                                 == "StrAttr"
                             ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                 default_value = '\\\"' + default_value + '\\\"'
                         attr_list = (
                             " DefaultValuedAttr<"
@@ -394,6 +419,23 @@ def convert_op_proto_into_mlir(op_descs):
                         )
                         ARGUMENTS += attr_list
                     else:
+<<<<<<< HEAD
+                        print("Error:" + op_type + ":" + attr + ":" +
+                              str(op_proto[ATTRS][attr][TYPE]))
+                else:
+                    if op_proto[ATTRS][attr][TYPE] in attr_mlir_converter:
+                        attr_type_ = attr_mlir_converter[op_proto[ATTRS][attr]
+                                                         [TYPE]]
+                        if (attr_type_ in [
+                                'StrAttr', 'I32ArrayAttr', 'F32ArrayAttr',
+                                'StrArrayAttr', 'BoolArrayAttr', 'I64ArrayAttr'
+                        ]):
+                            attr_list = attr_type_ + ":$" + attr + ","
+                            ARGUMENTS += attr_list
+                    else:
+                        print(" ouch Error:" + op_type + ":" + attr + ":" +
+                              str(op_proto[ATTRS][attr][TYPE]))
+=======
                         print(
                             "Error:"
                             + op_type
@@ -426,6 +468,7 @@ def convert_op_proto_into_mlir(op_descs):
                             + ":"
                             + str(op_proto[ATTRS][attr][TYPE])
                         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             ARGUMENTS = ARGUMENTS[:-1] + ");\n"
 
         # 2.4 results info
@@ -457,10 +500,15 @@ def convert_op_proto_into_mlir(op_descs):
         ops_mlir_file.write("\n#endif  // PD_OPS")
 
     print("Skipped ops num: " + str(len(skipped_op_list)))
+<<<<<<< HEAD
+    print("Automatically generated op dialects num: " +
+          str(len(automatically_generated_op_dialect)))
+=======
     print(
         "Automatically generated op dialects num: "
         + str(len(automatically_generated_op_dialect))
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

@@ -245,6 +245,14 @@ def _convert_to_place(device):
         selected_mlus = os.getenv("FLAGS_selected_mlus", "0").split(",")
         device_id = int(selected_mlus[0])
         place = core.MLUPlace(device_id)
+<<<<<<< HEAD
+    elif device in core.get_all_custom_device_type():
+        selected_devices = os.getenv("FLAGS_selected_{}s".format(device),
+                                     "0").split(",")
+        device_id = int(selected_devices[0])
+        place = core.CustomPlace(device, device_id)
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     else:
         avaliable_gpu_device = re.match(r'gpu:\d+', lower_device)
         avaliable_xpu_device = re.match(r'xpu:\d+', lower_device)

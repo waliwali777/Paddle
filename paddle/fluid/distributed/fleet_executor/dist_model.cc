@@ -556,7 +556,11 @@ bool DistModel::FetchResults(std::vector<DistModelTensor> *output_data,
             i));
     framework::FetchType &fetch_var =
         framework::GetFetchVariable(*scope, "fetch", idx);
+<<<<<<< HEAD
+    auto &fetch = PADDLE_GET(framework::LoDTensor, fetch_var);
+=======
     auto &fetch = PADDLE_GET(phi::DenseTensor, fetch_var);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     auto type = framework::TransToProtoVarType(fetch.dtype());
     auto output = &(output_data->at(i));
     output->name = idx_to_fetches_[idx];

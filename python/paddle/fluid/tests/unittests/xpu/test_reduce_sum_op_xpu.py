@@ -30,10 +30,12 @@ paddle.enable_static()
 
 
 class XPUTestReduceSumOp(XPUOpTestWrapper):
+
     def __init__(self):
         self.op_name = 'reduce_sum'
 
     class XPUTestReduceSumBase(XPUOpTest):
+
         def setUp(self):
             self.place = paddle.XPUPlace(0)
             self.init_case()
@@ -51,9 +53,15 @@ class XPUTestReduceSumOp(XPUOpTestWrapper):
                 self.outputs = {'Out': self.inputs['X'].sum()}
             else:
                 self.outputs = {
+<<<<<<< HEAD
+                    'Out':
+                    self.inputs['X'].sum(axis=self.axis,
+                                         keepdims=self.attrs['keep_dim'])
+=======
                     'Out': self.inputs['X'].sum(
                         axis=self.axis, keepdims=self.attrs['keep_dim']
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 }
 
         def init_case(self):
@@ -69,6 +77,7 @@ class XPUTestReduceSumOp(XPUOpTestWrapper):
             self.check_grad_with_place(self.place, ['X'], 'Out')
 
     class XPUTestReduceSumCase1(XPUTestReduceSumBase):
+
         def init_case(self):
             self.shape = (5, 6, 10)
             self.axis = (0,)

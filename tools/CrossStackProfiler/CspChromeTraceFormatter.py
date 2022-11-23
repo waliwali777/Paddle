@@ -13,9 +13,26 @@
 # limitations under the License.
 
 import json
+<<<<<<< HEAD
+import six
+import sys
+import re
+import os
+import glob
+import unittest
+import pandas
+import tempfile
+import platform
+import pandas as pd
+
+
+class ChromeTraceFormatter(object):
+
+=======
 
 
 class ChromeTraceFormatter:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self):
         self._events = []
         self._metadata = []

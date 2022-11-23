@@ -64,7 +64,11 @@ struct DivNRanksForAllReduce {
   phi::DenseTensor* in_;
   int64_t nranks_;
   const platform::DeviceContext& ctx_;
+<<<<<<< HEAD
+  DivNRanksForAllReduce(framework::Tensor* in,
+=======
   DivNRanksForAllReduce(phi::DenseTensor* in,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         int64_t nranks,
                         const platform::DeviceContext& ctx)
       : in_(in), nranks_(nranks), ctx_(ctx) {}
@@ -111,7 +115,11 @@ class Group {
   void SplitTensors(const platform::DeviceContext& context);
 
   // use it in CUDA
+<<<<<<< HEAD
+  void DivNRanks(framework::Tensor* tensor,
+=======
   void DivNRanks(phi::DenseTensor* tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                  int64_t nranks,
                  const platform::DeviceContext& context);
 

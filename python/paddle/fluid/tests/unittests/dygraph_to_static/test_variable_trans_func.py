@@ -15,12 +15,17 @@
 import unittest
 
 from paddle.fluid.dygraph.dygraph_to_static.utils import ast_to_source_code
+<<<<<<< HEAD
+from paddle.fluid.dygraph.dygraph_to_static.variable_trans_func import create_fill_constant_node
+=======
 from paddle.fluid.dygraph.dygraph_to_static.variable_trans_func import (
     create_fill_constant_node,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class TestVariableTransFunc(unittest.TestCase):
+
     def test_create_fill_constant_node(self):
         node = create_fill_constant_node("a", 1.0)
         source = "a = paddle.full(shape=[1], dtype='float64', fill_value=1.0, name='a')"

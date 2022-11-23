@@ -337,9 +337,14 @@ class BertTokenizer(PretrainedTokenizer):
         self.vocab = self.load_vocabulary(vocab_file, unk_token=unk_token)
         self.do_lower_case = do_lower_case
         self.basic_tokenizer = BasicTokenizer(do_lower_case=do_lower_case)
+<<<<<<< HEAD
+        self.wordpiece_tokenizer = WordpieceTokenizer(vocab=self.vocab,
+                                                      unk_token=unk_token)
+=======
         self.wordpiece_tokenizer = WordpieceTokenizer(
             vocab=self.vocab, unk_token=unk_token
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.special_tokens_map = {
             'unk_token': unk_token,
             'sep_token': sep_token,
@@ -408,9 +413,13 @@ class BertTokenizer(PretrainedTokenizer):
         token_ids_1 = []
         return len(
             self.build_inputs_with_special_tokens(
+<<<<<<< HEAD
+                token_ids_0, token_ids_1 if pair else None))
+=======
                 token_ids_0, token_ids_1 if pair else None
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
         """
@@ -486,11 +495,16 @@ class BertTokenizer(PretrainedTokenizer):
             return list(
                 map(
                     lambda x: 1
+<<<<<<< HEAD
+                    if x in [self.sep_token_id, self.cls_token_id] else 0,
+                    token_ids_0))
+=======
                     if x in [self.sep_token_id, self.cls_token_id]
                     else 0,
                     token_ids_0,
                 )
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         if token_ids_1 is not None:
             return (

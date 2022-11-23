@@ -66,12 +66,21 @@ class MasterDaemon {
   std::thread _background_thread{};
   int _nranks = -1;
   int _timeout = 0;
+<<<<<<< HEAD
+  bool _stop = false;  // all workers stopped
+  std::chrono::time_point<std::chrono::system_clock> _stop_time;
+  bool _has_stop = false;  // at least one worker stopped
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   void InitControlFd();
   void CloseControlFd();
   void StopByControlFd();
 #ifdef _WIN32
+<<<<<<< HEAD
+=======
   HANDLE ghStopEvent_{};
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #else
   std::array<int, 2> _control_fd{{-1, -1}};
 #endif

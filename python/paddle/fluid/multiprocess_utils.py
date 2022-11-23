@@ -64,6 +64,7 @@ class CleanupFuncRegistrar:
 
     @classmethod
     def register(cls, function, signals=[]):
+
         def _func_exectuor():
             if function not in cls._executed_func_set:
                 try:
@@ -92,10 +93,15 @@ class CleanupFuncRegistrar:
             for sig in signals:
                 orig_handler = signal.signal(sig, _signal_handler)
                 if orig_handler not in (signal.SIG_DFL, signal.SIG_IGN):
+<<<<<<< HEAD
+                    if (sig == signal.SIGINT
+                            and orig_handler is signal.default_int_handler):
+=======
                     if (
                         sig == signal.SIGINT
                         and orig_handler is signal.default_int_handler
                     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         continue
                     if orig_handler not in cls._registered_func_set:
                         atexit.register(orig_handler)

@@ -69,7 +69,11 @@ struct TestReduceOpHandle {
       for (int i = 0; i < count; ++i) {
         auto p = p::CUDAPlace(i);
         gpu_list_.push_back(p);
+<<<<<<< HEAD
+        ctxs_.emplace_back(new p::phi::GPUContext(p));
+=======
         ctxs_.emplace_back(new phi::GPUContext(p));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       }
       nccl_ctxs_.reset(new platform::NCCLContextMap(gpu_list_));
 #else
@@ -251,7 +255,11 @@ struct TestReduceOpHandle {
           in_var,
           platform::errors::NotFound("Variable %s is not found in scope.",
                                      "input"));
+<<<<<<< HEAD
+      auto in_lod_tensor = in_var->GetMutable<f::LoDTensor>();
+=======
       auto in_lod_tensor = in_var->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       in_lod_tensor->mutable_data<float>(kDims, gpu_list_[input_scope_idx]);
       in_lod_tensor->set_lod(lod);
 

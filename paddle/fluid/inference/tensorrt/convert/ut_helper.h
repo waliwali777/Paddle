@@ -45,7 +45,11 @@ float random(float low, float high) {
   return dist(mt);
 }
 
+<<<<<<< HEAD
+void RandomizeTensor(framework::LoDTensor* tensor,
+=======
 void RandomizeTensor(phi::DenseTensor* tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                      const platform::Place& place,
                      const platform::DeviceContext& ctx) {
   auto dims = tensor->dims();
@@ -79,7 +83,11 @@ class TRTConvertValidation {
   TRTConvertValidation(int max_batch_size,
                        const std::unordered_set<std::string>& parameters,
                        framework::Scope& scope,  // NOLINT
+<<<<<<< HEAD
+                       int workspace_size = 1 << 10,
+=======
                        int64_t workspace_size = 1 << 30,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                        bool if_add_batch = true)
       : parameters_(parameters),
         scope_(scope),

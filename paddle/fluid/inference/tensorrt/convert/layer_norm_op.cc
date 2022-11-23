@@ -71,8 +71,12 @@ class LayerNormOpConverter : public OpConverter {
               begin_norm_axis,
               eps,
               mean_shape,
+<<<<<<< HEAD
+              variance_shape);
+=======
               variance_shape,
               with_fp16);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       layernorm_layer = engine_->AddDynamicPlugin(&X, 1, plugin);
     } else {
       int statis_num = 1;
@@ -91,8 +95,12 @@ class LayerNormOpConverter : public OpConverter {
           begin_norm_axis,
           eps,
           mean_shape,
+<<<<<<< HEAD
+          variance_shape);
+=======
           variance_shape,
           with_fp16);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       layernorm_layer = engine_->AddPlugin(
           &X, 1, reinterpret_cast<plugin::PluginTensorRT*>(plugin));
     }

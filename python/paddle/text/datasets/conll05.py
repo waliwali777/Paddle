@@ -102,12 +102,19 @@ class Conll05st(Dataset):
     ):
         self.data_file = data_file
         if self.data_file is None:
+<<<<<<< HEAD
+            assert download, "data_file is not set and downloading automatically is disabled"
+            self.data_file = _check_exists_and_download(data_file, DATA_URL,
+                                                        DATA_MD5, 'conll05st',
+                                                        download)
+=======
             assert (
                 download
             ), "data_file is not set and downloading automatically is disabled"
             self.data_file = _check_exists_and_download(
                 data_file, DATA_URL, DATA_MD5, 'conll05st', download
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.word_dict_file = word_dict_file
         if self.word_dict_file is None:
@@ -150,12 +157,19 @@ class Conll05st(Dataset):
 
         self.emb_file = emb_file
         if self.emb_file is None:
+<<<<<<< HEAD
+            assert download, "emb_file is not set and downloading automatically is disabled"
+            self.emb_file = _check_exists_and_download(emb_file, EMB_URL,
+                                                       EMB_MD5, 'conll05st',
+                                                       download)
+=======
             assert (
                 download
             ), "emb_file is not set and downloading automatically is disabled"
             self.emb_file = _check_exists_and_download(
                 emb_file, EMB_URL, EMB_MD5, 'conll05st', download
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.word_dict = self._load_dict(self.word_dict_file)
         self.predicate_dict = self._load_dict(self.verb_dict_file)

@@ -13,6 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD
+from __future__ import print_function
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 import unittest
 import paddle
 import paddle.fluid as fluid
@@ -22,11 +27,21 @@ import numpy as np
 
 
 class MyLayer(paddle.nn.Layer):
+<<<<<<< HEAD
+
+    def __init__(self):
+        super(MyLayer, self).__init__()
+        self.conv1 = paddle.nn.Conv2D(in_channels=3,
+                                      out_channels=4,
+                                      kernel_size=3,
+                                      padding=2)
+=======
     def __init__(self):
         super().__init__()
         self.conv1 = paddle.nn.Conv2D(
             in_channels=3, out_channels=4, kernel_size=3, padding=2
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.linear1 = paddle.nn.Linear(4624, 32)
         self.linear2 = paddle.nn.Linear(32, 32)
         self.linear3 = paddle.nn.Linear(32, 10)
@@ -41,6 +56,10 @@ class MyLayer(paddle.nn.Layer):
 
 
 class TestASPDynamicOptimize(unittest.TestCase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def setUp(self):
         paddle.disable_static()
 
@@ -51,8 +70,12 @@ class TestASPDynamicOptimize(unittest.TestCase):
             self.place = paddle.CUDAPlace(0)
 
         self.optimizer = paddle.optimizer.SGD(
+<<<<<<< HEAD
+            learning_rate=0.01, parameters=self.layer.parameters())
+=======
             learning_rate=0.01, parameters=self.layer.parameters()
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.optimizer = paddle.incubate.asp.decorate(self.optimizer)
         paddle.incubate.asp.prune_model(self.layer)
 
@@ -65,6 +88,13 @@ class TestASPDynamicOptimize(unittest.TestCase):
         paddle.save(self.optimizer.state_dict(), opt_path)
 
         asp_info = ASPHelper._get_program_asp_info(
+<<<<<<< HEAD
+            paddle.static.default_main_program())
+        for param_name in asp_info.mask_vars:
+            mask = asp_info.mask_vars[param_name]
+            asp_info.update_mask_vars(
+                param_name, paddle.ones(shape=mask.shape, dtype=mask.dtype))
+=======
             paddle.static.default_main_program()
         )
         for param_name in asp_info.mask_vars:
@@ -72,6 +102,7 @@ class TestASPDynamicOptimize(unittest.TestCase):
             asp_info.update_mask_vars(
                 param_name, paddle.ones(shape=mask.shape, dtype=mask.dtype)
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             asp_info.update_masks(param_name, np.ones(shape=mask.shape))
 
         net_state_dict = paddle.load(net_path)
@@ -80,6 +111,16 @@ class TestASPDynamicOptimize(unittest.TestCase):
         self.layer.set_state_dict(net_state_dict)
         self.optimizer.set_state_dict(opt_state_dict)
 
+<<<<<<< HEAD
+        imgs = paddle.to_tensor(np.random.randn(64, 3, 32, 32),
+                                dtype='float32',
+                                place=self.place,
+                                stop_gradient=False)
+        labels = paddle.to_tensor(np.random.randint(10, size=(64, 1)),
+                                  dtype='float32',
+                                  place=self.place,
+                                  stop_gradient=False)
+=======
         imgs = paddle.to_tensor(
             np.random.randn(64, 3, 32, 32),
             dtype='float32',
@@ -92,6 +133,7 @@ class TestASPDynamicOptimize(unittest.TestCase):
             place=self.place,
             stop_gradient=False,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         loss_fn = paddle.nn.MSELoss(reduction='mean')
 
@@ -103,6 +145,26 @@ class TestASPDynamicOptimize(unittest.TestCase):
 
         for param in self.layer.parameters():
             if ASPHelper._is_supported_layer(
+<<<<<<< HEAD
+                    paddle.static.default_main_program(), param.name):
+                mat = param.numpy()
+                if (len(param.shape) == 4
+                        and param.shape[1] < 4) or (len(param.shape) == 2
+                                                    and param.shape[0] < 4):
+                    self.assertFalse(
+                        paddle.fluid.contrib.sparsity.check_sparsity(mat.T,
+                                                                     n=2,
+                                                                     m=4))
+                else:
+                    self.assertTrue(
+                        paddle.fluid.contrib.sparsity.check_sparsity(mat.T,
+                                                                     n=2,
+                                                                     m=4))
+
+
+class TestASPStaticOptimize(unittest.TestCase):
+
+=======
                 paddle.static.default_main_program(), param.name
             ):
                 mat = param.numpy()
@@ -123,6 +185,7 @@ class TestASPDynamicOptimize(unittest.TestCase):
 
 
 class TestASPStaticOptimize(unittest.TestCase):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def setUp(self):
         paddle.enable_static()
 
@@ -130,6 +193,17 @@ class TestASPStaticOptimize(unittest.TestCase):
         self.startup_program = fluid.Program()
 
         def build_model():
+<<<<<<< HEAD
+            img = fluid.data(name='img',
+                             shape=[None, 3, 32, 32],
+                             dtype='float32')
+            label = fluid.data(name='label', shape=[None, 1], dtype='int64')
+            hidden = fluid.layers.conv2d(input=img,
+                                         num_filters=4,
+                                         filter_size=3,
+                                         padding=2,
+                                         act="relu")
+=======
             img = fluid.data(
                 name='img', shape=[None, 3, 32, 32], dtype='float32'
             )
@@ -137,6 +211,7 @@ class TestASPStaticOptimize(unittest.TestCase):
             hidden = fluid.layers.conv2d(
                 input=img, num_filters=4, filter_size=3, padding=2, act="relu"
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             hidden = fluid.layers.fc(input=hidden, size=32, act='relu')
             prediction = fluid.layers.fc(input=hidden, size=10, act='softmax')
             return img, label, prediction
@@ -144,8 +219,12 @@ class TestASPStaticOptimize(unittest.TestCase):
         with fluid.program_guard(self.main_program, self.startup_program):
             self.img, self.label, predict = build_model()
             self.loss = paddle.mean(
+<<<<<<< HEAD
+                fluid.layers.cross_entropy(input=predict, label=self.label))
+=======
                 fluid.layers.cross_entropy(input=predict, label=self.label)
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             self.optimizer = fluid.optimizer.SGD(learning_rate=0.01)
             self.optimizer = paddle.incubate.asp.decorate(self.optimizer)
             self.optimizer.minimize(self.loss, self.startup_program)
@@ -171,6 +250,13 @@ class TestASPStaticOptimize(unittest.TestCase):
         state_dict = paddle.load(param_path)
         prog.set_state_dict(state_dict)
 
+<<<<<<< HEAD
+        feeder = fluid.DataFeeder(feed_list=[self.img, self.label],
+                                  place=self.place)
+
+        data = (np.random.randn(64, 3, 32,
+                                32), np.random.randint(10, size=(64, 1)))
+=======
         feeder = fluid.DataFeeder(
             feed_list=[self.img, self.label], place=self.place
         )
@@ -179,10 +265,27 @@ class TestASPStaticOptimize(unittest.TestCase):
             np.random.randn(64, 3, 32, 32),
             np.random.randint(10, size=(64, 1)),
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.exe.run(prog, feed=feeder.feed([data]))
 
         for param in prog.global_block().all_parameters():
             if ASPHelper._is_supported_layer(prog, param.name):
+<<<<<<< HEAD
+                mat = np.array(fluid.global_scope().find_var(
+                    param.name).get_tensor())
+                if (len(param.shape) == 4
+                        and param.shape[1] < 4) or (len(param.shape) == 2
+                                                    and param.shape[0] < 4):
+                    self.assertFalse(
+                        paddle.fluid.contrib.sparsity.check_sparsity(mat.T,
+                                                                     n=2,
+                                                                     m=4))
+                else:
+                    self.assertTrue(
+                        paddle.fluid.contrib.sparsity.check_sparsity(mat.T,
+                                                                     n=2,
+                                                                     m=4))
+=======
                 mat = np.array(
                     fluid.global_scope().find_var(param.name).get_tensor()
                 )
@@ -200,6 +303,7 @@ class TestASPStaticOptimize(unittest.TestCase):
                             mat.T, n=2, m=4
                         )
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

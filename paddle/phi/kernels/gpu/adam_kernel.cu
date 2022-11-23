@@ -386,8 +386,12 @@ PD_REGISTER_KERNEL(merged_adam,
                    phi::MergedAdamKernel,
                    float,
                    double,
+<<<<<<< HEAD
+                   phi::dtype::float16) {
+=======
                    phi::dtype::float16,
                    phi::dtype::bfloat16) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   // Skip beta1_pow, beta2_pow data transform
   kernel->InputAt(5).SetBackend(phi::Backend::ALL_BACKEND);
   kernel->InputAt(6).SetBackend(phi::Backend::ALL_BACKEND);

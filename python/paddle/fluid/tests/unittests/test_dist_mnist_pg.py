@@ -20,6 +20,7 @@ paddle.enable_static()
 
 
 class TestDistMnistNCCL2(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = True
         self._use_reduce = False
@@ -30,6 +31,14 @@ class TestDistMnistNCCL2(TestDistBase):
         import paddle.fluid as fluid
 
         if fluid.core.is_compiled_with_cuda():
+<<<<<<< HEAD
+            self.check_with_place("dist_mnist.py",
+                                  delta=1,
+                                  need_envs={
+                                      "FLAGS_enable_parallel_graph": "1",
+                                      "FLAGS_sync_nccl_allreduce": "1"
+                                  })
+=======
             self.check_with_place(
                 "dist_mnist.py",
                 delta=1,
@@ -38,6 +47,7 @@ class TestDistMnistNCCL2(TestDistBase):
                     "FLAGS_sync_nccl_allreduce": "1",
                 },
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

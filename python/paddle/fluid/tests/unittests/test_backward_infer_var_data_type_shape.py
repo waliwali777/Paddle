@@ -20,12 +20,20 @@ import warnings
 
 
 class TestBackwardInferVarDataTypeShape(unittest.TestCase):
+
     def test_backward_infer_var_data_type_shape(self):
         paddle.enable_static()
         program = fluid.default_main_program()
+<<<<<<< HEAD
+        dy = program.global_block().create_var(name="Tmp@GRAD",
+                                               shape=[1, 1],
+                                               dtype=np.float32,
+                                               persistable=True)
+=======
         dy = program.global_block().create_var(
             name="Tmp@GRAD", shape=[1, 1], dtype=np.float32, persistable=True
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         # invoke warning
         fluid.backward._infer_var_data_type_shape_(
             "Tmp@GRAD", program.global_block()

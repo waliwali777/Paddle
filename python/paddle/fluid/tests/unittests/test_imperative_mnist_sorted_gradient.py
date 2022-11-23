@@ -26,6 +26,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class TestImperativeMnistSortGradient(unittest.TestCase):
+
     def func_test_mnist_sort_gradient_float32(self):
         seed = 90
         epoch_num = 1
@@ -36,17 +37,32 @@ class TestImperativeMnistSortGradient(unittest.TestCase):
             fluid.set_flags({'FLAGS_sort_sum_gradient': True})
 
             mnist2 = MNIST()
+<<<<<<< HEAD
+            sgd2 = SGDOptimizer(learning_rate=1e-3,
+                                parameter_list=mnist2.parameters())
+            train_reader2 = paddle.batch(paddle.dataset.mnist.train(),
+                                         batch_size=128,
+                                         drop_last=True)
+=======
             sgd2 = SGDOptimizer(
                 learning_rate=1e-3, parameter_list=mnist2.parameters()
             )
             train_reader2 = paddle.batch(
                 paddle.dataset.mnist.train(), batch_size=128, drop_last=True
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             mnist2.train()
             dy_param_init_value2 = {}
             for epoch in range(epoch_num):
                 for batch_id, data in enumerate(train_reader2()):
+<<<<<<< HEAD
+                    dy_x_data2 = np.array([
+                        x[0].reshape(1, 28, 28) for x in data
+                    ]).astype('float32')
+                    y_data2 = np.array([x[1] for x in data
+                                        ]).astype('int64').reshape(128, 1)
+=======
                     dy_x_data2 = np.array(
                         [x[0].reshape(1, 28, 28) for x in data]
                     ).astype('float32')
@@ -55,6 +71,7 @@ class TestImperativeMnistSortGradient(unittest.TestCase):
                         .astype('int64')
                         .reshape(128, 1)
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                     img2 = to_variable(dy_x_data2)
                     label2 = to_variable(y_data2)
@@ -92,6 +109,15 @@ class TestImperativeMnistSortGradient(unittest.TestCase):
 
             mnist = MNIST()
             sgd = SGDOptimizer(learning_rate=1e-3)
+<<<<<<< HEAD
+            train_reader = paddle.batch(paddle.dataset.mnist.train(),
+                                        batch_size=128,
+                                        drop_last=True)
+
+            img = fluid.layers.data(name='pixel',
+                                    shape=[1, 28, 28],
+                                    dtype='float32')
+=======
             train_reader = paddle.batch(
                 paddle.dataset.mnist.train(), batch_size=128, drop_last=True
             )
@@ -99,6 +125,7 @@ class TestImperativeMnistSortGradient(unittest.TestCase):
             img = fluid.layers.data(
                 name='pixel', shape=[1, 28, 28], dtype='float32'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             label = fluid.layers.data(name='label', shape=[1], dtype='int64')
             cost = mnist(img)
             loss = fluid.layers.cross_entropy(cost, label)
@@ -121,6 +148,22 @@ class TestImperativeMnistSortGradient(unittest.TestCase):
 
             for epoch in range(epoch_num):
                 for batch_id, data in enumerate(train_reader()):
+<<<<<<< HEAD
+                    static_x_data = np.array([
+                        x[0].reshape(1, 28, 28) for x in data
+                    ]).astype('float32')
+                    y_data = np.array([x[1] for x in data
+                                       ]).astype('int64').reshape([128, 1])
+
+                    fetch_list = [avg_loss.name]
+                    fetch_list.extend(static_param_name_list)
+                    out = exe.run(fluid.default_main_program(),
+                                  feed={
+                                      "pixel": static_x_data,
+                                      "label": y_data
+                                  },
+                                  fetch_list=fetch_list)
+=======
                     static_x_data = np.array(
                         [x[0].reshape(1, 28, 28) for x in data]
                     ).astype('float32')
@@ -137,13 +180,19 @@ class TestImperativeMnistSortGradient(unittest.TestCase):
                         feed={"pixel": static_x_data, "label": y_data},
                         fetch_list=fetch_list,
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                     static_param_value = {}
                     static_out = out[0]
                     for i in range(1, len(out)):
+<<<<<<< HEAD
+                        static_param_value[static_param_name_list[i -
+                                                                  1]] = out[i]
+=======
                         static_param_value[static_param_name_list[i - 1]] = out[
                             i
                         ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     if batch_id == 20:
                         break
 

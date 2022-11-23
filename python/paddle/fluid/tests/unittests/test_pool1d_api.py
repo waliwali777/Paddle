@@ -46,11 +46,17 @@ def max_pool1D_forward_naive(
     if adaptive:
         L_out = ksize[0]
     else:
+<<<<<<< HEAD
+        L_out = (L - ksize[0] + 2 * paddings[0] + strides[0] -
+                 1) // strides[0] + 1 if ceil_mode else (
+                     L - ksize[0] + 2 * paddings[0]) // strides[0] + 1
+=======
         L_out = (
             (L - ksize[0] + 2 * paddings[0] + strides[0] - 1) // strides[0] + 1
             if ceil_mode
             else (L - ksize[0] + 2 * paddings[0]) // strides[0] + 1
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     out = np.zeros((N, C, L_out))
     for i in range(L_out):
@@ -83,11 +89,17 @@ def avg_pool1D_forward_naive(
     if adaptive:
         L_out = ksize[0]
     else:
+<<<<<<< HEAD
+        L_out = (L - ksize[0] + 2 * paddings[0] + strides[0] -
+                 1) // strides[0] + 1 if ceil_mode else (
+                     L - ksize[0] + 2 * paddings[0]) // strides[0] + 1
+=======
         L_out = (
             (L - ksize[0] + 2 * paddings[0] + strides[0] - 1) // strides[0] + 1
             if ceil_mode
             else (L - ksize[0] + 2 * paddings[0]) // strides[0] + 1
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     out = np.zeros((N, C, L_out))
     for i in range(L_out):
@@ -103,6 +115,13 @@ def avg_pool1D_forward_naive(
             (r_end - r_start) if (exclusive or adaptive) else (ksize[0])
         )
         if data_type == np.int8 or data_type == np.uint8:
+<<<<<<< HEAD
+            out[:, :, i] = (np.rint(np.sum(x_masked, axis=(2, 3)) /
+                                    field_size)).astype(data_type)
+        else:
+            out[:, :,
+                i] = (np.sum(x_masked, axis=(2)) / field_size).astype(data_type)
+=======
             out[:, :, i] = (
                 np.rint(np.sum(x_masked, axis=(2, 3)) / field_size)
             ).astype(data_type)
@@ -110,10 +129,12 @@ def avg_pool1D_forward_naive(
             out[:, :, i] = (np.sum(x_masked, axis=(2)) / field_size).astype(
                 data_type
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
 class TestPool1D_API(unittest.TestCase):
+
     def setUp(self):
         np.random.seed(123)
         self.places = [fluid.CPUPlace()]
@@ -126,9 +147,17 @@ class TestPool1D_API(unittest.TestCase):
             result = F.avg_pool1d(input, kernel_size=2, stride=2, padding=0)
 
             input_np = np.random.random([2, 3, 32]).astype("float32")
+<<<<<<< HEAD
+            result_np = avg_pool1D_forward_naive(input_np,
+                                                 ksize=[2],
+                                                 strides=[2],
+                                                 paddings=[0],
+                                                 ceil_mode=False)
+=======
             result_np = avg_pool1D_forward_naive(
                 input_np, ksize=[2], strides=[2], paddings=[0], ceil_mode=False
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             exe = fluid.Executor(place)
             fetches = exe.run(
@@ -144,15 +173,28 @@ class TestPool1D_API(unittest.TestCase):
             input = fluid.dygraph.to_variable(input_np)
             result = F.avg_pool1d(input, kernel_size=2, stride=2, padding=[0])
 
+<<<<<<< HEAD
+            result_np = avg_pool1D_forward_naive(input_np,
+                                                 ksize=[2],
+                                                 strides=[2],
+                                                 paddings=[0])
+=======
             result_np = avg_pool1D_forward_naive(
                 input_np, ksize=[2], strides=[2], paddings=[0]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
+<<<<<<< HEAD
+            avg_pool1d_dg = paddle.nn.layer.AvgPool1D(kernel_size=2,
+                                                      stride=None,
+                                                      padding=0)
+=======
             avg_pool1d_dg = paddle.nn.layer.AvgPool1D(
                 kernel_size=2, stride=None, padding=0
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             result = avg_pool1d_dg(input)
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
@@ -160,6 +202,19 @@ class TestPool1D_API(unittest.TestCase):
         with fluid.dygraph.guard(place):
             input_np = np.random.random([2, 3, 32]).astype("float32")
             input = fluid.dygraph.to_variable(input_np)
+<<<<<<< HEAD
+            result = F.avg_pool1d(input,
+                                  kernel_size=2,
+                                  stride=2,
+                                  padding=[1],
+                                  exclusive=True)
+
+            result_np = avg_pool1D_forward_naive(input_np,
+                                                 ksize=[2],
+                                                 strides=[2],
+                                                 paddings=[1],
+                                                 exclusive=False)
+=======
             result = F.avg_pool1d(
                 input, kernel_size=2, stride=2, padding=[1], exclusive=True
             )
@@ -167,12 +222,20 @@ class TestPool1D_API(unittest.TestCase):
             result_np = avg_pool1D_forward_naive(
                 input_np, ksize=[2], strides=[2], paddings=[1], exclusive=False
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
+<<<<<<< HEAD
+            avg_pool1d_dg = paddle.nn.AvgPool1D(kernel_size=2,
+                                                stride=None,
+                                                padding=1,
+                                                exclusive=True)
+=======
             avg_pool1d_dg = paddle.nn.AvgPool1D(
                 kernel_size=2, stride=None, padding=1, exclusive=True
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             result = avg_pool1d_dg(input)
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
@@ -183,9 +246,16 @@ class TestPool1D_API(unittest.TestCase):
             result = F.max_pool1d(input, kernel_size=2, stride=2, padding=[0])
 
             input_np = np.random.random([2, 3, 32]).astype("float32")
+<<<<<<< HEAD
+            result_np = max_pool1D_forward_naive(input_np,
+                                                 ksize=[2],
+                                                 strides=[2],
+                                                 paddings=[0])
+=======
             result_np = max_pool1D_forward_naive(
                 input_np, ksize=[2], strides=[2], paddings=[0]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             exe = fluid.Executor(place)
             fetches = exe.run(
@@ -201,15 +271,28 @@ class TestPool1D_API(unittest.TestCase):
             input = fluid.dygraph.to_variable(input_np)
             result = F.max_pool1d(input, kernel_size=2, stride=2, padding=0)
 
+<<<<<<< HEAD
+            result_np = max_pool1D_forward_naive(input_np,
+                                                 ksize=[2],
+                                                 strides=[2],
+                                                 paddings=[0])
+=======
             result_np = max_pool1D_forward_naive(
                 input_np, ksize=[2], strides=[2], paddings=[0]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
+<<<<<<< HEAD
+            max_pool1d_dg = paddle.nn.layer.MaxPool1D(kernel_size=2,
+                                                      stride=None,
+                                                      padding=0)
+=======
             max_pool1d_dg = paddle.nn.layer.MaxPool1D(
                 kernel_size=2, stride=None, padding=0
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             result = max_pool1d_dg(input)
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
@@ -217,6 +300,18 @@ class TestPool1D_API(unittest.TestCase):
         with fluid.dygraph.guard(place):
             input_np = np.random.random([2, 3, 32]).astype("float32")
             input = fluid.dygraph.to_variable(input_np)
+<<<<<<< HEAD
+            result, index = F.max_pool1d(input,
+                                         kernel_size=2,
+                                         stride=2,
+                                         padding=0,
+                                         return_mask=True)
+
+            result_np = max_pool1D_forward_naive(input_np,
+                                                 ksize=[2],
+                                                 strides=[2],
+                                                 paddings=[0])
+=======
             result, index = F.max_pool1d(
                 input, kernel_size=2, stride=2, padding=0, return_mask=True
             )
@@ -224,12 +319,19 @@ class TestPool1D_API(unittest.TestCase):
             result_np = max_pool1D_forward_naive(
                 input_np, ksize=[2], strides=[2], paddings=[0]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
+<<<<<<< HEAD
+            max_pool1d_dg = paddle.nn.layer.MaxPool1D(kernel_size=2,
+                                                      stride=None,
+                                                      padding=0)
+=======
             max_pool1d_dg = paddle.nn.layer.MaxPool1D(
                 kernel_size=2, stride=None, padding=0
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             result = max_pool1d_dg(input)
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
@@ -237,6 +339,17 @@ class TestPool1D_API(unittest.TestCase):
         with fluid.dygraph.guard(place):
             input_np = np.random.random([2, 3, 32]).astype("float32")
             input = fluid.dygraph.to_variable(input_np)
+<<<<<<< HEAD
+            result = F.max_pool1d(input,
+                                  kernel_size=2,
+                                  stride=2,
+                                  padding="SAME")
+
+            result_np = max_pool1D_forward_naive(input_np,
+                                                 ksize=[2],
+                                                 strides=[2],
+                                                 paddings=[0])
+=======
             result = F.max_pool1d(
                 input, kernel_size=2, stride=2, padding="SAME"
             )
@@ -244,6 +357,7 @@ class TestPool1D_API(unittest.TestCase):
             result_np = max_pool1D_forward_naive(
                 input_np, ksize=[2], strides=[2], paddings=[0]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
@@ -251,6 +365,17 @@ class TestPool1D_API(unittest.TestCase):
         with fluid.dygraph.guard(place):
             input_np = np.random.random([2, 3, 32]).astype("float32")
             input = fluid.dygraph.to_variable(input_np)
+<<<<<<< HEAD
+            result = F.avg_pool1d(input,
+                                  kernel_size=2,
+                                  stride=2,
+                                  padding="SAME")
+
+            result_np = avg_pool1D_forward_naive(input_np,
+                                                 ksize=[2],
+                                                 strides=[2],
+                                                 paddings=[0])
+=======
             result = F.avg_pool1d(
                 input, kernel_size=2, stride=2, padding="SAME"
             )
@@ -258,6 +383,7 @@ class TestPool1D_API(unittest.TestCase):
             result_np = avg_pool1D_forward_naive(
                 input_np, ksize=[2], strides=[2], paddings=[0]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
 
@@ -278,7 +404,9 @@ class TestPool1D_API(unittest.TestCase):
 
 
 class TestPool2DError_API(unittest.TestCase):
+
     def test_error_api(self):
+
         def run1():
             with fluid.dygraph.guard():
                 input_np = np.random.uniform(-1, 1, [2, 3, 32]).astype(
@@ -286,9 +414,16 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = [[2]]
+<<<<<<< HEAD
+                res_pd = F.max_pool1d(input_pd,
+                                      kernel_size=2,
+                                      stride=2,
+                                      padding=padding)
+=======
                 res_pd = F.max_pool1d(
                     input_pd, kernel_size=2, stride=2, padding=padding
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run1)
 
@@ -299,9 +434,16 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = [[2]]
+<<<<<<< HEAD
+                res_pd = F.max_pool1d(input_pd,
+                                      kernel_size=2,
+                                      stride=2,
+                                      padding=padding)
+=======
                 res_pd = F.max_pool1d(
                     input_pd, kernel_size=2, stride=2, padding=padding
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run2)
 
@@ -312,9 +454,16 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = "padding"
+<<<<<<< HEAD
+                res_pd = F.max_pool1d(input_pd,
+                                      kernel_size=2,
+                                      stride=2,
+                                      padding=padding)
+=======
                 res_pd = F.max_pool1d(
                     input_pd, kernel_size=2, stride=2, padding=padding
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run3)
 
@@ -325,6 +474,13 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = "VALID"
+<<<<<<< HEAD
+                res_pd = F.max_pool1d(input_pd,
+                                      kernel_size=2,
+                                      stride=2,
+                                      padding=padding,
+                                      ceil_mode=True)
+=======
                 res_pd = F.max_pool1d(
                     input_pd,
                     kernel_size=2,
@@ -332,6 +488,7 @@ class TestPool2DError_API(unittest.TestCase):
                     padding=padding,
                     ceil_mode=True,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run4)
 
@@ -342,6 +499,13 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = "VALID"
+<<<<<<< HEAD
+                res_pd = F.max_pool1d(input_pd,
+                                      kernel_size=2,
+                                      stride=2,
+                                      padding=padding,
+                                      ceil_mode=True)
+=======
                 res_pd = F.max_pool1d(
                     input_pd,
                     kernel_size=2,
@@ -349,6 +513,7 @@ class TestPool2DError_API(unittest.TestCase):
                     padding=padding,
                     ceil_mode=True,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run5)
 
@@ -359,6 +524,13 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = "VALID"
+<<<<<<< HEAD
+                res_pd = F.avg_pool1d(input_pd,
+                                      kernel_size=2,
+                                      stride=2,
+                                      padding=padding,
+                                      ceil_mode=True)
+=======
                 res_pd = F.avg_pool1d(
                     input_pd,
                     kernel_size=2,
@@ -366,6 +538,7 @@ class TestPool2DError_API(unittest.TestCase):
                     padding=padding,
                     ceil_mode=True,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run6)
 
@@ -376,6 +549,13 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = "paddle"
+<<<<<<< HEAD
+                res_pd = F.avg_pool1d(input_pd,
+                                      kernel_size=2,
+                                      stride=2,
+                                      padding=padding,
+                                      ceil_mode=True)
+=======
                 res_pd = F.avg_pool1d(
                     input_pd,
                     kernel_size=2,
@@ -383,6 +563,7 @@ class TestPool2DError_API(unittest.TestCase):
                     padding=padding,
                     ceil_mode=True,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run7)
 
@@ -393,6 +574,13 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = 0
+<<<<<<< HEAD
+                res_pd = F.avg_pool1d(input_pd,
+                                      kernel_size=-1,
+                                      stride=2,
+                                      padding=padding,
+                                      ceil_mode=True)
+=======
                 res_pd = F.avg_pool1d(
                     input_pd,
                     kernel_size=-1,
@@ -400,6 +588,7 @@ class TestPool2DError_API(unittest.TestCase):
                     padding=padding,
                     ceil_mode=True,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run_kernel_out_of_range)
 
@@ -410,6 +599,13 @@ class TestPool2DError_API(unittest.TestCase):
                 )
                 input_pd = fluid.dygraph.to_variable(input_np)
                 padding = 0
+<<<<<<< HEAD
+                res_pd = F.avg_pool1d(input_pd,
+                                      kernel_size=2,
+                                      stride=0,
+                                      padding=padding,
+                                      ceil_mode=True)
+=======
                 res_pd = F.avg_pool1d(
                     input_pd,
                     kernel_size=2,
@@ -417,6 +613,7 @@ class TestPool2DError_API(unittest.TestCase):
                     padding=padding,
                     ceil_mode=True,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.assertRaises(ValueError, run_stride_out_of_range)
 

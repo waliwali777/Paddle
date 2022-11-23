@@ -23,6 +23,7 @@ paddle.enable_static()
 
 
 class TestPostTrainingForResnet50(TestPostTrainingQuantization):
+
     def test_post_training_resnet50(self):
         model = "ResNet-50"
         algo = "min_max"
@@ -51,6 +52,7 @@ class TestPostTrainingForResnet50(TestPostTrainingQuantization):
 
 
 class TestPostTrainingForResnet50ONNXFormat(TestPostTrainingQuantization):
+
     def test_post_training_resnet50(self):
         model = "ResNet-50"
         algo = "min_max"
@@ -65,6 +67,19 @@ class TestPostTrainingForResnet50ONNXFormat(TestPostTrainingQuantization):
         is_optimize_model = False
         diff_threshold = 0.025
         onnx_format = True
+<<<<<<< HEAD
+        self.run_test(model,
+                      algo,
+                      round_type,
+                      data_urls,
+                      data_md5s,
+                      quantizable_op_type,
+                      is_full_quantize,
+                      is_use_cache_file,
+                      is_optimize_model,
+                      diff_threshold,
+                      onnx_format=onnx_format)
+=======
         self.run_test(
             model,
             algo,
@@ -78,6 +93,7 @@ class TestPostTrainingForResnet50ONNXFormat(TestPostTrainingQuantization):
             diff_threshold,
             onnx_format=onnx_format,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

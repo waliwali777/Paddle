@@ -27,6 +27,7 @@ flag_name = os.path.splitext(__file__)[0]
 
 
 class TestDistSaveLoadDense2x2(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = True
         self._enforce_place = "CPU"
@@ -67,9 +68,16 @@ class TestDistSaveLoadDense2x2(TestDistBase):
         cluster_env.update(required_envs)
 
         local_var = self._run_local(model_file, local_env, check_error_log)
+<<<<<<< HEAD
+        tr0_var, tr1_var = self._run_cluster(model_file,
+                                             cluster_env,
+                                             check_error_log,
+                                             log_name=flag_name)
+=======
         tr0_var, tr1_var = self._run_cluster(
             model_file, cluster_env, check_error_log, log_name=flag_name
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         shutil.rmtree(model_dir)
 
@@ -88,15 +96,23 @@ class TestDistSaveLoadDense2x2(TestDistBase):
             'IS_SELF_CONTAINED_LR': '1',
             'SAVE_MODE': 'LOCAL',
         }
+<<<<<<< HEAD
+        self.check_with_place("dist_save_load.py",
+                              delta=0,
+                              check_error_log=False,
+                              need_envs=need_envs)
+=======
         self.check_with_place(
             "dist_save_load.py",
             delta=0,
             check_error_log=False,
             need_envs=need_envs,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class TestDistSaveLoadWithPServerStateDense2x2(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = True
         self._enforce_place = "CPU"
@@ -132,17 +148,31 @@ class TestDistSaveLoadWithPServerStateDense2x2(TestDistBase):
         save_env["MODEL_DIR"] = model_dir
         save_env.update(required_envs)
 
+<<<<<<< HEAD
+        tr0_var_1, tr1_var_1 = self._run_cluster(model_file,
+                                                 save_env,
+                                                 check_error_log,
+                                                 log_name=flag_name)
+=======
         tr0_var_1, tr1_var_1 = self._run_cluster(
             model_file, save_env, check_error_log, log_name=flag_name
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         load_env = {}
         load_env["LOAD"] = "1"
         load_env["MODEL_DIR"] = model_dir
         load_env.update(required_envs)
+<<<<<<< HEAD
+        tr0_var_2, tr1_var_2 = self._run_cluster(model_file,
+                                                 load_env,
+                                                 check_error_log,
+                                                 log_name=flag_name)
+=======
         tr0_var_2, tr1_var_2 = self._run_cluster(
             model_file, load_env, check_error_log, log_name=flag_name
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         shutil.rmtree(model_dir)
 
@@ -163,6 +193,13 @@ class TestDistSaveLoadWithPServerStateDense2x2(TestDistBase):
             'OPTIMIZER': 'ADAM',
             'SKIP_STEPS': str(np.random.randint(2, 6)),
         }
+<<<<<<< HEAD
+        self.check_with_place("dist_save_load.py",
+                              delta=0,
+                              check_error_log=True,
+                              need_envs=need_envs,
+                              log_name=flag_name)
+=======
         self.check_with_place(
             "dist_save_load.py",
             delta=0,
@@ -170,6 +207,7 @@ class TestDistSaveLoadWithPServerStateDense2x2(TestDistBase):
             need_envs=need_envs,
             log_name=flag_name,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

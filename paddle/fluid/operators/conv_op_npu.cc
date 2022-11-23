@@ -22,8 +22,13 @@ using Tensor = phi::DenseTensor;
 using NPUDeviceContext = platform::NPUDeviceContext;
 static void CastToFP16(const framework::ExecutionContext& ctx,
                        const aclrtStream& stream,
+<<<<<<< HEAD
+                       const Tensor& in,
+                       Tensor* out) {
+=======
                        const phi::DenseTensor& in,
                        phi::DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   out->mutable_data<paddle::platform::float16>(ctx.GetPlace());
   NpuOpRunner runner;
   runner.SetType("Cast")
@@ -35,8 +40,13 @@ static void CastToFP16(const framework::ExecutionContext& ctx,
 
 static void CastToFP32(const framework::ExecutionContext& ctx,
                        const aclrtStream& stream,
+<<<<<<< HEAD
+                       const Tensor& in,
+                       Tensor* out) {
+=======
                        const phi::DenseTensor& in,
                        phi::DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   out->mutable_data<float>(ctx.GetPlace());
   NpuOpRunner runner;
   runner.SetType("Cast")

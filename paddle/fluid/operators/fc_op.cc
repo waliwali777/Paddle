@@ -128,7 +128,24 @@ class FCOp : public framework::OperatorWithKernel {
       const framework::ExecutionContext& ctx) const override {
     auto input_data_type =
         OperatorWithKernel::IndicateVarDataType(ctx, "Input");
+<<<<<<< HEAD
+    if (ctx.Attr<bool>("use_mkldnn")) {
+      library = framework::LibraryType::kMKLDNN;
+      layout = framework::DataLayout::kMKLDNN;
+      using framework::proto::VarType;
+      customized_type_value = (input_data_type == VarType::INT8 ||
+                               input_data_type == VarType::UINT8)
+                                  ? kFCMKLDNNINT8
+                                  : kFCMKLDNNFP32;
+    }
+    return framework::OpKernelType(input_data_type,
+                                   ctx.GetPlace(),
+                                   layout,
+                                   library,
+                                   customized_type_value);
+=======
     return framework::OpKernelType(input_data_type, ctx.GetPlace());
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 };
 

@@ -86,7 +86,11 @@ class ExpandOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       const framework::OpKernelType& expected_kernel_type) const override {
     if (var_name == "expand_times_tensor" || var_name == "ExpandTimes") {
       return expected_kernel_type;
@@ -215,7 +219,11 @@ class ExpandGradOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       const framework::OpKernelType& expected_kernel_type) const override {
     if (var_name == "expand_times_tensor") {
       return expected_kernel_type;

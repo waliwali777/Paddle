@@ -32,8 +32,13 @@ struct GroupNormFunction {
     stream = ctx.template device_context<paddle::platform::NPUDeviceContext>()
                  .stream();
   }
+<<<<<<< HEAD
+  void ReduceMean(const Tensor* x,
+                  Tensor* y,
+=======
   void ReduceMean(const phi::DenseTensor* x,
                   phi::DenseTensor* y,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                   const std::vector<int>& dim,
                   bool keep_dims = true) {
     //  y should be init first
@@ -41,8 +46,13 @@ struct GroupNormFunction {
         "ReduceMeanD", {*x}, {*y}, {{"axes", dim}, {"keep_dims", keep_dims}});
     runner.Run(stream);
   }
+<<<<<<< HEAD
+  void ReduceSum(const Tensor* x,
+                 Tensor* y,
+=======
   void ReduceSum(const phi::DenseTensor* x,
                  phi::DenseTensor* y,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                  const std::vector<int>& dim,
                  bool keep_dims = true) {
     //  y should be init first
@@ -103,7 +113,11 @@ struct GroupNormFunction {
     const auto& runner = NpuOpRunner("Adds", {*x}, {*y}, {{"value", scalar}});
     runner.Run(stream);
   }
+<<<<<<< HEAD
+  Tensor ReduceMeanToNG(const Tensor* x,
+=======
   Tensor ReduceMeanToNG(const phi::DenseTensor* x,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         const DataLayout& data_layout,
                         const int64_t N,
                         const int64_t C,

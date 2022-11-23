@@ -18,14 +18,21 @@ import unittest
 
 
 class TestMemoryReuseExcludeFeedVar(unittest.TestCase):
+
     def setUp(self):
         self.image_shape = [28, 28]
         self.iteration = 10
 
     def main_impl(self, place):
+<<<<<<< HEAD
+        image = fluid.layers.data(name='image',
+                                  shape=self.image_shape,
+                                  dtype='float32')
+=======
         image = fluid.layers.data(
             name='image', shape=self.image_shape, dtype='float32'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         relu_image = fluid.layers.relu(image)
         loss = fluid.layers.reduce_mean(relu_image)
 
@@ -37,6 +44,14 @@ class TestMemoryReuseExcludeFeedVar(unittest.TestCase):
         exe.run(fluid.default_startup_program())
 
         compiled_prog = fluid.CompiledProgram(
+<<<<<<< HEAD
+            fluid.default_main_program()).with_data_parallel(
+                loss_name=loss.name, build_strategy=build_strategy)
+
+        image_tensor = fluid.LoDTensor()
+        np_image = np.random.uniform(low=-10, high=10,
+                                     size=self.image_shape).astype('float32')
+=======
             fluid.default_main_program()
         ).with_data_parallel(loss_name=loss.name, build_strategy=build_strategy)
 
@@ -44,6 +59,7 @@ class TestMemoryReuseExcludeFeedVar(unittest.TestCase):
         np_image = np.random.uniform(
             low=-10, high=10, size=self.image_shape
         ).astype('float32')
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         image_tensor.set(np_image, place)
 
         feed_dict = [{image.name: image_tensor}]

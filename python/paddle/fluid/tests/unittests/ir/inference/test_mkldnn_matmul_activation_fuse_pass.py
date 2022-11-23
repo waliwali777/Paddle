@@ -21,6 +21,10 @@ import hypothesis.strategies as st
 
 
 class TestMatmulActivationMkldnnFusePass(PassAutoScanTest):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def sample_program_config(self, draw):
         transpose_X = draw(st.booleans())
         transpose_Y = draw(st.booleans())
@@ -29,6 +33,13 @@ class TestMatmulActivationMkldnnFusePass(PassAutoScanTest):
         channel = draw(st.sampled_from([8]))
         input_dim = draw(st.sampled_from([32]))
         activation_type = draw(
+<<<<<<< HEAD
+            st.sampled_from([
+                'relu', 'gelu', 'tanh', 'sigmoid', 'swish', 'mish', 'sqrt',
+                'hard_swish', 'sigmoid', 'abs', 'relu6', 'clip', 'tanh',
+                'hard_sigmoid', 'leaky_relu'
+            ]))
+=======
             st.sampled_from(
                 [
                     'relu',
@@ -48,6 +59,7 @@ class TestMatmulActivationMkldnnFusePass(PassAutoScanTest):
                 ]
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         def generate_input(type):
             if transpose_X and transpose_Y:
@@ -68,6 +80,41 @@ class TestMatmulActivationMkldnnFusePass(PassAutoScanTest):
             else:
                 return np.random.random(shape_y).astype(np.float32)
 
+<<<<<<< HEAD
+        matmul_op = OpConfig(type='matmul',
+                             inputs={
+                                 'X': ['matmul_X'],
+                                 'Y': ['matmul_Y']
+                             },
+                             outputs={'Out': ['matmul_output']},
+                             attrs={
+                                 'transpose_X': transpose_X,
+                                 'transpose_Y': transpose_Y,
+                                 'alpha': alpha
+                             })
+
+        if activation_type == "relu6":
+            activation_op = OpConfig(activation_type,
+                                     inputs={"X": ["matmul_output"]},
+                                     outputs={"Out": ["activation_output"]},
+                                     threshold=draw(
+                                         st.floats(min_value=1.0,
+                                                   max_value=10.0)))
+        elif activation_type == "leaky_relu":
+            activation_op = OpConfig(activation_type,
+                                     inputs={"X": ["matmul_output"]},
+                                     outputs={"Out": ["activation_output"]},
+                                     alpha=draw(
+                                         st.floats(min_value=0.1,
+                                                   max_value=1.0)))
+        elif activation_type == "swish":
+            activation_op = OpConfig(activation_type,
+                                     inputs={"X": ["matmul_output"]},
+                                     outputs={"Out": ["activation_output"]},
+                                     beta=draw(
+                                         st.floats(min_value=0.1,
+                                                   max_value=1.0)))
+=======
         matmul_op = OpConfig(
             type='matmul',
             inputs={'X': ['matmul_X'], 'Y': ['matmul_Y']},
@@ -108,12 +155,20 @@ class TestMatmulActivationMkldnnFusePass(PassAutoScanTest):
                 outputs={"Out": ["activation_output"]},
                 beta=draw(st.floats(min_value=0.1, max_value=1.0)),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         elif activation_type == "clip":
             activation_op = OpConfig(
                 activation_type,
                 inputs={"X": ["matmul_output"]},
                 outputs={"Out": ["activation_output"]},
                 min=draw(st.floats(min_value=0.1, max_value=0.49)),
+<<<<<<< HEAD
+                max=draw(st.floats(min_value=0.5, max_value=1.0)))
+        else:
+            activation_op = OpConfig(activation_type,
+                                     inputs={"X": ["matmul_output"]},
+                                     outputs={"Out": ["activation_output"]})
+=======
                 max=draw(st.floats(min_value=0.5, max_value=1.0)),
             )
         else:
@@ -122,6 +177,7 @@ class TestMatmulActivationMkldnnFusePass(PassAutoScanTest):
                 inputs={"X": ["matmul_output"]},
                 outputs={"Out": ["activation_output"]},
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         model_net = [matmul_op, activation_op]
 
@@ -130,14 +186,29 @@ class TestMatmulActivationMkldnnFusePass(PassAutoScanTest):
             weights={},
             inputs={
                 'matmul_X': TensorConfig(data_gen=partial(generate_input, 'x')),
+<<<<<<< HEAD
+                'matmul_Y': TensorConfig(data_gen=partial(generate_input, 'y'))
+            },
+            outputs=['activation_output'])
+=======
                 'matmul_Y': TensorConfig(data_gen=partial(generate_input, 'y')),
             },
             outputs=['activation_output'],
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         return program_config
 
     def sample_predictor_configs(self, program_config):
+<<<<<<< HEAD
+        config = self.create_inference_config(use_mkldnn=True)
+        yield config, ['matmul'], (1e-5, 1e-5)
+
+    def test(self):
+        self.run_and_statis(quant=False,
+                            max_examples=30,
+                            passes=['matmul_activation_mkldnn_fuse_pass'])
+=======
         config = self.create_inference_config(
             use_mkldnn=True,
             passes=[
@@ -156,6 +227,7 @@ class TestMatmulActivationMkldnnFusePass(PassAutoScanTest):
                 'operator_scale_onednn_fuse_pass',
             ],
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

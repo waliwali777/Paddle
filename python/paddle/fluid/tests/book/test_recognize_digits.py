@@ -43,6 +43,21 @@ def mlp(img, label):
 
 
 def conv_net(img, label):
+<<<<<<< HEAD
+    conv_pool_1 = fluid.nets.simple_img_conv_pool(input=img,
+                                                  filter_size=5,
+                                                  num_filters=20,
+                                                  pool_size=2,
+                                                  pool_stride=2,
+                                                  act="relu")
+    conv_pool_1 = fluid.layers.batch_norm(conv_pool_1)
+    conv_pool_2 = fluid.nets.simple_img_conv_pool(input=conv_pool_1,
+                                                  filter_size=5,
+                                                  num_filters=50,
+                                                  pool_size=2,
+                                                  pool_stride=2,
+                                                  act="relu")
+=======
     conv_pool_1 = fluid.nets.simple_img_conv_pool(
         input=img,
         filter_size=5,
@@ -60,6 +75,7 @@ def conv_net(img, label):
         pool_stride=2,
         act="relu",
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return loss_net(conv_pool_2, label)
 
 
@@ -97,6 +113,13 @@ def train(
 
     exe = fluid.Executor(place)
 
+<<<<<<< HEAD
+    train_reader = paddle.batch(paddle.reader.shuffle(
+        paddle.dataset.mnist.train(), buf_size=500),
+                                batch_size=BATCH_SIZE)
+    test_reader = paddle.batch(paddle.dataset.mnist.test(),
+                               batch_size=BATCH_SIZE)
+=======
     train_reader = paddle.batch(
         paddle.reader.shuffle(paddle.dataset.mnist.train(), buf_size=500),
         batch_size=BATCH_SIZE,
@@ -104,6 +127,7 @@ def train(
     test_reader = paddle.batch(
         paddle.dataset.mnist.test(), batch_size=BATCH_SIZE
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     feeder = fluid.DataFeeder(feed_list=[img, label], place=place)
 
     def train_loop(main_program):
@@ -152,6 +176,11 @@ def train(
                         return
                     else:
                         print(
+<<<<<<< HEAD
+                            'PassID {0:1}, BatchID {1:04}, Test Loss {2:2.2}, Acc {3:2.2}'
+                            .format(pass_id, batch_id + 1, float(avg_loss_val),
+                                    float(acc_val)))
+=======
                             'PassID {0:1}, BatchID {1:04}, Test Loss {2:2.2}, Acc {3:2.2}'.format(
                                 pass_id,
                                 batch_id + 1,
@@ -159,6 +188,7 @@ def train(
                                 float(acc_val),
                             )
                         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         if math.isnan(float(avg_loss_val)):
                             sys.exit("got NaN loss, training failed.")
         raise AssertionError("Loss of recognize digits is too large")
@@ -204,6 +234,12 @@ def infer(
         # the feed_target_names (the names of variables that will be feeded
         # data using feed operators), and the fetch_targets (variables that
         # we want to obtain data from using fetch operators).
+<<<<<<< HEAD
+        [inference_program, feed_target_names,
+         fetch_targets] = fluid.io.load_inference_model(save_dirname, exe,
+                                                        model_filename,
+                                                        params_filename)
+=======
         [
             inference_program,
             feed_target_names,
@@ -211,6 +247,7 @@ def infer(
         ] = fluid.io.load_inference_model(
             save_dirname, exe, model_filename, params_filename
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         # The input's dimension of conv should be 4-D or 5-D.
         # Use normilized image pixels as input data, which should be in the range [-1.0, 1.0].
@@ -242,6 +279,19 @@ def main(use_cuda, parallel, nn_type, combine):
             params_filename = "__params_combined__"
 
     # call train() with is_local argument to run distributed train
+<<<<<<< HEAD
+    train(nn_type=nn_type,
+          use_cuda=use_cuda,
+          parallel=parallel,
+          save_dirname=save_dirname,
+          save_full_dirname=save_full_dirname,
+          model_filename=model_filename,
+          params_filename=params_filename)
+    infer(use_cuda=use_cuda,
+          save_dirname=save_dirname,
+          model_filename=model_filename,
+          params_filename=params_filename)
+=======
     train(
         nn_type=nn_type,
         use_cuda=use_cuda,
@@ -257,6 +307,7 @@ def main(use_cuda, parallel, nn_type, combine):
         model_filename=model_filename,
         params_filename=params_filename,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class TestRecognizeDigits(unittest.TestCase):
@@ -264,6 +315,7 @@ class TestRecognizeDigits(unittest.TestCase):
 
 
 def inject_test_method(use_cuda, parallel, nn_type, combine):
+
     def __impl__(self):
         prog = fluid.Program()
         startup_prog = fluid.Program()
@@ -272,12 +324,18 @@ def inject_test_method(use_cuda, parallel, nn_type, combine):
             with fluid.program_guard(prog, startup_prog):
                 main(use_cuda, parallel, nn_type, combine)
 
+<<<<<<< HEAD
+    fn = 'test_{0}_{1}_{2}_{3}'.format(nn_type, 'cuda' if use_cuda else 'cpu',
+                                       'parallel' if parallel else 'normal',
+                                       'combine' if combine else 'separate')
+=======
     fn = 'test_{0}_{1}_{2}_{3}'.format(
         nn_type,
         'cuda' if use_cuda else 'cpu',
         'parallel' if parallel else 'normal',
         'combine' if combine else 'separate',
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     setattr(TestRecognizeDigits, fn, __impl__)
 

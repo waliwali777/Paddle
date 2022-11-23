@@ -591,7 +591,11 @@ class GraphKhopSamplerOpCUDAKernel : public framework::OpKernel<T> {
                    &orig_nodes,
                    &reindex_nodes,
                    bs);
+<<<<<<< HEAD
+    auto* reindex_x = ctx.Output<Tensor>("Reindex_X");
+=======
     auto* reindex_x = ctx.Output<phi::DenseTensor>("Reindex_X");
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     T* p_reindex_x = reindex_x->mutable_data<T>(ctx.GetPlace());
     thrust::copy(reindex_nodes.begin(), reindex_nodes.end(), p_reindex_x);
 

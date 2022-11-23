@@ -31,7 +31,12 @@ import numpy as np
 __all__ = []
 
 
+<<<<<<< HEAD
+class UtilFactory(object):
+
+=======
 class UtilFactory:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def _create_util(self, context=None):
         util = UtilBase()
         if context is not None and "valid_strategy" in context:
@@ -41,7 +46,12 @@ class UtilFactory:
         return util
 
 
+<<<<<<< HEAD
+class UtilBase(object):
+
+=======
 class UtilBase:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self):
         self.role_maker = None
         self.dist_strategy = None
@@ -219,7 +229,11 @@ class UtilBase:
         trainer_files = [[]] * trainers
         begin = 0
         for i in range(trainers):
+<<<<<<< HEAD
+            trainer_files[i] = files[begin:begin + blocks[i]]
+=======
             trainer_files[i] = files[begin : begin + blocks[i]]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             begin += blocks[i]
 
         return trainer_files[trainer_id]
@@ -321,6 +335,7 @@ class UtilBase:
                 f.write(program.desc.serialize_to_string())
 
     def _load_program(self, path, is_text):
+
         def load_program_binary(path):
             """load program from binary string file"""
             with open(path, "rb") as f:
@@ -344,9 +359,14 @@ class UtilBase:
     def _program_type_trans(self, prog_dir, prog_fn, is_text):
         prog = self._load_program(os.path.join(prog_dir, prog_fn), is_text)
         prog_out_fn = prog_fn + ".bin" if is_text else prog_fn + ".pbtxt"
+<<<<<<< HEAD
+        self._save_program(prog, os.path.join(prog_dir, prog_out_fn),
+                           1 - is_text)
+=======
         self._save_program(
             prog, os.path.join(prog_dir, prog_out_fn), 1 - is_text
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         return prog_out_fn
 
     def _visualize_graphviz(self, program, output_dir, output_filename):
@@ -355,12 +375,19 @@ class UtilBase:
         pdf_path = os.path.join(output_dir, output_filename + '.pdf')
         debugger.draw_block_graphviz(block, path=dot_path)
         cmd = ["dot", "-Tpdf", dot_path, "-o", pdf_path]
+<<<<<<< HEAD
+        p = subprocess.Popen(cmd,
+                             stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+=======
         p = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         p.wait()
 
     def _proto_check(self, config):
@@ -407,6 +434,11 @@ class UtilBase:
                 or var.dtype != train_prog_var.dtype
             ):
                 print(
+<<<<<<< HEAD
+                    "variable: {} not match. in pruned program shape: {} dtype:{}, in train program shape: {} dtype: {}"
+                    .format(var_name, var.shape, var.dtype,
+                            train_prog_var.shape, train_prog_var.dtype))
+=======
                     "variable: {} not match. in pruned program shape: {} dtype:{}, in train program shape: {} dtype: {}".format(
                         var_name,
                         var.shape,
@@ -415,11 +447,14 @@ class UtilBase:
                         train_prog_var.dtype,
                     )
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 is_match = False
         return is_match
 
     def _params_check(self, config):
+
         def feed_gen(batch_size, feeded_vars_dims, feeded_vars_filelist):
+
             def reader(batch_size, fn, dim):
                 data = []
                 if isinstance(dim, list) or isinstance(dim, tuple):
@@ -481,10 +516,15 @@ class UtilBase:
         not_expected_op_types = check_not_expected_ops(prog, ["lookup_table"])
         if len(not_expected_op_types) > 0:
             print(
+<<<<<<< HEAD
+                "find op type '{}' in program, please check if your program is pruned correctly !"
+                .format(list(not_expected_op_types)))
+=======
                 "find op type '{}' in program, please check if your program is pruned correctly !".format(
                     list(not_expected_op_types)
                 )
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             return False
 
         place = fluid.CPUPlace()
@@ -520,10 +560,15 @@ class UtilBase:
                 if new_shape != orig_shape:
                     raise RuntimeError(
                         "Shape not matching: the Program requires a parameter with a shape of ({}), "
+<<<<<<< HEAD
+                        "while the loaded parameter (namely [ {} ]) has a shape of  ({})."
+                        .format(orig_shape, each_var.name, new_shape))
+=======
                         "while the loaded parameter (namely [ {} ]) has a shape of  ({}).".format(
                             orig_shape, each_var.name, new_shape
                         )
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             # check feed/fetch vars in program and config
             feed_config = config.feed_config
@@ -540,10 +585,15 @@ class UtilBase:
                 and feed_target_names != feed_config.feeded_vars_names
             ):
                 print(
+<<<<<<< HEAD
+                    "warning! feed vars in program and config are diff: feed in program: {}. feed in config {}."
+                    .format(feed_target_names, feed_config.feeded_vars_names))
+=======
                     "warning! feed vars in program and config are diff: feed in program: {}. feed in config {}.".format(
                         feed_target_names, feed_config.feeded_vars_names
                     )
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 feed_name_list = feed_config.feeded_vars_names
                 # remove feed op in inference_program. new feed op will be added in exe.run
                 global_block = inference_program.global_block()
@@ -559,10 +609,15 @@ class UtilBase:
                 and fetch_targets_names != fetch_config.fetch_vars_names
             ):
                 print(
+<<<<<<< HEAD
+                    "warning! fetch vars in program and config are diff: fetch in program: {}. fetch in config {}."
+                    .format(fetch_targets_names, fetch_config.fetch_vars_names))
+=======
                     "warning! fetch vars in program and config are diff: fetch in program: {}. fetch in config {}.".format(
                         fetch_targets_names, fetch_config.fetch_vars_names
                     )
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 fetch_list = [
                     inference_program.global_block().var(i)
                     for i in fetch_config.fetch_vars_names
@@ -602,12 +657,18 @@ class UtilBase:
                 var_shape = var.shape[1:]
                 if tensor_shape != var_shape:
                     raise RuntimeError(
+<<<<<<< HEAD
+                        "feed variable '{}' shape not match. infer program  shape: {}. feed tensor shape: {}"
+                        .format(feed_config.feeded_vars_names[i], var_shape,
+                                tensor_shape))
+=======
                         "feed variable '{}' shape not match. infer program  shape: {}. feed tensor shape: {}".format(
                             feed_config.feeded_vars_names[i],
                             var_shape,
                             tensor_shape,
                         )
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             if not feed_config.feeded_vars_filelist:
                 print("generate random feed vars.")
@@ -618,6 +679,21 @@ class UtilBase:
                     # create fake feed tensor. if lod_level > 1, should create_lod_tensor()
                     if var.lod_level == 0:
                         feed_tensors.append(
+<<<<<<< HEAD
+                            np.array(np.random.random(
+                                tuple([config.batch_size] +
+                                      list(feed_config.feeded_vars_dims[i]))),
+                                     dtype=feed_config.feeded_vars_types[i]))
+                    elif var.lod_level == 1:
+                        t = np.array(np.random.random(
+                            tuple([config.batch_size] +
+                                  list(feed_config.feeded_vars_dims[i]))),
+                                     dtype=feed_config.feeded_vars_types[i])
+                        feed_tensors.append(
+                            fluid.create_lod_tensor(t,
+                                                    [[1] * config.batch_size],
+                                                    place))
+=======
                             np.array(
                                 np.random.random(
                                     tuple(
@@ -643,6 +719,7 @@ class UtilBase:
                                 t, [[1] * config.batch_size], place
                             )
                         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     else:
                         raise RuntimeError(
                             "vars with lod_level >= 2 is not supported now in this infer program check tool."

@@ -28,9 +28,17 @@ def make_program_dp2():
     with paddle.static.program_guard(main_program, start_program):
         x = paddle.static.data(name='x', shape=[4, 5, 6], dtype='float32')
         x.stop_gradient = False
+<<<<<<< HEAD
+        auto.shard_tensor(x,
+                          dist_attr={
+                              "process_mesh": auto.ProcessMesh([0, 1]),
+                              "dims_mapping": [0, -1, -1]
+                          })
+=======
         auto.shard_tensor(
             x, auto.ProcessMesh([0, 1], dim_names=["x"]), ["x", None, None]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         tmp_0 = paddle.norm(x, p=2)
     return main_program, start_program, tmp_0
 
@@ -41,9 +49,17 @@ def make_program_serial():
     with paddle.static.program_guard(main_program, start_program):
         x = paddle.static.data(name='x', shape=[4, 5, 6], dtype='float32')
         x.stop_gradient = False
+<<<<<<< HEAD
+        auto.shard_tensor(x,
+                          dist_attr={
+                              "process_mesh": auto.ProcessMesh([0]),
+                              "dims_mapping": [-1, -1, -1]
+                          })
+=======
         auto.shard_tensor(
             x, auto.ProcessMesh([0], dim_names=["x"]), [None, None, None]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         tmp_0 = paddle.norm(x, p=2)
     return main_program, start_program, tmp_0
 
@@ -76,6 +92,7 @@ def parallelizer(program_func, rank):
 
 
 class TestDistPNorm(unittest.TestCase):
+
     def test_dist_pnorm_dp2(self):
 
         for rank in range(2):

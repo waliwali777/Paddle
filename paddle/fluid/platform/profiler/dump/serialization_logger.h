@@ -35,6 +35,10 @@ class SerializationLogger : public BaseLogger {
   void LogHostTraceEventNode(const HostTraceEventNode&) override;
   void LogRuntimeTraceEventNode(const CudaRuntimeTraceEventNode&) override;
   void LogNodeTrees(const NodeTrees&) override;
+<<<<<<< HEAD
+  void LogMetaInfo(const std::unordered_map<std::string, std::string>);
+  void LogMemTraceEventNode(const MemTraceEventNode&) override;
+=======
   void LogExtraInfo(const std::unordered_map<std::string, std::string>);
   void LogMemTraceEventNode(const MemTraceEventNode&) override;
 #if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
@@ -42,6 +46,7 @@ class SerializationLogger : public BaseLogger {
       const std::map<uint32_t, gpuDeviceProp>& device_property_map);
 #endif
   void LogMetaInfo(const std::string& version, uint32_t span_indx);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
  private:
   void OpenFile();

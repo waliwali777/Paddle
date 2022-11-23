@@ -51,6 +51,14 @@ def init_metric(
         phase = 1 if is_join else 0
 
         if metric_runner['method'] == 'AucCalculator':
+<<<<<<< HEAD
+            metric_ptr.init_metric(metric_runner['method'],
+                                   metric_runner['name'],
+                                   metric_runner['label'],
+                                   metric_runner['target'], cmatch_rank_var,
+                                   mask_var, uid_var, phase, cmatch_rank_group,
+                                   ignore_rank, bucket_size)
+=======
             metric_ptr.init_metric(
                 metric_runner['method'],
                 metric_runner['name'],
@@ -64,6 +72,7 @@ def init_metric(
                 ignore_rank,
                 bucket_size,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         elif metric_runner['method'] == 'MultiTaskAucCalculator':
             metric_ptr.init_metric(
                 metric_runner['method'],
@@ -93,6 +102,14 @@ def init_metric(
                 bucket_size,
             )
         elif metric_runner['method'] == 'MaskAucCalculator':
+<<<<<<< HEAD
+            metric_ptr.init_metric(metric_runner['method'],
+                                   metric_runner['name'],
+                                   metric_runner['label'],
+                                   metric_runner['target'], cmatch_rank_var,
+                                   metric_runner['mask'], uid_var, phase,
+                                   cmatch_rank_group, ignore_rank, bucket_size)
+=======
             metric_ptr.init_metric(
                 metric_runner['method'],
                 metric_runner['name'],
@@ -106,6 +123,7 @@ def init_metric(
                 ignore_rank,
                 bucket_size,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         elif metric_runner['method'] == 'CmatchRankMaskAucCalculator':
             metric_ptr.init_metric(
                 metric_runner['method'],
@@ -121,6 +139,21 @@ def init_metric(
                 bucket_size,
             )
         elif metric_runner['method'] == 'WuAucCalculator':
+<<<<<<< HEAD
+            metric_ptr.init_metric(metric_runner['method'],
+                                   metric_runner['name'],
+                                   metric_runner['label'],
+                                   metric_runner['target'], cmatch_rank_var,
+                                   mask_var, metric_runner['uid'], phase,
+                                   cmatch_rank_group, ignore_rank, bucket_size)
+        else:
+            metric_ptr.init_metric(metric_runner['method'],
+                                   metric_runner['name'],
+                                   metric_runner['label'],
+                                   metric_runner['target'], cmatch_rank_var,
+                                   mask_var, phase, cmatch_rank_group,
+                                   ignore_rank, bucket_size)
+=======
             metric_ptr.init_metric(
                 metric_runner['method'],
                 metric_runner['name'],
@@ -147,6 +180,7 @@ def init_metric(
                 ignore_rank,
                 bucket_size,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 def print_metric(metric_ptr, name):

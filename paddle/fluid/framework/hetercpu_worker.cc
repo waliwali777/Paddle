@@ -316,7 +316,11 @@ void HeterCpuWorker::CollectLabelInfo(std::shared_ptr<HeterTask> task,
     if (fea_var == nullptr) {
       continue;
     }
+<<<<<<< HEAD
+    LoDTensor* tensor = fea_var->GetMutable<LoDTensor>();
+=======
     phi::DenseTensor* tensor = fea_var->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     CHECK(tensor != nullptr)
         << "tensor of var " << sparse_key_names_[table_id][i] << " is null";
 
@@ -588,14 +592,22 @@ void HeterCpuWorker::CopyDenseVars() {
             << dest_var_name;
     Variable* src_var = thread_scope_->FindVar(src_var_name);
     CHECK(src_var != nullptr) << src_var_name << " not found";  // NOLINT
+<<<<<<< HEAD
+    LoDTensor* src_tensor = src_var->GetMutable<LoDTensor>();
+=======
     phi::DenseTensor* src_tensor = src_var->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     CHECK(src_tensor != nullptr)
         << src_var_name << " tensor is null";  // NOLINT
     float* src_data = src_tensor->data<float>();
 
     Variable* dest_var = thread_scope_->FindVar(dest_var_name);
     CHECK(dest_var != nullptr) << dest_var_name << " not found";  // NOLINT
+<<<<<<< HEAD
+    LoDTensor* dest_tensor = dest_var->GetMutable<LoDTensor>();
+=======
     phi::DenseTensor* dest_tensor = dest_var->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     CHECK(dest_tensor != nullptr)
         << dest_var_name << " tensor is null";  // NOLINT
     float* dest_data = dest_tensor->data<float>();

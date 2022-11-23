@@ -18,6 +18,7 @@ import numpy as np
 
 
 class TensorToNumpyTest(unittest.TestCase):
+
     def setUp(self):
         self.shape = [11, 25, 32, 43]
 
@@ -40,9 +41,14 @@ class TensorToNumpyTest(unittest.TestCase):
         for p in places:
             for dtype in dtypes:
                 np_arr = np.reshape(
+<<<<<<< HEAD
+                    np.array(six.moves.range(np.prod(
+                        self.shape))).astype(dtype), self.shape)
+=======
                     np.array(range(np.prod(self.shape))).astype(dtype),
                     self.shape,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                 t = fluid.LoDTensor()
                 t.set(np_arr, p)

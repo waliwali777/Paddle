@@ -29,7 +29,11 @@ std::shared_ptr<HeterClient> HeterClient::switch_s_instance_ = nullptr;
 int GetMicroId(const platform::DeviceContext& ctx,
                const framework::Scope* scope) {
   framework::Variable* var = scope->FindVar("microbatch_id");
+<<<<<<< HEAD
+  PADDLE_ENFORCE_EQ(var->IsType<framework::LoDTensor>(),
+=======
   PADDLE_ENFORCE_EQ(var->IsType<phi::DenseTensor>(),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     true,
                     platform::errors::InvalidArgument(
                         "the type of micro id shoulde be LoDTensor."));

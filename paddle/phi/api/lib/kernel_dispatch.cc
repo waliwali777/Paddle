@@ -56,7 +56,11 @@ BackendSet GetTensorBackendSet(const phi::TensorBase& t) {
   if (HasAllocation(t) && t.place().GetType() != AllocationType::UNDEFINED) {
     BackendSet backend_set(phi::TransToPhiBackend(t.place()));
     switch (t.layout()) {
+<<<<<<< HEAD
+      case DataLayout::MKLDNN:
+=======
       case DataLayout::ONEDNN:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         backend_set = backend_set | BackendSet(Backend::ONEDNN);
         break;
       default:

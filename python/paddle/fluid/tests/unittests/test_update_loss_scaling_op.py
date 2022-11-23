@@ -47,9 +47,12 @@ def update_loss_scaling_wrapper(
 
 
 class TestUpdateLossScalingOp(OpTest):
+
     def setUp(self):
         self.op_type = "update_loss_scaling"
         self.init()
+<<<<<<< HEAD
+=======
         self.python_api = update_loss_scaling_wrapper
         self.python_out_sig = [
             "out0",
@@ -57,6 +60,7 @@ class TestUpdateLossScalingOp(OpTest):
             "OutGoodSteps",
             "OutBadSteps",
         ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         found_inf = np.array([False], dtype=np.bool_)
         x = np.random.random((1024, 1024)).astype(self.dtype)
 
@@ -96,9 +100,12 @@ class TestUpdateLossScalingOp(OpTest):
 
 
 class TestUpdateLossScalingOpBad(TestUpdateLossScalingOp):
+
     def setUp(self):
         self.op_type = "update_loss_scaling"
         self.init()
+<<<<<<< HEAD
+=======
         self.python_api = update_loss_scaling_wrapper
         self.python_out_sig = [
             "out0",
@@ -106,6 +113,7 @@ class TestUpdateLossScalingOpBad(TestUpdateLossScalingOp):
             "OutGoodSteps",
             "OutBadSteps",
         ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         found_inf = np.array([True], dtype=np.bool_)
         x = np.random.random((1024, 1024)).astype(self.dtype)
         i = np.random.randint(0, 1024, 1)
@@ -133,11 +141,23 @@ class TestUpdateLossScalingOpBad(TestUpdateLossScalingOp):
 
 
 class TestUpdateLossScalingLayer(unittest.TestCase):
+
     def loss_scaling_check(self, use_cuda=True, scope=fluid.Scope()):
         a = fluid.data(name="a", shape=[1024, 1024], dtype='float32')
         b = fluid.data(name="b", shape=[512, 128], dtype='float32')
         x = [a, b]
         found_inf = fluid.data(name="found_inf", shape=[1], dtype='bool')
+<<<<<<< HEAD
+        prev_loss_scaling = fluid.data(name="prev_loss_scaling",
+                                       shape=[1],
+                                       dtype='float32')
+        num_good_steps = fluid.data(name="num_good_steps",
+                                    shape=[1],
+                                    dtype='int32')
+        num_bad_steps = fluid.data(name="num_bad_steps",
+                                   shape=[1],
+                                   dtype='int32')
+=======
         prev_loss_scaling = fluid.data(
             name="prev_loss_scaling", shape=[1], dtype='float32'
         )
@@ -147,6 +167,7 @@ class TestUpdateLossScalingLayer(unittest.TestCase):
         num_bad_steps = fluid.data(
             name="num_bad_steps", shape=[1], dtype='int32'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         a_v = np.random.random([1024, 1024]).astype('float32')
         b_v = np.random.random([512, 128]).astype('float32')
@@ -160,6 +181,18 @@ class TestUpdateLossScalingLayer(unittest.TestCase):
         incr_ratio = 2
         decr_ratio = 0.8
 
+<<<<<<< HEAD
+        result = amp_nn.update_loss_scaling(x,
+                                            found_inf,
+                                            prev_loss_scaling,
+                                            num_good_steps,
+                                            num_bad_steps,
+                                            incr_every_n_steps,
+                                            decr_every_n_nan_or_inf,
+                                            incr_ratio,
+                                            decr_ratio,
+                                            name="update_loss_scaling")
+=======
         result = amp_nn.update_loss_scaling(
             x,
             found_inf,
@@ -172,6 +205,7 @@ class TestUpdateLossScalingLayer(unittest.TestCase):
             decr_ratio,
             name="update_loss_scaling",
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
         exe = fluid.Executor(place)
@@ -209,6 +243,17 @@ class TestUpdateLossScalingLayer(unittest.TestCase):
         b = fluid.data(name="b", shape=[512, 128], dtype='float32')
         x = [a, b]
         found_inf = fluid.data(name="found_inf", shape=[1], dtype='bool')
+<<<<<<< HEAD
+        prev_loss_scaling = fluid.data(name="prev_loss_scaling",
+                                       shape=[1],
+                                       dtype='float32')
+        num_good_steps = fluid.data(name="num_good_steps",
+                                    shape=[1],
+                                    dtype='int32')
+        num_bad_steps = fluid.data(name="num_bad_steps",
+                                   shape=[1],
+                                   dtype='int32')
+=======
         prev_loss_scaling = fluid.data(
             name="prev_loss_scaling", shape=[1], dtype='float32'
         )
@@ -218,6 +263,7 @@ class TestUpdateLossScalingLayer(unittest.TestCase):
         num_bad_steps = fluid.data(
             name="num_bad_steps", shape=[1], dtype='int32'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         a_v = np.random.random([1024, 1024]).astype('float32')
         b_v = np.random.random([512, 128]).astype('float32')
@@ -234,6 +280,18 @@ class TestUpdateLossScalingLayer(unittest.TestCase):
         incr_ratio = 2
         decr_ratio = 0.8
 
+<<<<<<< HEAD
+        result = amp_nn.update_loss_scaling(x,
+                                            found_inf,
+                                            prev_loss_scaling,
+                                            num_good_steps,
+                                            num_bad_steps,
+                                            incr_every_n_steps,
+                                            decr_every_n_nan_or_inf,
+                                            incr_ratio,
+                                            decr_ratio,
+                                            name="update_loss_scaling")
+=======
         result = amp_nn.update_loss_scaling(
             x,
             found_inf,
@@ -246,6 +304,7 @@ class TestUpdateLossScalingLayer(unittest.TestCase):
             decr_ratio,
             name="update_loss_scaling",
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
         exe = fluid.Executor(place)

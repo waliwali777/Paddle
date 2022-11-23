@@ -18,6 +18,8 @@ if(WITH_TESTING)
     paddle_gtest_main
     SRCS paddle_gtest_main.cc
     DEPS ${paddle_gtest_main_deps})
+<<<<<<< HEAD
+=======
 
   cc_library(
     paddle_gtest_main_new
@@ -26,4 +28,5 @@ if(WITH_TESTING)
   if(WITH_MKLDNN)
     add_dependencies(paddle_gtest_main_new mkldnn)
   endif()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 endif()

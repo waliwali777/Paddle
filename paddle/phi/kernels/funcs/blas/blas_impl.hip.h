@@ -725,6 +725,7 @@ inline void Blas<phi::GPUContext>::GEMM(CBLAS_TRANSPOSE transA,
 
 template <>
 template <>
+<<<<<<< HEAD
 inline void Blas<phi::GPUContext>::GEMM(CBLAS_TRANSPOSE transA,
                                         CBLAS_TRANSPOSE transB,
                                         int M,
@@ -754,6 +755,75 @@ inline void Blas<phi::GPUContext>::GEMM(CBLAS_TRANSPOSE transA,
           "but received %d",
           context_.GetComputeCapability()));
 
+  float h_alpha = static_cast<float>(alpha);
+  float h_beta = static_cast<float>(beta);
+  rocblas_gemm_algo algo = rocblas_gemm_algo_standard;
+
+  context_.TensorCoreCublasCallIfAvailable([&](rocblas_handle handle) {
+    PADDLE_ENFORCE_GPU_SUCCESS(
+        paddle::platform::dynload::rocblas_gemm_ex(handle,
+                                                   cuTransB,
+                                                   cuTransA,
+                                                   N,
+                                                   M,
+                                                   K,
+                                                   &h_alpha,
+                                                   B,
+                                                   rocblas_datatype_bf16_r,
+                                                   ldb,
+                                                   A,
+                                                   rocblas_datatype_bf16_r,
+                                                   lda,
+                                                   &h_beta,
+                                                   C,
+                                                   rocblas_datatype_bf16_r,
+                                                   N,
+                                                   C,
+                                                   rocblas_datatype_bf16_r,
+                                                   N,
+                                                   rocblas_datatype_f32_r,
+                                                   algo,
+                                                   0,
+                                                   0));
+  });
+}
+
+template <>
+template <>
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
+inline void Blas<phi::GPUContext>::GEMM(CBLAS_TRANSPOSE transA,
+                                        CBLAS_TRANSPOSE transB,
+                                        int M,
+                                        int N,
+                                        int K,
+                                        phi::dtype::complex<float> alpha,
+                                        const phi::dtype::complex<float> *A,
+                                        const phi::dtype::complex<float> *B,
+                                        phi::dtype::complex<float> beta,
+                                        phi::dtype::complex<float> *C) const {
+  // Note that cublas follows fortran order, so the order is different from
+  // the cblas convention.
+  int lda = (transA == CblasNoTrans) ? K : M;
+  int ldb = (transB == CblasNoTrans) ? N : K;
+  rocblas_operation cuTransA = (transA == CblasNoTrans)
+                                   ? rocblas_operation_none
+                                   : rocblas_operation_transpose;
+  rocblas_operation cuTransB = (transB == CblasNoTrans)
+                                   ? rocblas_operation_none
+                                   : rocblas_operation_transpose;
+
+  // TODO(kexinzhao): add processing code for compute capability < 53 case
+  PADDLE_ENFORCE_GE(
+      context_.GetComputeCapability(),
+      53,
+      phi::errors::InvalidArgument(
+          "cublas complex64 gemm requires GPU compute capability >= 53,"
+          "but received %d",
+          context_.GetComputeCapability()));
+
+<<<<<<< HEAD
+=======
   float h_alpha = static_cast<float>(alpha);
   float h_beta = static_cast<float>(beta);
   rocblas_gemm_algo algo = rocblas_gemm_algo_standard;
@@ -819,6 +889,7 @@ inline void Blas<phi::GPUContext>::GEMM(CBLAS_TRANSPOSE transA,
           "but received %d",
           context_.GetComputeCapability()));
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   thrust::complex<float> c_alpha =
       thrust::complex<float>(alpha.real, alpha.imag);
   thrust::complex<float> c_beta = thrust::complex<float>(beta.real, beta.imag);
@@ -1076,6 +1147,8 @@ void Blas<phi::GPUContext>::BatchedGEMM(CBLAS_TRANSPOSE transA,
                                         int batchCount,
                                         int64_t strideA,
                                         int64_t strideB) const {
+<<<<<<< HEAD
+=======
   // Note that cublas follows fortran order, so the order is different from
   // the cblas convention.
   int lda = (transA == CblasNoTrans) ? K : M;
@@ -1127,6 +1200,7 @@ inline void Blas<phi::GPUContext>::BatchedGEMM(CBLAS_TRANSPOSE transA,
                                                int batchCount,
                                                int64_t strideA,
                                                int64_t strideB) const {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   // Note that cublas follows fortran order, so the order is different from
   // the cblas convention.
   int lda = (transA == CblasNoTrans) ? K : M;
@@ -1164,6 +1238,8 @@ inline void Blas<phi::GPUContext>::BatchedGEMM(CBLAS_TRANSPOSE transA,
 
 template <>
 template <>
+<<<<<<< HEAD
+=======
 inline void Blas<phi::GPUContext>::BatchedGEMM(CBLAS_TRANSPOSE transA,
                                                CBLAS_TRANSPOSE transB,
                                                int M,
@@ -1214,6 +1290,7 @@ inline void Blas<phi::GPUContext>::BatchedGEMM(CBLAS_TRANSPOSE transA,
 
 template <>
 template <>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 inline void Blas<phi::GPUContext>::BatchedGEMM(CBLAS_TRANSPOSE transA,
                                                CBLAS_TRANSPOSE transB,
                                                int M,

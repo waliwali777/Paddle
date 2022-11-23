@@ -25,6 +25,7 @@ paddle.enable_static()
 
 
 class TestPythonOperatorOverride(unittest.TestCase):
+
     def check_result(self, fn, place, dtype):
         shape = [9, 10]
 
@@ -32,22 +33,44 @@ class TestPythonOperatorOverride(unittest.TestCase):
         y_data = np.random.random(size=shape).astype(dtype)
         python_out = fn(x_data, y_data)
 
+<<<<<<< HEAD
+        x_var = layers.create_global_var(name='x',
+                                         shape=shape,
+                                         value=0.0,
+                                         dtype=dtype,
+                                         persistable=True)
+        y_var = layers.create_global_var(name='y',
+                                         shape=shape,
+                                         value=0.0,
+                                         dtype=dtype,
+                                         persistable=True)
+=======
         x_var = layers.create_global_var(
             name='x', shape=shape, value=0.0, dtype=dtype, persistable=True
         )
         y_var = layers.create_global_var(
             name='y', shape=shape, value=0.0, dtype=dtype, persistable=True
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         out = fn(x_var, y_var)
 
         exe = fluid.Executor(place)
 
         exe.run(fluid.default_startup_program())
+<<<<<<< HEAD
+        fluid_out = exe.run(fluid.default_main_program(),
+                            feed={
+                                'x': x_data,
+                                'y': y_data
+                            },
+                            fetch_list=[out])
+=======
         fluid_out = exe.run(
             fluid.default_main_program(),
             feed={'x': x_data, 'y': y_data},
             fetch_list=[out],
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         np.testing.assert_array_equal(python_out, fluid_out[0])
 

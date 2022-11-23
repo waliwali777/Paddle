@@ -66,8 +66,11 @@ from ..fluid.framework import _dygraph_tracer  # noqa: F401
 from ..fluid.layer_helper import LayerHelper  # noqa: F401
 from ..fluid.framework import in_dygraph_mode  # noqa: F401
 from ..fluid.framework import _in_legacy_dygraph  # noqa: F401
+<<<<<<< HEAD
+=======
 from ..fluid.framework import _global_flags  # noqa: F401
 from ..fluid.framework import _apply_pass  # noqa: F401
 from ..fluid.framework import switch_main_program
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 __all__ = []

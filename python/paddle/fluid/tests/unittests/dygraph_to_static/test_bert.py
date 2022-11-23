@@ -29,15 +29,21 @@ from bert_utils import get_bert_config, get_feed_data_reader
 from predictor_utils import PredictorTools
 
 program_translator = ProgramTranslator()
+<<<<<<< HEAD
+place = fluid.CUDAPlace(
+    0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
+=======
 place = (
     fluid.CUDAPlace(0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 SEED = 2020
 STEP_NUM = 10
 PRINT_STEP = 2
 
 
 class TestBert(unittest.TestCase):
+
     def setUp(self):
         self.bert_config = get_bert_config()
         self.data_reader = get_feed_data_reader(self.bert_config)
@@ -58,6 +64,16 @@ class TestBert(unittest.TestCase):
             fluid.default_main_program().random_seed = SEED
             fluid.default_startup_program().random_seed = SEED
 
+<<<<<<< HEAD
+            data_loader = fluid.io.DataLoader.from_generator(capacity=50,
+                                                             iterable=True)
+            data_loader.set_batch_generator(data_reader.data_generator(),
+                                            places=place)
+
+            bert = PretrainModelLayer(config=bert_config,
+                                      weight_sharing=False,
+                                      use_fp16=False)
+=======
             data_loader = fluid.io.DataLoader.from_generator(
                 capacity=50, iterable=True
             )
@@ -68,6 +84,7 @@ class TestBert(unittest.TestCase):
             bert = PretrainModelLayer(
                 config=bert_config, weight_sharing=False, use_fp16=False
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             optimizer = fluid.optimizer.Adam(parameter_list=bert.parameters())
             step_idx = 0
@@ -138,6 +155,16 @@ class TestBert(unittest.TestCase):
         paddle.enable_static()
         exe = fluid.Executor(place)
         # load inference model
+<<<<<<< HEAD
+        [inference_program, feed_target_names, fetch_targets
+         ] = fluid.io.load_inference_model(self.model_save_dir,
+                                           executor=exe,
+                                           model_filename=self.model_filename,
+                                           params_filename=self.params_filename)
+        pred_res = exe.run(inference_program,
+                           feed=dict(zip(feed_target_names, data)),
+                           fetch_list=fetch_targets)
+=======
         [
             inference_program,
             feed_target_names,
@@ -153,15 +180,22 @@ class TestBert(unittest.TestCase):
             feed=dict(zip(feed_target_names, data)),
             fetch_list=fetch_targets,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         return pred_res
 
     def predict_dygraph(self, bert_config, data):
         program_translator.enable(False)
         with fluid.dygraph.guard(place):
+<<<<<<< HEAD
+            bert = PretrainModelLayer(config=bert_config,
+                                      weight_sharing=False,
+                                      use_fp16=False)
+=======
             bert = PretrainModelLayer(
                 config=bert_config, weight_sharing=False, use_fp16=False
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             model_dict, _ = fluid.dygraph.load_dygraph(
                 self.dy_state_dict_save_path
             )
@@ -170,6 +204,16 @@ class TestBert(unittest.TestCase):
             bert.eval()
 
             input_vars = [fluid.dygraph.to_variable(x) for x in data]
+<<<<<<< HEAD
+            src_ids, pos_ids, sent_ids, input_mask, mask_label, mask_pos, labels = input_vars
+            pred_res = bert(src_ids=src_ids,
+                            position_ids=pos_ids,
+                            sentence_ids=sent_ids,
+                            input_mask=input_mask,
+                            mask_label=mask_label,
+                            mask_pos=mask_pos,
+                            labels=labels)
+=======
             (
                 src_ids,
                 pos_ids,
@@ -188,6 +232,7 @@ class TestBert(unittest.TestCase):
                 mask_pos=mask_pos,
                 labels=labels,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             pred_res = [var.numpy() for var in pred_res]
 
             return pred_res
@@ -227,6 +272,18 @@ class TestBert(unittest.TestCase):
         return out
 
     def test_train(self):
+<<<<<<< HEAD
+        static_loss, static_ppl = self.train_static(self.bert_config,
+                                                    self.data_reader)
+        dygraph_loss, dygraph_ppl = self.train_dygraph(self.bert_config,
+                                                       self.data_reader)
+        self.assertTrue(np.allclose(static_loss, dygraph_loss),
+                        msg="static_loss: {} \n dygraph_loss: {}".format(
+                            static_loss, dygraph_loss))
+        self.assertTrue(np.allclose(static_ppl, dygraph_ppl),
+                        msg="static_ppl: {} \n dygraph_ppl: {}".format(
+                            static_ppl, dygraph_ppl))
+=======
         static_loss, static_ppl = self.train_static(
             self.bert_config, self.data_reader
         )
@@ -235,6 +292,7 @@ class TestBert(unittest.TestCase):
         )
         np.testing.assert_allclose(static_loss, dygraph_loss, rtol=1e-05)
         np.testing.assert_allclose(static_ppl, dygraph_ppl, rtol=1e-05)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.verify_predict()
 

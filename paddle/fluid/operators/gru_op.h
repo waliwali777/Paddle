@@ -32,7 +32,11 @@ template <typename DeviceContext, typename T>
 inline void ReorderInitState(const DeviceContext& ctx,
                              const phi::DenseTensor& src,
                              framework::Vector<size_t> index_lod,
+<<<<<<< HEAD
+                             framework::Tensor* dst,
+=======
                              phi::DenseTensor* dst,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                              bool indexed_src) {
   phi::funcs::CopyMatrixRowsFunctor<DeviceContext, T> row_shuffle;
   dst->mutable_data<T>(src.dims(), ctx.GetPlace());

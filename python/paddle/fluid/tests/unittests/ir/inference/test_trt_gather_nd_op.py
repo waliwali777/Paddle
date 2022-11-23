@@ -22,6 +22,7 @@ from paddle.fluid.core import AnalysisConfig
 
 
 class TRTGatherNdTest(InferencePassTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
             data = fluid.data(name="data", shape=[-1, 3, 4], dtype="float32")
@@ -31,9 +32,14 @@ class TRTGatherNdTest(InferencePassTest):
 
         self.feeds = {
             "data": np.random.random([2, 3, 4]).astype("float32"),
+<<<<<<< HEAD
+            "index": np.array([[[0, 1], [1, 0]], [[1, 2],
+                                                  [0, 1]]]).astype("int32"),
+=======
             "index": np.array([[[0, 1], [1, 0]], [[1, 2], [0, 1]]]).astype(
                 "int32"
             ),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         }
         self.enable_trt = True
         self.trt_parameters = TRTGatherNdTest.TensorRTParam(
@@ -41,11 +47,24 @@ class TRTGatherNdTest(InferencePassTest):
         )
         self.fetch_list = [out]
         self.dynamic_shape_params = TRTGatherNdTest.DynamicShapeParam(
+<<<<<<< HEAD
+            {
+                'data': [1, 3, 4],
+                'index': [1, 2, 2]
+            }, {
+                'data': [3, 3, 4],
+                'index': [3, 2, 2]
+            }, {
+                'data': [3, 3, 4],
+                'index': [3, 2, 2]
+            }, False)
+=======
             {'data': [1, 3, 4], 'index': [1, 2, 2]},
             {'data': [3, 3, 4], 'index': [3, 2, 2]},
             {'data': [3, 3, 4], 'index': [3, 2, 2]},
             False,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_check_output(self):
         if core.is_compiled_with_cuda():
@@ -57,11 +76,18 @@ class TRTGatherNdTest(InferencePassTest):
 
 
 class TRTGatherNdFp16Test(InferencePassTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 1280, 192],
+                              dtype="float32")
+=======
             data = fluid.data(
                 name="data", shape=[-1, 1280, 192], dtype="float32"
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             index = fluid.data(name="index", shape=[-1, 1028, 2], dtype="int32")
             gather_nd = fluid.layers.gather_nd(data, index)
             out = fluid.layers.batch_norm(gather_nd, is_test=True)
@@ -77,11 +103,24 @@ class TRTGatherNdFp16Test(InferencePassTest):
         )
         self.fetch_list = [out]
         self.dynamic_shape_params = TRTGatherNdFp16Test.DynamicShapeParam(
+<<<<<<< HEAD
+            {
+                'data': [1, 1280, 192],
+                'index': [1, 1028, 2]
+            }, {
+                'data': [3, 1280, 192],
+                'index': [3, 1028, 2]
+            }, {
+                'data': [3, 1280, 192],
+                'index': [3, 1028, 2]
+            }, False)
+=======
             {'data': [1, 1280, 192], 'index': [1, 1028, 2]},
             {'data': [3, 1280, 192], 'index': [3, 1028, 2]},
             {'data': [3, 1280, 192], 'index': [3, 1028, 2]},
             False,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_check_output(self, atol=1e-3):
         if core.is_compiled_with_cuda():

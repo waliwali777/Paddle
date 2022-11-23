@@ -125,6 +125,14 @@ rmdir %BUILD_DIR%\paddle_inference_install_dir /s/q
 rmdir %BUILD_DIR%\paddle_inference_c_install_dir /s/q
 del %BUILD_DIR%\CMakeCache.txt
 
+<<<<<<< HEAD
+if "%WITH_CACHE%"=="OFF" (
+    rmdir %BUILD_DIR% /s/q
+    goto :mkbuild
+)
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 : set /p error_code=< %cache_dir%\error_code.txt
 if %error_code% NEQ 0 (
     rmdir %BUILD_DIR% /s/q
@@ -662,7 +670,10 @@ echo    ========================================
 echo    Step 4. Running unit tests ...
 echo    ========================================
 
+<<<<<<< HEAD
+=======
 pip install requests
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 pip install -r %work_dir%\python\unittest_py\requirements.txt
 if %ERRORLEVEL% NEQ 0 (
     echo pip install unittest requirements.txt failed!
@@ -689,9 +700,13 @@ set PATH=%THIRD_PARTY_PATH:/=\%\install\openblas\lib;%THIRD_PARTY_PATH:/=\%\inst
 %PATH%
 
 REM TODO: make ut find .dll in install\onnxruntime\lib
+<<<<<<< HEAD
+xcopy %THIRD_PARTY_PATH:/=\%\install\onnxruntime\lib\onnxruntime.dll %work_dir%\%BUILD_DIR%\paddle\fluid\inference\tests\api\ /Y
+=======
 if "%WITH_ONNXRUNTIME%"=="ON" (
     xcopy %THIRD_PARTY_PATH:/=\%\install\onnxruntime\lib\onnxruntime.dll %work_dir%\%BUILD_DIR%\paddle\fluid\inference\tests\api\ /Y
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 if "%WITH_GPU%"=="ON" (
     call:parallel_test_base_gpu

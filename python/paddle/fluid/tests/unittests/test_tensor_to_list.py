@@ -20,6 +20,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class TensorToListTest(unittest.TestCase):
+
     def setUp(self):
         self.shape = [11, 25, 32, 43]
 
@@ -30,9 +31,14 @@ class TensorToListTest(unittest.TestCase):
             places.append(fluid.CUDAPinnedPlace())
 
         for p in places:
+<<<<<<< HEAD
+            np_arr = np.reshape(np.array(six.moves.range(np.prod(self.shape))),
+                                self.shape)
+=======
             np_arr = np.reshape(
                 np.array(range(np.prod(self.shape))), self.shape
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             expectlist = np_arr.tolist()
 
             t = paddle.to_tensor(np_arr, place=p)

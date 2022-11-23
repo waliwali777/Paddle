@@ -18,6 +18,7 @@ __all__ = []
 
 
 class ParameterServerGraphOptimizer(ParameterServerOptimizer):
+
     def __init__(self, optimizer):
         super().__init__(optimizer)
         self.inner_opt = optimizer
@@ -58,12 +59,19 @@ class ParameterServerGraphOptimizer(ParameterServerOptimizer):
 
         self._compiled_program = paddle.static.CompiledProgram(main_program)
 
+<<<<<<< HEAD
+        self._compiled_program.with_data_parallel(loss_name=loss.name,
+                                                  build_strategy=build_strategy,
+                                                  exec_strategy=exec_strategy,
+                                                  share_vars_from=None)
+=======
         self._compiled_program.with_data_parallel(
             loss_name=loss.name,
             build_strategy=build_strategy,
             exec_strategy=exec_strategy,
             share_vars_from=None,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         return self._compiled_program
 

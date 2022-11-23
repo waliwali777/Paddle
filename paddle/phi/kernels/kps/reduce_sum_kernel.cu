@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+<<<<<<< HEAD
+#include "paddle/phi/core/kernel_registry.h"
+#include "paddle/phi/kernels/gpu/reduce.h"
+#include "paddle/phi/kernels/reduce_sum_kernel.h"
+=======
 #include "paddle/phi/kernels/reduce_sum_kernel.h"
 #include <limits>
 #include "paddle/phi/core/enforce.h"
@@ -20,6 +25,7 @@
 #ifndef PADDLE_WITH_XPU_KP
 #include "paddle/phi/kernels/funcs/eigen/common.h"
 #endif
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace phi {
 

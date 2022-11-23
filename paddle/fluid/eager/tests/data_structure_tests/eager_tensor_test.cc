@@ -202,9 +202,16 @@ TEST(EagerVariable, Constructor) {
 
 TEST(EagerVariable, DataLayout) {
   paddle::experimental::Tensor tensor;
+<<<<<<< HEAD
+  phi::DenseTensorMeta meta =
+      phi::DenseTensorMeta(phi::DataType::FLOAT32,
+                           phi::make_ddim({1, 1, 1, 1}),
+                           paddle::experimental::DataLayout::UNDEFINED);
+=======
   phi::DenseTensorMeta meta = phi::DenseTensorMeta(phi::DataType::FLOAT32,
                                                    phi::make_ddim({1, 1, 1, 1}),
                                                    phi::DataLayout::UNDEFINED);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   std::shared_ptr<phi::DenseTensor> dt = std::make_shared<phi::DenseTensor>(
       std::make_unique<paddle::experimental::DefaultAllocator>(
           paddle::platform::CPUPlace())

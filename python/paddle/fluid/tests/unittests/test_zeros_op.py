@@ -15,12 +15,19 @@
 import unittest
 import numpy as np
 import paddle
+<<<<<<< HEAD
+import paddle.compat as cpt
+import paddle.fluid.core as core
+from paddle.fluid.op import Operator
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 import paddle.fluid as fluid
 from paddle.fluid import Program, program_guard
 from paddle.fluid.framework import _test_eager_guard
 
 
 class TestZerosOpError(unittest.TestCase):
+
     def test_errors(self):
         with program_guard(Program(), Program()):
             shape = [4]
@@ -33,6 +40,7 @@ class TestZerosOpError(unittest.TestCase):
 
 
 class ApiZerosTest(unittest.TestCase):
+
     def test_out(self):
         with program_guard(Program()):
             zeros = paddle.zeros(shape=[10], dtype='float64')
@@ -79,7 +87,9 @@ class ApiZerosTest(unittest.TestCase):
 
 
 class ApiZerosError(unittest.TestCase):
+
     def test_errors(self):
+
         def test_error1():
             with paddle.static.program_guard(fluid.Program()):
                 ones = fluid.layers.zeros(shape=10, dtype='int64')
@@ -98,7 +108,11 @@ class ApiZerosError(unittest.TestCase):
                 shape = [-1, 5]
                 out = paddle.zeros(shape)
             except Exception as e:
+<<<<<<< HEAD
+                error_msg = cpt.get_exception_message(e)
+=======
                 error_msg = str(e)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 assert error_msg.find("expected to be no less than 0") > 0
 
     def test_eager(self):

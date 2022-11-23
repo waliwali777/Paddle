@@ -22,6 +22,7 @@ import paddle
 
 # Situation 1: expand_times is a list(without tensor)
 class TestExpandOpRank1(OpTest):
+
     def setUp(self):
         self.op_type = "expand"
         self.init_data()
@@ -46,30 +47,35 @@ class TestExpandOpRank1(OpTest):
 
 
 class TestExpandOpRank2_Corner(TestExpandOpRank1):
+
     def init_data(self):
         self.ori_shape = [120]
         self.expand_times = [2]
 
 
 class TestExpandOpRank2(TestExpandOpRank1):
+
     def init_data(self):
         self.ori_shape = [12, 14]
         self.expand_times = [2, 3]
 
 
 class TestExpandOpRank3_Corner(TestExpandOpRank1):
+
     def init_data(self):
         self.ori_shape = (2, 10, 5)
         self.expand_times = (1, 1, 1)
 
 
 class TestExpandOpRank3(TestExpandOpRank1):
+
     def init_data(self):
         self.ori_shape = (2, 4, 15)
         self.expand_times = (2, 1, 4)
 
 
 class TestExpandOpRank4(TestExpandOpRank1):
+
     def init_data(self):
         self.ori_shape = (2, 4, 5, 7)
         self.expand_times = (3, 2, 1, 2)
@@ -77,6 +83,7 @@ class TestExpandOpRank4(TestExpandOpRank1):
 
 # Situation 2: expand_times is a list(with tensor)
 class TestExpandOpRank1_tensor_attr(OpTest):
+
     def setUp(self):
         self.op_type = "expand"
         self.init_data()
@@ -111,6 +118,7 @@ class TestExpandOpRank1_tensor_attr(OpTest):
 
 
 class TestExpandOpRank2_Corner_tensor_attr(TestExpandOpRank1_tensor_attr):
+
     def init_data(self):
         self.ori_shape = [12, 14]
         self.expand_times = [1, 1]
@@ -118,6 +126,7 @@ class TestExpandOpRank2_Corner_tensor_attr(TestExpandOpRank1_tensor_attr):
 
 
 class TestExpandOpRank2_attr_tensor(TestExpandOpRank1_tensor_attr):
+
     def init_data(self):
         self.ori_shape = [12, 14]
         self.expand_times = [2, 3]
@@ -126,6 +135,7 @@ class TestExpandOpRank2_attr_tensor(TestExpandOpRank1_tensor_attr):
 
 # Situation 3: expand_times is a tensor
 class TestExpandOpRank1_tensor(OpTest):
+
     def setUp(self):
         self.op_type = "expand"
         self.init_data()
@@ -153,6 +163,7 @@ class TestExpandOpRank1_tensor(OpTest):
 
 
 class TestExpandOpRank2_tensor(TestExpandOpRank1_tensor):
+
     def init_data(self):
         self.ori_shape = [12, 14]
         self.expand_times = [2, 3]
@@ -160,6 +171,7 @@ class TestExpandOpRank2_tensor(TestExpandOpRank1_tensor):
 
 # Situation 4: input x is Integer
 class TestExpandOpInteger(OpTest):
+
     def setUp(self):
         self.op_type = "expand"
         self.inputs = {
@@ -175,6 +187,7 @@ class TestExpandOpInteger(OpTest):
 
 # Situation 5: input x is Bool
 class TestExpandOpBoolean(OpTest):
+
     def setUp(self):
         self.op_type = "expand"
         self.inputs = {'X': np.random.randint(2, size=(2, 4, 5)).astype("bool")}
@@ -188,6 +201,7 @@ class TestExpandOpBoolean(OpTest):
 
 # Situation 56: input x is Integer
 class TestExpandOpInt64_t(OpTest):
+
     def setUp(self):
         self.op_type = "expand"
         self.inputs = {
@@ -202,11 +216,17 @@ class TestExpandOpInt64_t(OpTest):
 
 
 class TestExpandError(unittest.TestCase):
+
     def test_errors(self):
         with program_guard(Program(), Program()):
+<<<<<<< HEAD
+            x1 = fluid.create_lod_tensor(np.array([[-1]]), [[1]],
+                                         fluid.CPUPlace())
+=======
             x1 = fluid.create_lod_tensor(
                 np.array([[-1]]), [[1]], fluid.CPUPlace()
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             expand_times = [2, 2]
             self.assertRaises(TypeError, fluid.layers.expand, x1, expand_times)
             x2 = fluid.layers.data(name='x2', shape=[4], dtype="uint8")
@@ -218,8 +238,20 @@ class TestExpandError(unittest.TestCase):
 
 # Test python API
 class TestExpandAPI(unittest.TestCase):
+
     def test_api(self):
         input = np.random.random([12, 14]).astype("float32")
+<<<<<<< HEAD
+        x = fluid.layers.data(name='x',
+                              shape=[12, 14],
+                              append_batch_size=False,
+                              dtype="float32")
+
+        positive_2 = fluid.layers.fill_constant([1], "int32", 2)
+        expand_times = fluid.layers.data(name="expand_times",
+                                         shape=[2],
+                                         append_batch_size=False)
+=======
         x = fluid.layers.data(
             name='x', shape=[12, 14], append_batch_size=False, dtype="float32"
         )
@@ -228,6 +260,7 @@ class TestExpandAPI(unittest.TestCase):
         expand_times = fluid.layers.data(
             name="expand_times", shape=[2], append_batch_size=False
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         out_1 = fluid.layers.expand(x, expand_times=[2, 3])
         out_2 = fluid.layers.expand(x, expand_times=[positive_2, 3])
@@ -236,26 +269,48 @@ class TestExpandAPI(unittest.TestCase):
         g0 = fluid.backward.calc_gradient(out_2, x)
 
         exe = fluid.Executor(place=fluid.CPUPlace())
+<<<<<<< HEAD
+        res_1, res_2, res_3 = exe.run(fluid.default_main_program(),
+                                      feed={
+                                          "x":
+                                          input,
+                                          "expand_times":
+                                          np.array([1, 3]).astype("int32")
+                                      },
+                                      fetch_list=[out_1, out_2, out_3])
+=======
         res_1, res_2, res_3 = exe.run(
             fluid.default_main_program(),
             feed={"x": input, "expand_times": np.array([1, 3]).astype("int32")},
             fetch_list=[out_1, out_2, out_3],
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         assert np.array_equal(res_1, np.tile(input, (2, 3)))
         assert np.array_equal(res_2, np.tile(input, (2, 3)))
         assert np.array_equal(res_3, np.tile(input, (1, 3)))
 
 
 class TestExpandDygraphAPI(unittest.TestCase):
+
     def test_expand_times_is_tensor(self):
         with paddle.fluid.dygraph.guard():
             a = paddle.rand([2, 5])
             b = paddle.fluid.layers.expand(a, expand_times=[2, 3])
+<<<<<<< HEAD
+            c = paddle.fluid.layers.expand(a,
+                                           expand_times=paddle.to_tensor(
+                                               [2, 3], dtype='int32'))
+            self.assertTrue(
+                np.array_equal(b.numpy(), np.tile(a.numpy(), [2, 3])))
+            self.assertTrue(
+                np.array_equal(c.numpy(), np.tile(a.numpy(), [2, 3])))
+=======
             c = paddle.fluid.layers.expand(
                 a, expand_times=paddle.to_tensor([2, 3], dtype='int32')
             )
             np.testing.assert_array_equal(b.numpy(), np.tile(a.numpy(), [2, 3]))
             np.testing.assert_array_equal(c.numpy(), np.tile(a.numpy(), [2, 3]))
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

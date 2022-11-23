@@ -43,7 +43,10 @@ limitations under the License. */
 #include "paddle/fluid/string/split.h"
 #include "paddle/phi/kernels/funcs/blas/blas.h"
 #include "paddle/phi/kernels/funcs/math_function.h"
+<<<<<<< HEAD
+=======
 #include "paddle/phi/kernels/funcs/selected_rows_functor.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace paddle {
 namespace distributed {
@@ -212,10 +215,18 @@ inline void MergeVars(const std::string &var_name,
     }
     phi::CPUContext dev_ctx;
     if (merge_add) {
+<<<<<<< HEAD
+      paddle::operators::math::scatter::MergeAdd<phi::CPUContext, T> merge_add;
+      merge_add(dev_ctx, inputs, out_slr);
+    } else {
+      paddle::operators::math::scatter::MergeAverage<phi::CPUContext, T>
+          merge_average;
+=======
       phi::funcs::scatter::MergeAdd<phi::CPUContext, T> merge_add;
       merge_add(dev_ctx, inputs, out_slr);
     } else {
       phi::funcs::scatter::MergeAverage<phi::CPUContext, T> merge_average;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       merge_average(dev_ctx, inputs, out_slr);
     }
 
@@ -484,6 +495,20 @@ class AsyncCommunicator : public Communicator {
       uint64_t padding_id,
       platform::Place place,
       bool is_training,
+<<<<<<< HEAD
+      std::vector<const framework::LoDTensor *> *inputs,  // NOLINT
+      std::vector<framework::LoDTensor *> *outputs);      // NOLINT
+
+  void PushSparseFromTensorAsync(
+      const uint64_t table_id,
+      int fea_dim,
+      uint64_t padding_id,
+      platform::Place place,
+      std::vector<const framework::LoDTensor *> *inputs,
+      const framework::LoDTensor *shows,
+      const framework::LoDTensor *clicks,
+      std::vector<framework::LoDTensor *> *outputs);
+=======
       std::vector<const phi::DenseTensor *> *inputs,  // NOLINT
       std::vector<phi::DenseTensor *> *outputs);      // NOLINT
 
@@ -495,6 +520,7 @@ class AsyncCommunicator : public Communicator {
                                  const phi::DenseTensor *shows,
                                  const phi::DenseTensor *clicks,
                                  std::vector<phi::DenseTensor *> *outputs);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
  protected:
   std::unordered_map<std::string,
@@ -683,7 +709,11 @@ class FLCommunicator : public GeoCommunicator {
 
   void InitImpl(const RpcCtxMap &send_varname_to_ctx,
                 const RecvCtxMap &recv_varname_to_ctx,
+<<<<<<< HEAD
+                Scope *recv_scope) override {}
+=======
                 Scope *recv_scope) {}
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   void StartCoordinatorClient(
       const std::vector<std::string> &trainer_endpoints);

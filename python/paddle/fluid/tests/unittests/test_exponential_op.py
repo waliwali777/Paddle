@@ -21,6 +21,7 @@ paddle.seed(100)
 
 
 class TestExponentialOp1(OpTest):
+
     def setUp(self):
         paddle.enable_static()
         self.op_type = "exponential"
@@ -47,7 +48,12 @@ class TestExponentialOp1(OpTest):
         hist2 = hist2.astype("float32")
         hist2 = hist2 / float(data_np.size)
 
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(hist1, hist2, rtol=0.02),
+                        "actual: {}, expected: {}".format(hist1, hist2))
+=======
         np.testing.assert_allclose(hist1, hist2, rtol=0.02)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_check_grad_normal(self):
         self.check_grad(
@@ -61,12 +67,14 @@ class TestExponentialOp1(OpTest):
 
 
 class TestExponentialOp2(TestExponentialOp1):
+
     def config(self):
         self.lam = 0.25
         self.dtype = "float32"
 
 
 class TestExponentialAPI(unittest.TestCase):
+
     def test_static(self):
         with paddle.static.program_guard(
             paddle.static.Program(), paddle.static.Program()
@@ -85,7 +93,11 @@ class TestExponentialAPI(unittest.TestCase):
 
     def test_dygraph(self):
         paddle.disable_static()
+<<<<<<< HEAD
+        x = paddle.full([10, 10], -1., dtype='float32')
+=======
         x = paddle.full([10, 10], -1.0, dtype='float32')
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         x.stop_gradient = False
         y = 2 * x
         y.exponential_(0.5)
@@ -93,7 +105,11 @@ class TestExponentialAPI(unittest.TestCase):
         self.assertTrue(np.min(y.numpy()) >= 0)
 
         y.backward()
+<<<<<<< HEAD
+        self.assertTrue(np.array_equal(x.grad.numpy(), np.zeros([10, 10])))
+=======
         np.testing.assert_array_equal(x.grad.numpy(), np.zeros([10, 10]))
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         paddle.enable_static()
 
     def test_fixed_random_number(self):

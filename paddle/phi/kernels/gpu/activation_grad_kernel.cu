@@ -14,6 +14,7 @@ limitations under the License. */
 
 #include "paddle/phi/kernels/activation_grad_kernel.h"
 
+#include "paddle/fluid/platform/device/gpu/gpu_device_function.h"
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/backends/gpu/gpu_device_function.h"
 #include "paddle/phi/common/bfloat16.h"
@@ -416,6 +417,8 @@ PD_REGISTER_KERNEL(square_double_grad,
                    int64_t,
                    phi::dtype::float16,
                    phi::dtype::bfloat16) {}
+<<<<<<< HEAD
+=======
 
 PD_REGISTER_KERNEL(sin_double_grad,
                    GPU,
@@ -456,6 +459,7 @@ PD_REGISTER_KERNEL(cos_triple_grad,
                    int,
                    int64_t,
                    phi::dtype::float16) {}
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(softsign_grad, SoftsignGradKernel)
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(sigmoid_grad, SigmoidGradKernel)

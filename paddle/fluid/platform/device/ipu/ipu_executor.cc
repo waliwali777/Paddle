@@ -14,11 +14,17 @@ limitations under the License. */
 
 #include "paddle/fluid/platform/device/ipu/ipu_executor.h"
 
+<<<<<<< HEAD
+#include <popart/devicemanager.hpp>
+#include <popdist/popdist_poplar.hpp>
+
+=======
 #include <chrono>
 #include <popart/devicemanager.hpp>
 #include <popdist/popdist_poplar.hpp>
 
 #include "paddle/fluid/framework/data_type_transform.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/fluid/framework/operator.h"
 #include "paddle/fluid/platform/device/ipu/ipu_compiler.h"
 #include "paddle/fluid/platform/device/ipu/ipu_names.h"
@@ -531,6 +537,8 @@ void Executor::Reset() {
   Detach();
   session_.reset();
   executor_resources_.reset();
+<<<<<<< HEAD
+=======
   if (enable_model_runtime_executor_) {
     ResetPopef();
   }
@@ -557,6 +565,7 @@ void Executor::ResetPopef() {
   // reset stop back to false in case executor is reused.
   stop_.store(false);
   queue_manager_ = nullptr;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 void Executor::SetWeightsIO() {

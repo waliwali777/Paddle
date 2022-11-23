@@ -24,6 +24,7 @@ from CspFileReader import FILEORGANIZEFORM_BYTRAINER
 
 
 class netFileReader(FileReader):
+
     def _parseSingleFile(self, fileNameList, tx_pid, rx_pid, q=None):
 
         traceInfo = {}
@@ -86,6 +87,15 @@ class netFileReader(FileReader):
 
         taskList = self._splitTaskListForMultiProcess(fileFist, processNum)
         for task in taskList:
+<<<<<<< HEAD
+            subproc = Process(target=self._parseSingleFile,
+                              args=(
+                                  task,
+                                  tx_pid,
+                                  rx_pid,
+                                  q,
+                              ))
+=======
             subproc = Process(
                 target=self._parseSingleFile,
                 args=(
@@ -95,6 +105,7 @@ class netFileReader(FileReader):
                     q,
                 ),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             processPool.append(subproc)
             subproc.start()
             pidList.append(subproc.pid)

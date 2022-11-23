@@ -17,6 +17,28 @@ foreach(src ${OPS})
                                                 ${COLLECTIVE_COMPILE_FLAGS})
 endforeach()
 
+<<<<<<< HEAD
+register_operators(
+  EXCLUDES
+  c_gen_bkcl_id_op
+  gen_bkcl_id_op
+  c_gen_nccl_id_op
+  gen_nccl_id_op
+  c_gen_hccl_id_op
+  gen_hccl_id_op
+  c_gen_cncl_id_op
+  DEPS
+  ${COLLECTIVE_DEPS})
+
+if(WITH_NCCL OR WITH_RCCL)
+  set(COLLECTIVE_DEPS ${COLLECTIVE_DEPS} nccl_common collective_helper)
+  op_library(c_gen_nccl_id_op DEPS ${COLLECTIVE_DEPS})
+  op_library(gen_nccl_id_op DEPS ${COLLECTIVE_DEPS})
+endif()
+
+if(WITH_GLOO)
+  set(COLLECTIVE_DEPS ${COLLECTIVE_DEPS} gloo_wrapper)
+=======
 if(WITH_GLOO)
   set(COLLECTIVE_DEPS ${COLLECTIVE_DEPS} gloo_wrapper)
 endif()
@@ -37,6 +59,7 @@ if(WITH_NCCL OR WITH_RCCL)
   set(COLLECTIVE_DEPS ${COLLECTIVE_DEPS} nccl_common collective_helper)
   op_library(c_gen_nccl_id_op DEPS ${COLLECTIVE_DEPS})
   op_library(gen_nccl_id_op DEPS ${COLLECTIVE_DEPS})
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 endif()
 
 if(WITH_XPU_BKCL)

@@ -93,7 +93,11 @@ class TileNPUKernel : public framework::OpKernel<T> {
             "'repeat_times' for tile op must match after promotion.",
             vec_in_dims.size(),
             repeat_times.size()));
+<<<<<<< HEAD
+    auto* out0 = context.Output<framework::Tensor>("Out");
+=======
     auto* out0 = context.Output<phi::DenseTensor>("Out");
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     framework::DDim new_in_dims = phi::make_ddim(vec_in_dims);
     framework::DDim out_dims(new_in_dims);

@@ -30,6 +30,17 @@ class TestPullGpupsSparse(unittest.TestCase):
         slots = []
         with fluid.program_guard(train_program, startup_program):
 
+<<<<<<< HEAD
+            l = fluid.layers.data(name='input',
+                                  shape=[1],
+                                  dtype="int64",
+                                  lod_level=1)
+            slots.append(l)
+            output = _pull_gpups_sparse(slots,
+                                        size=[11],
+                                        is_distributed=True,
+                                        is_sparse=True)
+=======
             l = fluid.layers.data(
                 name='input', shape=[1], dtype="int64", lod_level=1
             )
@@ -37,6 +48,7 @@ class TestPullGpupsSparse(unittest.TestCase):
             output = _pull_gpups_sparse(
                 slots, size=[11], is_distributed=True, is_sparse=True
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             cost = paddle.mean(output)
             sgd_optimizer = fluid.optimizer.SGD(learning_rate=0.001)
             sgd_optimizer.minimize(cost, train_program)

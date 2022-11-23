@@ -109,7 +109,11 @@ class TestElementwiseOpGradGrad {
     auto op = CreateTestOp();
     op->Run(scope_, place_);
     platform::DeviceContextPool::Instance().Get(place_)->Wait();
+<<<<<<< HEAD
+    framework::LoDTensor cpu_out;
+=======
     phi::DenseTensor cpu_out;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     PADDLE_ENFORCE_EQ(scope_.kids().empty(),
                       true,
                       platform::errors::InvalidArgument(

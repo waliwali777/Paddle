@@ -26,6 +26,7 @@ from .utils import (
 
 
 class DistributedOperator:
+
     def __init__(self, serial_op, dist_attr=None):
         self._serial_op = serial_op
         self._serial_inputs = {}
@@ -259,6 +260,13 @@ class DistributedOperator:
         return result
 
 
+<<<<<<< HEAD
+class DistributedModule:
+
+    def __init__(self, serial_module, dist_attr=None):
+        self._serial_module = serial_module
+        self._dist_attr = dist_attr
+=======
 class DistributedOperatorHelper:
     def __init__(
         self, serial_op, process_mesh, in_dims_mappings, out_dims_mappings
@@ -267,6 +275,7 @@ class DistributedOperatorHelper:
         self._process_mesh = process_mesh
         self._in_dims_mappings = in_dims_mappings
         self._out_dims_mappings = out_dims_mappings
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def __call__(self, *args, **kwargs):
         tensor_to_dims_mapping = {}
@@ -371,5 +380,8 @@ class DistributedOperatorHelper:
             if self._process_mesh is not None:
                 dist_op.dist_attr.mark_annotated("process_mesh")
             default_dist_ctx.add_dist_op_for_program(dist_op)
+<<<<<<< HEAD
+=======
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         return output

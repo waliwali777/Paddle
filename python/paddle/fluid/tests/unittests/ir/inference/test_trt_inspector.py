@@ -24,10 +24,18 @@ import subprocess
 
 
 class TensorRTInspectorTest(InferencePassTest):
+
     def setUp(self):
         self.set_params()
         with fluid.program_guard(self.main_program, self.startup_program):
             data = fluid.data(name="data", shape=[1, 16, 16], dtype="float32")
+<<<<<<< HEAD
+            matmul_out = fluid.layers.matmul(x=data,
+                                             y=data,
+                                             transpose_x=self.transpose_x,
+                                             transpose_y=self.transpose_y,
+                                             alpha=self.alpha)
+=======
             matmul_out = fluid.layers.matmul(
                 x=data,
                 y=data,
@@ -35,6 +43,7 @@ class TensorRTInspectorTest(InferencePassTest):
                 transpose_y=self.transpose_y,
                 alpha=self.alpha,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             out = fluid.layers.batch_norm(matmul_out, is_test=True)
 
         self.feeds = {

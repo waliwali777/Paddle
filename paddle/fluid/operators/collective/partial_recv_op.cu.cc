@@ -75,7 +75,11 @@ class PartialRecvOpCUDAKernel : public framework::OpKernel<T> {
     if (map->has(rid)) {
       // Use ProcessGroup
       distributed::ProcessGroup *pg = map->get(rid);
+<<<<<<< HEAD
+      auto task = pg->Recv_Partial(*out, peer, offset, recv_numel);
+=======
       auto task = pg->Recv(out, peer, offset, recv_numel, /*sync_op*/ true);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       task->Wait();
     } else {
       gpuStream_t stream = nullptr;

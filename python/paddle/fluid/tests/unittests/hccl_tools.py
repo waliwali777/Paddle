@@ -57,11 +57,19 @@ def parse_args():
         "--device_num",
         type=str,
         default="[0,8)",
-        help="The number of the Ascend accelerators used. please note that the Ascend accelerators"
+        help=
+        "The number of the Ascend accelerators used. please note that the Ascend accelerators"
         "used must be continuous, such [0,4) means to use four chips "
         "0,1,2,3; [0,1) means to use chip 0; The first four chips are"
         "a group, and the last four chips are a group. In addition to"
         "the [0,8) chips are allowed, other cross-group such as [3,6)"
+<<<<<<< HEAD
+        "are prohibited.")
+    parser.add_argument("--visible_devices",
+                        type=str,
+                        default="0,1,2,3,4,5,6,7",
+                        help="will use the visible devices sequentially")
+=======
         "are prohibited.",
     )
     parser.add_argument(
@@ -70,6 +78,7 @@ def parse_args():
         default="0,1,2,3,4,5,6,7",
         help="will use the visible devices sequentially",
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     parser.add_argument("--server_ip", type=str, default="", help="server ip")
     args = parser.parse_args()
     return args
@@ -127,10 +136,15 @@ def main():
                 pass
             else:
                 raise ValueError(
+<<<<<<< HEAD
+                    "device num {} must be in the same group of [0,4] or [4,8] !"
+                    .format(args.device_num))
+=======
                     "device num {} must be in the same group of [0,4] or [4,8] !".format(
                         args.device_num
                     )
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     device_num_list = list(range(first_num, last_num))
     print("device_num_list:", device_num_list)
@@ -177,10 +191,16 @@ def main():
     table_path = os.getcwd()
     table_fn = os.path.join(
         table_path,
+<<<<<<< HEAD
+        'hccl_{}p_{}_{}.json'.format(len(device_num_list),
+                                     "".join(map(str,
+                                                 device_num_list)), server_id))
+=======
         'hccl_{}p_{}_{}.json'.format(
             len(device_num_list), "".join(map(str, device_num_list)), server_id
         ),
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     with open(table_fn, 'w') as table_fp:
         json.dump(hccn_table, table_fp, indent=4)
     sys.stdout.flush()

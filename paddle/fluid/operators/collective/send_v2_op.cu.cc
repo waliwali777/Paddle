@@ -26,7 +26,11 @@ namespace operators {
 
 #if (defined(PADDLE_WITH_RCCL) || defined(PADDLE_WITH_NCCL)) && \
     NCCL_VERSION_CODE >= 2703
+<<<<<<< HEAD
+void send_shape_info(const framework::Tensor& x,
+=======
 void send_shape_info(const phi::DenseTensor& x,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                      const platform::Place& place,
                      const gpuStream_t& stream,
                      platform::NCCLComm* comm,
@@ -221,7 +225,11 @@ namespace plat = paddle::platform;
 REGISTER_OP_CUDA_KERNEL(send_v2,
                         ops::SendOpV2CUDAKernel<float>,
                         ops::SendOpV2CUDAKernel<double>,
+<<<<<<< HEAD
+#if CUDNN_VERSION_MIN(8, 1, 0) && NCCL_VERSION_CODE >= 21000
+=======
 #if NCCL_VERSION_CODE >= 21000
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         ops::SendOpV2CUDAKernel<plat::bfloat16>,
 #endif
                         ops::SendOpV2CUDAKernel<int>,

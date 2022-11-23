@@ -33,6 +33,7 @@ np.random.seed(2022)
     ],
 )
 class TestDirichlet(unittest.TestCase):
+
     def setUp(self):
         self._paddle_diric = paddle.distribution.Dirichlet(
             paddle.to_tensor(self.concentration)
@@ -100,11 +101,16 @@ class TestDirichlet(unittest.TestCase):
         self.assertTrue(
             np.all(
                 self._paddle_diric._log_normalizer(
+<<<<<<< HEAD
+                    paddle.to_tensor(param.xrand((100, 100,
+                                                  100)))).numpy() < 0.0))
+=======
                     paddle.to_tensor(param.xrand((100, 100, 100)))
                 ).numpy()
                 < 0.0
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     @param.place(DEVICES)
     @param.param_cls(
@@ -112,11 +118,17 @@ class TestDirichlet(unittest.TestCase):
         [('test-zero-dim', np.array(1.0))],
     )
     class TestDirichletException(unittest.TestCase):
+
         def TestInit(self):
             with self.assertRaises(ValueError):
+<<<<<<< HEAD
+                paddle.distribution.Dirichlet(paddle.squeeze(
+                    self.concentration))
+=======
                 paddle.distribution.Dirichlet(
                     paddle.squeeze(self.concentration)
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

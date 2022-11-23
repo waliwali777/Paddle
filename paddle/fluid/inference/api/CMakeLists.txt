@@ -136,6 +136,18 @@ if(WITH_TESTING)
 endif()
 
 if(NOT APPLE AND NOT WIN32)
+<<<<<<< HEAD
+  cc_test(
+    test_analysis_predictor
+    SRCS analysis_predictor_tester.cc
+    DEPS paddle_inference_shared ARGS --dirname=${WORD2VEC_MODEL_DIR})
+elseif(WIN32)
+  cc_test(
+    test_analysis_predictor
+    SRCS analysis_predictor_tester.cc
+    DEPS analysis_predictor benchmark ${inference_deps} ARGS
+         --dirname=${WORD2VEC_MODEL_DIR})
+=======
   cc_test_old(
     test_analysis_predictor
     SRCS
@@ -155,6 +167,7 @@ elseif(WIN32)
     ${inference_deps}
     ARGS
     --dirname=${WORD2VEC_MODEL_DIR})
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 endif()
 
 if(WITH_TESTING AND WITH_MKLDNN)

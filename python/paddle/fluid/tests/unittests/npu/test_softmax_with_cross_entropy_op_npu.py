@@ -28,6 +28,7 @@ SEED = 2021
 
 
 class TestSoftmaxWithCrossEntropyOp(OpTest):
+
     def set_npu(self):
         self.__class__.use_npu = True
 
@@ -90,6 +91,12 @@ class TestSoftmaxWithCrossEntropyOp(OpTest):
 
     def test_check_grad(self):
         # fp32 has low precision, cpu and npu both need to relax the max_relative_error if using fp32
+<<<<<<< HEAD
+        self.check_grad_with_place(self.place, ['Logits'],
+                                   'Loss',
+                                   numeric_grad_delta=0.001,
+                                   max_relative_error=0.5)
+=======
         self.check_grad_with_place(
             self.place,
             ['Logits'],
@@ -97,9 +104,11 @@ class TestSoftmaxWithCrossEntropyOp(OpTest):
             numeric_grad_delta=0.001,
             max_relative_error=0.5,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class TestPowNet(unittest.TestCase):
+
     def _test(self, run_npu=True):
         main_prog = paddle.static.Program()
         startup_prog = paddle.static.Program()
@@ -114,9 +123,15 @@ class TestPowNet(unittest.TestCase):
         with paddle.static.program_guard(main_prog, startup_prog):
             a = paddle.static.data(name="a", shape=[32, 32], dtype='float32')
             b = paddle.static.data(name="b", shape=[32, 32], dtype='float32')
+<<<<<<< HEAD
+            label = paddle.static.data(name="label",
+                                       shape=[32, 1],
+                                       dtype='int64')
+=======
             label = paddle.static.data(
                 name="label", shape=[32, 1], dtype='int64'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             sum = paddle.add(a, b)
             z = paddle.pow(sum, 2.0)
@@ -140,11 +155,21 @@ class TestPowNet(unittest.TestCase):
         print("Start run on {}".format(place))
         for epoch in range(100):
 
+<<<<<<< HEAD
+            pred_res, loss_res = exe.run(main_prog,
+                                         feed={
+                                             "a": a_np,
+                                             "b": b_np,
+                                             "label": label_np
+                                         },
+                                         fetch_list=[prediction, loss])
+=======
             pred_res, loss_res = exe.run(
                 main_prog,
                 feed={"a": a_np, "b": b_np, "label": label_np},
                 fetch_list=[prediction, loss],
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             if epoch % 10 == 0:
                 print(
                     "Epoch {} | Prediction[0]: {}, Loss: {}".format(

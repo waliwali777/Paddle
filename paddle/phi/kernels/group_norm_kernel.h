@@ -16,7 +16,10 @@
 
 #include <string>
 
+<<<<<<< HEAD
+=======
 #include "paddle/phi/backends/gpu/gpu_decls.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/core/dense_tensor.h"
 
 namespace phi {
@@ -33,6 +36,8 @@ void GroupNormKernel(const Context& dev_ctx,
                      DenseTensor* mean,
                      DenseTensor* variance);
 
+<<<<<<< HEAD
+=======
 #if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
 template <typename T>
 class GroupNormDirectCUDAFunctor {
@@ -53,4 +58,5 @@ class GroupNormDirectCUDAFunctor {
 };
 #endif
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }  // namespace phi

@@ -14,7 +14,10 @@
 
 #include <cmath>
 #include <string>
+<<<<<<< HEAD
+=======
 #include <vector>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 #include "gtest/gtest.h"
 
@@ -26,7 +29,10 @@
 #include "paddle/phi/core/tensor_utils.h"
 #include "paddle/phi/kernels/funcs/math_function.h"
 
+<<<<<<< HEAD
+=======
 #include "paddle/fluid/jit/function.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/fluid/jit/function_utils.h"
 #include "paddle/fluid/jit/layer.h"
 #include "paddle/fluid/jit/serializer.h"
@@ -38,7 +44,10 @@ USE_OP_ITSELF(reduce_mean);
 USE_OP_ITSELF(feed);
 USE_OP_ITSELF(fetch);
 USE_OP_ITSELF(scale);
+<<<<<<< HEAD
+=======
 USE_OP_ITSELF(transfer_layout);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 PD_DECLARE_KERNEL(add, CPU, ALL_LAYOUT);
 PD_DECLARE_KERNEL(matmul, CPU, ALL_LAYOUT);
@@ -70,15 +79,22 @@ std::vector<Tensor> PrepareInputs(const phi::Place& place) {
   return utils::ToTensors({t});
 }
 
+<<<<<<< HEAD
+=======
 TEST(CpuLayerTest, Function) {
   auto func_null = Function();
   EXPECT_TRUE(!func_null.IsValid());
 }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 TEST(CpuLayerTest, Construct) {
   auto place = phi::CPUPlace();
   std::string path = "./multi_program_load/export";
   auto layer = jit::Load(path, place);
+<<<<<<< HEAD
+  auto inputs = PrepareInputs(place);
+
+=======
 
   float fbias = layer.Attribute<float>("fbias");
   EXPECT_FLOAT_EQ(fbias, 1.4);
@@ -104,13 +120,18 @@ TEST(CpuLayerTest, Construct) {
 
   // functions
   auto inputs = PrepareInputs(place);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   auto outs = layer.forward(inputs);
   auto out_data = outs[0].data<float>();
   EXPECT_NEAR(out_data[0], 0.02194316, 1e-6);
 
   auto func = layer.Function("infer");
+<<<<<<< HEAD
+  outs = (*func)(inputs);
+=======
   EXPECT_TRUE(func.IsValid());
   outs = func(inputs);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   out_data = outs[0].data<float>();
   EXPECT_NEAR(out_data[0], 1.41562390, 1e-6);
   auto pow_out =
@@ -135,8 +156,12 @@ TEST(GpuLayerTest, Construct) {
   EXPECT_NEAR(out_data[0], 0.02194316, 1e-6);
 
   auto func = layer.Function("infer");
+<<<<<<< HEAD
+  outs = (*func)(inputs);
+=======
   EXPECT_TRUE(func.IsValid());
   outs = func(inputs);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   gpu_tensor = outs[0];
   cpu_tensor = paddle::experimental::copy_to(gpu_tensor, phi::CPUPlace(), true);
   out_data = cpu_tensor.data<float>();

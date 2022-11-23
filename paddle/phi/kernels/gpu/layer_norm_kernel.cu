@@ -38,7 +38,11 @@ void LayerNormDirectCUDAFunctor<T, U>::operator()(gpuStream_t stream,
   int64_t feature_size = static_cast<int64_t>(matrix_dim[1]);
   switch (paddle::operators::GetDesiredBlockDim(feature_size)) {
     FIXED_BLOCK_DIM_CASE(
+<<<<<<< HEAD
+        paddle::operators::LayerNormForward<T, T, kBlockDim>
+=======
         paddle::operators::LayerNormForward<T, U, kBlockDim>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         <<<batch_size, kBlockDim, 0, stream>>>(
             input, scale, bias, output, mean, variance, eps, feature_size));
     default:

@@ -22,6 +22,7 @@ import unittest
 
 
 class TrtConvertGroupNormTest(TrtLayerAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         inputs = program_config.inputs
         weights = program_config.weights
@@ -35,6 +36,7 @@ class TrtConvertGroupNormTest(TrtLayerAutoScanTest):
         return True
 
     def sample_program_configs(self):
+
         def generate_input(attrs: List[Dict[str, Any]], batch):
             if attrs[0]['data_layout'] == 'NCHW':
                 return np.random.random([batch, 32, 64, 64]).astype(np.float32)
@@ -69,6 +71,36 @@ class TrtConvertGroupNormTest(TrtLayerAutoScanTest):
                                 "op_outputs": {
                                     "Y": ["y_output"],
                                     "Mean": ["mean_output"],
+<<<<<<< HEAD
+                                    "Variance": ["variance_output"]
+                                },
+                                "op_attrs": dics[i]
+                            }]
+                            ops = self.generate_op_config(ops_config)
+
+                            program_config = ProgramConfig(
+                                ops=ops,
+                                weights={
+                                    "scale_weight":
+                                    TensorConfig(
+                                        data_gen=partial(generate_scale)),
+                                    "bias_weight":
+                                    TensorConfig(
+                                        data_gen=partial(generate_bias))
+                                },
+                                inputs={
+                                    "input_data":
+                                    TensorConfig(data_gen=partial(
+                                        generate_input, dics, batch))
+                                },
+                                outputs=["y_output"])
+
+                            yield program_config
+
+    def sample_predictor_configs(
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
                                     "Variance": ["variance_output"],
                                 },
                                 "op_attrs": dics[0],
@@ -101,6 +133,7 @@ class TrtConvertGroupNormTest(TrtLayerAutoScanTest):
     def sample_predictor_configs(
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def generate_dynamic_shape(attrs):
             self.dynamic_shape.min_input_shape = {"input_data": [1, 16, 16, 16]}
             self.dynamic_shape.max_input_shape = {
@@ -143,7 +176,20 @@ class TrtConvertGroupNormTest(TrtLayerAutoScanTest):
         ), (1e-3, 1e-3)
 
     def add_skip_trt_case(self):
+<<<<<<< HEAD
+
+        def teller1(program_config, predictor_config):
+            if len(self.dynamic_shape.min_input_shape) != 0:
+                return True
+            return False
+
+        self.add_skip_case(
+            teller1, SkipReasons.TRT_NOT_IMPLEMENTED,
+            "The goup_norm plugin will check dim not -1 failed when dynamic fp16 mode."
+        )
+=======
         pass
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test(self):
         self.add_skip_trt_case()

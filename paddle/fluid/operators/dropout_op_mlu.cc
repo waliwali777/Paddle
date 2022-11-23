@@ -88,20 +88,62 @@ class DropoutMLUKernel : public framework::OpKernel<T> {
       const int device_id = ctx.GetPlace().GetDeviceId();
       auto mlu_gen_random = GetMLURandomGenerator(ctx, device_id, seed_data);
 
+<<<<<<< HEAD
+      const float prob = is_upscale ? dropout_prob : 0.0f;
+=======
       // compute out = input * mask / ( 1.0 - dropout_prob )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       MLUCnnl::FusedDropout(ctx,
                             mlu_gen_random->get(),
                             x_desc.get(),
                             GetBasePtr(x),
+<<<<<<< HEAD
+                            prob,
+=======
                             dropout_prob,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             GetBasePtr(&(mlu_gen_random->get_state())),
                             mask_desc.get(),
                             GetBasePtr(mask),
                             out_desc.get(),
                             GetBasePtr(out));
+<<<<<<< HEAD
+    } else {
+      // exec dropout op for inference only.
+      if (is_upscale) {
+        framework::TensorCopy(
+            *x,
+            ctx.GetPlace(),
+            ctx.template device_context<platform::MLUDeviceContext>(),
+            out);
+      } else {
+        auto scale = static_cast<T>(1.0f - dropout_prob);
+        Tensor scale_tensor(x->dtype());
+        scale_tensor.mutable_data<T>({1}, ctx.GetPlace());
+        MLUCnnlTensorDesc scale_desc(scale_tensor);
+        MLUCnnl::Fill(ctx,
+                      CNNL_POINTER_MODE_HOST,
+                      &scale,
+                      scale_desc.get(),
+                      GetBasePtr(&scale_tensor));
+
+        auto data_type = ToCnnlDataType<T>();
+        MLUCnnlOpTensorDesc op_tensor_desc(
+            CNNL_OP_TENSOR_MUL, data_type, CNNL_NOT_PROPAGATE_NAN);
+        MLUCnnl::OpTensor(ctx,
+                          op_tensor_desc.get(),
+                          x_desc.get(),
+                          GetBasePtr(x),
+                          scale_desc.get(),
+                          GetBasePtr(&scale_tensor),
+                          out_desc.get(),
+                          GetBasePtr(out),
+                          data_type);
+=======
 
       if (is_upscale) {
         return;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       }
     }
 

@@ -47,6 +47,15 @@ void Array2PointVec(const T* box,
                     std::vector<Point_<T>>* vec);
 
 template <class T>
+<<<<<<< HEAD
+void Array2Poly(const T* box, const size_t box_size, gpc::gpc_polygon* poly);
+
+template <class T>
+void PointVec2Poly(const std::vector<Point_<T>>& vec, gpc::gpc_polygon* poly);
+
+template <class T>
+void Poly2PointVec(const gpc::gpc_vertex_list& contour,
+=======
 void Array2Poly(const T* box,
                 const size_t box_size,
                 phi::funcs::gpc_polygon* poly);
@@ -57,6 +66,7 @@ void PointVec2Poly(const std::vector<Point_<T>>& vec,
 
 template <class T>
 void Poly2PointVec(const phi::funcs::gpc_vertex_list& contour,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                    std::vector<Point_<T>>* vec);
 
 template <class T>

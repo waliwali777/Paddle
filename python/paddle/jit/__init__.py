@@ -26,6 +26,10 @@ from ..fluid.dygraph.io import TranslatedLayer  # noqa: F401
 from . import dy2static  # noqa: F401
 
 __all__ = [  # noqa
+<<<<<<< HEAD
+    'save', 'load', 'TracedLayer', 'to_static', 'ProgramTranslator',
+    'TranslatedLayer', 'set_code_level', 'set_verbosity', 'not_to_static'
+=======
     'save',
     'load',
     'TracedLayer',
@@ -35,4 +39,5 @@ __all__ = [  # noqa
     'set_code_level',
     'set_verbosity',
     'not_to_static',
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 ]

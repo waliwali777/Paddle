@@ -17,9 +17,15 @@
 namespace paddle {
 namespace platform {
 
+<<<<<<< HEAD
+void CudaProfilerInit(std::string output_file,
+                      std::string output_mode,
+                      std::string config_file) {
+=======
 void CudaProfilerInit(const std::string& output_file,
                       const std::string& output_mode,
                       const std::string& config_file) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   PADDLE_ENFORCE(output_mode == "kvp" || output_mode == "csv",
                  platform::errors::InvalidArgument(
                      "Unsupported cuda profiler output mode, expect `kvp` or "

@@ -27,6 +27,12 @@
 namespace cub = hipcub;
 #endif
 #include <limits>
+<<<<<<< HEAD
+
+#include "paddle/fluid/framework/data_type.h"
+#include "paddle/phi/core/ddim.h"
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 #include "paddle/phi/core/ddim.h"
 #include "paddle/phi/core/utils/data_type.h"

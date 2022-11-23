@@ -37,7 +37,11 @@ class MkldnnQuantizerTest : public testing::Test {
   }
 
   std::pair<std::vector<int>, float> Histogram(
+<<<<<<< HEAD
+      const framework::LoDTensor& var_tensor,
+=======
       const phi::DenseTensor& var_tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       float min_val,
       float max_val,
       int num_bins) const {

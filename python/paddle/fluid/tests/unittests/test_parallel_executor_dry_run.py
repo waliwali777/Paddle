@@ -23,6 +23,15 @@ os.environ['CPU_NUM'] = str(4)
 
 
 class TestBase(unittest.TestCase):
+<<<<<<< HEAD
+
+    def main(self,
+             network_func,
+             iter=10,
+             iter_per_pe=10,
+             use_gpu=True,
+             use_experimental_executor=False):
+=======
     def main(
         self,
         network_func,
@@ -31,6 +40,7 @@ class TestBase(unittest.TestCase):
         use_gpu=True,
         use_experimental_executor=False,
     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         if use_gpu and not fluid.core.is_compiled_with_cuda():
             logging.warning(
                 "Paddle is not compiled with CUDA, skip GPU unittests"
@@ -54,24 +64,38 @@ class TestBase(unittest.TestCase):
                     use_experimental_executor
                 )
                 train_cp = compiler.CompiledProgram(
+<<<<<<< HEAD
+                    main_prog).with_data_parallel(loss_name=loss.name,
+                                                  exec_strategy=exe_strategy)
+                for _ in six.moves.xrange(iter):
+                    for _ in six.moves.xrange(iter_per_pe):
+=======
                     main_prog
                 ).with_data_parallel(
                     loss_name=loss.name, exec_strategy=exe_strategy
                 )
                 for _ in range(iter):
                     for _ in range(iter_per_pe):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         exe.run(train_cp)
 
 
 class TestMNISTDryRun(TestBase):
+
     def test_mnist_dry_run(self):
         for use_gpu in (False, True):
             for use_experimental_executor in (False, True):
+<<<<<<< HEAD
+                self.main(network_func=TestMNISTDryRun.network_func,
+                          use_gpu=use_gpu,
+                          use_experimental_executor=use_experimental_executor)
+=======
                 self.main(
                     network_func=TestMNISTDryRun.network_func,
                     use_gpu=use_gpu,
                     use_experimental_executor=use_experimental_executor,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     @staticmethod
     def network_func():

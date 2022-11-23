@@ -31,7 +31,10 @@
 #include "paddle/fluid/imperative/type_defs.h"
 #include "paddle/fluid/operators/ops_extra_info.h"
 #include "paddle/fluid/pybind/imperative.h"
+<<<<<<< HEAD
+=======
 #include "paddle/phi/common/complex.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace py = pybind11;
 namespace paddle {
@@ -190,6 +193,8 @@ float CastPyArg2Float(PyObject* obj,
   return static_cast<float>(CastPyArg2Double(obj, op_type, arg_pos));
 }
 
+<<<<<<< HEAD
+=======
 void CastPyArg2AttrFloat(PyObject* obj,
                          paddle::framework::AttributeMap& attrs,  // NOLINT
                          const std::string& key,
@@ -198,6 +203,7 @@ void CastPyArg2AttrFloat(PyObject* obj,
   attrs[key] = CastPyArg2Float(obj, op_type, arg_pos);
 }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 double CastPyArg2Double(PyObject* obj,
                         const std::string& op_type,
                         ssize_t arg_pos) {
@@ -206,7 +212,11 @@ double CastPyArg2Double(PyObject* obj,
   } else {
     PADDLE_THROW(platform::errors::InvalidArgument(
         "%s(): argument (position %d) must be "
+<<<<<<< HEAD
+        "float, but got %s",
+=======
         "double, but got %s",
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         op_type,
         arg_pos + 1,
         ((PyTypeObject*)obj->ob_type)->tp_name));  // NOLINT
@@ -215,6 +225,14 @@ double CastPyArg2Double(PyObject* obj,
   return 0.0;
 }
 
+<<<<<<< HEAD
+void CastPyArg2AttrFloat(PyObject* obj,
+                         paddle::framework::AttributeMap& attrs,  // NOLINT
+                         const std::string& key,
+                         const std::string& op_type,
+                         ssize_t arg_pos) {
+  attrs[key] = CastPyArg2Float(obj, op_type, arg_pos);
+=======
 phi::dtype::complex<float> CastPyArg2Complex(PyObject* obj,
                                              const std::string& op_type,
                                              ssize_t arg_pos) {
@@ -240,6 +258,7 @@ void CastPyArg2AttrDouble(PyObject* obj,
                           const std::string& op_type,
                           ssize_t arg_pos) {
   attrs[key] = CastPyArg2Double(obj, op_type, arg_pos);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 std::string CastPyArg2String(PyObject* obj,

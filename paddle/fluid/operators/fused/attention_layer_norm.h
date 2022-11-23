@@ -34,10 +34,17 @@ class AttnLayerNorm {
 
   ~AttnLayerNorm() {}
 
+<<<<<<< HEAD
+  void ComputeForward(const T* x_data,
+                      const LayerNormParamType<T>* scale_data,
+                      const LayerNormParamType<T>* bias_data,
+                      T* y_data,
+=======
   void ComputeForward(const InType* x_data,
                       const LayerNormParamType<T>* scale_data,
                       const LayerNormParamType<T>* bias_data,
                       OutType* y_data,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                       LayerNormParamType<T>* mean_data,
                       LayerNormParamType<T>* var_data,
                       const float* dequant_out_scale_data = nullptr,
@@ -50,12 +57,16 @@ class AttnLayerNorm {
 
     switch (GetDesiredBlockDim(feature_size_)) {
       FIXED_BLOCK_DIM_CASE(
+<<<<<<< HEAD
+          LayerNormForward<T, LayerNormParamType<T>, kBlockDim>
+=======
           LayerNormForward<T,
                            LayerNormParamType<T>,
                            kBlockDim,
                            false,
                            InType,
                            OutType>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
           <<<batch_size_, kBlockDim, 0, stream>>>(x_data,
                                                   scale_data,
                                                   bias_data,
@@ -63,6 +74,9 @@ class AttnLayerNorm {
                                                   mean_data,
                                                   var_data,
                                                   epsilon_,
+<<<<<<< HEAD
+                                                  feature_size_));
+=======
                                                   feature_size_,
                                                   dequant_out_scale_data,
                                                   quant_out_scale_offset,
@@ -70,6 +84,7 @@ class AttnLayerNorm {
                                                   quant_round_type,
                                                   quant_max_bound,
                                                   quant_min_bound));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       default:
         PADDLE_THROW(platform::errors::InvalidArgument(
             "Feature_size must be larger than 1"));

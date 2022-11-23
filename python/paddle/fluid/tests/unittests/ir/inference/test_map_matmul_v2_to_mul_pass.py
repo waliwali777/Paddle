@@ -71,6 +71,15 @@ class TestMapMatmulToMulPass(PassAutoScanTest):
     def sample_program_config(self, draw):
         # 1. Generate shape and attr of matmul
         x_shape = draw(
+<<<<<<< HEAD
+            st.lists(st.integers(min_value=1, max_value=8),
+                     min_size=2,
+                     max_size=5))
+        y_shape = draw(
+            st.lists(st.integers(min_value=1, max_value=8),
+                     min_size=2,
+                     max_size=2))
+=======
             st.lists(
                 st.integers(min_value=1, max_value=8), min_size=2, max_size=5
             )
@@ -80,6 +89,7 @@ class TestMapMatmulToMulPass(PassAutoScanTest):
                 st.integers(min_value=1, max_value=8), min_size=2, max_size=2
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         y_shape[0] = x_shape[-1]
         alpha = 1.0
         transpose_X = False
@@ -87,7 +97,14 @@ class TestMapMatmulToMulPass(PassAutoScanTest):
 
         matmul_op = OpConfig(
             "matmul_v2",
+<<<<<<< HEAD
+            inputs={
+                "X": ["matmul_x"],
+                "Y": ["matmul_y"]
+            },
+=======
             inputs={"X": ["matmul_x"], "Y": ["matmul_y"]},
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             outputs={"Out": ["matmul_out"]},
             alpha=alpha,
             trans_x=transpose_X,
@@ -118,11 +135,17 @@ class TestMapMatmulToMulPass(PassAutoScanTest):
         return program_config
 
     def test(self):
+<<<<<<< HEAD
+        self.run_and_statis(quant=False,
+                            max_examples=100,
+                            passes=["gpu_cpu_map_matmul_v2_to_mul_pass"])
+=======
         self.run_and_statis(
             quant=False,
             max_examples=100,
             passes=["gpu_cpu_map_matmul_v2_to_mul_pass"],
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

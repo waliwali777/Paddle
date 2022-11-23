@@ -14,7 +14,10 @@
 
 #pragma once
 
+<<<<<<< HEAD
+=======
 #include "paddle/phi/core/tensor_utils.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/kernels/funcs/eigen/common.h"
 #include "paddle/phi/kernels/funcs/eigen/eigen_function.h"
 #include "paddle/phi/kernels/funcs/math_function.h"

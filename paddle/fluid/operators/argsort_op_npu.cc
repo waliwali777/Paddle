@@ -25,8 +25,13 @@ template <typename T>
 static void TranposeNPU(const framework::ExecutionContext& ctx,
                         const aclrtStream& stream,
                         std::vector<int64_t>* perm,
+<<<<<<< HEAD
+                        const Tensor& in,
+                        Tensor* out) {
+=======
                         const phi::DenseTensor& in,
                         phi::DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   out->mutable_data<T>(ctx.GetPlace());
   NpuOpRunner runner;
   runner.SetType("Transpose")
@@ -38,8 +43,13 @@ static void TranposeNPU(const framework::ExecutionContext& ctx,
 
 static void CastToInt64(const framework::ExecutionContext& ctx,
                         const aclrtStream& stream,
+<<<<<<< HEAD
+                        const Tensor& in,
+                        Tensor* out) {
+=======
                         const phi::DenseTensor& in,
                         phi::DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   out->mutable_data<int64_t>(ctx.GetPlace());
   NpuOpRunner runner;
   runner.SetType("Cast")
@@ -51,8 +61,13 @@ static void CastToInt64(const framework::ExecutionContext& ctx,
 
 static void CastToFP32(const framework::ExecutionContext& ctx,
                        const aclrtStream& stream,
+<<<<<<< HEAD
+                       const Tensor& in,
+                       Tensor* out) {
+=======
                        const phi::DenseTensor& in,
                        phi::DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   out->mutable_data<float>(ctx.GetPlace());
   NpuOpRunner runner;
   runner.SetType("Cast")
@@ -176,9 +191,15 @@ template <typename T, typename Type>
 static void FullAssignNPU(const framework::ExecutionContext& ctx,
                           const aclrtStream& stream,
                           const framework::DDim in_dims,
+<<<<<<< HEAD
+                          const Tensor& input,
+                          const Tensor& indices,
+                          Tensor* t_out) {
+=======
                           const phi::DenseTensor& input,
                           const phi::DenseTensor& indices,
                           phi::DenseTensor* t_out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const int64_t input_height =
       phi::product(phi::slice_ddim(in_dims, 0, in_dims.size() - 1));
   const int64_t input_width = in_dims[in_dims.size() - 1];

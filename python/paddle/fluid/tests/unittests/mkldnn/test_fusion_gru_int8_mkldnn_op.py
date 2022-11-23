@@ -20,6 +20,7 @@ from paddle.fluid.tests.unittests.test_fusion_lstm_op import ACTIVATION
 
 
 class TestFusionGRUINT8MKLDNNOp(OpTest):
+
     def set_confs(self):
         pass
 
@@ -61,6 +62,23 @@ class TestFusionGRUINT8MKLDNNOp(OpTest):
         # WeightH data shape in PP: [OC, 2 * OC] + [OC, OC]
         # Scales shape in oneDNN:   [3, OC]
         s8_max = 127.0
+<<<<<<< HEAD
+        scale_ur = s8_max / np.max(np.abs(
+            np.concatenate([
+                wx[:, :2 * self.OC],
+                wh.flatten()[:2 * self.OC * self.OC].reshape(
+                    self.OC, 2 * self.OC)
+            ],
+                           axis=0)),
+                                   axis=0)
+        scale_o = s8_max / np.max(np.abs(
+            np.concatenate([
+                wx[:, 2 * self.OC:],
+                wh.flatten()[2 * self.OC * self.OC:].reshape(self.OC, self.OC)
+            ],
+                           axis=0)),
+                                  axis=0)
+=======
         scale_ur = s8_max / np.max(
             np.abs(
                 np.concatenate(
@@ -89,6 +107,7 @@ class TestFusionGRUINT8MKLDNNOp(OpTest):
             ),
             axis=0,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         scale_weights = np.concatenate([scale_ur, scale_o]).astype('float')
 
@@ -153,21 +172,25 @@ class TestFusionGRUINT8MKLDNNOp(OpTest):
 
 
 class TestFusionGRUINT8MKLDNNOp2(TestFusionGRUINT8MKLDNNOp):
+
     def set_confs(self):
         self.force_fp32_output = False
 
 
 class TestFusionGRUINT8MKLDNNOp3(TestFusionGRUINT8MKLDNNOp):
+
     def set_confs(self):
         self.origin_mode = False
 
 
 class TestFusionGRUINT8MKLDNNOp4(TestFusionGRUINT8MKLDNNOp):
+
     def set_confs(self):
         self.with_bias = False
 
 
 class TestFusionGRUINT8MKLDNNOp5(TestFusionGRUINT8MKLDNNOp):
+
     def set_confs(self):
         self.with_h0 = False
 

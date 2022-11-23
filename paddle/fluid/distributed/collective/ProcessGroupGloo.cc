@@ -88,9 +88,12 @@ namespace distributed {
     case experimental::DataType::BOOL:       \
       func<bool>(args);                      \
       break;                                 \
+<<<<<<< HEAD
+=======
     case experimental::DataType::BFLOAT16:   \
       func<bfloat16>(args);                  \
       break;                                 \
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     default:                                 \
       VLOG(0) << "Error: Unknown DataType."; \
       exit(-1);                              \
@@ -180,6 +183,10 @@ ProcessGroupGloo::ProcessGroupGloo(
     const std::shared_ptr<distributed::Store>& store,
     int rank,
     int world_size,
+<<<<<<< HEAD
+    const platform::Place& place,
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     int gid,
     const std::shared_ptr<GlooOptions> options)
     : ProcessGroup(rank, world_size, gid),
@@ -243,6 +250,8 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupGloo::Broadcast(
     std::vector<phi::DenseTensor>& inputs,
     std::vector<phi::DenseTensor>& outputs,
     const BroadcastOptions& opts) {
+<<<<<<< HEAD
+=======
   return Broadcast(inputs, outputs, opts, true);
 }
 
@@ -251,6 +260,7 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupGloo::Broadcast(
     std::vector<phi::DenseTensor>& outputs,
     const BroadcastOptions& opts,
     bool sync_op) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   auto root = opts.source_rank;
   std::unique_ptr<BroadcastGlooTask> task;
   auto tag = next_tag();
@@ -314,6 +324,8 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupGloo::AllReduce(
     std::vector<phi::DenseTensor>& inputs,
     std::vector<phi::DenseTensor>& outputs,
     const AllreduceOptions& opts) {
+<<<<<<< HEAD
+=======
   return AllReduce(inputs, outputs, opts, true);
 }
 
@@ -322,6 +334,7 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupGloo::AllReduce(
     std::vector<phi::DenseTensor>& outputs,
     const AllreduceOptions& opts,
     bool sync_op) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   auto tag = next_tag();
   std::shared_ptr<GlooTask> task;
   auto context = get_context();
@@ -475,6 +488,16 @@ class ReduceGlooTask : public ProcessGroupGloo::GlooTask {
 };
 
 std::shared_ptr<ProcessGroup::Task> ProcessGroupGloo::Reduce(
+<<<<<<< HEAD
+    std::vector<phi::DenseTensor>& inputs,
+    std::vector<phi::DenseTensor>& outputs,
+    const ReduceOptions& opts) {
+  std::shared_ptr<ReduceGlooTask> task;
+  auto tag = next_tag();
+  auto context = get_context();
+  task = std::make_shared<ReduceGlooTask>(
+      rank_, context, inputs, outputs, opts.reduce_op, opts.root_rank, tag);
+=======
     phi::DenseTensor* out_tensor,
     const phi::DenseTensor& in_tensor,
     const ReduceOptions& opts,
@@ -492,6 +515,7 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupGloo::Reduce(
                                           opts.reduce_op,
                                           opts.root_rank,
                                           tag);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   task->Run();
   return task;
 }
@@ -546,10 +570,16 @@ class ScatterGlooTask : public ProcessGroupGloo::GlooTask {
 };
 
 std::shared_ptr<ProcessGroup::Task> ProcessGroupGloo::Scatter(
+<<<<<<< HEAD
+    std::vector<phi::DenseTensor>& in_tensors,
+    std::vector<phi::DenseTensor>& out_tensors,
+    const ScatterOptions& opts) {
+=======
     phi::DenseTensor* out_tensor,
     const phi::DenseTensor& in_tensor,
     const ScatterOptions& opts,
     bool sync_op) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   std::shared_ptr<ScatterGlooTask> task;
   auto tag = next_tag();
   auto context = get_context();

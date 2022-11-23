@@ -20,11 +20,17 @@
 #include "paddle/fluid/framework/variable.h"
 #include "paddle/fluid/platform/device_context.h"
 
+<<<<<<< HEAD
+#include "paddle/fluid/jit/executor_function.h"
+#include "paddle/fluid/jit/layer.h"
+#include "paddle/fluid/jit/pe_function.h"
+=======
 #include "paddle/fluid/jit/engine/executor_engine.h"
 #include "paddle/fluid/jit/engine/interpreter_engine.h"
 #include "paddle/fluid/jit/engine/pe_engine.h"
 #include "paddle/fluid/jit/engine/predictor_engine.h"
 #include "paddle/fluid/jit/layer.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/fluid/jit/property.h"
 #include "paddle/fluid/jit/serializer_utils.h"
 
@@ -32,18 +38,31 @@ DECLARE_string(jit_engine_type);
 
 namespace paddle {
 namespace jit {
+<<<<<<< HEAD
+
+=======
 using FunctionInfoMap =
     std::unordered_map<std::string, std::shared_ptr<FunctionInfo>>;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 Layer Deserializer::operator()(const std::string& path,
                                const phi::Place& place) {
   const auto& pdmodel_paths = utils::PdmodelFilePaths(path);
   // set is ordered
   std::set<std::string> param_names_set;
+<<<<<<< HEAD
+  std::vector<std::shared_ptr<FunctionInfo>> infos;
+  Name2VariableMap params_dict;
+=======
   FunctionInfoMap info_map;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   for (auto& it : pdmodel_paths) {
     auto& func_name = it.first;
     auto program_desc = LoadProgram(it.second);
 
+<<<<<<< HEAD
+    // TODO(dev): load int/float attrs
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     std::vector<std::string> persist_var_names;
     auto all_var_desc = program_desc.Block(0).AllVars();
     for (auto* desc_ptr : all_var_desc) {
@@ -53,6 +72,30 @@ Layer Deserializer::operator()(const std::string& path,
     }
 
     param_names_set.insert(persist_var_names.begin(), persist_var_names.end());
+<<<<<<< HEAD
+    infos.emplace_back(std::make_shared<FunctionInfo>(
+        func_name, persist_var_names, program_desc));
+  }
+
+  ReadTensorData(path + PDPARAMS_SUFFIX, param_names_set, place, &params_dict);
+  // ReadAttributeData();
+
+  Layer layer = Layer(params_dict, place);
+
+  for (auto& info : infos) {
+    if (FLAGS_jit_engine_type == "Executor") {
+      VLOG(3) << "Add function type: ExecutorFunction.";
+      layer.SetFunction(
+          info->FunctionName(),
+          utils::MakeFunction<ExecutorFunction>(info, params_dict, place));
+    } else if (FLAGS_jit_engine_type == "PE") {
+      VLOG(3) << "Add function type: PEFunction.";
+      layer.SetFunction(
+          info->FunctionName(),
+          utils::MakeFunction<PEFunction>(info, params_dict, place));
+    } else {
+      PD_THROW("Invalid JitLayer funciton type.");
+=======
     info_map[func_name] = std::make_shared<FunctionInfo>(
         func_name, persist_var_names, program_desc);
     info_map[func_name]->SetProgramFilePath(it.second);
@@ -91,6 +134,7 @@ Layer Deserializer::operator()(const std::string& path,
           utils::MakeEngine<PredictorEngine>(info, params_dict, place));
     } else {
       PD_THROW("Invalid JitLayer engine type.");
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     }
   }
 
@@ -100,7 +144,11 @@ Layer Deserializer::operator()(const std::string& path,
 void Deserializer::ReadTensorData(const std::string& file_name,
                                   const std::set<std::string>& var_name,
                                   const phi::Place& place,
+<<<<<<< HEAD
+                                  Name2VariableMap* params_dict) const {
+=======
                                   VariableMap* params_dict) const {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   VLOG(3) << "ReadTensorData from: " << file_name;
   std::ifstream fin(file_name, std::ios::binary);
   platform::DeviceContextPool& pool = platform::DeviceContextPool::Instance();
@@ -116,6 +164,9 @@ void Deserializer::ReadTensorData(const std::string& file_name,
 }
 
 void Deserializer::ReadAttributeData(const std::string& file_path,
+<<<<<<< HEAD
+                                     Name2VariableMap* attrs_dict) const {}
+=======
                                      VariableMap* attrs_dict) const {
   VLOG(3) << "ReadPropertyData from: " << file_path;
   Property p;
@@ -123,6 +174,7 @@ void Deserializer::ReadAttributeData(const std::string& file_path,
   *attrs_dict = static_cast<VariableMap>(p.Values());
   return;
 }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 framework::ProgramDesc Deserializer::LoadProgram(const std::string& file_name) {
   VLOG(3) << "LoadProgram from: " << file_name;

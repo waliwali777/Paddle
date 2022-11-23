@@ -14,11 +14,14 @@ limitations under the License. */
 
 #include "paddle/fluid/framework/program_desc.h"
 
+<<<<<<< HEAD
+=======
 extern "C" {
 #include <xxhash.h>
 }
 
 #include <algorithm>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/fluid/framework/feed_fetch_type.h"
 #include "paddle/fluid/framework/version.h"
 

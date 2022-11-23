@@ -25,6 +25,7 @@ import os
 
 
 class RandomDataset(Dataset):
+
     def __init__(self, num_samples):
         self.num_samples = num_samples
 
@@ -38,6 +39,7 @@ class RandomDataset(Dataset):
 
 
 class SimpleNet(nn.Layer):
+
     def __init__(self):
         super().__init__()
         self.fc = nn.Linear(10, 10)
@@ -47,12 +49,22 @@ class SimpleNet(nn.Layer):
 
 
 class TestAutoTune(unittest.TestCase):
+
     def setUp(self):
         self.batch_size = 1
         self.dataset = RandomDataset(10)
 
     def test_dataloader_use_autotune(self):
         paddle.incubate.autotune.set_config(
+<<<<<<< HEAD
+            config={"dataloader": {
+                "enable": True,
+                "tuning_steps": 1,
+            }})
+        loader = DataLoader(self.dataset,
+                            batch_size=self.batch_size,
+                            num_workers=0)
+=======
             config={
                 "dataloader": {
                     "enable": True,
@@ -63,6 +75,7 @@ class TestAutoTune(unittest.TestCase):
         loader = DataLoader(
             self.dataset, batch_size=self.batch_size, num_workers=0
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_dataloader_disable_autotune(self):
         config = {"dataloader": {"enable": False, "tuning_steps": 1}}
@@ -71,10 +84,17 @@ class TestAutoTune(unittest.TestCase):
         tfile.close()
         paddle.incubate.autotune.set_config(tfile.name)
         os.remove(tfile.name)
+<<<<<<< HEAD
+        loader = DataLoader(self.dataset,
+                            batch_size=self.batch_size,
+                            num_workers=2)
+        if (sys.platform == 'darwin' or sys.platform == 'win32'):
+=======
         loader = DataLoader(
             self.dataset, batch_size=self.batch_size, num_workers=2
         )
         if sys.platform == 'darwin' or sys.platform == 'win32':
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             self.assertEqual(loader.num_workers, 0)
         else:
             self.assertEqual(loader.num_workers, 2)
@@ -89,14 +109,22 @@ class TestAutoTune(unittest.TestCase):
             }
         )
         batch_sampler = paddle.io.DistributedBatchSampler(
+<<<<<<< HEAD
+            self.dataset, batch_size=self.batch_size)
+        loader = DataLoader(self.dataset,
+                            batch_sampler=batch_sampler,
+                            num_workers=2)
+=======
             self.dataset, batch_size=self.batch_size
         )
         loader = DataLoader(
             self.dataset, batch_sampler=batch_sampler, num_workers=2
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class TestAutoTuneAPI(unittest.TestCase):
+
     def test_set_config_warnings(self):
         with warnings.catch_warnings(record=True) as w:
             config = {"kernel": {"enable": 1, "tuning_range": True}}

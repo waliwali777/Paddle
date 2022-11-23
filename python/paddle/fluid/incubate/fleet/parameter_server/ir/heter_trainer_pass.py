@@ -50,8 +50,12 @@ def split_heter_worker_ops_pass(program, config, stage_id, device):
     """
     default_deveice = "cpu"
     program, heter_ops, _, program_block_ops = find_heter_ops(
+<<<<<<< HEAD
+        program, default_deveice)
+=======
         program, default_deveice
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     if len(heter_ops) == 0:
         warnings.warn(
             "Currently running in Heter Parameter Server mode, but no OP running on heterogeneous devices, Please check your code."

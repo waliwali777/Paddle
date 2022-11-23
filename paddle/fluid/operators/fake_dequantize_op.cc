@@ -25,10 +25,17 @@ namespace operators {
 template <typename T>
 struct DequantizeFunctor<phi::CPUContext, T> {
   void operator()(const phi::CPUContext& dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor* in,
+                  const framework::Tensor* scale,
+                  T max_range,
+                  framework::Tensor* out) {
+=======
                   const phi::DenseTensor* in,
                   const phi::DenseTensor* scale,
                   T max_range,
                   phi::DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     auto in_e = framework::EigenVector<T>::Flatten(*in);
     const T* scale_factor = scale->data<T>();
     auto out_e = framework::EigenVector<T>::Flatten(*out);
@@ -41,13 +48,22 @@ struct DequantizeFunctor<phi::CPUContext, T> {
 template <typename T>
 struct ChannelDequantizeFunctor<phi::CPUContext, T> {
   void operator()(const phi::CPUContext& dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor* in,
+                  const framework::Tensor** scales,
+=======
                   const phi::DenseTensor* in,
                   const phi::DenseTensor** scales,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                   const int scale_num,
                   T max_range,
                   const int quant_axis,
                   const int x_num_col_dims,
+<<<<<<< HEAD
+                  framework::Tensor* out) {
+=======
                   phi::DenseTensor* out) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     if (scale_num == 1) {
       // Dequant op is before quantized op
       // Dequantize the weight of quantized op

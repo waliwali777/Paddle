@@ -62,7 +62,11 @@ class ConditionalBlockInferOp : public ConditionalOp {
       // depends on the input variables (Input).
       auto xs = InputTensors(scope, "Input");
       need_run =
+<<<<<<< HEAD
+          std::all_of(xs.begin(), xs.end(), [](const framework::LoDTensor *t) {
+=======
           std::all_of(xs.begin(), xs.end(), [](const phi::DenseTensor *t) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             return t->numel() != 0;
           });
     }

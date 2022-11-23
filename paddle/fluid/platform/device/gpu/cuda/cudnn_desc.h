@@ -228,7 +228,11 @@ class FilterDescriptor {
                                             transformed_dims.data()));
   }
 
+<<<<<<< HEAD
+  void set(const Tensor& tensor,
+=======
   void set(const phi::DenseTensor& tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
            const cudnnTensorFormat_t format,
            const int groups = 1) {
     auto dims = phi::vectorize<int>(tensor.dims());

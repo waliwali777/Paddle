@@ -149,11 +149,19 @@ if(NOT WIN32)
       -Wno-unused-parameter
       -Wno-unused-function
       -Wno-error=literal-suffix
+<<<<<<< HEAD
+      -Wno-error=unused-local-typedefs
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       -Wno-error=ignored-attributes # Warnings in Eigen, gcc 6.3
       -Wno-error=terminate # Warning in PADDLE_ENFORCE
       -Wno-error=int-in-bool-context # Warning in Eigen gcc 7.2
       -Wimplicit-fallthrough=0 # Warning in tinyformat.h
+<<<<<<< HEAD
+      -Wno-error=maybe-uninitialized # Warning in boost gcc 7.2
+=======
       -Wno-error=maybe-uninitialized # Warning in Paddle-Lite
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       ${fsanitize})
 
   if(WITH_IPU)
@@ -161,11 +169,14 @@ if(NOT WIN32)
                      -Wno-non-virtual-dtor # Warnings in Popart
     )
   endif()
+<<<<<<< HEAD
+=======
 
   if(WITH_CUDNN_FRONTEND)
     # flags from https://github.com/NVIDIA/cudnn-frontend/blob/v0.7.1/CMakeLists.txt
     set(COMMON_FLAGS ${COMMON_FLAGS} -Wno-sign-compare -Wno-non-virtual-dtor)
   endif()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   if(WITH_ASCEND_CL AND WITH_ARM_BRPC)
     set(COMMON_FLAGS ${COMMON_FLAGS} -faligned-new)
@@ -174,7 +185,17 @@ if(NOT WIN32)
   if(NOT APPLE)
     if((${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 8.0) OR (WITH_ROCM))
       set(COMMON_FLAGS
+<<<<<<< HEAD
+          ${COMMON_FLAGS}
+          -Wno-format-truncation # Warning in boost gcc 8.2
+          -Wno-error=parentheses # Warning in boost gcc 8.2
+          -Wno-error=catch-value # Warning in boost gcc 8.2
+          -Wno-error=nonnull-compare # Warning in boost gcc 8.2
+          -Wno-error=address # Warning in boost gcc 8.2
+          -Wno-ignored-qualifiers # Warning in boost gcc 8.2
+=======
           ${COMMON_FLAGS} -Wno-ignored-qualifiers # Warning in Paddle-Lite
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
           -Wno-ignored-attributes # Warning in Eigen gcc 8.3
           -Wno-parentheses # Warning in Eigen gcc 8.3
       )
@@ -212,6 +233,9 @@ if(APPLE)
         CACHE STRING "Build architectures for OSX" FORCE)
   endif()
   # On Mac OS X register class specifier is deprecated and will cause warning error on latest clang 10.0
+<<<<<<< HEAD
+  set(COMMON_FLAGS -Wno-deprecated-register)
+=======
   set(COMMON_FLAGS
       -Wno-deprecated-register
       -Werror=format
@@ -221,6 +245,7 @@ if(APPLE)
       -Werror=tautological-constant-out-of-range-compare
       -Werror=literal-conversion
       -Werror=pragma-pack)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 endif()
 
 if(WITH_HETERPS AND WITH_PSLIB)
@@ -257,9 +282,13 @@ if(WITH_ROCM)
   string(REPLACE "-Werror" "-Wno-error" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
 endif()
 
+<<<<<<< HEAD
+if(WITH_PSCORE OR WITH_PSLIB)
+=======
 if(WITH_PSCORE
    OR WITH_PSLIB
    OR WITH_TENSORRT)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   string(REPLACE "-Wnon-virtual-dtor" "-Wno-non-virtual-dtor" CMAKE_CXX_FLAGS
                  ${CMAKE_CXX_FLAGS})
   string(REPLACE "-Wnon-virtual-dtor" "-Wno-non-virtual-dtor" CMAKE_C_FLAGS

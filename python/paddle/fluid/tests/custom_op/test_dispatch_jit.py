@@ -20,7 +20,10 @@ from paddle.utils.cpp_extension import load, get_build_directory
 from utils import paddle_includes, extra_cc_args
 from paddle.utils.cpp_extension.extension_utils import run_cmd
 from paddle.fluid.framework import _test_eager_guard
+<<<<<<< HEAD
+=======
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 # Because Windows don't use docker, the shared lib already exists in the
 # cache dir, it will not be compiled again unless the shared lib is removed.
 file = '{}\\dispatch_op\\dispatch_op.pyd'.format(get_build_directory())
@@ -38,6 +41,7 @@ dispatch_op = load(
 
 
 class TestJitDispatch(unittest.TestCase):
+
     def setUp(self):
         paddle.set_device('cpu')
 

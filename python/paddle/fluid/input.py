@@ -122,6 +122,13 @@ def one_hot(input, depth, allow_out_of_range=False):
             depth.stop_gradient = True
             inputs = {'X': input, 'depth_tensor': depth}
             attrs = {'allow_out_of_range': allow_out_of_range}
+<<<<<<< HEAD
+    helper.append_op(type="one_hot_v2",
+                     inputs=inputs,
+                     attrs=attrs,
+                     outputs={'Out': one_hot_out},
+                     stop_gradient=True)
+=======
     helper.append_op(
         type="one_hot_v2",
         inputs=inputs,
@@ -129,6 +136,7 @@ def one_hot(input, depth, allow_out_of_range=False):
         outputs={'Out': one_hot_out},
         stop_gradient=True,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return one_hot_out
 
 
@@ -323,6 +331,27 @@ def embedding(
     remote_prefetch = is_sparse and (not is_distributed)
     if remote_prefetch:
         assert is_sparse is True and is_distributed is False
+<<<<<<< HEAD
+    w = helper.create_parameter(attr=helper.param_attr,
+                                shape=size,
+                                dtype=dtype,
+                                is_bias=False)
+    tmp = helper.create_variable_for_type_inference(dtype)
+    padding_idx = -1 if padding_idx is None else padding_idx if padding_idx >= 0 else (
+        size[0] + padding_idx)
+    helper.append_op(type='lookup_table_v2',
+                     inputs={
+                         'Ids': input,
+                         'W': w
+                     },
+                     outputs={'Out': tmp},
+                     attrs={
+                         'is_sparse': is_sparse,
+                         'is_distributed': is_distributed,
+                         'remote_prefetch': remote_prefetch,
+                         'padding_idx': padding_idx
+                     })
+=======
     w = helper.create_parameter(
         attr=helper.param_attr, shape=size, dtype=dtype, is_bias=False
     )
@@ -345,4 +374,5 @@ def embedding(
             'padding_idx': padding_idx,
         },
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return tmp

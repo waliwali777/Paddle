@@ -50,7 +50,11 @@ struct ScaleLossGradFunctor {
   platform::DeviceContext *ctx_;
 
   ScaleLossGradFunctor(float coeff,
+<<<<<<< HEAD
+                       Tensor *out,
+=======
                        phi::DenseTensor *out,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                        platform::Place place,
                        proto::VarType::Type dtype,
                        platform::DeviceContext *ctx)
@@ -102,7 +106,10 @@ std::string ScaleLossGradOpHandle::LossGradName() const {
 void ScaleLossGradOpHandle::RunImpl() {
   platform::RecordEvent record_event(
       Name(), platform::TracerEventType::UserDefined, 2);
+<<<<<<< HEAD
+=======
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   RunOnVar(local_exec_scopes_[0]->FindVar(LossGradName()), true);
 }
 

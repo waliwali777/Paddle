@@ -22,6 +22,7 @@ import unittest
 
 
 class TrtConvertReduceMeanTest(TrtLayerAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         inputs = program_config.inputs
         attrs = [
@@ -44,6 +45,7 @@ class TrtConvertReduceMeanTest(TrtLayerAutoScanTest):
         return True
 
     def sample_program_configs(self):
+
         def generate_input1(dtype, attrs: List[Dict[str, Any]]):
             if dtype == -1 or dtype == 5:
                 return np.random.random([1, 3, 64, 64]).astype(np.float32)
@@ -89,11 +91,17 @@ class TrtConvertReduceMeanTest(TrtLayerAutoScanTest):
                             ops=ops,
                             weights={},
                             inputs={
+<<<<<<< HEAD
+                                "input_data":
+                                TensorConfig(data_gen=partial(
+                                    generate_input1, out_dtype, dics))
+=======
                                 "input_data": TensorConfig(
                                     data_gen=partial(
                                         generate_input1, out_dtype, dics
                                     )
                                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             },
                             outputs=["reduce_output_data"],
                         )
@@ -104,8 +112,13 @@ class TrtConvertReduceMeanTest(TrtLayerAutoScanTest):
                         yield program_config
 
     def sample_predictor_configs(
+<<<<<<< HEAD
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def generate_dynamic_shape(attrs):
             self.dynamic_shape.min_input_shape = {"input_data": [1, 3, 32, 32]}
             self.dynamic_shape.max_input_shape = {"input_data": [4, 3, 64, 64]}
@@ -147,8 +160,12 @@ class TrtConvertReduceMeanTest(TrtLayerAutoScanTest):
         generate_dynamic_shape(attrs)
         self.trt_param.precision = paddle_infer.PrecisionType.Float32
         yield self.create_inference_config(), generate_trt_nodes_num(
+<<<<<<< HEAD
+            attrs, True), 1e-5
+=======
             attrs, True
         ), 1e-5
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.trt_param.precision = paddle_infer.PrecisionType.Half
         yield self.create_inference_config(), generate_trt_nodes_num(
             attrs, True

@@ -34,6 +34,7 @@ np.random.seed(2022)
     ],
 )
 class TestBeta(unittest.TestCase):
+
     def setUp(self):
         # scale no need convert to tensor for scale input unittest
         alpha, beta = self.alpha, self.beta
@@ -109,9 +110,14 @@ class TestBeta(unittest.TestCase):
         ]
         for case in cases:
             self.assertTrue(
+<<<<<<< HEAD
+                self._paddle_beta.sample(case.get('input')).shape == case.get(
+                    'expect'))
+=======
                 self._paddle_beta.sample(case.get('input')).shape
                 == case.get('expect')
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

@@ -582,7 +582,11 @@ void RunBrpcPushSparse() {
 
   ASSERT_EQ(res.first[1].size(), 1UL);
   std::vector<int64_t> nodes_ids = client2.random_sample_nodes("user", 0, 6);
+<<<<<<< HEAD
+  ASSERT_EQ(nodes_ids.size(), 2);
+=======
   ASSERT_EQ(nodes_ids.size(), 2UL);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   ASSERT_EQ(true,
             (nodes_ids[0] == 59 && nodes_ids[1] == 37) ||
                 (nodes_ids[0] == 37 && nodes_ids[1] == 59));

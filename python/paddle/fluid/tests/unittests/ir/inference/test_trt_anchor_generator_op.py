@@ -24,6 +24,7 @@ from paddle.fluid.core import AnalysisConfig
 
 
 class TRTAnchorGeneratorBaseTest(InferencePassTest):
+
     def setUp(self):
         self.bs = 1
         self.channel = 16
@@ -53,11 +54,17 @@ class TRTAnchorGeneratorBaseTest(InferencePassTest):
             False,
         )
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name='data',
+                              shape=[-1, self.channel, self.height, self.width],
+                              dtype='float32')
+=======
             data = fluid.data(
                 name='data',
                 shape=[-1, self.channel, self.height, self.width],
                 dtype='float32',
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             anchor, var = fluid.layers.detection.anchor_generator(
                 data,
                 anchor_sizes=self.anchor_sizes,
@@ -78,6 +85,12 @@ class TRTAnchorGeneratorBaseTest(InferencePassTest):
     def set_dynamic(self):
         self.dynamic_shape_params = InferencePassTest.DynamicShapeParam(
             {
+<<<<<<< HEAD
+                'data':
+                [self.bs, self.channel, self.height // 2, self.width // 2]
+            }, {'data': [self.bs, self.channel, self.height, self.width]},
+            {'data': [self.bs, self.channel, self.height, self.width]}, False)
+=======
                 'data': [
                     self.bs,
                     self.channel,
@@ -89,6 +102,7 @@ class TRTAnchorGeneratorBaseTest(InferencePassTest):
             {'data': [self.bs, self.channel, self.height, self.width]},
             False,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_base(self):
         self.run_test()

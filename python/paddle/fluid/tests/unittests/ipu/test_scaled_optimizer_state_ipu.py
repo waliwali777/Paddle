@@ -20,6 +20,7 @@ from paddle.fluid.tests.unittests.ipu.op_test_ipu import IPUOpTest
 
 
 class TestBase(IPUOpTest):
+
     def setUp(self):
         self.set_atol()
         self.set_training()
@@ -54,6 +55,23 @@ class TestBase(IPUOpTest):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        image = paddle.static.data(name='image',
+                                   shape=[1, 3, 10, 10],
+                                   dtype='float32')
+        conv1 = paddle.static.nn.conv2d(image,
+                                        num_filters=3,
+                                        filter_size=3,
+                                        bias_attr=False)
+        loss = paddle.mean(conv1)
+
+        weight_decay = self.attrs['weight_decay']
+        opt = paddle.optimizer.Adam(learning_rate=1e-1,
+                                    weight_decay=weight_decay)
+        if self.attrs['optimizer'] == 'lamb':
+            opt = paddle.optimizer.Lamb(learning_rate=1e-1,
+                                        lamb_weight_decay=weight_decay)
+=======
         image = paddle.static.data(
             name='image', shape=[1, 3, 10, 10], dtype='float32'
         )
@@ -70,6 +88,7 @@ class TestBase(IPUOpTest):
             opt = paddle.optimizer.Lamb(
                 learning_rate=1e-1, lamb_weight_decay=weight_decay
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         opt.minimize(loss)
         self.feed_list = [image.name]
         self.fetch_list = [loss.name]
@@ -79,6 +98,12 @@ class TestBase(IPUOpTest):
         ipu_strategy.set_graph_config(is_training=self.is_training)
         if self.is_ipu_mode(exec_mode):
             if "use_no_bias_optimizer" in self.attrs.keys():
+<<<<<<< HEAD
+                ipu_strategy.set_options({
+                    "use_no_bias_optimizer":
+                    self.attrs["use_no_bias_optimizer"]
+                })
+=======
                 ipu_strategy.set_options(
                     {
                         "use_no_bias_optimizer": self.attrs[
@@ -86,6 +111,7 @@ class TestBase(IPUOpTest):
                         ]
                     }
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             if "scaled_optimizer_state" in self.attrs.keys():
                 ipu_strategy.set_options(
                     {
@@ -105,6 +131,7 @@ class TestBase(IPUOpTest):
 
 
 class TestScaledAdam(TestBase):
+
     def set_attrs(self):
         self.attrs = {
             "optimizer": 'adam',
@@ -120,6 +147,7 @@ class TestScaledAdam(TestBase):
 
 @unittest.skip('cpu do not support AdamNoBias')
 class TestScaledAdamNoBias(TestBase):
+
     def set_attrs(self):
         self.attrs = {
             "optimizer": 'adam',
@@ -131,6 +159,7 @@ class TestScaledAdamNoBias(TestBase):
 
 @unittest.skip('cpu do not support LambNoBias')
 class TestScaledLambNoBias(TestBase):
+
     def set_attrs(self):
         self.attrs = {
             "optimizer": 'lamb',

@@ -25,6 +25,7 @@ import tempfile
 
 
 class TestPassBuilder(unittest.TestCase):
+
     def check_network_convergence(self, use_cuda, build_strategy=None):
         os.environ['CPU_NUM'] = str(4)
         main = fluid.Program()
@@ -71,6 +72,12 @@ class TestPassBuilder(unittest.TestCase):
                 if math.isnan(float(avg_train_loss_val)):
                     sys.exit("got NaN loss, training failed.")
 
+<<<<<<< HEAD
+                self.assertTrue(
+                    np.allclose(train_loss, test_loss,
+                                atol=1e-8), "Train loss: " + str(train_loss) +
+                    "\n Test loss:" + str(test_loss))
+=======
                 np.testing.assert_allclose(
                     train_loss,
                     test_loss,
@@ -81,6 +88,7 @@ class TestPassBuilder(unittest.TestCase):
                     + '\n Test loss:'
                     + str(test_loss),
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_parallel_testing_with_new_strategy(self):
         build_strategy = fluid.BuildStrategy()
@@ -100,9 +108,14 @@ class TestPassBuilder(unittest.TestCase):
         viz_pass = pass_builder.append_pass("graph_viz_pass")
         self.assertEqual(origin_len + 1, len(pass_builder.all_passes()))
 
+<<<<<<< HEAD
+        pass_builder.insert_pass(len(pass_builder.all_passes()),
+                                 "graph_viz_pass")
+=======
         pass_builder.insert_pass(
             len(pass_builder.all_passes()), "graph_viz_pass"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.assertEqual(origin_len + 2, len(pass_builder.all_passes()))
 
         pass_builder.remove_pass(len(pass_builder.all_passes()) - 1)

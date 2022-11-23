@@ -16,10 +16,15 @@ import unittest
 import numpy as np
 import paddle
 
+<<<<<<< HEAD
+from paddle.fluid.framework import in_dygraph_mode, _test_eager_guard
+=======
 from paddle.fluid.framework import _test_eager_guard
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class LinearNet(paddle.nn.Layer):
+
     def __init__(self):
         super().__init__()
         self._linear = paddle.nn.Linear(128, 10)
@@ -29,6 +34,7 @@ class LinearNet(paddle.nn.Layer):
 
 
 class Logic(paddle.nn.Layer):
+
     def __init__(self):
         super().__init__()
 
@@ -40,10 +46,17 @@ class Logic(paddle.nn.Layer):
 
 
 class TestExportWithTensor(unittest.TestCase):
+<<<<<<< HEAD
+
+    def func_with_tensor(self):
+        self.x_spec = paddle.static.InputSpec(shape=[None, 128],
+                                              dtype='float32')
+=======
     def func_with_tensor(self):
         self.x_spec = paddle.static.InputSpec(
             shape=[None, 128], dtype='float32'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         model = LinearNet()
         paddle.onnx.export(model, 'linear_net', input_spec=[self.x_spec])
 
@@ -54,6 +67,10 @@ class TestExportWithTensor(unittest.TestCase):
 
 
 class TestExportWithTensor1(unittest.TestCase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def func_with_tensor(self):
         self.x = paddle.to_tensor(np.random.random((1, 128)))
         model = LinearNet()
@@ -66,15 +83,26 @@ class TestExportWithTensor1(unittest.TestCase):
 
 
 class TestExportPrunedGraph(unittest.TestCase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def func_prune_graph(self):
         model = Logic()
         self.x = paddle.to_tensor(np.array([1]))
         self.y = paddle.to_tensor(np.array([-1]))
         paddle.jit.to_static(model)
         out = model(self.x, self.y, z=True)
+<<<<<<< HEAD
+        paddle.onnx.export(model,
+                           'pruned',
+                           input_spec=[self.x],
+                           output_spec=[out])
+=======
         paddle.onnx.export(
             model, 'pruned', input_spec=[self.x], output_spec=[out]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_prune_graph(self):
         # test eager

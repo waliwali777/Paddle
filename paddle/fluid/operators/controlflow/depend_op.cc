@@ -98,7 +98,11 @@ namespace ops = paddle::operators;
 
 REGISTER_OPERATOR(
     depend,
+<<<<<<< HEAD
+    paddle::operators::DependOp,
+=======
     ops::DependOp,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     paddle::framework::EmptyGradOpMaker<paddle::framework::OpDesc>,
     paddle::framework::EmptyGradOpMaker<paddle::imperative::OpBase>,
     ops::DependOpProtoMaker,

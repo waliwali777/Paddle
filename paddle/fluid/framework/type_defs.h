@@ -56,10 +56,14 @@ using Attribute = paddle::variant<paddle::blank,
                                   int64_t,
                                   std::vector<BlockDesc*>,
                                   std::vector<int64_t>,
+<<<<<<< HEAD
+                                  std::vector<double>>;
+=======
                                   std::vector<double>,
                                   VarDesc*,
                                   std::vector<VarDesc*>,
                                   double>;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 using AttributeMap = std::unordered_map<std::string, Attribute>;
 
 #ifdef PADDLE_WITH_ASCEND_CL
@@ -77,8 +81,11 @@ using NPUAttribute = paddle::variant<paddle::blank,
                                      std::vector<BlockDesc*>,
                                      std::vector<int64_t>,
                                      std::vector<double>,
+<<<<<<< HEAD
+=======
                                      VarDesc*,
                                      std::vector<VarDesc*>,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                      std::vector<std::vector<int64_t>>>;
 
 using NPUAttributeMap = std::unordered_map<std::string, NPUAttribute>;

@@ -222,6 +222,8 @@ def test_diff_return(x):
     return y, z
 
 
+<<<<<<< HEAD
+=======
 @to_static
 def test_return_if_else_2(x):
     rr = 0
@@ -264,14 +266,21 @@ def test_return_nested(x):
     return func()
 
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestReturnBase(unittest.TestCase):
+
     def setUp(self):
         self.input = np.ones((1)).astype('int32')
+<<<<<<< HEAD
+        self.place = fluid.CUDAPlace(
+            0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
+=======
         self.place = (
             fluid.CUDAPlace(0)
             if fluid.is_compiled_with_cuda()
             else fluid.CPUPlace()
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.init_dygraph_func()
         self.program_translator = ProgramTranslator()
 
@@ -299,7 +308,13 @@ class TestReturnBase(unittest.TestCase):
                     dygraph_res[i], static_res[i], rtol=1e-05
                 )
         elif isinstance(dygraph_res, np.ndarray):
+<<<<<<< HEAD
+            self.assertTrue(np.allclose(dygraph_res, static_res),
+                            msg='dygraph res is {}\nstatic_res is {}'.format(
+                                dygraph_res, static_res))
+=======
             np.testing.assert_allclose(dygraph_res, static_res, rtol=1e-05)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         else:
             self.assertEqual(dygraph_res, static_res)
 
@@ -312,16 +327,29 @@ class TestReturnBase(unittest.TestCase):
 
 
 class TestInsideFuncBase(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_inside_func_base
 
 
 class TestReturnIf(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_if
 
 
+<<<<<<< HEAD
+class TestReturnIfDiff(TestReturnBase):
+
+    def init_dygraph_func(self):
+        self.dygraph_func = test_diff_return
+
+
+class TestReturnIfElse(TestReturnBase):
+
+=======
 class TestReturnOnlyIf(TestReturnBase):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def init_dygraph_func(self):
         self.dygraph_func = test_return_if_else_2
 
@@ -332,11 +360,17 @@ class TestReturnInFor(TestReturnBase):
 
 
 class TestReturnInWhile(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_in_while
 
 
+<<<<<<< HEAD
+class TestReturnInFor(TestReturnBase):
+
+=======
 class TestReturnIfDiff(TestReturnBase):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def init_dygraph_func(self):
         self.dygraph_func = test_diff_return
 
@@ -359,56 +393,66 @@ class TestReturnInFor2(TestReturnBase):
 
 
 class TestRecursiveReturn(TestReturnBase):
+
     def init_dygraph_func(self):
         self.input = self.input.astype(np.float32)
         self.dygraph_func = test_recursive_return
 
 
 class TestReturnDifferentLengthIfBody(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_different_length_if_body
         self.error = "Your if/else have different number of return value."
 
 
 class TestReturnDifferentLengthElse(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_different_length_else
         self.error = "Your if/else have different number of return value."
 
 
 class TestNoReturn(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_no_return
 
 
 class TestReturnNone(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_none
         self.error = "Your if/else have different number of return value."
 
 
 class TestReturnNoVariable(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_no_variable
         self.error = "Your if/else have different number of return value."
 
 
 class TestReturnListOneValue(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_list_one_value
 
 
 class TestReturnListManyValue(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_list_many_values
 
 
 class TestReturnTupleOneValue(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_tuple_one_value
 
 
 class TestReturnTupleManyValue(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_tuple_many_values
 
@@ -419,6 +463,7 @@ class TestReturnNested(TestReturnBase):
 
 
 class TestReturnSpecial(TestReturnBase):
+
     def init_dygraph_func(self):
         self.dygraph_func = test_return_without_paddle_cond
 

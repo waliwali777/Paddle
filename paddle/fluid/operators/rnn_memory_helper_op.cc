@@ -129,8 +129,13 @@ class RNNMemoryHelperGradOp : public framework::OperatorBase {
           "fill_constant", {}, {{"Out", {in_grad_var_name}}}, attrs);
       zero_op->Run(scope, dev_place);
     } else {
+<<<<<<< HEAD
+      auto &out_grad_tensor = out_grad_var->Get<framework::LoDTensor>();
+      auto *in_grad_tensor = in_grad_var->GetMutable<framework::LoDTensor>();
+=======
       auto &out_grad_tensor = out_grad_var->Get<phi::DenseTensor>();
       auto *in_grad_tensor = in_grad_var->GetMutable<phi::DenseTensor>();
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       framework::TensorCopy(
           out_grad_tensor, dev_place, dev_ctx, in_grad_tensor);
       in_grad_tensor->set_lod(out_grad_tensor.lod());

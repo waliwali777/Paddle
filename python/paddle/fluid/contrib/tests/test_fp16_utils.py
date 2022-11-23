@@ -22,6 +22,7 @@ paddle.enable_static()
 
 
 class AMPTest(unittest.TestCase):
+
     def test_find_op_index(self):
         block = fluid.default_main_program().global_block()
         op_desc = core.OpDesc()
@@ -34,12 +35,21 @@ class AMPTest(unittest.TestCase):
         var1 = block.create_var(name="X", shape=[3], dtype='float32')
         var2 = block.create_var(name="Y", shape=[3], dtype='float32')
         var3 = block.create_var(name="Z", shape=[3], dtype='float32')
+<<<<<<< HEAD
+        op1 = block.append_op(type="abs",
+                              inputs={"X": [var1]},
+                              outputs={"Out": [var2]})
+        op2 = block.append_op(type="abs",
+                              inputs={"X": [var2]},
+                              outputs={"Out": [var3]})
+=======
         op1 = block.append_op(
             type="abs", inputs={"X": [var1]}, outputs={"Out": [var2]}
         )
         op2 = block.append_op(
             type="abs", inputs={"X": [var2]}, outputs={"Out": [var3]}
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         res = fp16_utils.find_true_post_op(block.ops, op1, "Y")
         assert res == [op2]
 

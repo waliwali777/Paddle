@@ -34,7 +34,12 @@ paddle.enable_static()
 
 
 class EncoderCell(layers.RNNCell):
+<<<<<<< HEAD
+
+    def __init__(self, num_layers, hidden_size, dropout_prob=0.):
+=======
     def __init__(self, num_layers, hidden_size, dropout_prob=0.0):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.num_layers = num_layers
         self.hidden_size = hidden_size
         self.dropout_prob = dropout_prob
@@ -60,7 +65,12 @@ class EncoderCell(layers.RNNCell):
 
 
 class DecoderCell(layers.RNNCell):
+<<<<<<< HEAD
+
+    def __init__(self, num_layers, hidden_size, dropout_prob=0.):
+=======
     def __init__(self, num_layers, hidden_size, dropout_prob=0.0):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.num_layers = num_layers
         self.hidden_size = hidden_size
         self.dropout_prob = dropout_prob
@@ -69,20 +79,34 @@ class DecoderCell(layers.RNNCell):
         ]
 
     def attention(self, hidden, encoder_output, encoder_padding_mask):
+<<<<<<< HEAD
+        query = layers.fc(hidden,
+                          size=encoder_output.shape[-1],
+                          bias_attr=False)
+        attn_scores = layers.matmul(layers.unsqueeze(query, [1]),
+                                    encoder_output,
+                                    transpose_y=True)
+=======
         query = layers.fc(
             hidden, size=encoder_output.shape[-1], bias_attr=False
         )
         attn_scores = layers.matmul(
             layers.unsqueeze(query, [1]), encoder_output, transpose_y=True
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         if encoder_padding_mask is not None:
             attn_scores = layers.elementwise_add(
                 attn_scores, encoder_padding_mask
             )
         attn_scores = layers.softmax(attn_scores)
+<<<<<<< HEAD
+        attn_out = layers.squeeze(layers.matmul(attn_scores, encoder_output),
+                                  [1])
+=======
         attn_out = layers.squeeze(
             layers.matmul(attn_scores, encoder_output), [1]
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         attn_out = layers.concat([attn_out, hidden], 1)
         attn_out = layers.fc(attn_out, size=self.hidden_size, bias_attr=False)
         return attn_out
@@ -105,8 +129,14 @@ class DecoderCell(layers.RNNCell):
         return out, [new_lstm_states, out]
 
 
+<<<<<<< HEAD
+class Encoder(object):
+
+    def __init__(self, num_layers, hidden_size, dropout_prob=0.):
+=======
 class Encoder:
     def __init__(self, num_layers, hidden_size, dropout_prob=0.0):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.encoder_cell = EncoderCell(num_layers, hidden_size, dropout_prob)
 
     def __call__(self, src_emb, src_sequence_length):
@@ -119,6 +149,16 @@ class Encoder:
         return encoder_output, encoder_final_state
 
 
+<<<<<<< HEAD
+class Decoder(object):
+
+    def __init__(self,
+                 num_layers,
+                 hidden_size,
+                 dropout_prob,
+                 decoding_strategy="infer_sample",
+                 max_decoding_length=20):
+=======
 class Decoder:
     def __init__(
         self,
@@ -128,6 +168,7 @@ class Decoder:
         decoding_strategy="infer_sample",
         max_decoding_length=20,
     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.decoder_cell = DecoderCell(num_layers, hidden_size, dropout_prob)
         self.decoding_strategy = decoding_strategy
         self.max_decoding_length = (
@@ -154,6 +195,31 @@ class Decoder:
 
         if self.decoding_strategy == "beam_search":
             beam_size = kwargs.get("beam_size", 4)
+<<<<<<< HEAD
+            encoder_output = layers.BeamSearchDecoder.tile_beam_merge_with_batch(
+                encoder_output, beam_size)
+            encoder_padding_mask = layers.BeamSearchDecoder.tile_beam_merge_with_batch(
+                encoder_padding_mask, beam_size)
+            decoder = layers.BeamSearchDecoder(cell=self.decoder_cell,
+                                               output_fn=output_layer,
+                                               **kwargs)
+        else:
+            decoder = layers.BasicDecoder(self.decoder_cell,
+                                          helper,
+                                          output_fn=output_layer)
+
+        (decoder_output, decoder_final_state,
+         dec_seq_lengths) = layers.dynamic_decode(
+             decoder,
+             inits=decoder_initial_states,
+             max_step_num=self.max_decoding_length,
+             encoder_output=encoder_output,
+             encoder_padding_mask=encoder_padding_mask,
+             impute_finished=False  # for test coverage
+             if self.decoding_strategy == "beam_search" else True,
+             is_test=True if self.decoding_strategy == "beam_search" else False,
+             return_length=True)
+=======
             encoder_output = (
                 layers.BeamSearchDecoder.tile_beam_merge_with_batch(
                     encoder_output, beam_size
@@ -188,6 +254,7 @@ class Decoder:
             is_test=True if self.decoding_strategy == "beam_search" else False,
             return_length=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         return decoder_output, decoder_final_state, dec_seq_lengths
 
 
@@ -223,6 +290,16 @@ class Seq2SeqModel:
             weight_attr=fluid.ParamAttr(name="target_embedding"),
         )
         self.encoder = Encoder(num_layers, hidden_size, dropout_prob)
+<<<<<<< HEAD
+        self.decoder = Decoder(num_layers, hidden_size, dropout_prob,
+                               decoding_strategy, max_decoding_length)
+        self.output_layer = lambda x: layers.fc(x,
+                                                size=trg_vocab_size,
+                                                num_flatten_dims=len(x.shape) -
+                                                1,
+                                                param_attr=fluid.ParamAttr(),
+                                                bias_attr=False)
+=======
         self.decoder = Decoder(
             num_layers,
             hidden_size,
@@ -237,6 +314,7 @@ class Seq2SeqModel:
             param_attr=fluid.ParamAttr(),
             bias_attr=False,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def __call__(self, src, src_length, trg=None, trg_length=None):
         # encoder
@@ -247,16 +325,46 @@ class Seq2SeqModel:
         decoder_initial_states = [
             encoder_final_state,
             self.decoder.decoder_cell.get_initial_states(
+<<<<<<< HEAD
+                batch_ref=encoder_output, shape=[encoder_output.shape[-1]])
+        ]
+        src_mask = layers.sequence_mask(src_length,
+                                        maxlen=layers.shape(src)[1],
+                                        dtype="float32")
+=======
                 batch_ref=encoder_output, shape=[encoder_output.shape[-1]]
             ),
         ]
         src_mask = layers.sequence_mask(
             src_length, maxlen=layers.shape(src)[1], dtype="float32"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         encoder_padding_mask = (src_mask - 1.0) * 1e9
         encoder_padding_mask = layers.unsqueeze(encoder_padding_mask, [1])
 
         # decoder
+<<<<<<< HEAD
+        decoder_kwargs = {
+            "inputs": self.trg_embeder(trg),
+            "sequence_length": trg_length,
+        } if self.decoder.decoding_strategy == "train_greedy" else (
+            {
+                "embedding_fn": self.trg_embeder,
+                "beam_size": self.beam_size,
+                "start_token": self.start_token,
+                "end_token": self.end_token
+            } if self.decoder.decoding_strategy == "beam_search" else {
+                "embedding_fn":
+                self.trg_embeder,
+                "start_tokens":
+                layers.fill_constant_batch_size_like(input=encoder_output,
+                                                     shape=[-1],
+                                                     dtype=src.dtype,
+                                                     value=self.start_token),
+                "end_token":
+                self.end_token
+            })
+=======
         decoder_kwargs = (
             {
                 "inputs": self.trg_embeder(trg),
@@ -283,6 +391,7 @@ class Seq2SeqModel:
                 }
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         decoder_kwargs["output_layer"] = self.output_layer
 
         (decoder_output, decoder_final_state, dec_seq_lengths) = self.decoder(
@@ -312,9 +421,15 @@ class PolicyGradient:
         """
         update policy model self.model with policy gradient algorithm
         """
+<<<<<<< HEAD
+        self.reward = fluid.layers.py_func(func=reward_func,
+                                           x=[action, length],
+                                           out=reward)
+=======
         self.reward = fluid.layers.py_func(
             func=reward_func, x=[action, length], out=reward
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         neg_log_prob = layers.cross_entropy(act_prob, action)
         cost = neg_log_prob * reward
         cost = (
@@ -347,9 +462,14 @@ def reward_func(samples, sample_length):
             dmat = np.ones([batch_size, max_seq_length], dtype=dtype)
         else:
             steps = np.tile(np.arange(max_seq_length), [batch_size, 1])
+<<<<<<< HEAD
+            mask = np.asarray(steps < (sequence_length - 1)[:, None],
+                              dtype=dtype)
+=======
             mask = np.asarray(
                 steps < (sequence_length - 1)[:, None], dtype=dtype
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             # Make each row = [discount, ..., discount, 1, ..., 1]
             dmat = mask * discount + (1 - mask)
             dmat = np.cumprod(dmat[:, ::-1], axis=1)[:, ::-1]
@@ -413,6 +533,23 @@ class MLE:
         return loss
 
 
+<<<<<<< HEAD
+class SeqPGAgent(object):
+
+    def __init__(self,
+                 model_cls,
+                 alg_cls=PolicyGradient,
+                 model_hparams={},
+                 alg_hparams={},
+                 executor=None,
+                 main_program=None,
+                 startup_program=None,
+                 seed=None):
+        self.main_program = fluid.Program(
+        ) if main_program is None else main_program
+        self.startup_program = fluid.Program(
+        ) if startup_program is None else startup_program
+=======
 class SeqPGAgent:
     def __init__(
         self,
@@ -431,6 +568,7 @@ class SeqPGAgent:
         self.startup_program = (
             fluid.Program() if startup_program is None else startup_program
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         if seed is not None:
             self.main_program.random_seed = seed
             self.startup_program.random_seed = seed
@@ -440,6 +578,19 @@ class SeqPGAgent:
     def build_program(self, model_cls, alg_cls, model_hparams, alg_hparams):
         with fluid.program_guard(self.main_program, self.startup_program):
             source = fluid.data(name="src", shape=[None, None], dtype="int64")
+<<<<<<< HEAD
+            source_length = fluid.data(name="src_sequence_length",
+                                       shape=[None],
+                                       dtype="int64")
+            # only for teacher-forcing MLE training
+            target = fluid.data(name="trg", shape=[None, None], dtype="int64")
+            target_length = fluid.data(name="trg_sequence_length",
+                                       shape=[None],
+                                       dtype="int64")
+            label = fluid.data(name="label",
+                               shape=[None, None, 1],
+                               dtype="int64")
+=======
             source_length = fluid.data(
                 name="src_sequence_length", shape=[None], dtype="int64"
             )
@@ -451,6 +602,7 @@ class SeqPGAgent:
             label = fluid.data(
                 name="label", shape=[None, None, 1], dtype="int64"
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             self.model = model_cls(**model_hparams)
             self.alg = alg_cls(**alg_hparams)
             self.probs, self.samples, self.sample_length = self.model(
@@ -489,6 +641,7 @@ class SeqPGAgent:
 
 
 class TestDynamicDecode(unittest.TestCase):
+
     def setUp(self):
         np.random.seed(123)
         self.model_hparams = {
@@ -508,6 +661,30 @@ class TestDynamicDecode(unittest.TestCase):
         src_seq_len = 10
         trg_seq_len = 12
         self.data = {
+<<<<<<< HEAD
+            "src":
+            np.random.randint(
+                2, self.model_hparams["src_vocab_size"],
+                (iter_num * batch_size, src_seq_len)).astype("int64"),
+            "src_sequence_length":
+            np.random.randint(1, src_seq_len,
+                              (iter_num * batch_size, )).astype("int64"),
+            "trg":
+            np.random.randint(
+                2, self.model_hparams["src_vocab_size"],
+                (iter_num * batch_size, trg_seq_len)).astype("int64"),
+            "trg_sequence_length":
+            np.random.randint(1, trg_seq_len,
+                              (iter_num * batch_size, )).astype("int64"),
+            "label":
+            np.random.randint(
+                2, self.model_hparams["src_vocab_size"],
+                (iter_num * batch_size, trg_seq_len, 1)).astype("int64"),
+        }
+
+        place = core.CUDAPlace(
+            0) if core.is_compiled_with_cuda() else core.CPUPlace()
+=======
             "src": np.random.randint(
                 2,
                 self.model_hparams["src_vocab_size"],
@@ -536,11 +713,22 @@ class TestDynamicDecode(unittest.TestCase):
             if core.is_compiled_with_cuda()
             else core.CPUPlace()
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.exe = Executor(place)
 
     def test_mle_train(self):
         paddle.enable_static()
         self.model_hparams["decoding_strategy"] = "train_greedy"
+<<<<<<< HEAD
+        agent = SeqPGAgent(model_cls=Seq2SeqModel,
+                           alg_cls=MLE,
+                           model_hparams=self.model_hparams,
+                           alg_hparams={"lr": 0.001},
+                           executor=self.exe,
+                           main_program=fluid.Program(),
+                           startup_program=fluid.Program(),
+                           seed=123)
+=======
         agent = SeqPGAgent(
             model_cls=Seq2SeqModel,
             alg_cls=MLE,
@@ -551,10 +739,31 @@ class TestDynamicDecode(unittest.TestCase):
             startup_program=fluid.Program(),
             seed=123,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.exe.run(agent.startup_program)
         for iter_idx in range(self.iter_num):
             reward, cost = agent.learn(
                 {
+<<<<<<< HEAD
+                    "src":
+                    self.data["src"][iter_idx * self.batch_size:(iter_idx + 1) *
+                                     self.batch_size, :],
+                    "src_sequence_length":
+                    self.data["src_sequence_length"][iter_idx * self.batch_size:
+                                                     (iter_idx + 1) *
+                                                     self.batch_size],
+                    "trg":
+                    self.data["trg"][iter_idx * self.batch_size:(iter_idx + 1) *
+                                     self.batch_size, :],
+                    "trg_sequence_length":
+                    self.data["trg_sequence_length"][iter_idx * self.batch_size:
+                                                     (iter_idx + 1) *
+                                                     self.batch_size],
+                    "label":
+                    self.data["label"][iter_idx *
+                                       self.batch_size:(iter_idx + 1) *
+                                       self.batch_size]
+=======
                     "src": self.data["src"][
                         iter_idx
                         * self.batch_size : (iter_idx + 1)
@@ -582,6 +791,7 @@ class TestDynamicDecode(unittest.TestCase):
                         * self.batch_size : (iter_idx + 1)
                         * self.batch_size
                     ],
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 },
                 fetch_list=[agent.cost, agent.cost],
             )
@@ -593,6 +803,16 @@ class TestDynamicDecode(unittest.TestCase):
     def test_greedy_train(self):
         paddle.enable_static()
         self.model_hparams["decoding_strategy"] = "infer_greedy"
+<<<<<<< HEAD
+        agent = SeqPGAgent(model_cls=Seq2SeqModel,
+                           alg_cls=PolicyGradient,
+                           model_hparams=self.model_hparams,
+                           alg_hparams={"lr": 0.001},
+                           executor=self.exe,
+                           main_program=fluid.Program(),
+                           startup_program=fluid.Program(),
+                           seed=123)
+=======
         agent = SeqPGAgent(
             model_cls=Seq2SeqModel,
             alg_cls=PolicyGradient,
@@ -603,10 +823,20 @@ class TestDynamicDecode(unittest.TestCase):
             startup_program=fluid.Program(),
             seed=123,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.exe.run(agent.startup_program)
         for iter_idx in range(self.iter_num):
             reward, cost = agent.learn(
                 {
+<<<<<<< HEAD
+                    "src":
+                    self.data["src"][iter_idx * self.batch_size:(iter_idx + 1) *
+                                     self.batch_size, :],
+                    "src_sequence_length":
+                    self.data["src_sequence_length"][iter_idx * self.batch_size:
+                                                     (iter_idx + 1) *
+                                                     self.batch_size]
+=======
                     "src": self.data["src"][
                         iter_idx
                         * self.batch_size : (iter_idx + 1)
@@ -618,6 +848,7 @@ class TestDynamicDecode(unittest.TestCase):
                         * self.batch_size : (iter_idx + 1)
                         * self.batch_size
                     ],
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 },
                 fetch_list=[agent.reward, agent.cost],
             )
@@ -629,6 +860,16 @@ class TestDynamicDecode(unittest.TestCase):
     def test_sample_train(self):
         paddle.enable_static()
         self.model_hparams["decoding_strategy"] = "infer_sample"
+<<<<<<< HEAD
+        agent = SeqPGAgent(model_cls=Seq2SeqModel,
+                           alg_cls=PolicyGradient,
+                           model_hparams=self.model_hparams,
+                           alg_hparams={"lr": 0.001},
+                           executor=self.exe,
+                           main_program=fluid.Program(),
+                           startup_program=fluid.Program(),
+                           seed=123)
+=======
         agent = SeqPGAgent(
             model_cls=Seq2SeqModel,
             alg_cls=PolicyGradient,
@@ -639,10 +880,20 @@ class TestDynamicDecode(unittest.TestCase):
             startup_program=fluid.Program(),
             seed=123,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.exe.run(agent.startup_program)
         for iter_idx in range(self.iter_num):
             reward, cost = agent.learn(
                 {
+<<<<<<< HEAD
+                    "src":
+                    self.data["src"][iter_idx * self.batch_size:(iter_idx + 1) *
+                                     self.batch_size, :],
+                    "src_sequence_length":
+                    self.data["src_sequence_length"][iter_idx * self.batch_size:
+                                                     (iter_idx + 1) *
+                                                     self.batch_size]
+=======
                     "src": self.data["src"][
                         iter_idx
                         * self.batch_size : (iter_idx + 1)
@@ -654,6 +905,7 @@ class TestDynamicDecode(unittest.TestCase):
                         * self.batch_size : (iter_idx + 1)
                         * self.batch_size
                     ],
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 },
                 fetch_list=[agent.reward, agent.cost],
             )
@@ -670,9 +922,15 @@ class TestDynamicDecode(unittest.TestCase):
         startup_program = fluid.Program()
         with fluid.program_guard(main_program, startup_program):
             source = fluid.data(name="src", shape=[None, None], dtype="int64")
+<<<<<<< HEAD
+            source_length = fluid.data(name="src_sequence_length",
+                                       shape=[None],
+                                       dtype="int64")
+=======
             source_length = fluid.data(
                 name="src_sequence_length", shape=[None], dtype="int64"
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             model = Seq2SeqModel(**self.model_hparams)
             output = model(source, source_length)
 
@@ -681,6 +939,16 @@ class TestDynamicDecode(unittest.TestCase):
             trans_ids = self.exe.run(
                 program=main_program,
                 feed={
+<<<<<<< HEAD
+                    "src":
+                    self.data["src"][iter_idx * self.batch_size:(iter_idx + 1) *
+                                     self.batch_size, :],
+                    "src_sequence_length":
+                    self.data["src_sequence_length"][iter_idx *
+                                                     self.batch_size:(iter_idx +
+                                                                      1) *
+                                                     self.batch_size]
+=======
                     "src": self.data["src"][
                         iter_idx
                         * self.batch_size : (iter_idx + 1)
@@ -692,6 +960,7 @@ class TestDynamicDecode(unittest.TestCase):
                         * self.batch_size : (iter_idx + 1)
                         * self.batch_size
                     ],
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 },
                 fetch_list=[output],
             )[0]
@@ -711,6 +980,7 @@ class TestDynamicDecode(unittest.TestCase):
 
 
 class ModuleApiTest(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls._np_rand_state = np.random.get_state()
@@ -720,6 +990,12 @@ class ModuleApiTest(unittest.TestCase):
         random.seed(cls._random_seed)
 
         cls.model_cls = type(
+<<<<<<< HEAD
+            cls.__name__ + "Model", (Layer, ), {
+                "__init__": cls.model_init_wrapper(cls.model_init),
+                "forward": cls.model_forward
+            })
+=======
             cls.__name__ + "Model",
             (Layer,),
             {
@@ -727,6 +1003,7 @@ class ModuleApiTest(unittest.TestCase):
                 "forward": cls.model_forward,
             },
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     @classmethod
     def tearDownClass(cls):
@@ -735,6 +1012,7 @@ class ModuleApiTest(unittest.TestCase):
 
     @staticmethod
     def model_init_wrapper(func):
+
         def __impl__(self, *args, **kwargs):
             Layer.__init__(self)
             func(self, *args, **kwargs)
@@ -799,9 +1077,14 @@ class ModuleApiTest(unittest.TestCase):
             np.testing.assert_allclose(actual_t, expect_t, rtol=1e-05, atol=0)
         if expect_output:
             for actual_t, expect_t in zip(dygraph_output, expect_output):
+<<<<<<< HEAD
+                self.assertTrue(
+                    np.allclose(actual_t, expect_t, rtol=1e-5, atol=0))
+=======
                 np.testing.assert_allclose(
                     actual_t, expect_t, rtol=1e-05, atol=0
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def check_output(self):
         devices = ["CPU", "GPU"] if fluid.is_compiled_with_cuda() else ["CPU"]
@@ -811,6 +1094,7 @@ class ModuleApiTest(unittest.TestCase):
 
 
 class TestBeamSearch(ModuleApiTest):
+
     def setUp(self):
         paddle.set_default_dtype("float64")
         shape = (8, 32)
@@ -827,6 +1111,35 @@ class TestBeamSearch(ModuleApiTest):
         self.param_states = {}
 
     @staticmethod
+<<<<<<< HEAD
+    def model_init(self,
+                   vocab_size,
+                   embed_dim,
+                   hidden_size,
+                   bos_id=0,
+                   eos_id=1,
+                   beam_size=4,
+                   max_step_num=20):
+        embedder = paddle.fluid.dygraph.Embedding(size=[vocab_size, embed_dim],
+                                                  dtype="float64")
+        output_layer = nn.Linear(hidden_size, vocab_size)
+        cell = nn.LSTMCell(embed_dim, hidden_size)
+        self.max_step_num = max_step_num
+        self.beam_search_decoder = BeamSearchDecoder(cell,
+                                                     start_token=bos_id,
+                                                     end_token=eos_id,
+                                                     beam_size=beam_size,
+                                                     embedding_fn=embedder,
+                                                     output_fn=output_layer)
+
+    @staticmethod
+    def model_forward(model, init_hidden, init_cell):
+        return dynamic_decode(model.beam_search_decoder,
+                              [init_hidden, init_cell],
+                              max_step_num=model.max_step_num,
+                              impute_finished=True,
+                              is_test=True)[0]
+=======
     def model_init(
         self,
         vocab_size,
@@ -861,6 +1174,7 @@ class TestBeamSearch(ModuleApiTest):
             impute_finished=True,
             is_test=True,
         )[0]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def make_inputs(self):
         inputs = [

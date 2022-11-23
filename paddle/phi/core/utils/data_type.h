@@ -121,6 +121,8 @@ inline DataType ToComplexType(const DataType& type) {
           type));
   }
 }
+<<<<<<< HEAD
+=======
 
 inline DataType ToRealType(const DataType& type) {
   switch (type) {
@@ -172,4 +174,5 @@ inline std::string DataType2String(DataType dtype) {
   }
 }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }  // namespace phi

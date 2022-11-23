@@ -55,6 +55,14 @@ def get_dist_prog(
     )
     dist_context.block_state.parse_forward_blocks(complete_train_program)
 
+<<<<<<< HEAD
+    params_grads = parallelizer._generate_backward(complete_train_program,
+                                                   startup_program,
+                                                   loss,
+                                                   parameter_list=None,
+                                                   no_grad_set=None,
+                                                   callbacks=None)
+=======
     params_grads = parallelizer._generate_backward(
         complete_train_program,
         startup_program,
@@ -63,6 +71,7 @@ def get_dist_prog(
         no_grad_set=None,
         callbacks=None,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     # logical partition
     partitioner = Partitioner(dist_context, rank_id)
@@ -86,6 +95,7 @@ def get_dist_prog(
 
 
 class TestDistributedTensor(unittest.TestCase):
+
     def test_new_local_tensor(self):
         test_auto_parallel_reshard._global_process_mesh = auto.ProcessMesh(
             mesh=[0, 1], dim_names=["x"]
@@ -169,14 +179,31 @@ class TestDistributedTensor(unittest.TestCase):
         # rank 1 [(2, 4), (0, 3)]
         # rank 4 [(2, 4), (3, 6)]
         rank = 0
+<<<<<<< HEAD
+        local_sizes = DistributedTensor.get_local_sizes(global_sizes,
+                                                        dims_mapping, topology,
+                                                        processes)
+=======
         local_sizes = DistributedTensor.get_local_sizes(
             global_sizes, dims_mapping, topology, processes
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.assertEqual(local_sizes, [2, 3])
         local_offsets = DistributedTensor.get_local_offsets(
             global_sizes, dims_mapping, topology, processes, rank
         )
         self.assertEqual(local_offsets, [0, 0])
+<<<<<<< HEAD
+        local_shard = DistributedTensor.get_local_shard(global_sizes,
+                                                        dims_mapping, topology,
+                                                        processes, rank)
+        self.assertEqual(local_shard, [(0, 2), (0, 3)])
+
+        rank = 1
+        local_sizes = DistributedTensor.get_local_sizes(global_sizes,
+                                                        dims_mapping, topology,
+                                                        processes)
+=======
         local_shard = DistributedTensor.get_local_shard(
             global_sizes, dims_mapping, topology, processes, rank
         )
@@ -186,11 +213,23 @@ class TestDistributedTensor(unittest.TestCase):
         local_sizes = DistributedTensor.get_local_sizes(
             global_sizes, dims_mapping, topology, processes
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.assertEqual(local_sizes, [2, 3])
         local_offsets = DistributedTensor.get_local_offsets(
             global_sizes, dims_mapping, topology, processes, rank
         )
         self.assertEqual(local_offsets, [2, 0])
+<<<<<<< HEAD
+        local_shard = DistributedTensor.get_local_shard(global_sizes,
+                                                        dims_mapping, topology,
+                                                        processes, rank)
+        self.assertEqual(local_shard, [(2, 4), (0, 3)])
+
+        rank = 4
+        local_sizes = DistributedTensor.get_local_sizes(global_sizes,
+                                                        dims_mapping, topology,
+                                                        processes)
+=======
         local_shard = DistributedTensor.get_local_shard(
             global_sizes, dims_mapping, topology, processes, rank
         )
@@ -200,14 +239,21 @@ class TestDistributedTensor(unittest.TestCase):
         local_sizes = DistributedTensor.get_local_sizes(
             global_sizes, dims_mapping, topology, processes
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.assertEqual(local_sizes, [2, 3])
         local_offsets = DistributedTensor.get_local_offsets(
             global_sizes, dims_mapping, topology, processes, rank
         )
         self.assertEqual(local_offsets, [2, 3])
+<<<<<<< HEAD
+        local_shard = DistributedTensor.get_local_shard(global_sizes,
+                                                        dims_mapping, topology,
+                                                        processes, rank)
+=======
         local_shard = DistributedTensor.get_local_shard(
             global_sizes, dims_mapping, topology, processes, rank
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.assertEqual(local_shard, [(2, 4), (3, 6)])
 
         # global sizes
@@ -221,11 +267,18 @@ class TestDistributedTensor(unittest.TestCase):
         tensor_dist_attr = TensorDistributedAttribute()
         tensor_dist_attr.dims_mapping = [1, 0]
         tensor_dist_attr.process_mesh = auto.ProcessMesh(
+<<<<<<< HEAD
+            mesh=[[0, 1, 2], [3, 4, 5]])
+        serial_tensor = paddle.static.data(name="data",
+                                           shape=[6, 6],
+                                           dtype='float32')
+=======
             mesh=[[0, 1, 2], [3, 4, 5]]
         )
         serial_tensor = paddle.static.data(
             name="data", shape=[6, 6], dtype='float32'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         dist_tensor = DistributedTensor(serial_tensor, tensor_dist_attr)
 
         # rank 0 [(0, 2), (0, 3)]

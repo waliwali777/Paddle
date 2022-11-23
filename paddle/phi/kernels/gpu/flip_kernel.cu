@@ -94,6 +94,17 @@ void LaunchFlipCudaKernel(const Context& dev_ctx,
           flip_dims_size);
 }
 
+<<<<<<< HEAD
+  flip_cuda_kernel<T>
+      <<<dim_grid, dim_block, 0, dev_ctx.stream()>>>(N,
+                                                     in_data,
+                                                     out_data,
+                                                     x_shape_array_gpu,
+                                                     x_strides_array_gpu,
+                                                     flip_dims_array_gpu,
+                                                     flip_dims_size,
+                                                     total_dims);
+=======
 template <typename T, typename Context>
 void FlipKernel(const Context& dev_ctx,
                 const DenseTensor& x,
@@ -134,6 +145,7 @@ void FlipKernel(const Context& dev_ctx,
           "%d",
           x.dims().size()));
   }
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 }  // namespace phi
 

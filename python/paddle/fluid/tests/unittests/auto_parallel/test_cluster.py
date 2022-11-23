@@ -1968,6 +1968,10 @@ multi_cluster_json = """{
 
 
 class TestCluster(unittest.TestCase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
 
@@ -1976,9 +1980,14 @@ class TestCluster(unittest.TestCase):
 
     def test_single_machine(self):
         # Build cluster
+<<<<<<< HEAD
+        cluster_json_path = os.path.join(self.temp_dir.name,
+                                         "auto_parallel_cluster_single.json")
+=======
         cluster_json_path = os.path.join(
             self.temp_dir.name, "auto_parallel_cluster_single.json"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         cluster_json_object = json.loads(cluster_json)
         with open(cluster_json_path, "w") as cluster_json_file:
@@ -2003,9 +2012,14 @@ class TestCluster(unittest.TestCase):
 
     def test_multi_machine(self):
         # Build cluster
+<<<<<<< HEAD
+        cluster_json_path = os.path.join(self.temp_dir.name,
+                                         "auto_parallel_cluster_multi.json")
+=======
         cluster_json_path = os.path.join(
             self.temp_dir.name, "auto_parallel_cluster_multi.json"
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         cluster_json_object = json.loads(multi_cluster_json)
         with open(cluster_json_path, "w") as cluster_json_file:
             json.dump(cluster_json_object, cluster_json_file)

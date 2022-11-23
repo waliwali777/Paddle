@@ -122,6 +122,17 @@ namespace ops = paddle::operators;
       paddle::framework::EmptyGradOpMaker<paddle::framework::OpDesc>, \
       paddle::framework::EmptyGradOpMaker<paddle::imperative::OpBase>)
 
+<<<<<<< HEAD
+#define REGISTER_OVERFLOW_CPU_KERNEL(op_type, functor)             \
+  REGISTER_OP_CPU_KERNEL(                                          \
+      op_type,                                                     \
+      ops::OverflowKernel<phi::CPUContext, int, ops::functor>,     \
+      ops::OverflowKernel<phi::CPUContext, int64_t, ops::functor>, \
+      ops::OverflowKernel<phi::CPUContext, float, ops::functor>,   \
+      ops::OverflowKernel<phi::CPUContext, double, ops::functor>);
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 REGISTER_OP_MAKER(isinf, "isinf(X)");
 REGISTER_OP_MAKER(isnan, "isnan(X)");
 REGISTER_OP_MAKER(isfinite, "isfinite(X)");

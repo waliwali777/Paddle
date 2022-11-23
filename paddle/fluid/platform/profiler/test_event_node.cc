@@ -137,7 +137,10 @@ TEST(NodeTreesTest, LogMe_case0) {
                                            5,
                                            MemsetEventInfo()));
   ChromeTracingLogger logger("test_nodetrees_logme_case0.json");
+<<<<<<< HEAD
+=======
   logger.LogMetaInfo(std::string("1.0.2"), 0);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   NodeTrees tree(host_events,
                  runtime_events,
                  device_events,
@@ -167,7 +170,11 @@ TEST(NodeTreesTest, LogMe_case0) {
     }
   }
   tree.LogMe(&logger);
+<<<<<<< HEAD
+  logger.LogMetaInfo(std::unordered_map<std::string, std::string>());
+=======
   logger.LogExtraInfo(std::unordered_map<std::string, std::string>());
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 TEST(NodeTreesTest, LogMe_case1) {
@@ -232,7 +239,10 @@ TEST(NodeTreesTest, LogMe_case1) {
                                            5,
                                            MemsetEventInfo()));
   ChromeTracingLogger logger("test_nodetrees_logme_case1.json");
+<<<<<<< HEAD
+=======
   logger.LogMetaInfo(std::string("1.0.2"), 0);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   NodeTrees tree(host_events,
                  runtime_events,
                  device_events,
@@ -256,7 +266,11 @@ TEST(NodeTreesTest, LogMe_case1) {
     }
   }
   tree.LogMe(&logger);
+<<<<<<< HEAD
+  logger.LogMetaInfo(std::unordered_map<std::string, std::string>());
+=======
   logger.LogExtraInfo(std::unordered_map<std::string, std::string>());
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 TEST(NodeTreesTest, HandleTrees_case0) {
@@ -335,7 +349,10 @@ TEST(NodeTreesTest, HandleTrees_case0) {
                                            3,
                                            KernelEventInfo()));
   ChromeTracingLogger logger("test_nodetrees_handletrees_case0.json");
+<<<<<<< HEAD
+=======
   logger.LogMetaInfo(std::string("1.0.2"), 0);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   NodeTrees tree(host_events,
                  runtime_events,
                  device_events,
@@ -379,5 +396,9 @@ TEST(NodeTreesTest, HandleTrees_case0) {
                    device_event_node_handle,
                    mem_event_node_handle,
                    op_supplement_event_node_handle);
+<<<<<<< HEAD
+  logger.LogMetaInfo(std::unordered_map<std::string, std::string>());
+=======
   logger.LogExtraInfo(std::unordered_map<std::string, std::string>());
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }

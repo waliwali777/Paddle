@@ -21,6 +21,7 @@ from op_test import OpTest
 
 
 class TestInf(OpTest):
+
     def setUp(self):
         self.op_type = "isinf"
         self.dtype = np.float32
@@ -40,15 +41,38 @@ class TestInf(OpTest):
         self.check_output()
 
 
+<<<<<<< HEAD
+class TestRaiseError(unittest.TestCase):
+
+    def test_errors(self):
+
+        def test_type():
+            fluid.layers.isfinite([10])
+
+        self.assertRaises(TypeError, test_type)
+
+        def test_dtype():
+            data = fluid.data(shape=[10], dtype="float16", name="input")
+            fluid.layers.isfinite(data)
+
+        self.assertRaises(TypeError, test_dtype)
+
+
+@unittest.skipIf(not core.is_compiled_with_cuda(),
+                 "core is not compiled with CUDA")
+=======
 @unittest.skipIf(
     not core.is_compiled_with_cuda(), "core is not compiled with CUDA"
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 class TestFP16Inf(TestInf):
+
     def init_dtype(self):
         self.dtype = np.float16
 
 
 class TestNAN(OpTest):
+
     def setUp(self):
         self.op_type = "isnan"
         self.dtype = np.float32
@@ -72,11 +96,13 @@ class TestNAN(OpTest):
     not core.is_compiled_with_cuda(), "core is not compiled with CUDA"
 )
 class TestFP16NAN(TestNAN):
+
     def init_dtype(self):
         self.dtype = np.float16
 
 
 class TestIsfinite(OpTest):
+
     def setUp(self):
         self.op_type = "isfinite"
         self.dtype = np.float32
@@ -101,11 +127,13 @@ class TestIsfinite(OpTest):
     not core.is_compiled_with_cuda(), "core is not compiled with CUDA"
 )
 class TestFP16Isfinite(TestIsfinite):
+
     def init_dtype(self):
         self.dtype = np.float16
 
 
 class BadInputTest(unittest.TestCase):
+
     def test_error(self):
         with fluid.program_guard(fluid.Program()):
 

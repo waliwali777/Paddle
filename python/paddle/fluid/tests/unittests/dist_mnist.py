@@ -69,6 +69,7 @@ def cnn_model(data):
 
 
 class TestDistMnist2x2(TestDistRunnerBase):
+
     def get_model(self, batch_size=2, use_dgc=False, dist_strategy=None):
         # Input data
         images = fluid.layers.data(name='pixel', shape=[1, 28, 28], dtype=DTYPE)
@@ -81,9 +82,15 @@ class TestDistMnist2x2(TestDistRunnerBase):
 
         # Evaluator
         batch_size_tensor = fluid.layers.create_tensor(dtype='int64')
+<<<<<<< HEAD
+        batch_acc = fluid.layers.accuracy(input=predict,
+                                          label=label,
+                                          total=batch_size_tensor)
+=======
         batch_acc = fluid.layers.accuracy(
             input=predict, label=label, total=batch_size_tensor
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         inference_program = fluid.default_main_program().clone()
         # Optimization
@@ -93,6 +100,21 @@ class TestDistMnist2x2(TestDistRunnerBase):
         if not use_dgc:
             opt = fluid.optimizer.Momentum(learning_rate=self.lr, momentum=0.9)
         else:
+<<<<<<< HEAD
+            opt = fluid.optimizer.DGCMomentumOptimizer(learning_rate=self.lr,
+                                                       momentum=0.9,
+                                                       rampup_begin_step=2)
+
+        # Reader
+        train_reader = paddle.batch(paddle.dataset.mnist.test(),
+                                    batch_size=batch_size)
+        test_reader = paddle.batch(paddle.dataset.mnist.test(),
+                                   batch_size=batch_size)
+
+        if dist_strategy:
+            dist_opt = fleet.distributed_optimizer(optimizer=opt,
+                                                   strategy=dist_strategy)
+=======
             opt = paddle.distributed.fleet.meta_optimizers.DGCMomentumOptimizer(
                 learning_rate=self.lr, momentum=0.9, rampup_begin_step=2
             )
@@ -109,6 +131,7 @@ class TestDistMnist2x2(TestDistRunnerBase):
             dist_opt = fleet.distributed_optimizer(
                 optimizer=opt, strategy=dist_strategy
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             _, param_grads = dist_opt.minimize(avg_cost)
         else:
             opt.minimize(avg_cost)

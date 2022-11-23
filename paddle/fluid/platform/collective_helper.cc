@@ -73,11 +73,14 @@ class NCCLCommImpl : public NCCLComm {
   std::shared_ptr<platform::CudaEventObject> comm_event_;
 };
 
+<<<<<<< HEAD
+=======
 NCCLCommContext& NCCLCommContext::Instance() {
   static NCCLCommContext comm_ctx;
   return comm_ctx;
 }
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 NCCLComm* NCCLCommContext::CreateComm(
     ncclUniqueId* nccl_id, int nranks, int rank, int dev_id, int ring_id) {
   PADDLE_ENFORCE_NOT_NULL(nccl_id,
@@ -357,6 +360,14 @@ BKCLComm* BKCLCommContext::AssignBKCLComm(
     BKCLContext_t comm, int nranks, int rank, int dev_id, int ring_id) {
   std::unique_ptr<XPUDeviceContext> dev_ctx(
       new XPUDeviceContext(XPUPlace(dev_id)));
+<<<<<<< HEAD
+  // used in BKCL as comm_stream, for every dev_id there is
+  // a comm_stream at each ring. this stream is passed as input var
+  // when calling collective comm commands like bkcl_all_reduce
+  XPUStream comm_stream;
+  PADDLE_ENFORCE_XPU_SUCCESS(xpu_stream_create(&comm_stream));
+  dev_ctx->SetXPUStream(comm_stream);
+=======
   dev_ctx->SetAllocator(paddle::memory::allocation::AllocatorFacade::Instance()
                             .GetAllocator(XPUPlace(dev_id))
                             .get());
@@ -372,6 +383,7 @@ BKCLComm* BKCLCommContext::AssignBKCLComm(
       paddle::memory::allocation::AllocatorFacade::Instance()
           .GetZeroAllocator(paddle::platform::CPUPlace())
           .get());
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   BKCLCommImpl* c = new BKCLCommImpl;
   c->set_ring_id(ring_id);

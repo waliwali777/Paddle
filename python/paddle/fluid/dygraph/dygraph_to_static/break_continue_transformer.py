@@ -17,6 +17,11 @@ from paddle.utils import gast
 from paddle.fluid import unique_name
 from paddle.fluid.dygraph.dygraph_to_static.utils import index_in_list
 from paddle.fluid.dygraph.dygraph_to_static.utils import BaseNodeVisitor
+<<<<<<< HEAD
+from paddle.fluid.dygraph.dygraph_to_static.variable_trans_func import create_bool_node
+from paddle.fluid.dygraph.dygraph_to_static.base_transformer import BaseTransformer
+from paddle.fluid.dygraph.dygraph_to_static.base_transformer import ForNodeVisitor
+=======
 from paddle.fluid.dygraph.dygraph_to_static.variable_trans_func import (
     create_bool_node,
 )
@@ -26,6 +31,7 @@ from paddle.fluid.dygraph.dygraph_to_static.base_transformer import (
 from paddle.fluid.dygraph.dygraph_to_static.base_transformer import (
     ForNodeVisitor,
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 __all__ = ['BreakContinueTransformer']
 
@@ -81,6 +87,15 @@ class ForToWhileTransformer(BaseTransformer):
         init_stmts, cond_stmt, body_stmts = stmts_tuple
 
         # 2. append break statement
+<<<<<<< HEAD
+        new_cond_stmt = gast.BoolOp(op=gast.And(),
+                                    values=[cond_stmt, self.condition_node])
+
+        # 3. construct gast.While node
+        while_node = gast.While(test=new_cond_stmt,
+                                body=body_stmts,
+                                orelse=node.orelse)
+=======
         new_cond_stmt = gast.BoolOp(
             op=gast.And(), values=[cond_stmt, self.condition_node]
         )
@@ -89,6 +104,7 @@ class ForToWhileTransformer(BaseTransformer):
         while_node = gast.While(
             test=new_cond_stmt, body=body_stmts, orelse=node.orelse
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         init_stmts.append(while_node)
         return init_stmts
 
@@ -151,6 +167,17 @@ class BreakContinueTransformer(BaseNodeVisitor):
         assign_false_node = create_bool_node(variable_name, False)
         self._add_stmt_before_cur_node(loop_node_index, assign_false_node)
 
+<<<<<<< HEAD
+        cond_var_node = gast.UnaryOp(op=gast.Not(),
+                                     operand=gast.Name(id=variable_name,
+                                                       ctx=gast.Load(),
+                                                       annotation=None,
+                                                       type_comment=None))
+
+        if isinstance(loop_node, gast.While):
+            loop_node.test = gast.BoolOp(op=gast.And(),
+                                         values=[loop_node.test, cond_var_node])
+=======
         cond_var_node = gast.UnaryOp(
             op=gast.Not(),
             operand=gast.Name(
@@ -165,6 +192,7 @@ class BreakContinueTransformer(BaseNodeVisitor):
             loop_node.test = gast.BoolOp(
                 op=gast.And(), values=[loop_node.test, cond_var_node]
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         elif isinstance(loop_node, gast.For):
             parent_node = self.ancestor_nodes[loop_node_index - 1]
             for_to_while = ForToWhileTransformer(
@@ -195,9 +223,15 @@ class BreakContinueTransformer(BaseNodeVisitor):
         assign_false_node = create_bool_node(variable_name, False)
         loop_node.body.insert(0, assign_false_node)
 
+<<<<<<< HEAD
+    def _remove_stmts_after_break_continue(self, break_continue_node,
+                                           break_continue_name,
+                                           loop_node_index):
+=======
     def _remove_stmts_after_break_continue(
         self, break_continue_node, break_continue_name, loop_node_index
     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         for first_block_index in range(
             len(self.ancestor_nodes) - 1, loop_node_index - 1, -1
         ):
@@ -237,9 +271,15 @@ class BreakContinueTransformer(BaseNodeVisitor):
             ):
                 continue
 
+<<<<<<< HEAD
+    def _replace_break_continue_in_stmt_list(self, stmt_list,
+                                             break_continue_node,
+                                             break_continue_name):
+=======
     def _replace_break_continue_in_stmt_list(
         self, stmt_list, break_continue_node, break_continue_name
     ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         i = index_in_list(stmt_list, break_continue_node)
         if i == -1:
             return False
@@ -258,6 +298,17 @@ class BreakContinueTransformer(BaseNodeVisitor):
             # No need to add, we consider this as added successfully
             return True
 
+<<<<<<< HEAD
+        if_stmt = gast.If(test=gast.UnaryOp(op=gast.Not(),
+                                            operand=gast.Name(
+                                                id=break_continue_name,
+                                                ctx=gast.Store(),
+                                                annotation=None,
+                                                type_comment=None)),
+                          body=stmt_list[i + 1:],
+                          orelse=[])
+        stmt_list[i + 1:] = []
+=======
         if_stmt = gast.If(
             test=gast.UnaryOp(
                 op=gast.Not(),
@@ -272,6 +323,7 @@ class BreakContinueTransformer(BaseNodeVisitor):
             orelse=[],
         )
         stmt_list[i + 1 :] = []
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         stmt_list.append(if_stmt)
         return True
 

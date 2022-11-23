@@ -13,6 +13,12 @@
 // limitations under the License.
 
 #include "paddle/phi/kernels/erfinv_kernel.h"
+<<<<<<< HEAD
+
+#include "paddle/phi/backends/gpu/gpu_context.h"
+#include "paddle/phi/core/kernel_registry.h"
+#include "paddle/phi/kernels/impl/erfinv_kernel_impl.h"
+=======
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/core/kernel_registry.h"
 #include "paddle/phi/kernels/funcs/elementwise_base.h"
@@ -33,5 +39,6 @@ void ErfinvKernel(const Context& ctx, const DenseTensor& x, DenseTensor* out) {
 }
 
 }  // namespace phi
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 PD_REGISTER_KERNEL(erfinv, GPU, ALL_LAYOUT, phi::ErfinvKernel, float, double) {}

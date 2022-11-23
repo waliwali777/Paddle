@@ -29,9 +29,15 @@ using DataLayout = phi::DataLayout;
 template <typename place, typename T>
 struct LRNFunctor {
   void operator()(const framework::ExecutionContext& ctx,
+<<<<<<< HEAD
+                  const framework::Tensor& input,
+                  framework::Tensor* out,
+                  framework::Tensor* mid,
+=======
                   const phi::DenseTensor& input,
                   phi::DenseTensor* out,
                   phi::DenseTensor* mid,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                   int N,
                   int C,
                   int H,
@@ -104,11 +110,19 @@ class LRNKernel : public framework::OpKernel<T> {
 template <typename DeviceContext, typename T>
 struct LRNGradFunctor {
   void operator()(const framework::ExecutionContext& ctx,
+<<<<<<< HEAD
+                  const framework::Tensor& x,
+                  const framework::Tensor& out,
+                  const framework::Tensor& mid,
+                  framework::Tensor* x_g,
+                  const framework::Tensor& out_g,
+=======
                   const phi::DenseTensor& x,
                   const phi::DenseTensor& out,
                   const phi::DenseTensor& mid,
                   phi::DenseTensor* x_g,
                   const phi::DenseTensor& out_g,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                   int N,
                   int C,
                   int H,

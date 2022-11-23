@@ -17,6 +17,11 @@
 #include <algorithm>
 #include <vector>
 
+<<<<<<< HEAD
+#include "paddle/fluid/framework/convert_utils.h"
+#include "paddle/fluid/platform/device/gpu/gpu_launch_config.h"
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/backends/gpu/gpu_launch_config.h"
 #include "paddle/phi/core/kernel_registry.h"

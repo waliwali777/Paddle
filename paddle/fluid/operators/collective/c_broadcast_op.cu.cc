@@ -73,7 +73,11 @@ class CBroadcastOpCUDAKernel : public framework::OpKernel<T> {
 
       if (out != x) {
         framework::TensorCopy(
+<<<<<<< HEAD
+            *static_cast<const framework::Tensor*>(x),
+=======
             *static_cast<const phi::DenseTensor*>(x),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             place,
             *platform::DeviceContextPool::Instance().Get(place),
             static_cast<phi::DenseTensor*>(out));
@@ -108,7 +112,11 @@ namespace plat = paddle::platform;
 REGISTER_OP_CUDA_KERNEL(c_broadcast,
                         ops::CBroadcastOpCUDAKernel<float>,
                         ops::CBroadcastOpCUDAKernel<double>,
+<<<<<<< HEAD
+#if CUDNN_VERSION_MIN(8, 1, 0) && NCCL_VERSION_CODE >= 21000
+=======
 #if NCCL_VERSION_CODE >= 21000
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         ops::CBroadcastOpCUDAKernel<plat::bfloat16>,
 #endif
                         ops::CBroadcastOpCUDAKernel<int>,

@@ -46,11 +46,17 @@ def max_pool1D_forward_naive(
     if adaptive:
         L_out = ksize[0]
     else:
+<<<<<<< HEAD
+        L_out = (L - ksize[0] + 2 * paddings[0] + strides[0] -
+                 1) // strides[0] + 1 if ceil_mode else (
+                     L - ksize[0] + 2 * paddings[0]) // strides[0] + 1
+=======
         L_out = (
             (L - ksize[0] + 2 * paddings[0] + strides[0] - 1) // strides[0] + 1
             if ceil_mode
             else (L - ksize[0] + 2 * paddings[0]) // strides[0] + 1
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     out = np.zeros((N, C, L_out))
     for i in range(L_out):
@@ -67,6 +73,7 @@ def max_pool1D_forward_naive(
 
 
 class TestPool1D_API(unittest.TestCase):
+
     def setUp(self):
         np.random.seed(123)
         self.places = [fluid.CPUPlace()]
@@ -79,10 +86,19 @@ class TestPool1D_API(unittest.TestCase):
             input = fluid.dygraph.to_variable(input_np)
             result = F.adaptive_max_pool1d(input, output_size=16)
 
+<<<<<<< HEAD
+            result_np = max_pool1D_forward_naive(input_np,
+                                                 ksize=[16],
+                                                 strides=[0],
+                                                 paddings=[0],
+                                                 adaptive=True)
+            self.assertTrue(np.allclose(result.numpy(), result_np))
+=======
             result_np = max_pool1D_forward_naive(
                 input_np, ksize=[16], strides=[0], paddings=[0], adaptive=True
             )
             np.testing.assert_allclose(result.numpy(), result_np, rtol=1e-05)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             ada_max_pool1d_dg = paddle.nn.layer.AdaptiveMaxPool1D(
                 output_size=16
@@ -96,9 +112,17 @@ class TestPool1D_API(unittest.TestCase):
             result = F.adaptive_max_pool1d(input, output_size=16)
 
             input_np = np.random.random([2, 3, 32]).astype("float32")
+<<<<<<< HEAD
+            result_np = max_pool1D_forward_naive(input_np,
+                                                 ksize=[16],
+                                                 strides=[2],
+                                                 paddings=[0],
+                                                 adaptive=True)
+=======
             result_np = max_pool1D_forward_naive(
                 input_np, ksize=[16], strides=[2], paddings=[0], adaptive=True
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             exe = fluid.Executor(place)
             fetches = exe.run(
@@ -115,15 +139,23 @@ class TestPool1D_API(unittest.TestCase):
 
 
 class TestOutDtype(unittest.TestCase):
+
     def test_max_pool(self):
         api_fn = F.adaptive_max_pool1d
         shape = [1, 3, 32]
+<<<<<<< HEAD
+        check_out_dtype(api_fn,
+                        in_specs=[(shape, )],
+                        expect_dtypes=['float32', 'float64'],
+                        output_size=16)
+=======
         check_out_dtype(
             api_fn,
             in_specs=[(shape,)],
             expect_dtypes=['float32', 'float64'],
             output_size=16,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == '__main__':

@@ -20,10 +20,16 @@ from .transform_parameters import (
     _stride_column,
 )  # noqa: F401
 
+<<<<<<< HEAD
+__all__ = [  #noqa
+    'weight_norm', 'remove_weight_norm', 'spectral_norm',
+    'parameters_to_vector', 'vector_to_parameters'
+=======
 __all__ = [  # noqa
     'weight_norm',
     'remove_weight_norm',
     'spectral_norm',
     'parameters_to_vector',
     'vector_to_parameters',
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 ]

@@ -21,6 +21,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class ComplexKronTestCase(unittest.TestCase):
+
     def __init__(self, methodName='runTest', x=None, y=None):
         super().__init__(methodName)
         self.x = x
@@ -55,6 +56,25 @@ def load_tests(loader, standard_tests, pattern):
     suite = unittest.TestSuite()
     for dtype in ["float32", "float64"]:
         suite.addTest(
+<<<<<<< HEAD
+            ComplexKronTestCase(x=np.random.randn(2, 2).astype(dtype) +
+                                1j * np.random.randn(2, 2).astype(dtype),
+                                y=np.random.randn(3, 3).astype(dtype) +
+                                1j * np.random.randn(3, 3).astype(dtype)))
+        suite.addTest(
+            ComplexKronTestCase(x=np.random.randn(2, 2).astype(dtype),
+                                y=np.random.randn(3, 3).astype(dtype) +
+                                1j * np.random.randn(3, 3).astype(dtype)))
+        suite.addTest(
+            ComplexKronTestCase(x=np.random.randn(2, 2).astype(dtype) +
+                                1j * np.random.randn(2, 2).astype(dtype),
+                                y=np.random.randn(3, 3).astype(dtype)))
+
+        suite.addTest(
+            ComplexKronTestCase(x=np.random.randn(2, 2).astype(dtype) +
+                                1j * np.random.randn(2, 2).astype(dtype),
+                                y=np.random.randn(2, 2, 3).astype(dtype)))
+=======
             ComplexKronTestCase(
                 x=np.random.randn(2, 2).astype(dtype)
                 + 1j * np.random.randn(2, 2).astype(dtype),
@@ -84,6 +104,7 @@ def load_tests(loader, standard_tests, pattern):
                 y=np.random.randn(2, 2, 3).astype(dtype),
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     return suite
 

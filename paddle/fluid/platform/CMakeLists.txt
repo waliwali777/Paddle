@@ -61,7 +61,11 @@ cc_library(monitor SRCS monitor.cc)
 cc_test(
   enforce_test
   SRCS enforce_test.cc
+<<<<<<< HEAD
+  DEPS stringpiece enforce)
+=======
   DEPS enforce)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 set(CPU_INFO_DEPS gflags glog enforce)
 if(WITH_XBYAK)
@@ -205,6 +209,10 @@ cc_library(
        place
        phi_place
        eigen3
+<<<<<<< HEAD
+       stringpiece
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
        cpu_helper
        cpu_info
        framework_proto
@@ -240,6 +248,16 @@ endif()
 
 if(WITH_ASCEND_CL)
   target_link_libraries(device_context npu_resource_pool)
+<<<<<<< HEAD
+endif()
+
+if(WITH_XPU)
+  target_link_libraries(device_context xpu_resource_pool)
+endif()
+
+if(WITH_MLU)
+  target_link_libraries(device_context mlu_resource_pool)
+=======
 endif()
 
 if(WITH_XPU)
@@ -252,6 +270,7 @@ endif()
 
 if(WITH_CUSTOM_DEVICE)
   target_link_libraries(device_context custom_device_resource_pool)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 endif()
 
 cc_test(
@@ -268,6 +287,18 @@ cc_library(
 set(DEVICE_EVENT_LIBS
     device_event_base
     CACHE INTERNAL "device event libs")
+<<<<<<< HEAD
+if(WITH_XPU)
+  cc_library(
+    device_event_xpu
+    SRCS device_event_xpu.cc
+    DEPS device_event_base xpu_info)
+  set(DEVICE_EVENT_LIBS
+      device_event_xpu
+      CACHE INTERNAL "device event libs")
+endif()
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 if(WITH_ASCEND_CL)
   cc_library(
@@ -287,6 +318,13 @@ if(WITH_GPU)
   set(DEVICE_EVENT_LIBS
       device_event_gpu
       CACHE INTERNAL "device event libs")
+<<<<<<< HEAD
+  nv_test(
+    device_event_test
+    SRCS device_event_test.cc
+    DEPS device_event_gpu)
+
+=======
   if(WITH_CUSTOM_DEVICE)
     nv_test(
       device_event_test
@@ -298,6 +336,7 @@ if(WITH_GPU)
       SRCS device_event_test.cc
       DEPS device_event_gpu)
   endif()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   nv_test(
     device_context_test
     SRCS device_context_test.cu
@@ -320,6 +359,13 @@ if(WITH_ROCM)
   set(DEVICE_EVENT_LIBS
       device_event_gpu
       CACHE INTERNAL "device event libs")
+<<<<<<< HEAD
+  hip_test(
+    device_event_test
+    SRCS device_event_test.cc
+    DEPS device_event_gpu)
+
+=======
   if(WITH_CUSTOM_DEVICE)
     hip_test(
       device_event_test
@@ -331,6 +377,7 @@ if(WITH_ROCM)
       SRCS device_event_test.cc
       DEPS device_event_gpu)
   endif()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   hip_test(
     device_context_test
     SRCS device_context_test.cu

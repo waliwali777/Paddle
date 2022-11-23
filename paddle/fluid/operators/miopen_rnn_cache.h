@@ -78,7 +78,11 @@ struct CudnnRNNCache {
             int seed,
             int weight_numel,
             size_t *reserve_size_,
+<<<<<<< HEAD
+            framework::Tensor *dropout_state_,
+=======
             phi::DenseTensor *dropout_state_,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             bool initialized,
             miopenDataType_t miopen_type) {
     seq_length_ = seq_len;

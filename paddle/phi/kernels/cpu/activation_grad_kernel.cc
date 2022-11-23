@@ -268,7 +268,11 @@ PD_REGISTER_ACTIVATION_GRAD_KERNEL(leaky_relu_grad, LeakyReluGradKernel)
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(thresholded_relu_grad,
                                    ThresholdedReluGradKernel)
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(relu6_grad, Relu6GradKernel)
+<<<<<<< HEAD
+PD_REGISTER_ACTIVATION_GRAD_KERNEL(soft_shrink_grad, SoftShrinkGradKernel)
+=======
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(softshrink_grad, SoftShrinkGradKernel)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(hard_shrink_grad, HardShrinkGradKernel)
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(tanh_shrink_grad, TanhShrinkGradKernel)
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(elu_grad, EluGradKernel)
@@ -336,6 +340,8 @@ PD_REGISTER_KERNEL(square_double_grad,
                    phi::dtype::float16,
                    int,
                    int64_t) {}
+<<<<<<< HEAD
+=======
 
 PD_REGISTER_KERNEL(sin_double_grad,
                    CPU,
@@ -377,6 +383,7 @@ PD_REGISTER_KERNEL(cos_triple_grad,
                    int,
                    int64_t) {}
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(softsign_grad, SoftsignGradKernel)
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(sigmoid_grad, SigmoidGradKernel)
 PD_REGISTER_ACTIVATION_GRAD_KERNEL(sigmoid_double_grad, SigmoidDoubleGradKernel)

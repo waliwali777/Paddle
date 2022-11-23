@@ -35,9 +35,15 @@ def get_logger(name, level, fmt):
     return logger
 
 
+<<<<<<< HEAD
+_http_server_logger = get_logger(__name__,
+                                 logging.INFO,
+                                 fmt='%(asctime)s-%(levelname)s: %(message)s')
+=======
 _http_server_logger = get_logger(
     __name__, logging.INFO, fmt='%(asctime)s-%(levelname)s: %(message)s'
 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 class KVHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):

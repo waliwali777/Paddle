@@ -46,7 +46,11 @@ template <typename DeviceContext, typename T>
 void PrepareSamples(const framework::ExecutionContext &context,
                     Sampler *sampler,
                     Tensor *sample_labels) {
+<<<<<<< HEAD
+  auto label = context.Input<Tensor>("Label");
+=======
   auto label = context.Input<phi::DenseTensor>("Label");
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   const int64_t *label_data = label->data<int64_t>();
   auto label_dims = label->dims();
   // for unitest

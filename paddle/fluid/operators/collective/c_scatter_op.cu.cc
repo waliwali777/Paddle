@@ -79,7 +79,11 @@ class CScatterOpCUDAKernel : public framework::OpKernel<T> {
           comm->comm(),
           stream));
 
+<<<<<<< HEAD
+      framework::TensorCopy(*static_cast<const framework::Tensor*>(x),
+=======
       framework::TensorCopy(*static_cast<const phi::DenseTensor*>(x),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             place,
                             *platform::DeviceContextPool::Instance().Get(place),
                             static_cast<phi::DenseTensor*>(&temp));
@@ -94,9 +98,15 @@ class CScatterOpCUDAKernel : public framework::OpKernel<T> {
     temp = temp.Slice(start_index, end_index);
     temp.Resize(out_dims);
     out->mutable_data<T>(out_dims, place);
+<<<<<<< HEAD
+    framework::TensorCopySync(*static_cast<const framework::Tensor*>(&temp),
+                              place,
+                              static_cast<framework::Tensor*>(out));
+=======
     framework::TensorCopySync(*static_cast<const phi::DenseTensor*>(&temp),
                               place,
                               static_cast<phi::DenseTensor*>(out));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     out->Resize(out_dims);
 #else
     PADDLE_ENFORCE_EQ(

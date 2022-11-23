@@ -16,8 +16,13 @@ limitations under the License. */
 #include <unordered_set>
 #include <vector>
 
+<<<<<<< HEAD
+#include "paddle/fluid/platform/device/gpu/gpu_launch_config.h"
+#include "paddle/fluid/platform/device/gpu/gpu_primitives.h"
+=======
 #include "paddle/phi/backends/gpu/gpu_launch_config.h"
 #include "paddle/phi/backends/gpu/gpu_primitives.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/common/place.h"
 #include "paddle/phi/core/dense_tensor.h"
 #include "paddle/phi/kernels/funcs/math_function.h"
@@ -231,7 +236,11 @@ void GPUScatterNdAdd(const phi::GPUContext& ctx,
   int block = 512;
   int64_t n = slice_size * remain_numel;
   dim3 grid = dim3((n + block - 1) / block);
+<<<<<<< HEAD
+  paddle::platform::LimitGridDim(ctx, &grid);
+=======
   phi::backends::gpu::LimitGridDim(ctx, &grid);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   ScatterNdCUDAKernel<T, IndexT>
       <<<grid, block, 0, ctx.stream()>>>(p_update,

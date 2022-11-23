@@ -23,7 +23,9 @@ import unittest
 
 
 class TestReaderReset(unittest.TestCase):
+
     def prepare_data(self):
+
         def fake_data_generator():
             for n in range(self.total_ins_num):
                 yield np.ones(self.ins_shape) * n, n
@@ -44,9 +46,15 @@ class TestReaderReset(unittest.TestCase):
         startup_prog = fluid.Program()
 
         with fluid.program_guard(main_prog, startup_prog):
+<<<<<<< HEAD
+            image = fluid.layers.data(name='image',
+                                      shape=self.ins_shape,
+                                      dtype='float32')
+=======
             image = fluid.layers.data(
                 name='image', shape=self.ins_shape, dtype='float32'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             label = fluid.layers.data(name='label', shape=[1], dtype='int64')
             data_reader_handle = fluid.io.PyReader(
                 feed_list=[image, label],
@@ -61,8 +69,12 @@ class TestReaderReset(unittest.TestCase):
         exe.run(startup_prog)
 
         data_reader_handle.decorate_sample_list_generator(
+<<<<<<< HEAD
+            paddle.batch(self.prepare_data(), batch_size=self.batch_size))
+=======
             paddle.batch(self.prepare_data(), batch_size=self.batch_size)
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         train_cp = compiler.CompiledProgram(main_prog).with_data_parallel(
             places=[place]
@@ -78,9 +90,15 @@ class TestReaderReset(unittest.TestCase):
                         train_cp, fetch_list=fetch_list, return_numpy=True
                     )
                     ins_num = data_val.shape[0]
+<<<<<<< HEAD
+                    broadcasted_label = np.ones((
+                        ins_num, ) + tuple(self.ins_shape)) * label_val.reshape(
+                            (ins_num, 1))
+=======
                     broadcasted_label = np.ones(
                         (ins_num,) + tuple(self.ins_shape)
                     ) * label_val.reshape((ins_num, 1))
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                     self.assertEqual(data_val.all(), broadcasted_label.all())
                     batch_id += 1
             except fluid.core.EOFException:

@@ -18,5 +18,15 @@
 #include "paddle/phi/core/kernel_registry.h"
 #include "paddle/phi/kernels/impl/bmm_kernel_impl.h"
 
+<<<<<<< HEAD
+PD_REGISTER_KERNEL(bmm,
+                   GPU,
+                   ALL_LAYOUT,
+                   phi::BmmKernel,
+                   float,
+                   double,
+                   paddle::platform::float16) {}
+=======
 PD_REGISTER_KERNEL(
     bmm, GPU, ALL_LAYOUT, phi::BmmKernel, float, double, phi::dtype::float16) {}
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

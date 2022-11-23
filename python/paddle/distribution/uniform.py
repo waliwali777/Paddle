@@ -127,6 +127,13 @@ class Uniform(distribution.Distribution):
         else:
             if isinstance(low, float) and isinstance(high, float):
                 self.all_arg_is_float = True
+<<<<<<< HEAD
+            if isinstance(low, np.ndarray) and str(
+                    low.dtype) in ['float32', 'float64']:
+                self.dtype = low.dtype
+            elif isinstance(high, np.ndarray) and str(
+                    high.dtype) in ['float32', 'float64']:
+=======
             if isinstance(low, np.ndarray) and str(low.dtype) in [
                 'float32',
                 'float64',
@@ -136,6 +143,7 @@ class Uniform(distribution.Distribution):
                 'float32',
                 'float64',
             ]:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 self.dtype = high.dtype
             # pylint: disable=unbalanced-tuple-unpacking
             self.low, self.high = self._to_tensor(low, high)
@@ -171,6 +179,16 @@ class Uniform(distribution.Distribution):
                 zero_tmp,
                 zero_tmp.shape,
                 dtype=self.dtype,
+<<<<<<< HEAD
+                min=0.,
+                max=1.,
+                seed=seed)
+            zero_tmp_reshape = nn.reshape(zero_tmp, output_shape)
+            uniform_random_tmp_reshape = nn.reshape(uniform_random_tmp,
+                                                    output_shape)
+            output = uniform_random_tmp_reshape * (zero_tmp_reshape +
+                                                   self.high - self.low)
+=======
                 min=0.0,
                 max=1.0,
                 seed=seed,
@@ -182,16 +200,23 @@ class Uniform(distribution.Distribution):
             output = uniform_random_tmp_reshape * (
                 zero_tmp_reshape + self.high - self.low
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             output = elementwise_add(output, self.low, name=name)
             return output
         else:
             output_shape = shape + batch_shape
             output = nn.uniform_random(
+<<<<<<< HEAD
+                output_shape, dtype=self.dtype, min=0., max=1.,
+                seed=seed) * (tensor.zeros(output_shape, dtype=self.dtype) +
+                              (self.high - self.low))
+=======
                 output_shape, dtype=self.dtype, min=0.0, max=1.0, seed=seed
             ) * (
                 tensor.zeros(output_shape, dtype=self.dtype)
                 + (self.high - self.low)
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             output = elementwise_add(output, self.low, name=name)
             if self.all_arg_is_float:
                 return paddle.reshape(output, shape, name=name)
@@ -233,9 +258,15 @@ class Uniform(distribution.Distribution):
         ub_bool = value < self.high
         lb = tensor.cast(lb_bool, dtype=value.dtype)
         ub = tensor.cast(ub_bool, dtype=value.dtype)
+<<<<<<< HEAD
+        return elementwise_sub(nn.log(lb * ub),
+                               nn.log(self.high - self.low),
+                               name=name)
+=======
         return elementwise_sub(
             nn.log(lb * ub), nn.log(self.high - self.low), name=name
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def probs(self, value):
         """Probability density/mass function.

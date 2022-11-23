@@ -20,6 +20,7 @@ import paddle.fluid.op as fluid_op
 
 
 class TestSumMKLDNN(TestSumOp):
+
     def setUp(self):
         self.op_type = "sum"
         self.init_data_type()
@@ -45,6 +46,7 @@ class TestSumMKLDNN(TestSumOp):
 
 
 class TestMKLDNNSumInplaceOp(unittest.TestCase):
+
     def setUp(self):
         self.op_type = "sum"
         self.init_data_type()
@@ -68,13 +70,25 @@ class TestMKLDNNSumInplaceOp(unittest.TestCase):
                 tensor = var.get_tensor()
                 tensor.set(var_value, place)
 
+<<<<<<< HEAD
+        sum_op = fluid_op.Operator("sum",
+                                   X=["x0", "x1"],
+                                   Out=out_var_name,
+                                   use_mkldnn=True)
+=======
         sum_op = fluid_op.Operator(
             "sum", X=["x0", "x1"], Out=out_var_name, use_mkldnn=True
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         expected_out = np.array(self.x0 + self.x1)
         sum_op.run(scope, place)
         out = scope.find_var("x0").get_tensor()
         out_array = np.array(out)
+<<<<<<< HEAD
+        self.assertTrue(
+            np.allclose(expected_out, out_array, atol=1e-5),
+            "Inplace sum_mkldnn_op output has diff with expected output")
+=======
         np.testing.assert_allclose(
             expected_out,
             out_array,
@@ -82,6 +96,7 @@ class TestMKLDNNSumInplaceOp(unittest.TestCase):
             atol=1e-05,
             err_msg='Inplace sum_mkldnn_op output has diff with expected output',
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_check_grad(self):
         pass

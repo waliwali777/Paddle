@@ -14,6 +14,10 @@
 
 #include "paddle/phi/kernels/trunc_kernel.h"
 
+<<<<<<< HEAD
+#include "paddle/fluid/platform/device/gpu/gpu_primitives.h"
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/backends/gpu/gpu_info.h"
 #include "paddle/phi/backends/gpu/gpu_primitives.h"

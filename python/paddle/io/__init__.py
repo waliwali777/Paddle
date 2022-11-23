@@ -30,6 +30,13 @@ from ..fluid.dataloader import WeightedRandomSampler  # noqa: F401
 from ..fluid.dataloader import Subset  # noqa: F401
 from ..fluid.dataloader import random_split  # noqa: F401
 
+<<<<<<< HEAD
+__all__ = [  #noqa
+    'Dataset', 'IterableDataset', 'TensorDataset', 'ComposeDataset',
+    'ChainDataset', 'BatchSampler', 'DistributedBatchSampler', 'DataLoader',
+    'get_worker_info', 'Sampler', 'SequenceSampler', 'RandomSampler',
+    'WeightedRandomSampler', 'random_split', 'Subset'
+=======
 __all__ = [  # noqa
     'Dataset',
     'IterableDataset',
@@ -46,4 +53,5 @@ __all__ = [  # noqa
     'WeightedRandomSampler',
     'random_split',
     'Subset',
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 ]

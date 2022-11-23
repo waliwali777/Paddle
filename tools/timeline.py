@@ -23,6 +23,18 @@ parser.add_argument(
     type=str,
     default='',
     help='Input profile file name. If there are multiple file, the format '
+<<<<<<< HEAD
+    'should be trainer1=file1,trainer2=file2,ps=file3')
+parser.add_argument('--timeline_path',
+                    type=str,
+                    default='',
+                    help='Output timeline file name.')
+args = parser.parse_args()
+
+
+class _ChromeTraceFormatter(object):
+
+=======
     'should be trainer1=file1,trainer2=file2,ps=file3',
 )
 parser.add_argument(
@@ -32,6 +44,7 @@ args = parser.parse_args()
 
 
 class _ChromeTraceFormatter:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self):
         self._events = []
         self._metadata = []
@@ -126,7 +139,12 @@ class _ChromeTraceFormatter:
             return json.dumps(trace, separators=(',', ':'))
 
 
+<<<<<<< HEAD
+class Timeline(object):
+
+=======
 class Timeline:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, profile_dict):
         self._profile_dict = profile_dict
         self._pid = 0
@@ -158,8 +176,12 @@ class Timeline:
                         pid = self._allocate_pid()
                         self._devices[(k, event.device_id, "GPUKernel")] = pid
                         self._chrome_trace.emit_pid(
+<<<<<<< HEAD
+                            "%s:gpu:%d" % (k, event.device_id), pid)
+=======
                             "%s:gpu:%d" % (k, event.device_id), pid
                         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             if not hasattr(profile_pb, "mem_events"):
                 continue
             for mevent in profile_pb.mem_events:
@@ -180,11 +202,16 @@ class Timeline:
                             pid,
                         )
                 elif mevent.place == profiler_pb2.MemEvent.CUDAPinnedPlace:
+<<<<<<< HEAD
+                    if (k, mevent.device_id,
+                            "CUDAPinnedPlace") not in self._mem_devices:
+=======
                     if (
                         k,
                         mevent.device_id,
                         "CUDAPinnedPlace",
                     ) not in self._mem_devices:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         pid = self._allocate_pid()
                         self._mem_devices[
                             (k, mevent.device_id, "CUDAPinnedPlace")
@@ -206,14 +233,22 @@ class Timeline:
                     pid = self._allocate_pid()
                     self._mem_devices[(k, 0, "CPU")] = pid
                     self._chrome_trace.emit_pid(
+<<<<<<< HEAD
+                        "memory usage on %s:cpu:%d" % (k, 0), pid)
+=======
                         "memory usage on %s:cpu:%d" % (k, 0), pid
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 if (k, 0, "GPU") not in self._mem_devices:
                     pid = self._allocate_pid()
                     self._mem_devices[(k, 0, "GPU")] = pid
                     self._chrome_trace.emit_pid(
+<<<<<<< HEAD
+                        "memory usage on %s:gpu:%d" % (k, 0), pid)
+=======
                         "memory usage on %s:gpu:%d" % (k, 0), pid
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 if (k, 0, "CUDAPinnedPlace") not in self._mem_devices:
                     pid = self._allocate_pid()
                     self._mem_devices[(k, 0, "CUDAPinnedPlace")] = pid
@@ -224,8 +259,12 @@ class Timeline:
                     pid = self._allocate_pid()
                     self._mem_devices[(k, 0, "NPU")] = pid
                     self._chrome_trace.emit_pid(
+<<<<<<< HEAD
+                        "memory usage on %s:npu:%d" % (k, 0), pid)
+=======
                         "memory usage on %s:npu:%d" % (k, 0), pid
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def _allocate_events(self):
         for k, profile_pb in self._profile_dict.items():
@@ -299,6 +338,12 @@ class Timeline:
                     total_size += mem_list[i + 1]['size']
                     i += 1
 
+<<<<<<< HEAD
+                self._chrome_trace.emit_counter("Memory", "Memory",
+                                                mem_list[i]['pid'],
+                                                mem_list[i]['time'], 0,
+                                                total_size)
+=======
                 self._chrome_trace.emit_counter(
                     "Memory",
                     "Memory",
@@ -307,6 +352,7 @@ class Timeline:
                     0,
                     total_size,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 i += 1
 
     def generate_chrome_trace(self):

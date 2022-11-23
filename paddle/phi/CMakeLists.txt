@@ -34,6 +34,10 @@ set(PHI_DEPS
     arg_map_context
     infermeta
     lod_utils
+<<<<<<< HEAD
+    op_compat_infos
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     sparse_csr_tensor
     sparse_coo_tensor
     string_tensor

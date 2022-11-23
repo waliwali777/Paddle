@@ -308,9 +308,14 @@ def parsing(externalErrorDesc):
         res_strong = r'<strong class="ph b">.*?</strong>'
         res_strong_detail = r'<strong class="ph b">(.*?)</strong>'
         list_strong = re.findall(res_strong, m_message, re.S | re.M)
+<<<<<<< HEAD
+        list_strong_detail = re.findall(res_strong_detail, m_message,
+                                        re.S | re.M)
+=======
         list_strong_detail = re.findall(
             res_strong_detail, m_message, re.S | re.M
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         assert len(list_strong) == len(list_strong_detail)
         for idx in range(len(list_strong)):
             m_message = m_message.replace(

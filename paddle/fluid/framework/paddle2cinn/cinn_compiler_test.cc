@@ -260,7 +260,11 @@ TEST(CinnCompilerTest, Compile) {
     tensor.Resize(phi::make_ddim(pair.second));
     tensor.mutable_data<float>(platform::CPUPlace());
   }
+<<<<<<< HEAD
+  std::map<std::string, const LoDTensor*> input_tensors;
+=======
   std::map<std::string, const phi::DenseTensor*> input_tensors;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   std::for_each(create_inputs.begin(),
                 create_inputs.end(),
                 [&input_tensors](const auto& val) {

@@ -23,6 +23,7 @@ from paddle.device.cuda import (
 
 
 class TestMaxMemoryreserved(unittest.TestCase):
+
     def test_max_memory_reserved(self, device=None):
         if core.is_compiled_with_cuda():
             alloc_time = 100
@@ -54,11 +55,15 @@ class TestMaxMemoryreserved(unittest.TestCase):
         if core.is_compiled_with_cuda():
             wrong_device = [
                 core.CPUPlace(),
+<<<<<<< HEAD
+                device_count() + 1, -2, 0.5, "gpu1", "npu"
+=======
                 device_count() + 1,
                 -2,
                 0.5,
                 "gpu1",
                 "npu",
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             ]
             for device in wrong_device:
                 with self.assertRaises(BaseException):

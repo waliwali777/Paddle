@@ -203,8 +203,12 @@ class ResNetUnitKernel : public framework::OpKernel<T> {
                       output,
                       bitmask);
     } else {
+<<<<<<< HEAD
+      const Tensor *input_z = fuse_add ? ctx.Input<Tensor>("Z") : nullptr;
+=======
       const Tensor *input_z =
           fuse_add ? ctx.Input<phi::DenseTensor>("Z") : nullptr;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       sbar_op.Forward(dev_ctx,
                       *conv_out_x,
                       equiv_scale_x,
@@ -367,8 +371,12 @@ class ResNetUnitGradKernel : public framework::OpKernel<T> {
       // 1.1 Backward of BN (+ Add + Relu) for x, get conv_out_x_grad,
       // scale_x_grad, bias_x_grad (and z_grad)
       Tensor *z_grad =
+<<<<<<< HEAD
+          fuse_add ? ctx.Output<Tensor>(framework::GradVarName("Z")) : nullptr;
+=======
           fuse_add ? ctx.Output<phi::DenseTensor>(framework::GradVarName("Z"))
                    : nullptr;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       sbar_x_op.Backward(dev_ctx,
                          *y_grad,
                          *conv_out_x,

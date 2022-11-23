@@ -15,6 +15,11 @@
 import os
 import unittest
 import time
+<<<<<<< HEAD
+import threading
+import numpy
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 import tempfile
 
 import paddle
@@ -27,6 +32,7 @@ import paddle.distributed.fleet as fleet
 
 
 class TestCommunicator(unittest.TestCase):
+
     def test_communicator_ps_gpu(self):
         temp_dir = tempfile.TemporaryDirectory()
         path = os.path.join(temp_dir.name, "test_communicator_ps_gpu.txt")
@@ -72,9 +78,16 @@ class TestCommunicator(unittest.TestCase):
         optimizer.minimize(avg_cost)
 
         dataset = paddle.distributed.InMemoryDataset()
+<<<<<<< HEAD
+        dataset.init(batch_size=32,
+                     thread_num=1,
+                     pipe_command="cat",
+                     use_var=slots_vars)
+=======
         dataset.init(
             batch_size=32, thread_num=1, pipe_command="cat", use_var=slots_vars
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         dataset.set_filelist(["test_communicator_ps_gpu.txt"])
         dataset.set_date("20211111")
         dataset.load_into_memory(is_shuffle=True)

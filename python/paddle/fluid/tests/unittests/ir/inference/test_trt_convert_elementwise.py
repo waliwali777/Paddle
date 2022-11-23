@@ -24,10 +24,218 @@ from typing import List
 # This is the special test case with weight including batch dimension
 # I don't want to mess up the code written by others, so I wrote a class specifically
 class TrtConvertElementwiseTest_one_input_special_case0(TrtLayerAutoScanTest):
+<<<<<<< HEAD
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         return True
 
     def sample_program_configs(self):
+
+        def generate_input(shape):
+            return np.random.random(shape).astype(np.float32)
+
+        def generate_weight():
+            return np.random.randn(1, 32, 1, 1).astype(np.float32)
+
+        for batch in [1, 4]:
+            for shape in [[batch, 32, 16, 32]]:
+                for op_type in ["elementwise_add", "elementwise_mul"]:
+                    for axis in [-1]:
+                        self.dims = len(shape)
+                        dics = [{"axis": axis}]
+                        ops_config = [{
+                            "op_type": op_type,
+                            "op_inputs": {
+                                "X": ["input_data"],
+                                "Y": ["weight"]
+                            },
+                            "op_outputs": {
+                                "Out": ["output_data"]
+                            },
+                            "op_attrs": dics[0]
+                        }]
+                        ops = self.generate_op_config(ops_config)
+
+                        program_config = ProgramConfig(
+                            ops=ops,
+                            weights={
+                                "weight":
+                                TensorConfig(data_gen=partial(generate_weight))
+                            },
+                            inputs={
+                                "input_data":
+                                TensorConfig(
+                                    data_gen=partial(generate_input, shape)),
+                            },
+                            outputs=["output_data"])
+
+                        yield program_config
+
+    def sample_predictor_configs(
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+        def generate_dynamic_shape(attrs):
+            # The input.dims[1] must be equal to the weight's length.
+            if self.dims == 4:
+                self.dynamic_shape.min_input_shape = {
+                    "input_data": [1, 32, 4, 4]
+                }
+                self.dynamic_shape.max_input_shape = {
+                    "input_data": [4, 32, 32, 32]
+                }
+                self.dynamic_shape.opt_input_shape = {
+                    "input_data": [4, 32, 16, 32]
+                }
+
+        def clear_dynamic_shape():
+            self.dynamic_shape.max_input_shape = {}
+            self.dynamic_shape.min_input_shape = {}
+            self.dynamic_shape.opt_input_shape = {}
+
+        def generate_trt_nodes_num(attrs, dynamic_shape):
+            return 1, 2
+
+        attrs = [
+            program_config.ops[i].attrs for i in range(len(program_config.ops))
+        ]
+
+        # for static_shape
+        clear_dynamic_shape()
+        self.trt_param.precision = paddle_infer.PrecisionType.Float32
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, False), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, False), 1e-5
+
+        # for dynamic_shape
+        generate_dynamic_shape(attrs)
+        self.trt_param.precision = paddle_infer.PrecisionType.Float32
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, True), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, True), 1e-5
+
+    def add_skip_trt_case(self):
+        pass
+
+    def test(self):
+        self.add_skip_trt_case()
+        self.run_test()
+
+
+# This is the special test case
+class TrtConvertElementwiseTest_one_input_special_case1(TrtLayerAutoScanTest):
+
+    def is_program_valid(self, program_config: ProgramConfig) -> bool:
+        return True
+
+    def sample_program_configs(self):
+
+        def generate_input(shape):
+            return np.random.random(shape).astype(np.float32)
+
+        def generate_weight():
+            return np.random.randn(1).astype(np.float32)
+
+        for shape in [[32]]:
+            for op_type in ["elementwise_add", "elementwise_mul"]:
+                for axis in [-1]:
+                    self.dims = len(shape)
+                    dics = [{"axis": axis}]
+                    ops_config = [{
+                        "op_type": op_type,
+                        "op_inputs": {
+                            "X": ["input_data"],
+                            "Y": ["weight"]
+                        },
+                        "op_outputs": {
+                            "Out": ["output_data"]
+                        },
+                        "op_attrs": dics[0]
+                    }]
+                    ops = self.generate_op_config(ops_config)
+
+                    program_config = ProgramConfig(
+                        ops=ops,
+                        weights={
+                            "weight":
+                            TensorConfig(data_gen=partial(generate_weight))
+                        },
+                        inputs={
+                            "input_data":
+                            TensorConfig(
+                                data_gen=partial(generate_input, shape)),
+                        },
+                        outputs=["output_data"])
+
+                    yield program_config
+
+    def sample_predictor_configs(
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+        def generate_dynamic_shape(attrs):
+            self.dynamic_shape.min_input_shape = {"input_data": [32]}
+            self.dynamic_shape.max_input_shape = {"input_data": [64]}
+            self.dynamic_shape.opt_input_shape = {"input_data": [32]}
+
+        def clear_dynamic_shape():
+            self.dynamic_shape.max_input_shape = {}
+            self.dynamic_shape.min_input_shape = {}
+            self.dynamic_shape.opt_input_shape = {}
+
+        def generate_trt_nodes_num(attrs, dynamic_shape):
+            if not dynamic_shape:
+                return 0, 3
+            return 1, 2
+
+        attrs = [
+            program_config.ops[i].attrs for i in range(len(program_config.ops))
+        ]
+
+        # for static_shape
+        clear_dynamic_shape()
+        self.trt_param.precision = paddle_infer.PrecisionType.Float32
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, False), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, False), 1e-5
+
+        # for dynamic_shape
+        generate_dynamic_shape(attrs)
+        self.trt_param.precision = paddle_infer.PrecisionType.Float32
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, True), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, True), 1e-5
+
+    def add_skip_trt_case(self):
+        pass
+
+    def test(self):
+        self.add_skip_trt_case()
+        self.run_test()
+
+
+class TrtConvertElementwiseTest_one_input(TrtLayerAutoScanTest):
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
+    def is_program_valid(self, program_config: ProgramConfig) -> bool:
+        return True
+
+    def sample_program_configs(self):
+<<<<<<< HEAD
+
+        def generate_input(shape):
+            return np.random.random(shape).astype(np.float32)
+
+        def generate_weight():
+            return np.random.randn(32).astype(np.float32)
+=======
         def generate_input(shape, op_type):
             # elementwise_floordiv is integer only
             if op_type == "elementwise_floordiv":
@@ -44,6 +252,7 @@ class TrtConvertElementwiseTest_one_input_special_case0(TrtLayerAutoScanTest):
                 )
             else:
                 return np.random.randn(1, 32, 1, 1).astype(np.float32)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         for batch in [1, 4]:
             for shape in [[batch, 32, 16, 32]]:
@@ -331,11 +540,17 @@ class TrtConvertElementwiseTest_one_input(TrtLayerAutoScanTest):
                                 )
                             },
                             inputs={
+<<<<<<< HEAD
+                                "input_data":
+                                TensorConfig(
+                                    data_gen=partial(generate_input, shape)),
+=======
                                 "input_data": TensorConfig(
                                     data_gen=partial(
                                         generate_input, shape, op_type
                                     )
                                 ),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             },
                             outputs=["output_data"],
                         )
@@ -343,8 +558,13 @@ class TrtConvertElementwiseTest_one_input(TrtLayerAutoScanTest):
                         yield program_config
 
     def sample_predictor_configs(
+<<<<<<< HEAD
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def generate_dynamic_shape(attrs):
             # The input.dims[1] must be equal to the weight's length.
             if self.dims == 1:
@@ -399,12 +619,19 @@ class TrtConvertElementwiseTest_one_input(TrtLayerAutoScanTest):
         generate_dynamic_shape(attrs)
         self.trt_param.precision = paddle_infer.PrecisionType.Float32
         yield self.create_inference_config(), generate_trt_nodes_num(
+<<<<<<< HEAD
+            attrs, True), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, True), 1e-5
+=======
             attrs, True
         ), (1e-5, 1e-5)
         self.trt_param.precision = paddle_infer.PrecisionType.Half
         yield self.create_inference_config(), generate_trt_nodes_num(
             attrs, True
         ), (1e-3, 1e-3)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def add_skip_trt_case(self):
         pass
@@ -415,12 +642,24 @@ class TrtConvertElementwiseTest_one_input(TrtLayerAutoScanTest):
 
 
 class TrtConvertElementwiseTest_two_input_without_broadcast(
+<<<<<<< HEAD
+        TrtLayerAutoScanTest):
+
+=======
     TrtLayerAutoScanTest
 ):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         return True
 
     def sample_program_configs(self):
+<<<<<<< HEAD
+
+        def generate_input(shape):
+            return np.random.random(shape).astype(np.float32)
+
+        for shape in [[4], [4, 32], [2, 64, 32], [1, 8, 16, 32]]:
+=======
         def generate_input(shape, op_type):
             # elementwise_floordiv is integer only
             if op_type == "elementwise_floordiv":
@@ -431,6 +670,7 @@ class TrtConvertElementwiseTest_two_input_without_broadcast(
                 return np.random.random(shape).astype(np.float32)
 
         for shape in [[4], [4, 32], [2, 32, 16], [1, 8, 16, 32]]:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             for op_type in [
                 "elementwise_add",
                 "elementwise_mul",
@@ -461,12 +701,21 @@ class TrtConvertElementwiseTest_two_input_without_broadcast(
                         ops=ops,
                         weights={},
                         inputs={
+<<<<<<< HEAD
+                            "input_data1":
+                            TensorConfig(
+                                data_gen=partial(generate_input, shape)),
+                            "input_data2":
+                            TensorConfig(
+                                data_gen=partial(generate_input, shape))
+=======
                             "input_data1": TensorConfig(
                                 data_gen=partial(generate_input, shape, op_type)
                             ),
                             "input_data2": TensorConfig(
                                 data_gen=partial(generate_input, shape, op_type)
                             ),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         },
                         outputs=["output_data"],
                     )
@@ -474,8 +723,13 @@ class TrtConvertElementwiseTest_two_input_without_broadcast(
                     yield program_config
 
     def sample_predictor_configs(
+<<<<<<< HEAD
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def generate_dynamic_shape(attrs):
             if self.dims == 1:
                 self.dynamic_shape.min_input_shape = {
@@ -548,12 +802,19 @@ class TrtConvertElementwiseTest_two_input_without_broadcast(
         clear_dynamic_shape()
         self.trt_param.precision = paddle_infer.PrecisionType.Float32
         yield self.create_inference_config(), generate_trt_nodes_num(
+<<<<<<< HEAD
+            attrs, False), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, False), 1e-5
+=======
             attrs, False
         ), (1e-5, 1e-5)
         self.trt_param.precision = paddle_infer.PrecisionType.Half
         yield self.create_inference_config(), generate_trt_nodes_num(
             attrs, False
         ), (1e-3, 1e-3)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         # for dynamic_shape
         generate_dynamic_shape(attrs)
@@ -571,6 +832,7 @@ class TrtConvertElementwiseTest_two_input_without_broadcast(
 
 
 class TrtConvertElementwiseTest_two_input_with_broadcast(TrtLayerAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         inputs = program_config.inputs
         if len(inputs['input_data1'].shape) != len(inputs['input_data2'].shape):
@@ -579,6 +841,11 @@ class TrtConvertElementwiseTest_two_input_with_broadcast(TrtLayerAutoScanTest):
         return True
 
     def sample_program_configs(self):
+<<<<<<< HEAD
+
+        def generate_input(shape):
+            return np.random.random(shape).astype(np.float32)
+=======
         def generate_input(shape, op_type):
             # elementwise_floordiv is integer only
             if op_type == "elementwise_floordiv":
@@ -587,6 +854,7 @@ class TrtConvertElementwiseTest_two_input_with_broadcast(TrtLayerAutoScanTest):
                 )
             else:
                 return np.random.random(shape).astype(np.float32)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         input1_shape_list = [[4, 32], [2, 4, 32], [4, 2, 4, 32]]
         input2_shape1_list = [[32], [4, 32], [2, 4, 32]]
@@ -653,6 +921,14 @@ class TrtConvertElementwiseTest_two_input_with_broadcast(TrtLayerAutoScanTest):
                             ops=ops,
                             weights={},
                             inputs={
+<<<<<<< HEAD
+                                "input_data1":
+                                TensorConfig(data_gen=partial(
+                                    generate_input, input1_shape)),
+                                "input_data2":
+                                TensorConfig(data_gen=partial(
+                                    generate_input, input2_shape))
+=======
                                 "input_data1": TensorConfig(
                                     data_gen=partial(
                                         generate_input, input1_shape, op_type
@@ -663,6 +939,7 @@ class TrtConvertElementwiseTest_two_input_with_broadcast(TrtLayerAutoScanTest):
                                         generate_input, input2_shape, op_type
                                     )
                                 ),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             },
                             outputs=["output_data"],
                         )
@@ -670,8 +947,13 @@ class TrtConvertElementwiseTest_two_input_with_broadcast(TrtLayerAutoScanTest):
                         yield program_config
 
     def sample_predictor_configs(
+<<<<<<< HEAD
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def generate_dynamic_shape(attrs):
             max_shape = [
                 [128],
@@ -728,10 +1010,20 @@ class TrtConvertElementwiseTest_two_input_with_broadcast(TrtLayerAutoScanTest):
 
 
 class TrtConvertElementwiseTest_one_input_corner_case(TrtLayerAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         return True
 
     def sample_program_configs(self):
+<<<<<<< HEAD
+
+        def generate_input(shape):
+            return np.random.random(shape).astype(np.float32)
+
+        # use rand not randn to avoiding pow producing `NAN`
+        def generate_weight():
+            return np.random.rand(32).astype(np.float32)
+=======
         def generate_input(shape, op_type):
             # elementwise_floordiv is integer only
             if op_type == "elementwise_floordiv":
@@ -749,6 +1041,7 @@ class TrtConvertElementwiseTest_one_input_corner_case(TrtLayerAutoScanTest):
                 )
             else:
                 return np.random.rand(32).astype(np.float32)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         for batch in [1, 2, 4]:
             for shape in [
@@ -758,6 +1051,13 @@ class TrtConvertElementwiseTest_one_input_corner_case(TrtLayerAutoScanTest):
                 [batch, 32, 16, 32],
             ]:
                 for op_type in [
+<<<<<<< HEAD
+                        "elementwise_add",
+                        "elementwise_mul",
+                        "elementwise_sub",
+                        "elementwise_div",
+                        "elementwise_pow",
+=======
                     "elementwise_add",
                     "elementwise_mul",
                     "elementwise_sub",
@@ -766,6 +1066,7 @@ class TrtConvertElementwiseTest_one_input_corner_case(TrtLayerAutoScanTest):
                     "elementwise_min",
                     "elementwise_max",
                     "elementwise_floordiv",
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 ]:
                     self.op_type = op_type
                     for axis in [-1 if len(shape) == 1 else 1]:
@@ -792,11 +1093,17 @@ class TrtConvertElementwiseTest_one_input_corner_case(TrtLayerAutoScanTest):
                                 )
                             },
                             inputs={
+<<<<<<< HEAD
+                                "input_data":
+                                TensorConfig(
+                                    data_gen=partial(generate_input, shape)),
+=======
                                 "input_data": TensorConfig(
                                     data_gen=partial(
                                         generate_input, shape, op_type
                                     )
                                 ),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                             },
                             outputs=["output_data"],
                         )
@@ -804,8 +1111,13 @@ class TrtConvertElementwiseTest_one_input_corner_case(TrtLayerAutoScanTest):
                         yield program_config
 
     def sample_predictor_configs(
+<<<<<<< HEAD
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def generate_dynamic_shape(attrs):
             # The input.dims[1] must be equal to the weight's length.
             if self.dims == 1:
@@ -845,16 +1157,28 @@ class TrtConvertElementwiseTest_one_input_corner_case(TrtLayerAutoScanTest):
         # for static_shape
         clear_dynamic_shape()
         self.trt_param.precision = paddle_infer.PrecisionType.Float32
+<<<<<<< HEAD
+        yield self.create_inference_config(), (0, 3), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), (0, 3), 1e-5
+=======
         yield self.create_inference_config(), (0, 3), (1e-5, 1e-5)
         self.trt_param.precision = paddle_infer.PrecisionType.Half
         yield self.create_inference_config(), (0, 3), (1e-3, 1e-3)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         # for dynamic_shape
         generate_dynamic_shape(attrs)
         self.trt_param.precision = paddle_infer.PrecisionType.Float32
+<<<<<<< HEAD
+        yield self.create_inference_config(), (1, 2), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), (1, 2), 1e-5
+=======
         yield self.create_inference_config(), (1, 2), (1e-5, 1e-5)
         self.trt_param.precision = paddle_infer.PrecisionType.Half
         yield self.create_inference_config(), (1, 2), (1e-3, 1e-3)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def add_skip_trt_case(self):
         pass

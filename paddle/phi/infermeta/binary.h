@@ -53,7 +53,11 @@ void BCELossInferMeta(const MetaTensor& input,
 
 void BincountInferMeta(const MetaTensor& x,
                        const MetaTensor& weights,
+<<<<<<< HEAD
+                       int minlength,
+=======
                        const Scalar& minlength,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                        MetaTensor* out);
 
 void BmmInferMeta(const MetaTensor& x, const MetaTensor& y, MetaTensor* out);
@@ -75,6 +79,10 @@ void CompareRawInferMeta(const MetaTensor& x,
                          const MetaTensor& y,
                          int axis,
                          MetaTensor* out);
+
+void ComplexInferMeta(const MetaTensor& x,
+                      const MetaTensor& y,
+                      MetaTensor* out);
 
 void ComplexInferMeta(const MetaTensor& x,
                       const MetaTensor& y,
@@ -177,7 +185,11 @@ void DotInferMeta(const MetaTensor& x, const MetaTensor& y, MetaTensor* out);
 
 void DropoutInferMeta(const MetaTensor& x,
                       const MetaTensor& seed_tensor,
+<<<<<<< HEAD
+                      float p,
+=======
                       const Scalar& p,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                       bool is_test,
                       const std::string& mode,
                       int seed,
@@ -187,7 +199,11 @@ void DropoutInferMeta(const MetaTensor& x,
 
 void DropoutNdInferMeta(const MetaTensor& x,
                         const MetaTensor& seed_tensor,
+<<<<<<< HEAD
+                        float p,
+=======
                         const Scalar& p,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         bool is_test,
                         const std::string& mode,
                         int seed,
@@ -208,6 +224,10 @@ void ElementwiseRawInferMeta(const MetaTensor& x_meta,
 void EmbeddingInferMeta(const MetaTensor& x,
                         const MetaTensor& weight,
                         int64_t padding_idx,
+<<<<<<< HEAD
+                        bool sparse,
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         MetaTensor* out);
 
 void ExpandAsInferMeta(const MetaTensor& x,
@@ -279,6 +299,8 @@ void LUUnpackInferMeta(const MetaTensor& x,
                        MetaTensor* l,
                        MetaTensor* u);
 
+<<<<<<< HEAD
+=======
 void MarginCrossEntropyInferMeta(const MetaTensor& logits,
                                  const MetaTensor& label,
                                  bool return_softmax,
@@ -293,6 +315,7 @@ void MarginCrossEntropyInferMeta(const MetaTensor& logits,
                                  MetaTensor* loss,
                                  MetaConfig config = MetaConfig());
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 void MaskedSelectInferMeta(const MetaTensor& x,
                            const MetaTensor& mask,
                            MetaTensor* out);
@@ -339,10 +362,13 @@ void PReluInferMeta(const MetaTensor& x,
                     MetaTensor* out,
                     MetaConfig config = MetaConfig());
 
+<<<<<<< HEAD
+=======
 void RepeatInterleaveWithTensorIndexInferMeta(const MetaTensor& x,
                                               const MetaTensor& repeats,
                                               int dim,
                                               MetaTensor* out);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 void PriorBoxInferMeta(const MetaTensor& input,
                        const MetaTensor& image,
                        const std::vector<float>& min_sizes,
@@ -424,6 +450,8 @@ void ValueCompareInferMeta(const MetaTensor& x,
 
 void SolveInferMeta(const MetaTensor& x, const MetaTensor& y, MetaTensor* out);
 
+<<<<<<< HEAD
+=======
 void UnpoolInferMeta(const MetaTensor& x,
                      const MetaTensor& indices,
                      const std::vector<int>& ksize,
@@ -444,4 +472,5 @@ void Unpool3dInferMeta(const MetaTensor& x,
                        MetaTensor* out,
                        MetaConfig config = MetaConfig());
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }  // namespace phi

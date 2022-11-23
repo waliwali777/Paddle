@@ -28,6 +28,7 @@ paddle.seed(2022)
     [('NotImplement', False, 0, constraint.Constraint())],
 )
 class TestVariable(unittest.TestCase):
+
     def setUp(self):
         self._var = variable.Variable(
             self.is_discrete, self.event_rank, self.constraint
@@ -43,14 +44,21 @@ class TestVariable(unittest.TestCase):
     (param.TEST_CASE_NAME, 'base', 'rank'), [('real_base', variable.real, 10)]
 )
 class TestIndependent(unittest.TestCase):
+
     def setUp(self):
         self._var = variable.Independent(self.base, self.rank)
 
+<<<<<<< HEAD
+    @param.param_func([
+        (paddle.rand([2, 3, 4]), ValueError),
+    ])
+=======
     @param.param_func(
         [
             (paddle.rand([2, 3, 4]), ValueError),
         ]
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def test_costraint(self, value, expect):
         with self.assertRaises(expect):
             self._var.constraint(value)
@@ -60,17 +68,24 @@ class TestIndependent(unittest.TestCase):
     (param.TEST_CASE_NAME, 'vars', 'axis'), [('real_base', [variable.real], 10)]
 )
 class TestStack(unittest.TestCase):
+
     def setUp(self):
         self._var = variable.Stack(self.vars, self.axis)
 
     def test_is_discrete(self):
         self.assertEqual(self._var.is_discrete, False)
 
+<<<<<<< HEAD
+    @param.param_func([
+        (paddle.rand([2, 3, 4]), ValueError),
+    ])
+=======
     @param.param_func(
         [
             (paddle.rand([2, 3, 4]), ValueError),
         ]
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def test_costraint(self, value, expect):
         with self.assertRaises(expect):
             self._var.constraint(value)

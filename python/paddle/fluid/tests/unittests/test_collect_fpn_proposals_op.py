@@ -18,13 +18,20 @@ from op_test import OpTest
 
 
 class TestCollectFPNProposalstOp(OpTest):
+
     def set_data(self):
         self.init_test_case()
         self.make_rois()
+<<<<<<< HEAD
+        self.scores_input = [('y%d' % i, (self.scores[i].reshape(-1, 1),
+                                          self.rois_lod[i]))
+                             for i in range(self.num_level)]
+=======
         self.scores_input = [
             ('y%d' % i, (self.scores[i].reshape(-1, 1), self.rois_lod[i]))
             for i in range(self.num_level)
         ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.rois, self.lod = self.calc_rois_collect()
         inputs_x = [
             ('x%d' % i, (self.roi_inputs[i][:, 1:], self.rois_lod[i]))
@@ -38,6 +45,12 @@ class TestCollectFPNProposalstOp(OpTest):
         self.attrs = {
             'post_nms_topN': self.post_nms_top_n,
         }
+<<<<<<< HEAD
+        self.attrs = {
+            'post_nms_topN': self.post_nms_top_n,
+        }
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.outputs = {
             'FpnRois': (self.rois, [self.lod]),
             'RoisNum': np.array(self.lod).astype('int32'),
@@ -102,9 +115,21 @@ class TestCollectFPNProposalstOp(OpTest):
 
 
 class TestCollectFPNProposalstOpWithRoisNum(TestCollectFPNProposalstOp):
+
     def set_data(self):
         self.init_test_case()
         self.make_rois()
+<<<<<<< HEAD
+        self.scores_input = [('y%d' % i, (self.scores[i].reshape(-1, 1),
+                                          self.rois_lod[i]))
+                             for i in range(self.num_level)]
+        self.rois, self.lod = self.calc_rois_collect()
+        inputs_x = [('x%d' % i, (self.roi_inputs[i][:, 1:], self.rois_lod[i]))
+                    for i in range(self.num_level)]
+        rois_num_per_level = [('rois%d' % i,
+                               np.array(self.rois_lod[i][0]).astype('int32'))
+                              for i in range(self.num_level)]
+=======
         self.scores_input = [
             ('y%d' % i, (self.scores[i].reshape(-1, 1), self.rois_lod[i]))
             for i in range(self.num_level)
@@ -118,6 +143,7 @@ class TestCollectFPNProposalstOpWithRoisNum(TestCollectFPNProposalstOp):
             ('rois%d' % i, np.array(self.rois_lod[i][0]).astype('int32'))
             for i in range(self.num_level)
         ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.inputs = {
             'MultiLevelRois': inputs_x,
@@ -127,6 +153,12 @@ class TestCollectFPNProposalstOpWithRoisNum(TestCollectFPNProposalstOp):
         self.attrs = {
             'post_nms_topN': self.post_nms_top_n,
         }
+<<<<<<< HEAD
+        self.attrs = {
+            'post_nms_topN': self.post_nms_top_n,
+        }
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.outputs = {
             'FpnRois': (self.rois, [self.lod]),
             'RoisNum': np.array(self.lod).astype('int32'),

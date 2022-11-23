@@ -156,6 +156,27 @@ def graph_sample_neighbors(
     out_neighbors = helper.create_variable_for_type_inference(dtype=row.dtype)
     out_count = helper.create_variable_for_type_inference(dtype=row.dtype)
     out_eids = helper.create_variable_for_type_inference(dtype=row.dtype)
+<<<<<<< HEAD
+    helper.append_op(type="graph_sample_neighbors",
+                     inputs={
+                         "Row": row,
+                         "Col_Ptr": colptr,
+                         "X": input_nodes,
+                         "Eids": eids if return_eids else None,
+                         "Perm_Buffer":
+                         perm_buffer if flag_perm_buffer else None
+                     },
+                     outputs={
+                         "Out": out_neighbors,
+                         "Out_Count": out_count,
+                         "Out_Eids": out_eids
+                     },
+                     attrs={
+                         "sample_size": sample_size,
+                         "return_eids": return_eids,
+                         "flag_perm_buffer": flag_perm_buffer
+                     })
+=======
     helper.append_op(
         type="graph_sample_neighbors",
         inputs={
@@ -176,6 +197,7 @@ def graph_sample_neighbors(
             "flag_perm_buffer": flag_perm_buffer,
         },
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     if return_eids:
         return out_neighbors, out_count, out_eids
     return out_neighbors, out_count

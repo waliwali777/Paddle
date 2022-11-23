@@ -241,9 +241,15 @@ class DetectionMAPOpKernel : public framework::OpKernel<T> {
       const std::map<int, int>& label_pos_count,
       const std::map<int, std::vector<std::pair<T, int>>>& true_pos,
       const std::map<int, std::vector<std::pair<T, int>>>& false_pos,
+<<<<<<< HEAD
+      framework::Tensor* output_pos_count,
+      framework::LoDTensor* output_true_pos,
+      framework::LoDTensor* output_false_pos,
+=======
       phi::DenseTensor* output_pos_count,
       phi::DenseTensor* output_true_pos,
       phi::DenseTensor* output_false_pos,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       const int class_num) const {
     int true_pos_count = 0;
     int false_pos_count = 0;

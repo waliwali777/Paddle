@@ -26,7 +26,10 @@ from paddle.fluid.dygraph import (
 from paddle.fluid.dygraph.jit import dygraph_to_static_func
 from paddle.fluid.layers.utils import map_structure
 import paddle
+<<<<<<< HEAD
+=======
 import paddle.nn.functional as F
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 def position_encoding_init(n_position, d_pos_vec):
@@ -36,6 +39,14 @@ def position_encoding_init(n_position, d_pos_vec):
     channels = d_pos_vec
     position = np.arange(n_position)
     num_timescales = channels // 2
+<<<<<<< HEAD
+    log_timescale_increment = (np.log(float(1e4) / float(1)) /
+                               (num_timescales - 1))
+    inv_timescales = np.exp(
+        np.arange(num_timescales)) * -log_timescale_increment
+    scaled_time = np.expand_dims(position, 1) * np.expand_dims(
+        inv_timescales, 0)
+=======
     log_timescale_increment = np.log(float(1e4) / float(1)) / (
         num_timescales - 1
     )
@@ -45,6 +56,7 @@ def position_encoding_init(n_position, d_pos_vec):
     scaled_time = np.expand_dims(position, 1) * np.expand_dims(
         inv_timescales, 0
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     signal = np.concatenate([np.sin(scaled_time), np.cos(scaled_time)], axis=1)
     signal = np.pad(signal, [[0, 0], [0, np.mod(channels, 2)]], 'constant')
     position_enc = signal
@@ -52,6 +64,7 @@ def position_encoding_init(n_position, d_pos_vec):
 
 
 class PrePostProcessLayer(Layer):
+
     def __init__(self, process_cmd, d_model, dropout_rate):
         super().__init__()
         self.process_cmd = process_cmd
@@ -62,8 +75,13 @@ class PrePostProcessLayer(Layer):
             elif cmd == "n":  # add layer normalization
                 self.functors.append(
                     self.add_sublayer(
+<<<<<<< HEAD
+                        "layer_norm_%d" %
+                        len([layer for layer in self.children()]),
+=======
                         "layer_norm_%d"
                         % len([layer for layer in self.children()]),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                         LayerNorm(
                             normalized_shape=d_model,
                             param_attr=fluid.ParamAttr(
@@ -78,8 +96,12 @@ class PrePostProcessLayer(Layer):
             elif cmd == "d":  # add dropout
                 if dropout_rate:
                     self.functors.append(
+<<<<<<< HEAD
+                        lambda x: layers.dropout(x, dropout_prob=dropout_rate))
+=======
                         lambda x: layers.dropout(x, dropout_prob=dropout_rate)
                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def forward(self, x, residual=None):
         for i, cmd in enumerate(self.process_cmd):
@@ -91,6 +113,17 @@ class PrePostProcessLayer(Layer):
 
 
 class MultiHeadAttention(Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 d_key,
+                 d_value,
+                 d_model,
+                 n_head=1,
+                 dropout_rate=0.,
+                 param_initializer=None):
+        super(MultiHeadAttention, self).__init__()
+=======
     def __init__(
         self,
         d_key,
@@ -101,6 +134,7 @@ class MultiHeadAttention(Layer):
         param_initializer=None,
     ):
         super().__init__()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.n_head = n_head
         self.d_key = d_key
         self.d_value = d_value
@@ -153,9 +187,16 @@ class MultiHeadAttention(Layer):
             v = layers.concat([cache_v, v], axis=2)
             cache["k"], cache["v"] = k, v
         # scale dot product attention
+<<<<<<< HEAD
+        product = layers.matmul(x=q,
+                                y=k,
+                                transpose_y=True,
+                                alpha=self.d_model**-0.5)
+=======
         product = layers.matmul(
             x=q, y=k, transpose_y=True, alpha=self.d_model**-0.5
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         if attn_bias is not None:
             product += attn_bias
         weights = layers.softmax(product)
@@ -171,6 +212,7 @@ class MultiHeadAttention(Layer):
 
 
 class FFN(Layer):
+
     def __init__(self, d_inner_hid, d_model, dropout_rate):
         super().__init__()
         self.dropout_rate = dropout_rate
@@ -186,6 +228,32 @@ class FFN(Layer):
 
 
 class EncoderLayer(Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 n_head,
+                 d_key,
+                 d_value,
+                 d_model,
+                 d_inner_hid,
+                 prepostprocess_dropout,
+                 attention_dropout,
+                 relu_dropout,
+                 preprocess_cmd="n",
+                 postprocess_cmd="da"):
+
+        super(EncoderLayer, self).__init__()
+
+        self.preprocesser1 = PrePostProcessLayer(preprocess_cmd, d_model,
+                                                 prepostprocess_dropout)
+        self.self_attn = MultiHeadAttention(d_key, d_value, d_model, n_head,
+                                            attention_dropout)
+        self.postprocesser1 = PrePostProcessLayer(postprocess_cmd, d_model,
+                                                  prepostprocess_dropout)
+
+        self.preprocesser2 = PrePostProcessLayer(preprocess_cmd, d_model,
+                                                 prepostprocess_dropout)
+=======
     def __init__(
         self,
         n_head,
@@ -215,15 +283,21 @@ class EncoderLayer(Layer):
         self.preprocesser2 = PrePostProcessLayer(
             preprocess_cmd, d_model, prepostprocess_dropout
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.ffn = FFN(d_inner_hid, d_model, relu_dropout)
         self.postprocesser2 = PrePostProcessLayer(
             postprocess_cmd, d_model, prepostprocess_dropout
         )
 
     def forward(self, enc_input, attn_bias):
+<<<<<<< HEAD
+        attn_output = self.self_attn(self.preprocesser1(enc_input), None, None,
+                                     attn_bias)
+=======
         attn_output = self.self_attn(
             self.preprocesser1(enc_input), None, None, attn_bias
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         attn_output = self.postprocesser1(attn_output, enc_input)
         ffn_output = self.ffn(self.preprocesser2(attn_output))
         ffn_output = self.postprocesser2(ffn_output, attn_output)
@@ -231,6 +305,23 @@ class EncoderLayer(Layer):
 
 
 class Encoder(Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 n_layer,
+                 n_head,
+                 d_key,
+                 d_value,
+                 d_model,
+                 d_inner_hid,
+                 prepostprocess_dropout,
+                 attention_dropout,
+                 relu_dropout,
+                 preprocess_cmd="n",
+                 postprocess_cmd="da"):
+
+        super(Encoder, self).__init__()
+=======
     def __init__(
         self,
         n_layer,
@@ -247,6 +338,7 @@ class Encoder(Layer):
     ):
 
         super().__init__()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.encoder_layers = list()
         for i in range(n_layer):
@@ -280,6 +372,7 @@ class Encoder(Layer):
 
 
 class Embedder(Layer):
+
     def __init__(self, vocab_size, emb_dim, bos_idx=0):
         super().__init__()
         self.word_embedder = Embedding(
@@ -296,6 +389,14 @@ class Embedder(Layer):
 
 
 class WrapEncoder(Layer):
+<<<<<<< HEAD
+
+    def __init__(self, src_vocab_size, max_length, n_layer, n_head, d_key,
+                 d_value, d_model, d_inner_hid, prepostprocess_dropout,
+                 attention_dropout, relu_dropout, preprocess_cmd,
+                 postprocess_cmd, word_embedder):
+        super(WrapEncoder, self).__init__()
+=======
     def __init__(
         self,
         src_vocab_size,
@@ -314,6 +415,7 @@ class WrapEncoder(Layer):
         word_embedder,
     ):
         super().__init__()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.emb_dropout = prepostprocess_dropout
         self.emb_dim = d_model
         self.word_embedder = word_embedder
@@ -346,6 +448,12 @@ class WrapEncoder(Layer):
         pos_enc = self.pos_encoder(src_pos)
         pos_enc.stop_gradient = True
         emb = word_emb + pos_enc
+<<<<<<< HEAD
+        enc_input = layers.dropout(
+            emb,
+            dropout_prob=self.emb_dropout,
+        ) if self.emb_dropout else emb
+=======
         enc_input = (
             layers.dropout(
                 emb,
@@ -354,11 +462,42 @@ class WrapEncoder(Layer):
             if self.emb_dropout
             else emb
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         enc_output = self.encoder(enc_input, src_slf_attn_bias)
         return enc_output
 
 
 class DecoderLayer(Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 n_head,
+                 d_key,
+                 d_value,
+                 d_model,
+                 d_inner_hid,
+                 prepostprocess_dropout,
+                 attention_dropout,
+                 relu_dropout,
+                 preprocess_cmd="n",
+                 postprocess_cmd="da"):
+        super(DecoderLayer, self).__init__()
+
+        self.preprocesser1 = PrePostProcessLayer(preprocess_cmd, d_model,
+                                                 prepostprocess_dropout)
+        self.self_attn = MultiHeadAttention(d_key, d_value, d_model, n_head,
+                                            attention_dropout)
+        self.postprocesser1 = PrePostProcessLayer(postprocess_cmd, d_model,
+                                                  prepostprocess_dropout)
+        self.preprocesser2 = PrePostProcessLayer(preprocess_cmd, d_model,
+                                                 prepostprocess_dropout)
+        self.cross_attn = MultiHeadAttention(d_key, d_value, d_model, n_head,
+                                             attention_dropout)
+        self.postprocesser2 = PrePostProcessLayer(postprocess_cmd, d_model,
+                                                  prepostprocess_dropout)
+        self.preprocesser3 = PrePostProcessLayer(preprocess_cmd, d_model,
+                                                 prepostprocess_dropout)
+=======
     def __init__(
         self,
         n_head,
@@ -395,17 +534,29 @@ class DecoderLayer(Layer):
         self.preprocesser3 = PrePostProcessLayer(
             preprocess_cmd, d_model, prepostprocess_dropout
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.ffn = FFN(d_inner_hid, d_model, relu_dropout)
         self.postprocesser3 = PrePostProcessLayer(
             postprocess_cmd, d_model, prepostprocess_dropout
         )
 
+<<<<<<< HEAD
+    def forward(self,
+                dec_input,
+                enc_output,
+                self_attn_bias,
+                cross_attn_bias,
+                cache=None):
+        self_attn_output = self.self_attn(self.preprocesser1(dec_input), None,
+                                          None, self_attn_bias, cache)
+=======
     def forward(
         self, dec_input, enc_output, self_attn_bias, cross_attn_bias, cache=None
     ):
         self_attn_output = self.self_attn(
             self.preprocesser1(dec_input), None, None, self_attn_bias, cache
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self_attn_output = self.postprocesser1(self_attn_output, dec_input)
         cross_attn_output = self.cross_attn(
             self.preprocesser2(self_attn_output),
@@ -422,6 +573,13 @@ class DecoderLayer(Layer):
 
 
 class Decoder(Layer):
+<<<<<<< HEAD
+
+    def __init__(self, n_layer, n_head, d_key, d_value, d_model, d_inner_hid,
+                 prepostprocess_dropout, attention_dropout, relu_dropout,
+                 preprocess_cmd, postprocess_cmd):
+        super(Decoder, self).__init__()
+=======
     def __init__(
         self,
         n_layer,
@@ -437,6 +595,7 @@ class Decoder(Layer):
         postprocess_cmd,
     ):
         super().__init__()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.decoder_layers = list()
         for i in range(n_layer):
@@ -475,13 +634,29 @@ class Decoder(Layer):
                 enc_output,
                 self_attn_bias,
                 cross_attn_bias,
+<<<<<<< HEAD
+                caches=None):
+        for i, decoder_layer in enumerate(self.decoder_layers):
+            dec_output = decoder_layer(dec_input, enc_output, self_attn_bias,
+                                       cross_attn_bias,
+                                       None if caches is None else caches[i])
+=======
                 None if caches is None else caches[i],
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             dec_input = dec_output
         return self.processer(dec_output)
 
 
 class WrapDecoder(Layer):
+<<<<<<< HEAD
+
+    def __init__(self, trg_vocab_size, max_length, n_layer, n_head, d_key,
+                 d_value, d_model, d_inner_hid, prepostprocess_dropout,
+                 attention_dropout, relu_dropout, preprocess_cmd,
+                 postprocess_cmd, share_input_output_embed, word_embedder):
+        super(WrapDecoder, self).__init__()
+=======
     def __init__(
         self,
         trg_vocab_size,
@@ -501,6 +676,7 @@ class WrapDecoder(Layer):
         word_embedder,
     ):
         super().__init__()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.emb_dropout = prepostprocess_dropout
         self.emb_dim = d_model
@@ -532,9 +708,15 @@ class WrapDecoder(Layer):
                 x=x, y=self.word_embedder.word_embedder.weight, transpose_y=True
             )
         else:
+<<<<<<< HEAD
+            self.linear = Linear(input_dim=d_model,
+                                 output_dim=trg_vocab_size,
+                                 bias_attr=False)
+=======
             self.linear = Linear(
                 input_dim=d_model, output_dim=trg_vocab_size, bias_attr=False
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def forward(
         self,
@@ -550,6 +732,15 @@ class WrapDecoder(Layer):
         pos_enc = self.pos_encoder(trg_pos)
         pos_enc.stop_gradient = True
         emb = word_emb + pos_enc
+<<<<<<< HEAD
+        dec_input = layers.dropout(
+            emb,
+            dropout_prob=self.emb_dropout,
+        ) if self.emb_dropout else emb
+        dec_output = self.decoder(dec_input, enc_output, trg_slf_attn_bias,
+                                  trg_src_attn_bias, caches)
+        dec_output = layers.reshape(
+=======
         dec_input = (
             layers.dropout(
                 emb,
@@ -562,6 +753,7 @@ class WrapDecoder(Layer):
             dec_input, enc_output, trg_slf_attn_bias, trg_src_attn_bias, caches
         )
         dec_output = paddle.reshape(
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             dec_output,
             shape=[-1, dec_output.shape[-1]],
         )
@@ -569,16 +761,27 @@ class WrapDecoder(Layer):
         return logits
 
 
+<<<<<<< HEAD
+class CrossEntropyCriterion(object):
+
+=======
 class CrossEntropyCriterion:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, label_smooth_eps):
         self.label_smooth_eps = label_smooth_eps
 
     def __call__(self, predict, label, weights):
         if self.label_smooth_eps:
+<<<<<<< HEAD
+            label_out = layers.label_smooth(label=layers.one_hot(
+                input=label, depth=predict.shape[-1]),
+                                            epsilon=self.label_smooth_eps)
+=======
             label_out = F.label_smooth(
                 label=layers.one_hot(input=label, depth=predict.shape[-1]),
                 epsilon=self.label_smooth_eps,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         cost = layers.softmax_with_cross_entropy(
             logits=predict,
@@ -594,6 +797,36 @@ class CrossEntropyCriterion:
 
 
 class Transformer(Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 src_vocab_size,
+                 trg_vocab_size,
+                 max_length,
+                 n_layer,
+                 n_head,
+                 d_key,
+                 d_value,
+                 d_model,
+                 d_inner_hid,
+                 prepostprocess_dropout,
+                 attention_dropout,
+                 relu_dropout,
+                 preprocess_cmd,
+                 postprocess_cmd,
+                 weight_sharing,
+                 bos_id=0,
+                 eos_id=1):
+        super(Transformer, self).__init__()
+        src_word_embedder = Embedder(vocab_size=src_vocab_size,
+                                     emb_dim=d_model,
+                                     bos_idx=bos_id)
+        self.encoder = WrapEncoder(src_vocab_size, max_length, n_layer, n_head,
+                                   d_key, d_value, d_model, d_inner_hid,
+                                   prepostprocess_dropout, attention_dropout,
+                                   relu_dropout, preprocess_cmd,
+                                   postprocess_cmd, src_word_embedder)
+=======
     def __init__(
         self,
         src_vocab_size,
@@ -634,12 +867,24 @@ class Transformer(Layer):
             postprocess_cmd,
             src_word_embedder,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         if weight_sharing:
             assert (
                 src_vocab_size == trg_vocab_size
             ), "Vocabularies in source and target should be same for weight sharing."
             trg_word_embedder = src_word_embedder
         else:
+<<<<<<< HEAD
+            trg_word_embedder = Embedder(vocab_size=trg_vocab_size,
+                                         emb_dim=d_model,
+                                         bos_idx=bos_id)
+        self.decoder = WrapDecoder(trg_vocab_size, max_length, n_layer, n_head,
+                                   d_key, d_value, d_model, d_inner_hid,
+                                   prepostprocess_dropout, attention_dropout,
+                                   relu_dropout, preprocess_cmd,
+                                   postprocess_cmd, weight_sharing,
+                                   trg_word_embedder)
+=======
             trg_word_embedder = Embedder(
                 vocab_size=trg_vocab_size, emb_dim=d_model, bos_idx=bos_id
             )
@@ -660,6 +905,7 @@ class Transformer(Layer):
             weight_sharing,
             trg_word_embedder,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.trg_vocab_size = trg_vocab_size
         self.n_layer = n_layer
@@ -685,6 +931,22 @@ class Transformer(Layer):
         return predict
 
     @dygraph_to_static_func
+<<<<<<< HEAD
+    def beam_search(self,
+                    src_word,
+                    src_pos,
+                    src_slf_attn_bias,
+                    trg_word,
+                    trg_src_attn_bias,
+                    bos_id=0,
+                    eos_id=1,
+                    beam_size=4,
+                    max_len=256):
+
+        def expand_to_beam_size(tensor, beam_size):
+            tensor = layers.reshape(tensor, [tensor.shape[0], 1] +
+                                    list(tensor.shape[1:]))
+=======
     def beam_search(
         self,
         src_word,
@@ -701,6 +963,7 @@ class Transformer(Layer):
             tensor = paddle.reshape(
                 tensor, [tensor.shape[0], 1] + list(tensor.shape[1:])
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             tile_dims = [1] * len(tensor.shape)
             tile_dims[1] = beam_size
             return layers.expand(tensor, tile_dims)
@@ -713,12 +976,19 @@ class Transformer(Layer):
                 + list(range(0, var_dim_in_state)),
             )
 
+<<<<<<< HEAD
+            tensor = layers.reshape(tensor, [0] *
+                                    (len(tensor.shape) - var_dim_in_state) +
+                                    [batch_size * beam_size])
+            res = layers.transpose(
+=======
             tensor = paddle.reshape(
                 tensor,
                 [0] * (len(tensor.shape) - var_dim_in_state)
                 + [batch_size * beam_size],
             )
             res = paddle.transpose(
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 tensor,
                 list(
                     range(
@@ -734,6 +1004,14 @@ class Transformer(Layer):
             var_dim_in_state = 1
             tensor = paddle.transpose(
                 tensor,
+<<<<<<< HEAD
+                list(range(var_dim_in_state, len(tensor.shape))) +
+                list(range(0, var_dim_in_state)))
+            tensor = layers.reshape(tensor, [0] *
+                                    (len(tensor.shape) - var_dim_in_state) +
+                                    [batch_size, beam_size])
+            res = layers.transpose(
+=======
                 list(range(var_dim_in_state, len(tensor.shape)))
                 + list(range(0, var_dim_in_state)),
             )
@@ -743,6 +1021,7 @@ class Transformer(Layer):
                 + [batch_size, beam_size],
             )
             res = paddle.transpose(
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                 tensor,
                 list(
                     range(
@@ -756,6 +1035,13 @@ class Transformer(Layer):
 
         def mask_probs(probs, finished, noend_mask_tensor):
             finished = layers.cast(finished, dtype=probs.dtype)
+<<<<<<< HEAD
+            probs = layers.elementwise_mul(layers.expand(
+                layers.unsqueeze(finished, [2]), [1, 1, self.trg_vocab_size]),
+                                           noend_mask_tensor,
+                                           axis=-1) - layers.elementwise_mul(
+                                               probs, (finished - 1), axis=0)
+=======
             probs = layers.elementwise_mul(
                 layers.expand(
                     layers.unsqueeze(finished, [2]), [1, 1, self.trg_vocab_size]
@@ -763,6 +1049,7 @@ class Transformer(Layer):
                 noend_mask_tensor,
                 axis=-1,
             ) - layers.elementwise_mul(probs, (finished - 1), axis=0)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             return probs
 
         def gather(input, indices, batch_pos):
@@ -776,25 +1063,49 @@ class Transformer(Layer):
         # constant number
         inf = float(1.0 * 1e7)
         max_len = (enc_output.shape[1] + 20) if max_len is None else max_len
+<<<<<<< HEAD
+        vocab_size_tensor = layers.fill_constant(shape=[1],
+                                                 dtype="int64",
+                                                 value=self.trg_vocab_size)
+        end_token_tensor = to_variable(
+            np.full([batch_size, beam_size], eos_id, dtype="int64"))
+=======
         vocab_size_tensor = layers.fill_constant(
             shape=[1], dtype="int64", value=self.trg_vocab_size
         )
         end_token_tensor = to_variable(
             np.full([batch_size, beam_size], eos_id, dtype="int64")
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         noend_array = [-inf] * self.trg_vocab_size
         noend_array[eos_id] = 0
         noend_mask_tensor = to_variable(np.array(noend_array, dtype="float32"))
         batch_pos = layers.expand(
             layers.unsqueeze(
+<<<<<<< HEAD
+                to_variable(np.arange(0, batch_size, 1, dtype="int64")), [1]),
+            [1, beam_size])
+=======
                 to_variable(np.arange(0, batch_size, 1, dtype="int64")), [1]
             ),
             [1, beam_size],
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         predict_ids = []
         parent_ids = []
         # initialize states of beam search
         log_probs = to_variable(
+<<<<<<< HEAD
+            np.array([[0.] + [-inf] * (beam_size - 1)] * batch_size,
+                     dtype="float32"))
+
+        finished = to_variable(np.full([batch_size, beam_size], 0,
+                                       dtype="bool"))
+
+        trg_word = layers.fill_constant(shape=[batch_size * beam_size, 1],
+                                        dtype="int64",
+                                        value=bos_id)
+=======
             np.array(
                 [[0.0] + [-inf] * (beam_size - 1)] * batch_size, dtype="float32"
             )
@@ -807,6 +1118,7 @@ class Transformer(Layer):
         trg_word = layers.fill_constant(
             shape=[batch_size * beam_size, 1], dtype="int64", value=bos_id
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         trg_src_attn_bias = merge_batch_beams(
             expand_to_beam_size(trg_src_attn_bias, beam_size)
@@ -816,6 +1128,29 @@ class Transformer(Layer):
         )
 
         # init states (caches) for transformer, need to be updated according to selected beam
+<<<<<<< HEAD
+        caches = [{
+            "k":
+            layers.fill_constant(
+                shape=[batch_size, beam_size, self.n_head, 0, self.d_key],
+                dtype=enc_output.dtype,
+                value=0),
+            "v":
+            layers.fill_constant(
+                shape=[batch_size, beam_size, self.n_head, 0, self.d_value],
+                dtype=enc_output.dtype,
+                value=0),
+        } for i in range(self.n_layer)]
+
+        for i in range(paddle.to_tensor(max_len)):
+            trg_pos = layers.fill_constant(shape=trg_word.shape,
+                                           dtype="int64",
+                                           value=i)
+            caches = map_structure(merge_batch_beams,
+                                   caches)  # TODO: modified for dygraph2static
+            logits = self.decoder(trg_word, trg_pos, None, trg_src_attn_bias,
+                                  enc_output, caches)
+=======
         caches = [
             {
                 "k": layers.fill_constant(
@@ -842,11 +1177,28 @@ class Transformer(Layer):
             logits = self.decoder(
                 trg_word, trg_pos, None, trg_src_attn_bias, enc_output, caches
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             caches = map_structure(split_batch_beams, caches)
             step_log_probs = split_batch_beams(
                 fluid.layers.log(fluid.layers.softmax(logits))
             )
 
+<<<<<<< HEAD
+            step_log_probs = mask_probs(step_log_probs, finished,
+                                        noend_mask_tensor)
+            log_probs = layers.elementwise_add(x=step_log_probs,
+                                               y=log_probs,
+                                               axis=0)
+            log_probs = layers.reshape(log_probs,
+                                       [-1, beam_size * self.trg_vocab_size])
+            scores = log_probs
+            topk_scores, topk_indices = fluid.layers.topk(input=scores,
+                                                          k=beam_size)
+            beam_indices = fluid.layers.elementwise_floordiv(
+                topk_indices, vocab_size_tensor)
+            token_indices = fluid.layers.elementwise_mod(
+                topk_indices, vocab_size_tensor)
+=======
             step_log_probs = mask_probs(
                 step_log_probs, finished, noend_mask_tensor
             )
@@ -862,6 +1214,7 @@ class Transformer(Layer):
             )
             beam_indices = paddle.floor_divide(topk_indices, vocab_size_tensor)
             token_indices = paddle.remainder(topk_indices, vocab_size_tensor)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             # update states
             caches = map_structure(

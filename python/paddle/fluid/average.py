@@ -28,11 +28,16 @@ __all__ = ["WeightedAverage"]
 
 
 def _is_number_(var):
+<<<<<<< HEAD
+    return isinstance(var, int) or isinstance(
+        var, float) or (isinstance(var, np.ndarray) and var.shape == (1, ))
+=======
     return (
         isinstance(var, int)
         or isinstance(var, float)
         or (isinstance(var, np.ndarray) and var.shape == (1,))
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 def _is_number_or_matrix_(var):

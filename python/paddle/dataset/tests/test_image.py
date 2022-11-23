@@ -27,9 +27,12 @@ __all__ = []
 
 
 class Image(unittest.TestCase):
+<<<<<<< HEAD
+=======
     """
     This function is test image resize,flip and chw.
     """
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_resize_flip_chw(self):
         """resize"""

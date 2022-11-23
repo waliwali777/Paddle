@@ -15,16 +15,36 @@
 #include "paddle/fluid/jit/layer.h"
 
 #include "paddle/fluid/framework/variable.h"
+<<<<<<< HEAD
+
+#include "paddle/fluid/jit/base_function.h"
+#include "paddle/fluid/jit/compilation_unit.h"
+=======
 #include "paddle/phi/core/enforce.h"
 #include "paddle/phi/core/errors.h"
 
 #include "paddle/fluid/jit/compilation_unit.h"
 #include "paddle/fluid/jit/engine/base_engine.h"
 #include "paddle/fluid/jit/function.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/fluid/jit/function_schema.h"
 
 namespace paddle {
 namespace jit {
+<<<<<<< HEAD
+Layer::Layer(const Name2VariableMap& params_dict, const phi::Place& place)
+    : params_dict_(params_dict) {
+  unit_.reset(new CompilationUnit());
+}
+
+std::shared_ptr<BaseFunction> Layer::Function(const std::string& name) const {
+  return unit_->Function(name);
+}
+
+std::vector<Tensor> Layer::forward(const std::vector<Tensor>& inputs) {
+  auto func = Function("forward");
+  return (*func)(inputs);
+=======
 
 Layer::Layer(const VariableMap& params_map,
              const VariableMap& attrs_map,
@@ -41,16 +61,37 @@ jit::Function Layer::Function(const std::string& name) const {
 std::vector<Tensor> Layer::forward(const std::vector<Tensor>& inputs) {
   auto func = this->Function("forward");
   return func(inputs);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 std::vector<DenseTensor> Layer::forward(
     const std::vector<DenseTensor>& inputs) {
+<<<<<<< HEAD
+  auto func = Function("forward");
+  return (*func)(inputs);
+=======
   auto func = this->Function("forward");
   return func(inputs);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 void Layer::to(const phi::Place& place) {}
 
+<<<<<<< HEAD
+void Layer::SetFunction(const std::string& name,
+                        const std::shared_ptr<BaseFunction>& function) {
+  unit_->SetFunction(name, function);
+}
+
+std::vector<std::string> Layer::FunctionNames() const {
+  return unit_->FunctionNames();
+}
+
+const Name2FunctionMap& Layer::FunctionMap() const {
+  return unit_->FunctionMap();
+}
+
+=======
 void Layer::SetEngine(const std::string& name,
                       const std::shared_ptr<BaseEngine>& engine) {
   unit_->SetEngine(name, engine);
@@ -94,5 +135,6 @@ PD_SPECIALZE_ATTRIBUTE_TYPE(std::vector<int>)
 PD_SPECIALZE_ATTRIBUTE_TYPE(std::vector<float>)
 PD_SPECIALZE_ATTRIBUTE_TYPE(std::vector<std::string>)
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }  // namespace jit
 }  // namespace paddle

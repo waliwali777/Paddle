@@ -27,37 +27,61 @@ TEST(DataTypeTransform, GPUTransform) {
   auto kernel_fp16 =
       paddle::framework::OpKernelType(paddle::framework::proto::VarType::FP16,
                                       gpu_place,
+<<<<<<< HEAD
+                                      paddle::framework::DataLayout::kAnyLayout,
+=======
                                       phi::DataLayout::kAnyLayout,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                       paddle::framework::LibraryType::kPlain);
 
   auto kernel_fp32 =
       paddle::framework::OpKernelType(paddle::framework::proto::VarType::FP32,
                                       gpu_place,
+<<<<<<< HEAD
+                                      paddle::framework::DataLayout::kAnyLayout,
+=======
                                       phi::DataLayout::kAnyLayout,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                       paddle::framework::LibraryType::kPlain);
 
   auto kernel_fp64 =
       paddle::framework::OpKernelType(paddle::framework::proto::VarType::FP64,
                                       gpu_place,
+<<<<<<< HEAD
+                                      paddle::framework::DataLayout::kAnyLayout,
+=======
                                       phi::DataLayout::kAnyLayout,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                       paddle::framework::LibraryType::kPlain);
 
   auto kernel_int32 =
       paddle::framework::OpKernelType(paddle::framework::proto::VarType::INT32,
                                       gpu_place,
+<<<<<<< HEAD
+                                      paddle::framework::DataLayout::kAnyLayout,
+=======
                                       phi::DataLayout::kAnyLayout,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                       paddle::framework::LibraryType::kPlain);
 
   auto kernel_int64 =
       paddle::framework::OpKernelType(paddle::framework::proto::VarType::INT64,
                                       gpu_place,
+<<<<<<< HEAD
+                                      paddle::framework::DataLayout::kAnyLayout,
+=======
                                       phi::DataLayout::kAnyLayout,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                       paddle::framework::LibraryType::kPlain);
 
   auto kernel_bool =
       paddle::framework::OpKernelType(paddle::framework::proto::VarType::BOOL,
                                       gpu_place,
+<<<<<<< HEAD
+                                      paddle::framework::DataLayout::kAnyLayout,
+=======
                                       phi::DataLayout::kAnyLayout,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                       paddle::framework::LibraryType::kPlain);
 
   // data type transform from float32

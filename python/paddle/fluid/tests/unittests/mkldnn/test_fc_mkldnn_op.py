@@ -23,12 +23,14 @@ def fully_connected_naive(input, weights, bias_data):
 
 
 class MatrixGenerate:
+
     def __init__(self, mb, ic, oc, h, w):
         self.input = np.random.random((mb, ic * h * w)).astype("float32")
         self.weights = np.random.random((ic * h * w, oc)).astype("float32")
 
 
 class TestFCMKLDNNOp(OpTest):
+
     def create_data(self):
         self.matrix = MatrixGenerate(1, 10, 15, 3, 3)
         self.bias = np.random.random(15).astype("float32")
@@ -47,9 +49,15 @@ class TestFCMKLDNNOp(OpTest):
         self.attrs = {'use_mkldnn': self.use_mkldnn}
 
         self.outputs = {
+<<<<<<< HEAD
+            'Out':
+            fully_connected_naive(self.matrix.input, self.matrix.weights,
+                                  self.bias)
+=======
             'Out': fully_connected_naive(
                 self.matrix.input, self.matrix.weights, self.bias
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         }
 
     def test_check_output(self):
@@ -64,6 +72,7 @@ class TestFCMKLDNNOp(OpTest):
 
 
 class TestFCMKLDNNOp1(TestFCMKLDNNOp):
+
     def create_data(self):
         self.matrix = MatrixGenerate(2, 15, 48, 2, 2)
         self.bias = np.random.random(48).astype("float32")

@@ -21,6 +21,7 @@ from paddle.fluid.tests.unittests.ipu.op_test_ipu import IPUOpTest
 
 
 class TestBase(IPUOpTest):
+
     def setUp(self):
         self.set_atol()
         self.set_training()
@@ -42,9 +43,15 @@ class TestBase(IPUOpTest):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         x_fill = paddle.full_like(x, **self.attrs)
         out = paddle.fluid.layers.elementwise_add(x_fill, x_fill)
         self.fetch_list = [out.name]
@@ -61,11 +68,16 @@ class TestBase(IPUOpTest):
 
 
 class TestCase1(TestBase):
+
     def set_op_attrs(self):
         self.attrs = {'fill_value': 3, 'dtype': 'int32'}
 
 
 class TestError(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     @IPUOpTest.static_graph
     def build_model(self):
         x = paddle.fluid.data('x', [-1, 3, 13], 'float32')
@@ -79,9 +91,14 @@ class TestError(TestBase):
         def test_error():
             self.run_op_test(IPUOpTest.ExecutionMode.IPU_FP32)
 
+<<<<<<< HEAD
+        self.assertRaisesRegex(Exception, "Please check tensor shape setting",
+                               test_error)
+=======
         self.assertRaisesRegex(
             Exception, "Please check tensor shape setting", test_error
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

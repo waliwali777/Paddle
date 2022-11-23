@@ -47,6 +47,11 @@ PD_REGISTER_KERNEL(mean,
                    phi::dtype::float16) {}
 #endif
 
+<<<<<<< HEAD
+#if defined(PADDLE_WITH_XPU_KP)
+PD_REGISTER_KERNEL(mean, KPS, ALL_LAYOUT, phi::MeanKernel, float) {}
+#endif
+=======
 #if defined(PADDLE_WITH_XPU_KP) && !defined(PADDLE_WITH_XPU)
 PD_REGISTER_KERNEL(mean, KPS, ALL_LAYOUT, phi::MeanKernel, float) {}
 #endif
@@ -59,3 +64,4 @@ PD_REGISTER_KERNEL(
 #if defined(PADDLE_WITH_XPU)
 PD_REGISTER_KERNEL(mean, XPU, ALL_LAYOUT, phi::MeanKernel, float) {}
 #endif
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

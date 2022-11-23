@@ -37,6 +37,16 @@ class PutAlongAxisOp : public framework::OperatorWithKernel {
         OperatorWithKernel::IndicateVarDataType(ctx, "Input"),
         ctx.device_context());
   }
+<<<<<<< HEAD
+  framework::OpKernelType GetKernelTypeForVar(
+      const std::string& var_name,
+      const framework::Tensor& tensor,
+      const framework::OpKernelType& expected_kernel_type) const override {
+    return framework::OpKernelType(
+        expected_kernel_type.data_type_, tensor.place(), tensor.layout());
+  }
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 };
 
 class PutAlongAxisOpMaker : public framework::OpProtoAndCheckerMaker {
@@ -71,6 +81,16 @@ class PutAlongAxisGradOp : public framework::OperatorWithKernel {
                                        ctx, framework::GradVarName("Result")),
                                    ctx.device_context());
   }
+<<<<<<< HEAD
+  framework::OpKernelType GetKernelTypeForVar(
+      const std::string& var_name,
+      const framework::Tensor& tensor,
+      const framework::OpKernelType& expected_kernel_type) const override {
+    return framework::OpKernelType(
+        expected_kernel_type.data_type_, tensor.place(), tensor.layout());
+  }
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 };
 
 template <typename T>

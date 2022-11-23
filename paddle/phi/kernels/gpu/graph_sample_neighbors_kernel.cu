@@ -185,12 +185,19 @@ void SampleNeighbors(const Context& dev_ctx,
   constexpr int TILE_SIZE = BLOCK_CTAS;
   const dim3 block(CTA_SIZE, BLOCK_CTAS);
   const dim3 grid((bs + TILE_SIZE - 1) / TILE_SIZE);
+<<<<<<< HEAD
+  SampleKernel<T, WARP_SIZE, BLOCK_WARPS, TILE_SIZE>
+=======
   SampleKernel<T, CTA_SIZE, BLOCK_CTAS, TILE_SIZE>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       <<<grid, block, 0, dev_ctx.stream()>>>(
           0,
           sample_size,
           bs,
+<<<<<<< HEAD
+=======
           len_col_ptr,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
           thrust::raw_pointer_cast(input),
           row,
           col_ptr,
@@ -340,16 +347,27 @@ void FisherYatesSampleNeighbors(const Context& dev_ctx,
   const dim3 block(CTA_SIZE, BLOCK_CTAS);
   const dim3 grid((bs + TILE_SIZE - 1) / TILE_SIZE);
 
+<<<<<<< HEAD
+  FisherYatesSampleKernel<T, WARP_SIZE, BLOCK_WARPS, TILE_SIZE>
+      <<<grid, block, 0, dev_ctx.stream()>>>(0,
+                                             sample_size,
+                                             bs,
+=======
   FisherYatesSampleKernel<T, CTA_SIZE, BLOCK_CTAS, TILE_SIZE>
       <<<grid, block, 0, dev_ctx.stream()>>>(0,
                                              sample_size,
                                              bs,
                                              len_col_ptr,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                                              thrust::raw_pointer_cast(input),
                                              perm_data,
                                              col_ptr);
 
+<<<<<<< HEAD
+  GatherEdge<T, WARP_SIZE, BLOCK_WARPS, TILE_SIZE>
+=======
   GatherEdge<T, CTA_SIZE, BLOCK_CTAS, TILE_SIZE>
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       <<<grid, block, 0, dev_ctx.stream()>>>(
           sample_size,
           bs,

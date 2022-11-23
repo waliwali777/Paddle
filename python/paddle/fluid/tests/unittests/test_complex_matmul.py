@@ -21,6 +21,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class TestComplexMatMulLayer(unittest.TestCase):
+
     def setUp(self):
         self._dtypes = ["float32", "float64"]
         self._places = [fluid.CPUPlace()]
@@ -34,6 +35,13 @@ class TestComplexMatMulLayer(unittest.TestCase):
                 y_var = dg.to_variable(y)
                 result = paddle.matmul(x_var, y_var)
                 pd_result = result.numpy()
+<<<<<<< HEAD
+                self.assertTrue(
+                    np.allclose(pd_result, np_result),
+                    "\nplace: {}\npaddle diff result:\n {}\nnumpy diff result:\n {}\n"
+                    .format(place, pd_result[~np.isclose(pd_result, np_result)],
+                            np_result[~np.isclose(pd_result, np_result)]))
+=======
                 np.testing.assert_allclose(
                     pd_result,
                     np_result,
@@ -44,6 +52,7 @@ class TestComplexMatMulLayer(unittest.TestCase):
                         np_result[~np.isclose(pd_result, np_result)],
                     ),
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def compare_op_by_basic_api(self, x, y, np_result):
         for place in self._places:
@@ -52,6 +61,13 @@ class TestComplexMatMulLayer(unittest.TestCase):
                 y_var = dg.to_variable(y)
                 result = x_var.matmul(y_var)
                 pd_result = result.numpy()
+<<<<<<< HEAD
+                self.assertTrue(
+                    np.allclose(pd_result, np_result),
+                    "\nplace: {}\npaddle diff result:\n {}\nnumpy diff result:\n {}\n"
+                    .format(place, pd_result[~np.isclose(pd_result, np_result)],
+                            np_result[~np.isclose(pd_result, np_result)]))
+=======
                 np.testing.assert_allclose(
                     pd_result,
                     np_result,
@@ -62,6 +78,7 @@ class TestComplexMatMulLayer(unittest.TestCase):
                         np_result[~np.isclose(pd_result, np_result)],
                     ),
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test_complex_xy(self):
         for dtype in self._dtypes:

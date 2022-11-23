@@ -96,11 +96,18 @@ def conj_static(func, shape, dtype, np_input):
 
 
 class TestCustomConjJit(unittest.TestCase):
+
     def setUp(self):
         self.dtypes = ['float32', 'float64']
         self.shape = [2, 20, 2, 3]
 
     def check_output(self, out, pd_out, name):
+<<<<<<< HEAD
+        self.assertTrue(
+            np.array_equal(out, pd_out),
+            "custom op {}: {},\n paddle api {}: {}".format(
+                name, out, name, pd_out))
+=======
         np.testing.assert_array_equal(
             out,
             pd_out,
@@ -108,6 +115,7 @@ class TestCustomConjJit(unittest.TestCase):
                 name, out, name, pd_out
             ),
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def run_dynamic(self, dtype, np_input):
         out, x_grad = conj_dynamic(custom_ops.custom_conj, dtype, np_input)

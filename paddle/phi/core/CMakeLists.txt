@@ -11,6 +11,12 @@ cc_library(
   SRCS enforce.cc
   DEPS ${phi_enforce_deps})
 
+<<<<<<< HEAD
+cc_library(
+  kernel_factory
+  SRCS kernel_factory.cc
+  DEPS phi_enforce fluid_convert_utils)
+=======
 if(WITH_XPU)
   cc_library(
     kernel_factory
@@ -22,10 +28,47 @@ else()
     SRCS kernel_factory.cc
     DEPS phi_enforce fluid_convert_utils)
 endif()
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 cc_library(
   kernel_context
   SRCS kernel_context.cc
   DEPS phi_enforce phi_backends)
+<<<<<<< HEAD
+
+cc_library(
+  ddim
+  SRCS ddim.cc
+  DEPS phi_enforce)
+cc_library(
+  tensor_base
+  SRCS tensor_base.cc allocator.cc
+  DEPS phi_enforce)
+cc_library(
+  tensor_meta
+  SRCS tensor_meta.cc
+  DEPS phi_enforce)
+cc_library(
+  lod_utils
+  SRCS lod_utils.cc
+  DEPS phi_enforce)
+
+cc_library(
+  dense_tensor
+  SRCS dense_tensor.cc dense_tensor_impl.cc
+  DEPS convert_utils fluid_convert_utils tensor_meta tensor_base)
+cc_library(
+  sparse_coo_tensor
+  SRCS sparse_coo_tensor.cc
+  DEPS tensor_meta tensor_base)
+cc_library(
+  sparse_csr_tensor
+  SRCS sparse_csr_tensor.cc
+  DEPS dense_tensor tensor_base)
+cc_library(
+  string_tensor
+  SRCS string_tensor.cc
+  DEPS convert_utils tensor_meta tensor_base)
+=======
 
 cc_library(
   ddim
@@ -72,6 +115,7 @@ cc_library(
   tensor_array
   SRCS tensor_array.cc
   DEPS dense_tensor tensor_base)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 cc_library(
   meta_tensor
@@ -84,15 +128,22 @@ cc_library(
 cc_library(
   selected_rows
   SRCS selected_rows_impl.cc selected_rows.cc
+<<<<<<< HEAD
+  DEPS tensor_base dense_tensor phi_enforce ddim memcpy)
+=======
   DEPS tensor_base dense_tensor phi_enforce ddim)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 cc_library(
   phi_device_context
   SRCS device_context.cc
   DEPS dense_tensor selected_rows)
+<<<<<<< HEAD
+=======
 cc_library(
   serialization
   SRCS serialization.cc
   DEPS version tensor phi_device_context)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 cc_library(
   custom_kernel

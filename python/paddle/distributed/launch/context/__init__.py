@@ -17,11 +17,17 @@ from paddle.distributed.launch import plugins
 from .node import Node
 from .status import Status
 from .args_envs import parse_args, fetch_envs, env_args_mapping
+import six
 
 import logging
 
 
+<<<<<<< HEAD
+class Context(object):
+
+=======
 class Context:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self, enable_plugin=True):
         self.args, self.unknown_args = parse_args()
         self.envs = fetch_envs()
@@ -41,7 +47,11 @@ class Context:
 
     def print(self):
         self.logger.info("-----------  Configuration  ----------------------")
+<<<<<<< HEAD
+        for arg, value in sorted(six.iteritems(vars(self.args))):
+=======
         for arg, value in sorted(vars(self.args).items()):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             self.logger.info("%s: %s" % (arg, value))
         self.logger.info("--------------------------------------------------")
 

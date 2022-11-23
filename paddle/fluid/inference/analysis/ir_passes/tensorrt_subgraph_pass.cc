@@ -118,11 +118,14 @@ void analysis::TensorRtSubgraphPass::ApplyImpl(
     framework::ir::Graph *graph) const {
   framework::ir::FusePassBase::Init("tensorrt_subgraph_pass", graph);
 
+<<<<<<< HEAD
+=======
   static std::once_flag trt_plugin_registered;
   std::call_once(trt_plugin_registered, []() {
     tensorrt::plugin::TrtPluginRegistry::Global()->RegistToTrt();
   });
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   auto model_precision =
       static_cast<phi::DataType>(Get<int>("model_precision"));
   if (model_precision == phi::DataType::BFLOAT16) {
@@ -333,10 +336,14 @@ void TensorRtSubgraphPass::CreateTensorRTOp(
     inference::DeserializeShapeRangeInfo(shape_range_info_path,
                                          &min_input_shape,
                                          &max_input_shape,
+<<<<<<< HEAD
+                                         &opt_input_shape);
+=======
                                          &opt_input_shape,
                                          &min_shape_tensor,
                                          &max_shape_tensor,
                                          &opt_shape_tensor);
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   }
 
   // The following procedure is used to rename all the intermediate
@@ -514,16 +521,23 @@ void TensorRtSubgraphPass::CreateTensorRTOp(
       inference::Singleton<inference::tensorrt::TRTEngineManager>::Global()
           .Create(engine_key + std::to_string(predictor_id),
                   max_batch_size,
+<<<<<<< HEAD
+                  Get<int>("workspace_size"),
+=======
                   Get<int64_t>("workspace_size"),
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                   precision_mode,
                   calibrator.get(),
                   Get<int>("gpu_device_id"),
                   min_input_shape,
                   max_input_shape,
                   opt_input_shape,
+<<<<<<< HEAD
+=======
                   min_shape_tensor,
                   max_shape_tensor,
                   opt_shape_tensor,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
                   disable_trt_plugin_fp16,
                   static_cast<phi::DataType>(Get<int>("model_precision")));
   trt_engine->SetUseOSS(Get<bool>("use_varseqlen"));
@@ -538,7 +552,10 @@ void TensorRtSubgraphPass::CreateTensorRTOp(
   trt_engine->SetWithErnie(
       graph->Has(framework::ir::kEmbEltwiseLayernormPass) &&
       graph->Has(framework::ir::kMultiheadMatmulPass));
+<<<<<<< HEAD
+=======
   trt_engine->SetContextMemorySharing(Get<bool>("context_memory_sharing"));
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   if (use_static_engine) {
     trt_engine_serialized_data = GetTrtEngineSerializedData(

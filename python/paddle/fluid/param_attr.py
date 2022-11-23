@@ -282,6 +282,25 @@ class WeightNormParamAttr(ParamAttr):
     # these paramters for inference.
     params_with_weight_norm = []
 
+<<<<<<< HEAD
+    def __init__(self,
+                 dim=None,
+                 name=None,
+                 initializer=None,
+                 learning_rate=1.0,
+                 regularizer=None,
+                 trainable=True,
+                 do_model_average=False,
+                 need_clip=True):
+        super(WeightNormParamAttr,
+              self).__init__(name=name,
+                             initializer=initializer,
+                             learning_rate=learning_rate,
+                             regularizer=regularizer,
+                             trainable=trainable,
+                             do_model_average=do_model_average,
+                             need_clip=need_clip)
+=======
     def __init__(
         self,
         dim=None,
@@ -302,4 +321,5 @@ class WeightNormParamAttr(ParamAttr):
             do_model_average=do_model_average,
             need_clip=need_clip,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         self.dim = dim

@@ -154,6 +154,8 @@ PEAndGraphPair CreateFixOrderExecutorInfo(const ProgramDesc& program_desc,
                                           int64_t end_op_index,
                                           framework::Scope* scope);
 
+<<<<<<< HEAD
+=======
 class InterpreterCoreInfo {
  public:
   struct CacheValue {
@@ -222,5 +224,6 @@ std::shared_ptr<InterpreterCore> CreateInterpreterCoreInfoToCache(
     int64_t program_id,
     framework::Scope* scope);
 
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }  // namespace framework
 }  // namespace paddle

@@ -207,11 +207,19 @@ class CorrelationCUDAKernel : public framework::OpKernel<T> {
     int padded_input_height = H + 2 * pad_size;
     int padded_input_width = W + 2 * pad_size;
 
+<<<<<<< HEAD
+    Tensor rinput1 = ctx.AllocateTmpTensor<T, phi::GPUContext>(
+        {N, padded_input_height, padded_input_width, C}, dev_ctx);
+    rinput1.mutable_data<T>(ctx.GetPlace());
+
+    Tensor rinput2 = ctx.AllocateTmpTensor<T, phi::GPUContext>(
+=======
     phi::DenseTensor rinput1 = ctx.AllocateTmpTensor<T, phi::GPUContext>(
         {N, padded_input_height, padded_input_width, C}, dev_ctx);
     rinput1.mutable_data<T>(ctx.GetPlace());
 
     phi::DenseTensor rinput2 = ctx.AllocateTmpTensor<T, phi::GPUContext>(
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         {N, padded_input_height, padded_input_width, C}, dev_ctx);
     rinput2.mutable_data<T>(ctx.GetPlace());
 
@@ -479,11 +487,19 @@ class CorrelationCUDAGradKernel : public framework::OpKernel<T> {
     int padded_input_height = H + 2 * pad_size;
     int padded_input_width = W + 2 * pad_size;
 
+<<<<<<< HEAD
+    Tensor rinput1 = ctx.AllocateTmpTensor<T, phi::GPUContext>(
+        {N, padded_input_height, padded_input_width, C}, dev_ctx);
+    rinput1.mutable_data<T>(ctx.GetPlace());
+
+    Tensor rinput2 = ctx.AllocateTmpTensor<T, phi::GPUContext>(
+=======
     phi::DenseTensor rinput1 = ctx.AllocateTmpTensor<T, phi::GPUContext>(
         {N, padded_input_height, padded_input_width, C}, dev_ctx);
     rinput1.mutable_data<T>(ctx.GetPlace());
 
     phi::DenseTensor rinput2 = ctx.AllocateTmpTensor<T, phi::GPUContext>(
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         {N, padded_input_height, padded_input_width, C}, dev_ctx);
     rinput2.mutable_data<T>(ctx.GetPlace());
 

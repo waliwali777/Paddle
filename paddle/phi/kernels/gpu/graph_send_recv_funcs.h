@@ -22,7 +22,11 @@
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/backends/gpu/gpu_primitives.h"
 #include "paddle/phi/core/hostdevice.h"
+<<<<<<< HEAD
+#include "paddle/phi/kernels/graph_send_recv_kernel.h"
+=======
 #include "paddle/phi/kernels/send_u_recv_kernel.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace phi {
 

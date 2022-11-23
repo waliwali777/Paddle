@@ -47,6 +47,8 @@ bool CheckTensorsInCudaPlace(const std::vector<phi::DenseTensor>& tensors) {
       tensors.cbegin(), tensors.cend(), [&](const phi::DenseTensor& t) {
         return platform::is_gpu_place(t.place());
       });
+<<<<<<< HEAD
+=======
 }
 
 bool CheckTensorsInCustomPlace(const std::vector<phi::DenseTensor>& tensors,
@@ -63,6 +65,7 @@ bool CheckTensorsInXPUPlace(const std::vector<phi::DenseTensor>& tensors) {
       tensors.cbegin(), tensors.cend(), [&](const phi::DenseTensor& t) {
         return platform::is_xpu_place(t.place());
       });
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 }  //  namespace distributed

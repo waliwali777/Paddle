@@ -22,6 +22,7 @@ import unittest
 
 
 class TrtConvertRollTest(TrtLayerAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         inputs = program_config.inputs
         weights = program_config.weights
@@ -31,6 +32,7 @@ class TrtConvertRollTest(TrtLayerAutoScanTest):
         return True
 
     def sample_program_configs(self):
+
         def generate_input1(attrs: List[Dict[str, Any]]):
             return np.ones([1, 56, 56, 192]).astype(np.float32)
 
@@ -67,8 +69,13 @@ class TrtConvertRollTest(TrtLayerAutoScanTest):
                 yield program_config
 
     def sample_predictor_configs(
+<<<<<<< HEAD
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         def generate_dynamic_shape(attrs):
             self.dynamic_shape.min_input_shape = {
                 "input_data": [1, 56, 56, 192]
@@ -114,12 +121,19 @@ class TrtConvertRollTest(TrtLayerAutoScanTest):
         generate_dynamic_shape(attrs)
         self.trt_param.precision = paddle_infer.PrecisionType.Float32
         yield self.create_inference_config(), generate_trt_nodes_num(
+<<<<<<< HEAD
+            attrs, True), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, True), 1e-4
+=======
             attrs, True
         ), 1e-5
         self.trt_param.precision = paddle_infer.PrecisionType.Half
         yield self.create_inference_config(), generate_trt_nodes_num(
             attrs, True
         ), 1e-3
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def test(self):
         self.run_test()

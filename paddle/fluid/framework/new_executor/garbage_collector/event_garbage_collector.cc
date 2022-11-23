@@ -24,8 +24,12 @@
 namespace paddle {
 namespace framework {
 
+<<<<<<< HEAD
+InterpreterCoreEventGarbageCollector::InterpreterCoreEventGarbageCollector() {
+=======
 InterpreterCoreEventGarbageCollector::InterpreterCoreEventGarbageCollector(
     const std::vector<Instruction>& vec_instruction) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
   WorkQueueOptions options(/*name*/ "GarbageCollector",
                            /*num_threads*/ 1,
                            /*allow_spinning*/ true,
@@ -41,6 +45,38 @@ InterpreterCoreEventGarbageCollector::~InterpreterCoreEventGarbageCollector() {
   queue_.reset(nullptr);
 }
 
+<<<<<<< HEAD
+void InterpreterCoreEventGarbageCollector::Add(
+    Garbage garbage,
+    platform::DeviceEvent* event,
+    const platform::DeviceContext* ctx) {
+  if (!garbage) {
+    return;
+  }
+
+  if (max_memory_size_ <= 1) {
+    Free(garbage, event, ctx);
+  } else {
+    std::unique_ptr<GarbageQueue> pending_delete_garbages;
+    {  // lock guard
+      std::lock_guard<memory::SpinLock> guard(spinlock_);
+      cur_memory_size_ += garbage->size();
+      garbages_->push_back(std::move(garbage));
+
+      if (cur_memory_size_ >= max_memory_size_) {
+        cur_memory_size_ = 0;
+        pending_delete_garbages = std::move(garbages_);
+        garbages_ = std::make_unique<GarbageQueue>();
+      }
+    }
+  }
+}
+
+void InterpreterCoreEventGarbageCollector::Add(Variable* var) {
+  PADDLE_THROW(platform::errors::Unimplemented(
+      "Add(Variable* var) is not implemented for "
+      "InterpreterCoreEventGarbageCollector."));
+=======
 void InterpreterCoreEventGarbageCollector::Add(Variable* var,
                                                const Instruction& instr) {
   PADDLE_ENFORCE_LT(instr.Id(),
@@ -51,6 +87,7 @@ void InterpreterCoreEventGarbageCollector::Add(Variable* var,
                         instr.Id(),
                         gc_event_.size()));
   Add(var, &gc_event_.at(instr.Id()), &instr.DeviceContext());
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 }
 
 void InterpreterCoreEventGarbageCollector::Add(
@@ -119,12 +156,20 @@ void InterpreterCoreEventGarbageCollector::Add(
 }
 
 void InterpreterCoreEventGarbageCollector::Free(
+<<<<<<< HEAD
+    GarbageQueue* garbages,
+=======
     const Garbage& garbage,
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     platform::DeviceEvent* event,
     const platform::DeviceContext* ctx) {
   event->Record(ctx);
   event->SetFininshed();  // Only for CPU Event
+<<<<<<< HEAD
+  queue_->AddTask([container = garbages, event = event]() {
+=======
   queue_->AddTask([container = garbage, event = event]() {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     while (!event->Query()) {
 #if defined(_WIN32)
       SleepEx(50, FALSE);
@@ -136,6 +181,16 @@ void InterpreterCoreEventGarbageCollector::Free(
   });
 }
 
+<<<<<<< HEAD
+void InterpreterCoreEventGarbageCollector::Free(
+    const Garbage& garbage,
+    platform::DeviceEvent* event,
+    const platform::DeviceContext* ctx) {
+  event->Record(ctx);
+  event->SetFininshed();  // Only for CPU Event
+  queue_->AddTask([container = garbage, event = event]() {
+    while (!event->Query()) {
+=======
 void InterpreterCoreEventGarbageCollector::FreeGarbages() {
   for (auto& vals : events_) {
     vals.second->Record(vals.first);
@@ -145,6 +200,7 @@ void InterpreterCoreEventGarbageCollector::FreeGarbages() {
       [container = std::move(*garbages_), events = std::move(events_)]() {
         for (auto& vals : events) {
           while (!vals.second->Query()) {
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #if defined(_WIN32)
             SleepEx(50, FALSE);
 #else

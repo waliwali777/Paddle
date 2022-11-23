@@ -22,8 +22,22 @@ from paddle.fluid.core import PassVersionChecker
 
 # padding SAME
 class ConvBiasMkldnnFusePassSamePadTest(InferencePassTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 3, 100, 100],
+                              dtype="float32")
+            param_attr = fluid.ParamAttr(
+                initializer=fluid.initializer.Xavier(uniform=False),
+                learning_rate=0.001)
+            conv_out = fluid.layers.conv2d(input=data,
+                                           num_filters=3,
+                                           filter_size=3,
+                                           padding="SAME",
+                                           bias_attr=param_attr)
+=======
             data = fluid.data(
                 name="data", shape=[-1, 3, 100, 100], dtype="float32"
             )
@@ -38,6 +52,7 @@ class ConvBiasMkldnnFusePassSamePadTest(InferencePassTest):
                 padding="SAME",
                 bias_attr=param_attr,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.feeds = {
             "data": np.random.random((1, 3, 100, 100)).astype("float32")
@@ -55,8 +70,22 @@ class ConvBiasMkldnnFusePassSamePadTest(InferencePassTest):
 
 # padding VALID
 class ConvBiasMkldnnFusePassValidPadTest(ConvBiasMkldnnFusePassSamePadTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 3, 100, 100],
+                              dtype="float32")
+            param_attr = fluid.ParamAttr(
+                initializer=fluid.initializer.Xavier(uniform=False),
+                learning_rate=0.001)
+            conv_out = fluid.layers.conv2d(input=data,
+                                           num_filters=3,
+                                           filter_size=3,
+                                           padding="VALID",
+                                           bias_attr=param_attr)
+=======
             data = fluid.data(
                 name="data", shape=[-1, 3, 100, 100], dtype="float32"
             )
@@ -71,6 +100,7 @@ class ConvBiasMkldnnFusePassValidPadTest(ConvBiasMkldnnFusePassSamePadTest):
                 padding="VALID",
                 bias_attr=param_attr,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.feeds = {
             "data": np.random.random((1, 3, 100, 100)).astype("float32")
@@ -81,8 +111,22 @@ class ConvBiasMkldnnFusePassValidPadTest(ConvBiasMkldnnFusePassSamePadTest):
 
 # padding EXPLICT NUMBER
 class ConvBiasMkldnnFusePassExplictPadTest(ConvBiasMkldnnFusePassSamePadTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 3, 100, 100],
+                              dtype="float32")
+            param_attr = fluid.ParamAttr(
+                initializer=fluid.initializer.Xavier(uniform=False),
+                learning_rate=0.001)
+            conv_out = fluid.layers.conv2d(input=data,
+                                           num_filters=3,
+                                           filter_size=3,
+                                           padding=[2, 4, 6, 8],
+                                           bias_attr=param_attr)
+=======
             data = fluid.data(
                 name="data", shape=[-1, 3, 100, 100], dtype="float32"
             )
@@ -97,6 +141,7 @@ class ConvBiasMkldnnFusePassExplictPadTest(ConvBiasMkldnnFusePassSamePadTest):
                 padding=[2, 4, 6, 8],
                 bias_attr=param_attr,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.feeds = {
             "data": np.random.random((1, 3, 100, 100)).astype("float32")
@@ -106,8 +151,26 @@ class ConvBiasMkldnnFusePassExplictPadTest(ConvBiasMkldnnFusePassSamePadTest):
 
 
 class ConvBiasMkldnnFusePassGroupTest(ConvBiasMkldnnFusePassSamePadTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 3, 100, 100],
+                              dtype="float32")
+            param_attr = fluid.ParamAttr(
+                initializer=fluid.initializer.Xavier(uniform=False),
+                learning_rate=0.001)
+            conv_out = fluid.layers.conv2d(input=data,
+                                           num_filters=3,
+                                           filter_size=3,
+                                           padding="VALID",
+                                           groups=3,
+                                           bias_attr=param_attr,
+                                           use_cudnn=False,
+                                           act="softmax",
+                                           data_format="NCHW")
+=======
             data = fluid.data(
                 name="data", shape=[-1, 3, 100, 100], dtype="float32"
             )
@@ -126,6 +189,7 @@ class ConvBiasMkldnnFusePassGroupTest(ConvBiasMkldnnFusePassSamePadTest):
                 act="softmax",
                 data_format="NCHW",
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.feeds = {
             "data": np.random.random((1, 3, 100, 100)).astype("float32")
@@ -135,6 +199,28 @@ class ConvBiasMkldnnFusePassGroupTest(ConvBiasMkldnnFusePassSamePadTest):
 
 
 class ConvBiasMkldnnFusePassDialtionsGroupsTest(
+<<<<<<< HEAD
+        ConvBiasMkldnnFusePassSamePadTest):
+
+    def setUp(self):
+        with fluid.program_guard(self.main_program, self.startup_program):
+            data = fluid.data(name="data",
+                              shape=[-1, 3, 100, 100],
+                              dtype="float32")
+            param_attr = fluid.ParamAttr(
+                initializer=fluid.initializer.Xavier(uniform=False),
+                learning_rate=0.001)
+            conv_out = fluid.layers.conv2d(input=data,
+                                           num_filters=3,
+                                           filter_size=3,
+                                           padding="VALID",
+                                           dilation=2,
+                                           groups=3,
+                                           bias_attr=param_attr,
+                                           use_cudnn=False,
+                                           act="softmax",
+                                           data_format="NCHW")
+=======
     ConvBiasMkldnnFusePassSamePadTest
 ):
     def setUp(self):
@@ -158,6 +244,7 @@ class ConvBiasMkldnnFusePassDialtionsGroupsTest(
                 act="softmax",
                 data_format="NCHW",
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.feeds = {
             "data": np.random.random((1, 3, 100, 100)).astype("float32")
@@ -167,11 +254,22 @@ class ConvBiasMkldnnFusePassDialtionsGroupsTest(
 
 
 class ConvTransposeMkldnnFusePassDialtionsGroupsTest(InferencePassTest):
+
     def setUp(self):
         with fluid.program_guard(self.main_program, self.startup_program):
             data = fluid.data(name="data", shape=[-1, 3, 5, 5], dtype="float32")
             param_attr = fluid.ParamAttr(
                 initializer=fluid.initializer.Xavier(uniform=False),
+<<<<<<< HEAD
+                learning_rate=0.001)
+            conv_out = fluid.layers.conv2d_transpose(input=data,
+                                                     num_filters=3,
+                                                     filter_size=3,
+                                                     padding="SAME",
+                                                     dilation=1,
+                                                     bias_attr=param_attr,
+                                                     use_cudnn=False)
+=======
                 learning_rate=0.001,
             )
             conv_out = paddle.static.nn.conv2d_transpose(
@@ -183,6 +281,7 @@ class ConvTransposeMkldnnFusePassDialtionsGroupsTest(InferencePassTest):
                 bias_attr=param_attr,
                 use_cudnn=False,
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         self.feeds = {"data": np.random.random((1, 3, 5, 5)).astype("float32")}
         self.fetch_list = [conv_out]

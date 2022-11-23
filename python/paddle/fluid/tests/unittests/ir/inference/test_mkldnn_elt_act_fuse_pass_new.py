@@ -22,6 +22,7 @@ import hypothesis.strategies as st
 
 
 class TestElementWiseAddReluFusePass(PassAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         return True
 
@@ -29,9 +30,14 @@ class TestElementWiseAddReluFusePass(PassAutoScanTest):
         batch_size = draw(st.integers(min_value=1, max_value=4))
 
         def generate_input():
+<<<<<<< HEAD
+            return np.random.random([batch_size, 3, 100,
+                                     100]).astype(np.float32)
+=======
             return np.random.random([batch_size, 3, 100, 100]).astype(
                 np.float32
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
         ops_config = [
             {
@@ -67,9 +73,15 @@ class TestElementWiseAddReluFusePass(PassAutoScanTest):
         yield config, ["elementwise_add"], (1e-5, 1e-5)
 
     def test(self):
+<<<<<<< HEAD
+        self.run_and_statis(quant=False,
+                            passes=["elt_act_mkldnn_fuse_pass"],
+                            min_success_num=4)
+=======
         self.run_and_statis(
             quant=False, passes=["elt_act_mkldnn_fuse_pass"], min_success_num=4
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 
 if __name__ == "__main__":

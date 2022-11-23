@@ -17,6 +17,10 @@ import sys
 import numpy as np
 import paddle
 import scipy.stats
+<<<<<<< HEAD
+from numpy.random import random as rand
+=======
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 sys.path.append("../")
 from op_test import OpTest
@@ -47,7 +51,12 @@ class TestDirichletOp(OpTest):
             scipy.stats.kstest(
                 outs[0][:, 0],
                 # scipy dirichlet have not cdf, use beta to replace it.
+<<<<<<< HEAD
+                scipy.stats.beta(a=self.alpha[0], b=self.alpha[1]).cdf)[0],
+            0.01)
+=======
                 scipy.stats.beta(a=self.alpha[0], b=self.alpha[1]).cdf,
             )[0],
             0.01,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91

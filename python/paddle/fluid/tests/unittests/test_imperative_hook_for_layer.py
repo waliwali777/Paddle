@@ -83,6 +83,14 @@ class Test_Forward_Hook(unittest.TestCase):
                 input1 = base.to_variable(input_word1)
                 y = base.to_variable(y_data)
 
+<<<<<<< HEAD
+                simplenet = SimpleNet(hidden_size=20,
+                                      vocab_size=32,
+                                      num_steps=3,
+                                      init_scale=0.1,
+                                      is_sparse=False,
+                                      dtype="float32")
+=======
                 simplenet = SimpleNet(
                     hidden_size=20,
                     vocab_size=32,
@@ -91,6 +99,7 @@ class Test_Forward_Hook(unittest.TestCase):
                     is_sparse=False,
                     dtype="float32",
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                 # origin, don't register any hook
                 outs_origin = simplenet(input, y)
@@ -165,6 +174,14 @@ class Test_Forward_Hook(unittest.TestCase):
                 input = base.to_variable(input_word)
                 y = base.to_variable(y_data)
 
+<<<<<<< HEAD
+                simplenet = SimpleNet(hidden_size=20,
+                                      vocab_size=32,
+                                      num_steps=3,
+                                      init_scale=0.1,
+                                      is_sparse=False,
+                                      dtype="float32")
+=======
                 simplenet = SimpleNet(
                     hidden_size=20,
                     vocab_size=32,
@@ -173,6 +190,7 @@ class Test_Forward_Hook(unittest.TestCase):
                     is_sparse=False,
                     dtype="float32",
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                 # origin, don't register any hook
                 outs_origin = simplenet(input, y)

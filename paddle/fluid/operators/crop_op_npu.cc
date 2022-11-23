@@ -28,7 +28,11 @@ class CropNPUKernel : public framework::OpKernel<T> {
 
     std::vector<int> offset_list;
     if (ctx.HasInput("Offsets")) {
+<<<<<<< HEAD
+      auto* offsets_tensor = ctx.Input<framework::Tensor>("Offsets");
+=======
       auto* offsets_tensor = ctx.Input<phi::DenseTensor>("Offsets");
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       paddle::framework::TensorToVector(
           *offsets_tensor, ctx.device_context(), &offset_list);
       if (offset_list.empty()) {
@@ -60,7 +64,11 @@ class CropNPUKernel : public framework::OpKernel<T> {
     out->mutable_data<T>(ctx.GetPlace());
 
     if (ctx.HasInput("Y")) {
+<<<<<<< HEAD
+      auto* shape = ctx.Input<framework::Tensor>("Y");
+=======
       auto* shape = ctx.Input<phi::DenseTensor>("Y");
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
       PADDLE_ENFORCE_EQ(shape->dims().size(),
                         x->dims().size(),
                         platform::errors::InvalidArgument(

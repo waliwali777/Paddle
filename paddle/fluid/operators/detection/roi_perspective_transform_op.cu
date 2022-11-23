@@ -20,7 +20,11 @@ limitations under the License. */
 #include "paddle/phi/kernels/funcs/math_function.h"
 
 using paddle::platform::float16;
+<<<<<<< HEAD
+using paddle::platform::PADDLE_CUDA_NUM_THREADS;
+=======
 using phi::PADDLE_CUDA_NUM_THREADS;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
 namespace paddle {
 namespace operators {

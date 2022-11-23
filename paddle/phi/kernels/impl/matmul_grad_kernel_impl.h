@@ -17,8 +17,12 @@ limitations under the License. */
 #include "paddle/phi/backends/cpu/cpu_context.h"
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/kernels/complex_kernel.h"
+#include "paddle/phi/kernels/cpu/reduce.h"
 #include "paddle/phi/kernels/empty_kernel.h"
+<<<<<<< HEAD
+=======
 #include "paddle/phi/kernels/funcs/reduce_function.h"
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 #include "paddle/phi/kernels/funcs/reduce_functor.h"
 #include "paddle/phi/kernels/impl/dot_grad_kernel_impl.h"
 #include "paddle/phi/kernels/impl/matmul_kernel_impl.h"

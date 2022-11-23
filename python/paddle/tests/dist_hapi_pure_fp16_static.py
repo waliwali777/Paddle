@@ -29,6 +29,7 @@ from paddle.vision.models import LeNet
     not fluid.is_compiled_with_cuda(), 'CPU testing is not supported'
 )
 class TestDistTraningWithPureFP16(unittest.TestCase):
+
     def test_amp_training_purefp16(self):
         if not fluid.is_compiled_with_cuda():
             self.skipTest('module not tested when ONLY_CPU compling')
@@ -42,6 +43,15 @@ class TestDistTraningWithPureFP16(unittest.TestCase):
         inputs = InputSpec([None, 1, 28, 28], "float32", 'x')
         labels = InputSpec([None, 1], "int64", "y")
         model = Model(net, inputs, labels)
+<<<<<<< HEAD
+        optim = paddle.optimizer.Adam(learning_rate=0.001,
+                                      parameters=model.parameters(),
+                                      multi_precision=True)
+        amp_configs = {"level": amp_level, "use_fp16_guard": False}
+        model.prepare(optimizer=optim,
+                      loss=CrossEntropyLoss(reduction="sum"),
+                      amp_configs=amp_configs)
+=======
         optim = paddle.optimizer.Adam(
             learning_rate=0.001,
             parameters=model.parameters(),
@@ -53,6 +63,7 @@ class TestDistTraningWithPureFP16(unittest.TestCase):
             loss=CrossEntropyLoss(reduction="sum"),
             amp_configs=amp_configs,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         model.train_batch([data], [label])
 
 

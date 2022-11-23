@@ -145,10 +145,17 @@ void TestBeamSearch() {
 #if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
 template <>
 void TestBeamSearch<phi::GPUContext, paddle::platform::CUDAPlace>() {
+<<<<<<< HEAD
+  paddle::framework::LoDTensor ids;
+  paddle::framework::LoDTensor scores;
+  paddle::framework::LoDTensor pre_ids;
+  paddle::framework::LoDTensor pre_scores;
+=======
   phi::DenseTensor ids;
   phi::DenseTensor scores;
   phi::DenseTensor pre_ids;
   phi::DenseTensor pre_scores;
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
   auto* place = new paddle::platform::CUDAPlace();
   auto* context = new phi::GPUContext(*place);

@@ -19,7 +19,11 @@ from ...fluid.data_feeder import check_variable_and_dtype
 from paddle import _C_ops, _legacy_C_ops
 from ...device import is_compiled_with_rocm
 from paddle import in_dynamic_mode
+<<<<<<< HEAD
+from paddle.fluid.framework import in_dygraph_mode
+=======
 from paddle.fluid.framework import in_dygraph_mode, _in_legacy_dygraph
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 from paddle.framework import _non_static_mode
 
 __all__ = []
@@ -124,12 +128,19 @@ def affine_grid(theta, out_shape, align_corners=True, name=None):
     else:
         attrs['output_shape'] = out_shape
 
+<<<<<<< HEAD
+    helper.append_op(type='affine_grid',
+                     inputs=ipts,
+                     outputs={'Output': out},
+                     attrs=None if len(attrs) == 0 else attrs)
+=======
     helper.append_op(
         type='affine_grid',
         inputs=ipts,
         outputs={'Output': out},
         attrs=None if len(attrs) == 0 else attrs,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
@@ -279,10 +290,15 @@ def grid_sample(
         )
     if padding_mode not in _padding_modes:
         raise ValueError(
+<<<<<<< HEAD
+            "The padding mode of grid sample function should be in {}, but got: {}"
+            .format(_padding_modes, padding_mode))
+=======
             "The padding mode of grid sample function should be in {}, but got: {}".format(
                 _padding_modes, padding_mode
             )
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     if not isinstance(align_corners, bool):
         raise ValueError(
@@ -305,6 +321,15 @@ def grid_sample(
         x.stop_gradient = False
         grid.stop_gradient = False
 
+<<<<<<< HEAD
+    if in_dygraph_mode():
+        return _C_ops.final_state_grid_sample(x, grid, mode, padding_mode,
+                                              align_corners)
+    elif in_dynamic_mode():
+        attrs = ('mode', mode, 'padding_mode', padding_mode, 'align_corners',
+                 align_corners, 'use_cudnn', use_cudnn)
+        out = getattr(_C_ops, 'grid_sampler')(x, grid, *attrs)
+=======
     if len(grid.shape) == 5:
         use_cudnn = False
 
@@ -322,6 +347,7 @@ def grid_sample(
             use_cudnn,
         )
         out = getattr(_legacy_C_ops, 'grid_sampler')(x, grid, *attrs)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     else:
         helper = LayerHelper("grid_sample", **locals())
         check_variable_and_dtype(x, 'x', ['float32', 'float64'], 'grid_sample')
@@ -336,12 +362,19 @@ def grid_sample(
             'use_cudnn': use_cudnn,
         }
         out = helper.create_variable_for_type_inference(x.dtype)
+<<<<<<< HEAD
+        helper.append_op(type='grid_sampler',
+                         inputs=ipts,
+                         attrs=attrs,
+                         outputs={'Output': out})
+=======
         helper.append_op(
             type='grid_sampler',
             inputs=ipts,
             attrs=attrs,
             outputs={'Output': out},
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
@@ -378,10 +411,14 @@ def pixel_shuffle(x, upscale_factor, data_format="NCHW", name=None):
     if data_format not in ["NCHW", "NHWC"]:
         raise ValueError(
             "Attr(data_format) should be 'NCHW' or 'NHWC'."
+<<<<<<< HEAD
+            "But recevie Attr(data_format): {} ".format(data_format))
+=======
             "But recevie Attr(data_format): {} ".format(data_format)
         )
     if in_dygraph_mode():
         return _C_ops.pixel_shuffle(x, upscale_factor, data_format)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     if _in_legacy_dygraph():
         return _legacy_C_ops.pixel_shuffle(
@@ -391,12 +428,22 @@ def pixel_shuffle(x, upscale_factor, data_format="NCHW", name=None):
     helper = LayerHelper("pixel_shuffle", **locals())
     check_variable_and_dtype(x, 'x', ['float32', 'float64'], 'pixel_shuffle')
     out = helper.create_variable_for_type_inference(dtype=x.dtype)
+<<<<<<< HEAD
+    helper.append_op(type="pixel_shuffle",
+                     inputs={"X": x},
+                     outputs={"Out": out},
+                     attrs={
+                         "upscale_factor": upscale_factor,
+                         "data_format": data_format
+                     })
+=======
     helper.append_op(
         type="pixel_shuffle",
         inputs={"X": x},
         outputs={"Out": out},
         attrs={"upscale_factor": upscale_factor, "data_format": data_format},
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
@@ -440,8 +487,12 @@ def pixel_unshuffle(x, downscale_factor, data_format="NCHW", name=None):
     if data_format not in ["NCHW", "NHWC"]:
         raise ValueError(
             "Attr(data_format) should be 'NCHW' or 'NHWC'."
+<<<<<<< HEAD
+            "But recevie Attr(data_format): {} ".format(data_format))
+=======
             "But recevie Attr(data_format): {} ".format(data_format)
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     if _non_static_mode():
         return _legacy_C_ops.pixel_unshuffle(
@@ -451,6 +502,15 @@ def pixel_unshuffle(x, downscale_factor, data_format="NCHW", name=None):
     helper = LayerHelper("pixel_unshuffle", **locals())
     check_variable_and_dtype(x, 'x', ['float32', 'float64'], 'pixel_unshuffle')
     out = helper.create_variable_for_type_inference(dtype=x.dtype)
+<<<<<<< HEAD
+    helper.append_op(type="pixel_unshuffle",
+                     inputs={"X": x},
+                     outputs={"Out": out},
+                     attrs={
+                         "downscale_factor": downscale_factor,
+                         "data_format": data_format
+                     })
+=======
     helper.append_op(
         type="pixel_unshuffle",
         inputs={"X": x},
@@ -460,6 +520,7 @@ def pixel_unshuffle(x, downscale_factor, data_format="NCHW", name=None):
             "data_format": data_format,
         },
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out
 
 
@@ -514,8 +575,12 @@ def channel_shuffle(x, groups, data_format="NCHW", name=None):
     if data_format not in ["NCHW", "NHWC"]:
         raise ValueError(
             "Attr(data_format) should be 'NCHW' or 'NHWC'."
+<<<<<<< HEAD
+            "But recevie Attr(data_format): {} ".format(data_format))
+=======
             "But recevie Attr(data_format): {} ".format(data_format)
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     if _non_static_mode():
         return _legacy_C_ops.channel_shuffle(
@@ -525,10 +590,20 @@ def channel_shuffle(x, groups, data_format="NCHW", name=None):
     helper = LayerHelper("channel_shuffle", **locals())
     check_variable_and_dtype(x, 'x', ['float32', 'float64'], 'channel_shuffle')
     out = helper.create_variable_for_type_inference(dtype=x.dtype)
+<<<<<<< HEAD
+    helper.append_op(type="channel_shuffle",
+                     inputs={"X": x},
+                     outputs={"Out": out},
+                     attrs={
+                         "groups": groups,
+                         "data_format": data_format
+                     })
+=======
     helper.append_op(
         type="channel_shuffle",
         inputs={"X": x},
         outputs={"Out": out},
         attrs={"groups": groups, "data_format": data_format},
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return out

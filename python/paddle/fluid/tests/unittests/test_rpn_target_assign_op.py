@@ -32,6 +32,14 @@ def rpn_target_assign(
 ):
     anchor_to_gt_argmax = anchor_by_gt_overlap.argmax(axis=1)
     anchor_to_gt_max = anchor_by_gt_overlap[
+<<<<<<< HEAD
+        np.arange(anchor_by_gt_overlap.shape[0]), anchor_to_gt_argmax]
+
+    gt_to_anchor_argmax = anchor_by_gt_overlap.argmax(axis=0)
+    gt_to_anchor_max = anchor_by_gt_overlap[
+        gt_to_anchor_argmax,
+        np.arange(anchor_by_gt_overlap.shape[1])]
+=======
         np.arange(anchor_by_gt_overlap.shape[0]), anchor_to_gt_argmax
     ]
 
@@ -39,6 +47,7 @@ def rpn_target_assign(
     gt_to_anchor_max = anchor_by_gt_overlap[
         gt_to_anchor_argmax, np.arange(anchor_by_gt_overlap.shape[1])
     ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     anchors_with_max_overlap = np.where(
         anchor_by_gt_overlap == gt_to_anchor_max
     )[0]
@@ -50,9 +59,15 @@ def rpn_target_assign(
     num_fg = int(rpn_fg_fraction * rpn_batch_size_per_im)
     fg_inds = np.where(labels == 1)[0]
     if len(fg_inds) > num_fg and use_random:
+<<<<<<< HEAD
+        disable_inds = np.random.choice(fg_inds,
+                                        size=(len(fg_inds) - num_fg),
+                                        replace=False)
+=======
         disable_inds = np.random.choice(
             fg_inds, size=(len(fg_inds) - num_fg), replace=False
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     else:
         disable_inds = fg_inds[num_fg:]
 
@@ -91,6 +106,14 @@ def rpn_target_assign(
 
 def get_anchor(n, c, h, w):
     input_feat = np.random.random((n, c, h, w)).astype('float32')
+<<<<<<< HEAD
+    anchors, _ = anchor_generator_in_python(input_feat=input_feat,
+                                            anchor_sizes=[32., 64.],
+                                            aspect_ratios=[0.5, 1.0],
+                                            variances=[1.0, 1.0, 1.0, 1.0],
+                                            stride=[16.0, 16.0],
+                                            offset=0.5)
+=======
     anchors, _ = anchor_generator_in_python(
         input_feat=input_feat,
         anchor_sizes=[32.0, 64.0],
@@ -99,6 +122,7 @@ def get_anchor(n, c, h, w):
         stride=[16.0, 16.0],
         offset=0.5,
     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     return anchors
 
 
@@ -127,8 +151,12 @@ def rpn_target_assign_in_python(
                 (all_anchors[:, 0] >= -rpn_straddle_thresh)
                 & (all_anchors[:, 1] >= -rpn_straddle_thresh)
                 & (all_anchors[:, 2] < im_width + rpn_straddle_thresh)
+<<<<<<< HEAD
+                & (all_anchors[:, 3] < im_height + rpn_straddle_thresh))[0]
+=======
                 & (all_anchors[:, 3] < im_height + rpn_straddle_thresh)
             )[0]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
             # keep only inside anchors
             inside_anchors = all_anchors[inds_inside, :]
         else:
@@ -143,6 +171,14 @@ def rpn_target_assign_in_python(
         gt_boxes_slice = gt_boxes_slice[not_crowd_inds]
         iou = _bbox_overlaps(inside_anchors, gt_boxes_slice)
 
+<<<<<<< HEAD
+        loc_inds, score_inds, labels, gt_inds, bbox_inside_weight = \
+                         rpn_target_assign(iou, rpn_batch_size_per_im,
+                                           rpn_positive_overlap,
+                                           rpn_negative_overlap,
+                                           rpn_fg_fraction,
+                                           use_random)
+=======
         (
             loc_inds,
             score_inds,
@@ -157,6 +193,7 @@ def rpn_target_assign_in_python(
             rpn_fg_fraction,
             use_random,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         # unmap to all anchor
         loc_inds = inds_inside[loc_inds]
         score_inds = inds_inside[score_inds]
@@ -200,6 +237,14 @@ def retinanet_target_assign(
 ):
     anchor_to_gt_argmax = anchor_by_gt_overlap.argmax(axis=1)
     anchor_to_gt_max = anchor_by_gt_overlap[
+<<<<<<< HEAD
+        np.arange(anchor_by_gt_overlap.shape[0]), anchor_to_gt_argmax]
+
+    gt_to_anchor_argmax = anchor_by_gt_overlap.argmax(axis=0)
+    gt_to_anchor_max = anchor_by_gt_overlap[
+        gt_to_anchor_argmax,
+        np.arange(anchor_by_gt_overlap.shape[1])]
+=======
         np.arange(anchor_by_gt_overlap.shape[0]), anchor_to_gt_argmax
     ]
 
@@ -207,6 +252,7 @@ def retinanet_target_assign(
     gt_to_anchor_max = anchor_by_gt_overlap[
         gt_to_anchor_argmax, np.arange(anchor_by_gt_overlap.shape[1])
     ]
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     anchors_with_max_overlap = np.where(
         anchor_by_gt_overlap == gt_to_anchor_max
     )[0]
@@ -325,6 +371,7 @@ def retinanet_target_assign_in_python(
 
 
 class TestRpnTargetAssignOp(OpTest):
+
     def setUp(self):
         n, c, h, w = 2, 4, 14, 14
         all_anchors = get_anchor(n, c, h, w)
@@ -405,6 +452,7 @@ class TestRpnTargetAssignOp(OpTest):
 
 
 class TestRetinanetTargetAssignOp(OpTest):
+
     def setUp(self):
         n, c, h, w = 2, 4, 14, 14
         all_anchors = get_anchor(n, c, h, w)
@@ -481,8 +529,33 @@ class TestRetinanetTargetAssignOp(OpTest):
 
 
 class TestRetinanetTargetAssignOpError(unittest.TestCase):
+
     def test_errors(self):
         with program_guard(Program(), Program()):
+<<<<<<< HEAD
+            bbox_pred1 = fluid.data(name='bbox_pred1',
+                                    shape=[1, 100, 4],
+                                    dtype='float32')
+            cls_logits1 = fluid.data(name='cls_logits1',
+                                     shape=[1, 100, 10],
+                                     dtype='float32')
+            anchor_box1 = fluid.data(name='anchor_box1',
+                                     shape=[100, 4],
+                                     dtype='float32')
+            anchor_var1 = fluid.data(name='anchor_var1',
+                                     shape=[100, 4],
+                                     dtype='float32')
+            gt_boxes1 = fluid.data(name='gt_boxes1',
+                                   shape=[10, 4],
+                                   dtype='float32')
+            gt_labels1 = fluid.data(name='gt_labels1',
+                                    shape=[10, 1],
+                                    dtype='int32')
+            is_crowd1 = fluid.data(name='is_crowd1', shape=[1], dtype='float32')
+            im_info1 = fluid.data(name='im_info1',
+                                  shape=[1, 3],
+                                  dtype='float32')
+=======
             bbox_pred1 = fluid.data(
                 name='bbox_pred1', shape=[1, 100, 4], dtype='float32'
             )
@@ -505,6 +578,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             im_info1 = fluid.data(
                 name='im_info1', shape=[1, 3], dtype='float32'
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             # The `bbox_pred` must be Variable and the data type of `bbox_pred` Tensor
             # one of float32 and float64.
@@ -531,6 +605,14 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             self.assertRaises(TypeError, test_bbox_pred_type)
 
             def test_bbox_pred_tensor_dtype():
+<<<<<<< HEAD
+                bbox_pred2 = fluid.data(name='bbox_pred2',
+                                        shape=[1, 100, 4],
+                                        dtype='intt32')
+                score_pred, loc_pred, score_target, loc_target, bbox_inside_weight, fg_num = \
+                    fluid.layers.retinanet_target_assign(bbox_pred2, cls_logits1, anchor_box1,
+                    anchor_var1, gt_boxes1, gt_labels1, is_crowd1, im_info1, 10)
+=======
                 bbox_pred2 = fluid.data(
                     name='bbox_pred2', shape=[1, 100, 4], dtype='intt32'
                 )
@@ -552,6 +634,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
                     im_info1,
                     10,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.assertRaises(TypeError, test_bbox_pred_tensor_dtype)
 
@@ -580,6 +663,14 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             self.assertRaises(TypeError, test_cls_logits_type)
 
             def test_cls_logits_tensor_dtype():
+<<<<<<< HEAD
+                cls_logits2 = fluid.data(name='cls_logits2',
+                                         shape=[1, 100, 10],
+                                         dtype='int32')
+                score_pred, loc_pred, score_target, loc_target, bbox_inside_weight, fg_num = \
+                    fluid.layers.retinanet_target_assign(bbox_pred1, cls_logits2, anchor_box1,
+                    anchor_var1, gt_boxes1, gt_labels1, is_crowd1, im_info1, 10)
+=======
                 cls_logits2 = fluid.data(
                     name='cls_logits2', shape=[1, 100, 10], dtype='int32'
                 )
@@ -601,6 +692,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
                     im_info1,
                     10,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.assertRaises(TypeError, test_cls_logits_tensor_dtype)
 
@@ -629,6 +721,14 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             self.assertRaises(TypeError, test_anchor_box_type)
 
             def test_anchor_box_tensor_dtype():
+<<<<<<< HEAD
+                anchor_box2 = fluid.data(name='anchor_box2',
+                                         shape=[100, 4],
+                                         dtype='int32')
+                score_pred, loc_pred, score_target, loc_target, bbox_inside_weight, fg_num = \
+                    fluid.layers.retinanet_target_assign(bbox_pred1, cls_logits1, anchor_box2,
+                    anchor_var1, gt_boxes1, gt_labels1, is_crowd1, im_info1, 10)
+=======
                 anchor_box2 = fluid.data(
                     name='anchor_box2', shape=[100, 4], dtype='int32'
                 )
@@ -650,6 +750,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
                     im_info1,
                     10,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.assertRaises(TypeError, test_anchor_box_tensor_dtype)
 
@@ -678,6 +779,14 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             self.assertRaises(TypeError, test_anchor_var_type)
 
             def test_anchor_var_tensor_dtype():
+<<<<<<< HEAD
+                anchor_var2 = fluid.data(name='anchor_var2',
+                                         shape=[100, 4],
+                                         dtype='int32')
+                score_pred, loc_pred, score_target, loc_target, bbox_inside_weight, fg_num = \
+                    fluid.layers.retinanet_target_assign(bbox_pred1, cls_logits1, anchor_box1,
+                    anchor_var2, gt_boxes1, gt_labels1, is_crowd1, im_info1, 10)
+=======
                 anchor_var2 = fluid.data(
                     name='anchor_var2', shape=[100, 4], dtype='int32'
                 )
@@ -699,6 +808,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
                     im_info1,
                     10,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.assertRaises(TypeError, test_anchor_var_tensor_dtype)
 
@@ -727,6 +837,14 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             self.assertRaises(TypeError, test_gt_boxes_type)
 
             def test_gt_boxes_tensor_dtype():
+<<<<<<< HEAD
+                gt_boxes2 = fluid.data(name='gt_boxes2',
+                                       shape=[10, 4],
+                                       dtype='int32')
+                score_pred, loc_pred, score_target, loc_target, bbox_inside_weight, fg_num = \
+                    fluid.layers.retinanet_target_assign(bbox_pred1, cls_logits1, anchor_box1,
+                    anchor_var1, gt_boxes2, gt_labels1, is_crowd1, im_info1, 10)
+=======
                 gt_boxes2 = fluid.data(
                     name='gt_boxes2', shape=[10, 4], dtype='int32'
                 )
@@ -748,6 +866,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
                     im_info1,
                     10,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.assertRaises(TypeError, test_gt_boxes_tensor_dtype)
 
@@ -776,6 +895,14 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             self.assertRaises(TypeError, test_gt_label_type)
 
             def test_gt_label_tensor_dtype():
+<<<<<<< HEAD
+                gt_labels2 = fluid.data(name='label2',
+                                        shape=[10, 1],
+                                        dtype='float32')
+                score_pred, loc_pred, score_target, loc_target, bbox_inside_weight, fg_num = \
+                    fluid.layers.retinanet_target_assign(bbox_pred1, cls_logits1, anchor_box1,
+                    anchor_var1, gt_boxes1, gt_labels2, is_crowd1, im_info1, 10)
+=======
                 gt_labels2 = fluid.data(
                     name='label2', shape=[10, 1], dtype='float32'
                 )
@@ -797,6 +924,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
                     im_info1,
                     10,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.assertRaises(TypeError, test_gt_label_tensor_dtype)
 
@@ -825,6 +953,14 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             self.assertRaises(TypeError, test_is_crowd_type)
 
             def test_is_crowd_tensor_dtype():
+<<<<<<< HEAD
+                is_crowd2 = fluid.data(name='is_crowd2',
+                                       shape=[10, 1],
+                                       dtype='float32')
+                score_pred, loc_pred, score_target, loc_target, bbox_inside_weight, fg_num = \
+                    fluid.layers.retinanet_target_assign(bbox_pred1, cls_logits1, anchor_box1,
+                    anchor_var1, gt_boxes1, gt_labels1, is_crowd2, im_info1, 10)
+=======
                 is_crowd2 = fluid.data(
                     name='is_crowd2', shape=[10, 1], dtype='float32'
                 )
@@ -846,6 +982,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
                     im_info1,
                     10,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.assertRaises(TypeError, test_is_crowd_tensor_dtype)
 
@@ -874,6 +1011,14 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
             self.assertRaises(TypeError, test_im_info_type)
 
             def test_im_info_tensor_dtype():
+<<<<<<< HEAD
+                im_info2 = fluid.data(name='im_info2',
+                                      shape=[1, 3],
+                                      dtype='int32')
+                score_pred, loc_pred, score_target, loc_target, bbox_inside_weight, fg_num = \
+                    fluid.layers.retinanet_target_assign(bbox_pred1, cls_logits1, anchor_box1,
+                    anchor_var1, gt_boxes1, gt_labels1, is_crowd1, im_info2, 10)
+=======
                 im_info2 = fluid.data(
                     name='im_info2', shape=[1, 3], dtype='int32'
                 )
@@ -895,6 +1040,7 @@ class TestRetinanetTargetAssignOpError(unittest.TestCase):
                     im_info2,
                     10,
                 )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
             self.assertRaises(TypeError, test_im_info_tensor_dtype)
 

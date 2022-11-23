@@ -17,7 +17,12 @@ import paddle
 from paddle.fluid import framework as framework
 
 
+<<<<<<< HEAD
+class PrimOption(object):
+
+=======
 class PrimOption:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self):
         self.enable_prim = False
 
@@ -174,7 +179,11 @@ def flatten_and_remove_none(inp):
 
 def as_tensors(xs):
     if isinstance(xs, framework.Variable):
+<<<<<<< HEAD
+        return (xs, )
+=======
         return (xs,)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     elif isinstance(xs, typing.Sequence):
         return tuple(xs)
     else:

@@ -16,7 +16,12 @@ import math
 import numpy as np
 
 
+<<<<<<< HEAD
+class PyPrRoIPool(object):
+
+=======
 class PyPrRoIPool:
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
     def __init__(self):
         pass
 
@@ -35,44 +40,68 @@ class PyPrRoIPool:
         beta = y0 - float(s_h)
         lim_alpha = x1 - float(s_w)
         lim_beta = y1 - float(s_h)
+<<<<<<< HEAD
+        tmp = (lim_alpha - 0.5 * lim_alpha * lim_alpha - alpha +
+               0.5 * alpha * alpha) * (lim_beta - 0.5 * lim_beta * lim_beta -
+                                       beta + 0.5 * beta * beta)
+=======
         tmp = (
             lim_alpha
             - 0.5 * lim_alpha * lim_alpha
             - alpha
             + 0.5 * alpha * alpha
         ) * (lim_beta - 0.5 * lim_beta * lim_beta - beta + 0.5 * beta * beta)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         sum_out += self._PrRoIPoolingGetData(this_data, s_h, s_w, h0, w0) * tmp
 
         alpha = float(e_w) - x1
         lim_alpha = float(e_w) - x0
+<<<<<<< HEAD
+        tmp = (lim_alpha - 0.5 * lim_alpha * lim_alpha - alpha +
+               0.5 * alpha * alpha) * (lim_beta - 0.5 * lim_beta * lim_beta -
+                                       beta + 0.5 * beta * beta)
+=======
         tmp = (
             lim_alpha
             - 0.5 * lim_alpha * lim_alpha
             - alpha
             + 0.5 * alpha * alpha
         ) * (lim_beta - 0.5 * lim_beta * lim_beta - beta + 0.5 * beta * beta)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         sum_out += self._PrRoIPoolingGetData(this_data, s_h, e_w, h0, w0) * tmp
 
         alpha = x0 - float(s_w)
         beta = float(e_h) - y1
         lim_alpha = x1 - float(s_w)
         lim_beta = float(e_h) - y0
+<<<<<<< HEAD
+        tmp = (lim_alpha - 0.5 * lim_alpha * lim_alpha - alpha +
+               0.5 * alpha * alpha) * (lim_beta - 0.5 * lim_beta * lim_beta -
+                                       beta + 0.5 * beta * beta)
+=======
         tmp = (
             lim_alpha
             - 0.5 * lim_alpha * lim_alpha
             - alpha
             + 0.5 * alpha * alpha
         ) * (lim_beta - 0.5 * lim_beta * lim_beta - beta + 0.5 * beta * beta)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         sum_out += self._PrRoIPoolingGetData(this_data, e_h, s_w, h0, w0) * tmp
 
         alpha = float(e_w) - x1
         lim_alpha = float(e_w) - x0
+<<<<<<< HEAD
+        tmp = (lim_alpha - 0.5 * lim_alpha * lim_alpha - alpha +
+               0.5 * alpha * alpha) * (lim_beta - 0.5 * lim_beta * lim_beta -
+                                       beta + 0.5 * beta * beta)
+=======
         tmp = (
             lim_alpha
             - 0.5 * lim_alpha * lim_alpha
             - alpha
             + 0.5 * alpha * alpha
         ) * (lim_beta - 0.5 * lim_beta * lim_beta - beta + 0.5 * beta * beta)
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         sum_out += self._PrRoIPoolingGetData(this_data, e_h, e_w, h0, w0) * tmp
 
         return sum_out
@@ -155,11 +184,18 @@ class PyPrRoIPool:
                                         w_iter + 1,
                                         max(win_start_h, float(h_iter)),
                                         max(win_start_w, float(w_iter)),
+<<<<<<< HEAD
+                                        min(win_end_h,
+                                            float(h_iter) + 1.0),
+                                        min(win_end_w,
+                                            float(w_iter + 1.0)), height, width)
+=======
                                         min(win_end_h, float(h_iter) + 1.0),
                                         min(win_end_w, float(w_iter + 1.0)),
                                         height,
                                         width,
                                     )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
                             out_data[i, c, ph, pw] = sum_out / win_size
 

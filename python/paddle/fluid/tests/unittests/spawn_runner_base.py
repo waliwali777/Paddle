@@ -30,6 +30,7 @@ class SpawnAssistTestArgs:
 
 
 class TestDistSpawnRunner(unittest.TestCase):
+
     def setUp(self):
         # NOTE(chenweihang): keep consistent with
         # TestDistBase.check_with_place
@@ -41,12 +42,19 @@ class TestDistSpawnRunner(unittest.TestCase):
 
     def _run_parallel(self, model, args):
         args.update_method = "nccl2"
+<<<<<<< HEAD
+        context = paddle.distributed.spawn(func=model.run_trainer_with_spawn,
+                                           args=(args, ),
+                                           nprocs=self.nprocs,
+                                           join=True)
+=======
         context = paddle.distributed.spawn(
             func=model.run_trainer_with_spawn,
             args=(args,),
             nprocs=self.nprocs,
             join=True,
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
         result_list = []
         for res_queue in context.return_queues:
             result_list.append(res_queue.get())
@@ -54,12 +62,19 @@ class TestDistSpawnRunner(unittest.TestCase):
 
     def check_dist_result_with_spawn(self, test_class, delta=1e-3):
         with _test_eager_guard():
+<<<<<<< HEAD
+            self.check_dist_result_with_spawn_func(test_class=test_class,
+                                                   delta=delta)
+        self.check_dist_result_with_spawn_func(test_class=test_class,
+                                               delta=delta)
+=======
             self.check_dist_result_with_spawn_func(
                 test_class=test_class, delta=delta
             )
         self.check_dist_result_with_spawn_func(
             test_class=test_class, delta=delta
         )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
 
     def check_dist_result_with_spawn_func(self, test_class, delta=1e-3):
         # 0. prepare model and args
@@ -86,8 +101,15 @@ class TestDistSpawnRunner(unittest.TestCase):
                 loss,
                 dist_loss,
                 delta=delta,
+<<<<<<< HEAD
+                msg=
+                "The results of single-card execution and multi-card execution are inconsistent."
+                "signal-card loss is:\n{}\nmulti-card average loss is:\n{}\n".
+                format(loss, dist_loss))
+=======
                 msg="The results of single-card execution and multi-card execution are inconsistent."
                 "signal-card loss is:\n{}\nmulti-card average loss is:\n{}\n".format(
                     loss, dist_loss
                 ),
             )
+>>>>>>> d828ca460a89c2ce88be15bb5cdb76c676decf91
