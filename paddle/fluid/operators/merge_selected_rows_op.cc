@@ -12,6 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
+<<<<<<< HEAD
+#include "paddle/fluid/operators/merge_selected_rows_op.h"
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include <unordered_map>
 
 #include "paddle/fluid/framework/infershape_utils.h"
@@ -81,6 +86,16 @@ class MergeSelectedRowsOpInferVarType
 
 namespace ops = paddle::operators;
 namespace plat = paddle::platform;
+<<<<<<< HEAD
+REGISTER_OPERATOR(merge_selected_rows,
+                  ops::MergeSelectedRowsOp,
+                  ops::MergeSelectedRowsOpMaker,
+                  ops::MergeSelectedRowsOpInferVarType);
+
+REGISTER_OP_CPU_KERNEL(merge_selected_rows,
+                       ops::MergeSelectedRowsKernel<phi::CPUContext, float>,
+                       ops::MergeSelectedRowsKernel<phi::CPUContext, double>);
+=======
 
 DECLARE_INFER_SHAPE_FUNCTOR(merge_selected_rows,
                             MergeSelectedRowsInferMetaFunctor,
@@ -91,3 +106,4 @@ REGISTER_OPERATOR(merge_selected_rows,
                   ops::MergeSelectedRowsOpMaker,
                   ops::MergeSelectedRowsOpInferVarType,
                   MergeSelectedRowsInferMetaFunctor);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f

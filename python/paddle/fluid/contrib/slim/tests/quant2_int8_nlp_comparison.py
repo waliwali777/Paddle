@@ -41,23 +41,50 @@ def parse_args():
         default=0,
         help='Number of the first minibatches to skip in performance statistics.',
     )
+<<<<<<< HEAD
+    parser.add_argument('--quant_model',
+                        type=str,
+                        default='',
+                        help='A path to a Quant model.')
+=======
     parser.add_argument(
         '--quant_model', type=str, default='', help='A path to a Quant model.'
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     parser.add_argument(
         '--fp32_model',
         type=str,
         default='',
+<<<<<<< HEAD
+        help=
+        'A path to an FP32 model. If empty, the Quant model will be used for FP32 inference.'
+    )
+    parser.add_argument('--infer_data', type=str, default='', help='Data file.')
+    parser.add_argument('--labels',
+                        type=str,
+                        default='',
+                        help='File with labels.')
+=======
         help='A path to an FP32 model. If empty, the Quant model will be used for FP32 inference.',
     )
     parser.add_argument('--infer_data', type=str, default='', help='Data file.')
     parser.add_argument(
         '--labels', type=str, default='', help='File with labels.'
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     parser.add_argument(
         '--batch_num',
         type=int,
         default=0,
+<<<<<<< HEAD
+        help=
+        'Number of batches to process. 0 or less means whole dataset. Default: 0.'
+    )
+    parser.add_argument('--acc_diff_threshold',
+                        type=float,
+                        default=0.01,
+                        help='Accepted accuracy difference threshold.')
+=======
         help='Number of batches to process. 0 or less means whole dataset. Default: 0.',
     )
     parser.add_argument(
@@ -66,11 +93,17 @@ def parse_args():
         default=0.01,
         help='Accepted accuracy difference threshold.',
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     parser.add_argument(
         '--ops_to_quantize',
         type=str,
         default='',
+<<<<<<< HEAD
+        help=
+        'A comma separated list of operators to quantize. Only quantizable operators are taken into account. If the option is not used, an attempt to quantize all quantizable operators will be made.'
+=======
         help='A comma separated list of operators to quantize. Only quantizable operators are taken into account. If the option is not used, an attempt to quantize all quantizable operators will be made.',
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     )
     parser.add_argument(
         '--op_ids_to_skip',
@@ -82,6 +115,14 @@ def parse_args():
         '--targets',
         type=str,
         default='quant,int8,fp32',
+<<<<<<< HEAD
+        help=
+        'A comma separated list of inference types to run ("int8", "fp32", "quant"). Default: "quant,int8,fp32"'
+    )
+    parser.add_argument('--debug',
+                        action='store_true',
+                        help='If used, the graph of Quant model is drawn.')
+=======
         help='A comma separated list of inference types to run ("int8", "fp32", "quant"). Default: "quant,int8,fp32"',
     )
     parser.add_argument(
@@ -89,6 +130,7 @@ def parse_args():
         action='store_true',
         help='If used, the graph of Quant model is drawn.',
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     test_args, args = parser.parse_known_args(namespace=unittest)
 
@@ -163,6 +205,14 @@ class QuantInt8NLPComparisonTest(unittest.TestCase):
         inference_scope = fluid.executor.global_scope()
         with fluid.scope_guard(inference_scope):
             if os.path.exists(os.path.join(model_path, '__model__')):
+<<<<<<< HEAD
+                [inference_program, feed_target_names, fetch_targets
+                 ] = fluid.io.load_inference_model(model_path, exe)
+            else:
+                [inference_program, feed_target_names, fetch_targets
+                 ] = fluid.io.load_inference_model(model_path, exe, 'model',
+                                                   'params')
+=======
                 [
                     inference_program,
                     feed_target_names,
@@ -176,6 +226,7 @@ class QuantInt8NLPComparisonTest(unittest.TestCase):
                 ] = fluid.io.load_inference_model(
                     model_path, exe, 'model', 'params'
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             graph = IrGraph(core.Graph(inference_program.desc), for_test=True)
             if self._debug:
@@ -250,8 +301,12 @@ class QuantInt8NLPComparisonTest(unittest.TestCase):
             pps_avg = np.average(ppses)
             acc_avg = float(np.sum(total_correct)) / float(total_samples)
             _logger.info(
+<<<<<<< HEAD
+                'Total inference run time: {:.2f} s'.format(infer_total_time))
+=======
                 'Total inference run time: {:.2f} s'.format(infer_total_time)
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             return acc_avg, pps_avg, latency_avg
 
@@ -342,6 +397,13 @@ class QuantInt8NLPComparisonTest(unittest.TestCase):
         _logger.info('Batch number: {}'.format(batch_num))
         _logger.info('Accuracy drop threshold: {}.'.format(acc_diff_threshold))
         _logger.info(
+<<<<<<< HEAD
+            'Quantized ops: {}.'.format(','.join(self._quantized_ops) if self.
+                                        _quantized_ops else 'all quantizable'))
+        _logger.info('Op ids to skip quantization: {}.'.format(
+            ','.join(map(str, self._op_ids_to_skip)
+                     ) if test_case_args.op_ids_to_skip else 'none'))
+=======
             'Quantized ops: {}.'.format(
                 ','.join(self._quantized_ops)
                 if self._quantized_ops
@@ -355,10 +417,22 @@ class QuantInt8NLPComparisonTest(unittest.TestCase):
                 else 'none'
             )
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         _logger.info('Targets: {}.'.format(','.join(self._targets)))
 
         if 'quant' in self._targets:
             _logger.info('--- Quant prediction start ---')
+<<<<<<< HEAD
+            val_reader = paddle.batch(self._reader_creator(
+                data_path, labels_path),
+                                      batch_size=batch_size)
+            quant_acc, quant_pps, quant_lat = self._predict(val_reader,
+                                                            quant_model_path,
+                                                            batch_size,
+                                                            batch_num,
+                                                            skip_batch_num,
+                                                            target='quant')
+=======
             val_reader = paddle.batch(
                 self._reader_creator(data_path, labels_path),
                 batch_size=batch_size,
@@ -371,11 +445,23 @@ class QuantInt8NLPComparisonTest(unittest.TestCase):
                 skip_batch_num,
                 target='quant',
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             self._print_performance('Quant', quant_pps, quant_lat)
             self._print_accuracy('Quant', quant_acc)
 
         if 'int8' in self._targets:
             _logger.info('--- INT8 prediction start ---')
+<<<<<<< HEAD
+            val_reader = paddle.batch(self._reader_creator(
+                data_path, labels_path),
+                                      batch_size=batch_size)
+            int8_acc, int8_pps, int8_lat = self._predict(val_reader,
+                                                         quant_model_path,
+                                                         batch_size,
+                                                         batch_num,
+                                                         skip_batch_num,
+                                                         target='int8')
+=======
             val_reader = paddle.batch(
                 self._reader_creator(data_path, labels_path),
                 batch_size=batch_size,
@@ -388,12 +474,24 @@ class QuantInt8NLPComparisonTest(unittest.TestCase):
                 skip_batch_num,
                 target='int8',
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             self._print_performance('INT8', int8_pps, int8_lat)
             self._print_accuracy('INT8', int8_acc)
 
         fp32_acc = fp32_pps = fp32_lat = -1
         if 'fp32' in self._targets and fp32_model_path:
             _logger.info('--- FP32 prediction start ---')
+<<<<<<< HEAD
+            val_reader = paddle.batch(self._reader_creator(
+                data_path, labels_path),
+                                      batch_size=batch_size)
+            fp32_acc, fp32_pps, fp32_lat = self._predict(val_reader,
+                                                         fp32_model_path,
+                                                         batch_size,
+                                                         batch_num,
+                                                         skip_batch_num,
+                                                         target='fp32')
+=======
             val_reader = paddle.batch(
                 self._reader_creator(data_path, labels_path),
                 batch_size=batch_size,
@@ -406,6 +504,7 @@ class QuantInt8NLPComparisonTest(unittest.TestCase):
                 skip_batch_num,
                 target='fp32',
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             self._print_performance('FP32', fp32_pps, fp32_lat)
             self._print_accuracy('FP32', fp32_acc)
 

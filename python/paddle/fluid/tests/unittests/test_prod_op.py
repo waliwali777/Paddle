@@ -19,6 +19,7 @@ from test_sum_op import TestReduceOPTensorAxisBase
 
 
 class TestProdOp(unittest.TestCase):
+
     def setUp(self):
         self.input = np.random.random(size=(10, 10, 5)).astype(np.float32)
 
@@ -61,6 +62,18 @@ class TestProdOp(unittest.TestCase):
         )
 
         dy_result = paddle.prod(input, axis=1, keepdim=True, dtype='int64')
+<<<<<<< HEAD
+        expected_result = np.prod(self.input,
+                                  axis=1,
+                                  keepdims=True,
+                                  dtype=np.int64)
+        self.assertTrue(np.allclose(dy_result.numpy(), expected_result))
+
+    def run_static(self, use_gpu=False):
+        input = paddle.fluid.data(name='input',
+                                  shape=[10, 10, 5],
+                                  dtype='float32')
+=======
         expected_result = np.prod(
             self.input, axis=1, keepdims=True, dtype=np.int64
         )
@@ -72,6 +85,7 @@ class TestProdOp(unittest.TestCase):
         input = paddle.fluid.data(
             name='input', shape=[10, 10, 5], dtype='float32'
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         result0 = paddle.prod(input)
         result1 = paddle.prod(input, axis=1)
         result2 = paddle.prod(input, axis=-1)
@@ -117,6 +131,14 @@ class TestProdOp(unittest.TestCase):
             static_result[4], expected_result, rtol=1e-05
         )
         expected_result = np.prod(self.input, axis=1, dtype=np.int64)
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(static_result[5], expected_result))
+        expected_result = np.prod(self.input,
+                                  axis=1,
+                                  keepdims=True,
+                                  dtype=np.int64)
+        self.assertTrue(np.allclose(static_result[6], expected_result))
+=======
         np.testing.assert_allclose(
             static_result[5], expected_result, rtol=1e-05
         )
@@ -126,6 +148,7 @@ class TestProdOp(unittest.TestCase):
         np.testing.assert_allclose(
             static_result[6], expected_result, rtol=1e-05
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_cpu(self):
         paddle.disable_static(place=paddle.CPUPlace())
@@ -148,14 +171,21 @@ class TestProdOp(unittest.TestCase):
 
 
 class TestProdOpError(unittest.TestCase):
+
     def test_error(self):
         with paddle.static.program_guard(
             paddle.static.Program(), paddle.static.Program()
         ):
             x = paddle.fluid.data(name='x', shape=[2, 2, 4], dtype='float32')
+<<<<<<< HEAD
+            bool_x = paddle.fluid.data(name='bool_x',
+                                       shape=[2, 2, 4],
+                                       dtype='bool')
+=======
             bool_x = paddle.fluid.data(
                 name='bool_x', shape=[2, 2, 4], dtype='bool'
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             # The argument x shoule be a Tensor
             self.assertRaises(TypeError, paddle.prod, [1])
 

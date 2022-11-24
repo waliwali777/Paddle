@@ -28,6 +28,14 @@ class TestNormalization(unittest.TestCase):
         )
 
     def set_program(self, axis, epsilon):
+<<<<<<< HEAD
+        """Build the test program.
+        """
+        data = fluid.layers.data(name=self.data_desc["name"],
+                                 shape=self.data_desc["shape"],
+                                 dtype="float32",
+                                 append_batch_size=False)
+=======
         """Build the test program."""
         data = fluid.layers.data(
             name=self.data_desc["name"],
@@ -35,6 +43,7 @@ class TestNormalization(unittest.TestCase):
             dtype="float32",
             append_batch_size=False,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         data.stop_gradient = False
         l2_norm = fluid.layers.l2_normalize(x=data, axis=axis, epsilon=epsilon)
         out = fluid.layers.reduce_sum(l2_norm, dim=None)

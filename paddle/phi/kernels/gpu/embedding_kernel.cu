@@ -13,12 +13,20 @@
 // limitations under the License.
 
 #include "paddle/phi/kernels/embedding_kernel.h"
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/backends/gpu/gpu_info.h"
 #include "paddle/phi/common/data_type.h"
 #include "paddle/phi/core/kernel_registry.h"
 #include "paddle/phi/kernels/funcs/eigen/eigen_function.h"
 #include "paddle/phi/kernels/funcs/embedding_util.h"
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 namespace phi {
 
 template <typename T, typename IdT, bool PaddingFlag>

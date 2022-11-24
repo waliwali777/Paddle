@@ -21,8 +21,11 @@ from paddle.fluid.dygraph.dygraph_to_static.utils import unwrap
 from paddle.fluid.dygraph.dygraph_to_static.utils import ORIGI_INFO
 from paddle.fluid.framework import Program
 
+<<<<<<< HEAD
+=======
 from collections.abc import Sequence
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 class Location:
     """

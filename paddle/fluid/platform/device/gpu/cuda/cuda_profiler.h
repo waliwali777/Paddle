@@ -23,9 +23,15 @@ limitations under the License. */
 namespace paddle {
 namespace platform {
 
+<<<<<<< HEAD
+void CudaProfilerInit(std::string output_file,
+                      std::string output_mode,
+                      std::string config_file);
+=======
 void CudaProfilerInit(const std::string& output_file,
                       const std::string& output_mode,
                       const std::string& config_file);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 void CudaProfilerStart();
 

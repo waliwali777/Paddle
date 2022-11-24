@@ -243,8 +243,13 @@ class GPUPRROIPoolOpKernel : public framework::OpKernel<T> {
         rois_batch_id_list.mutable_data<int>(platform::CPUPlace());
 
     if (ctx.HasInput("BatchRoINums") || rois->lod().empty()) {
+<<<<<<< HEAD
+      auto* batchroinum = ctx.Input<Tensor>("BatchRoINums");
+      framework::Tensor batch_index_cpu;
+=======
       auto* batchroinum = ctx.Input<phi::DenseTensor>("BatchRoINums");
       phi::DenseTensor batch_index_cpu;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       framework::TensorCopySync(
           *batchroinum, platform::CPUPlace(), &batch_index_cpu);
 
@@ -350,8 +355,13 @@ class GPUPRROIPoolGradOpKernel : public framework::OpKernel<T> {
           rois_batch_id_list.mutable_data<int>(platform::CPUPlace());
 
       if (ctx.HasInput("BatchRoINums") || rois->lod().empty()) {
+<<<<<<< HEAD
+        auto* batchroinum = ctx.Input<Tensor>("BatchRoINums");
+        framework::Tensor batch_index_cpu;
+=======
         auto* batchroinum = ctx.Input<phi::DenseTensor>("BatchRoINums");
         phi::DenseTensor batch_index_cpu;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         framework::TensorCopySync(
             *batchroinum, platform::CPUPlace(), &batch_index_cpu);
 

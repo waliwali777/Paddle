@@ -33,10 +33,18 @@ bool ProcessGroup::Task::Wait(std::chrono::milliseconds timeout) {
 
 void ProcessGroup::Task::Synchronize() {}
 
+<<<<<<< HEAD
+ProcessGroup::ProcessGroup(int rank,
+                           int size,
+                           const platform::Place& place,
+                           int gid)
+    : rank_(rank), size_(size), place_(place), gid_(gid) {
+=======
 void ProcessGroup::Task::UpdateWaitChain(const phi::DeviceContext& ctx) {}
 
 ProcessGroup::ProcessGroup(int rank, int size, int gid)
     : rank_(rank), size_(size), gid_(gid) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   if (gid != IGNORE_ID) {
     auto map = ProcessGroupMapFromGid::getInstance();
     map->insert(gid_, this);

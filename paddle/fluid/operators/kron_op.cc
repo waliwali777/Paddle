@@ -38,8 +38,13 @@ class KronOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const framework::Tensor& tensor,
+      const framework::OpKernelType& expected_kernel_type) const {
+=======
       const phi::DenseTensor& tensor,
       const framework::OpKernelType& expected_kernel_type) const override {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     if (framework::IsComplexType(expected_kernel_type.data_type_)) {
       // only promote inputs’s types when contains complex input
       return framework::OpKernelType(
@@ -120,8 +125,13 @@ class KronGradOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const framework::Tensor& tensor,
+      const framework::OpKernelType& expected_kernel_type) const {
+=======
       const phi::DenseTensor& tensor,
       const framework::OpKernelType& expected_kernel_type) const override {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     if (framework::IsComplexType(expected_kernel_type.data_type_)) {
       // only promote inputs’s types when contains complex input
       return framework::OpKernelType(

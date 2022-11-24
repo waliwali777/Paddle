@@ -14,7 +14,11 @@
 
 #include <gtest/gtest.h>
 
+<<<<<<< HEAD
+#include "paddle/fluid/framework/ir/mkldnn/conv_concat_relu_mkldnn_fuse_pass.h"
+=======
 #include "paddle/fluid/framework/ir/mkldnn/conv_activation_mkldnn_fuse_pass.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/fluid/framework/op_proto_maker.h"
 
 namespace paddle {

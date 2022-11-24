@@ -25,12 +25,18 @@ from test_fetch_feed import Linear
 
 np.random.seed(2020)
 
+<<<<<<< HEAD
+place = fluid.CUDAPlace(
+    0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
+=======
 place = (
     fluid.CUDAPlace(0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestDyToStaticSaveLoad(unittest.TestCase):
+
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.model_path = os.path.join(
@@ -50,9 +56,14 @@ class TestDyToStaticSaveLoad(unittest.TestCase):
             program_translator.enable(True)
             x = fluid.dygraph.to_variable(x_data)
             net = Linear(32, 64)
+<<<<<<< HEAD
+            adam = AdamOptimizer(learning_rate=0.1,
+                                 parameter_list=net.parameters())
+=======
             adam = AdamOptimizer(
                 learning_rate=0.1, parameter_list=net.parameters()
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             for i in range(batch_num):
                 static_out, static_loss = net(x)

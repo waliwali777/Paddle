@@ -20,8 +20,13 @@
 
 #include "paddle/fluid/framework/tensor.h"
 #include "paddle/fluid/framework/tensor_util.h"
+<<<<<<< HEAD
+#include "paddle/fluid/platform/device/gpu/gpu_primitives.h"
+#include "paddle/fluid/platform/device_context.h"
+=======
 #include "paddle/fluid/platform/device_context.h"
 #include "paddle/phi/backends/gpu/gpu_primitives.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 #include "paddle/fluid/inference/tensorrt/plugin/fused_token_prune_op_plugin.h"
 #include "paddle/fluid/operators/fused_token_prune_op.cu.h"
@@ -31,15 +36,28 @@ namespace inference {
 namespace tensorrt {
 namespace plugin {
 
+<<<<<<< HEAD
+#if IS_TRT_VERSION_GE(6000)
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 template <typename T>
 __global__ void ElementwiseMask(const T* a,
                                 const T* b,
                                 T* res,
                                 int num_elements) {
+<<<<<<< HEAD
+#if CUDA_ARCH_FP16_SUPPORTED(__CUDA_ARCH__)
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto tid = threadIdx.x + blockIdx.x * blockDim.x;
   if (tid >= num_elements) return;
   const T zero = 0;
   res[tid] = b[tid] >= zero ? a[tid] : zero;
+<<<<<<< HEAD
+#endif
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 template <typename T>
@@ -119,6 +137,10 @@ __global__ void ReduceSum2(
 template <>
 __global__ void ReduceSum2<half>(
     const half* src, half* dst, int bsz, int nb_head, int max_seq_len) {
+<<<<<<< HEAD
+#if CUDA_ARCH_FP16_SUPPORTED(__CUDA_ARCH__)
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   int tid = threadIdx.x;
   int bid = blockIdx.x;
   int num_blocks_per_head = ((max_seq_len / blockDim.x) * max_seq_len);
@@ -144,12 +166,20 @@ __global__ void ReduceSum2<half>(
   }
 
   if (tid == 0) {
+<<<<<<< HEAD
+    platform::fastAtomicAdd<platform::float16>(
+=======
     phi::fastAtomicAdd<platform::float16>(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         reinterpret_cast<platform::float16*>(dst),
         static_cast<size_t>(batch * max_seq_len + col),
         static_cast<size_t>(bsz * max_seq_len),
         static_cast<platform::float16>(res_half[0]));
   }
+<<<<<<< HEAD
+#endif
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 template <typename T>
@@ -171,6 +201,16 @@ __global__ void TakeAlongAxis(const T* src,
   }
 }
 
+<<<<<<< HEAD
+__global__ void pos_id_prune_kernel(const int32_t* src,
+                                    int32_t* dst,
+                                    int pos_nums,
+                                    float scale) {
+  dst[0] = 0;
+  for (int i = 1; i < pos_nums; i++) {
+    dst[i] =
+        dst[i - 1] + max(static_cast<int>((src[i] - src[i - 1]) * scale), 2);
+=======
 __global__ void compute_token_length(const int32_t* src,
                                      int32_t* dst,
                                      float scale) {
@@ -246,6 +286,7 @@ __global__ void varlen_prune_token(const half* tokens,
   if (token_index[token_it] < token_pos[batch + 1] - token_pos[batch]) {
     output[(token_index[token_it] + token_pos[batch]) * gridDim.z * blockDim.x +
            blockIdx.z * blockDim.x + threadIdx.x] = tokens[pre_value_it];
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 }
 
@@ -256,6 +297,11 @@ nvinfer1::DimsExprs FusedTokenPrunePluginDynamic::getOutputDimensions(
     nvinfer1::IExprBuilder& expr_builder) TRT_NOEXCEPT {
   auto x_dims = inputs[1], new_mask_dims = inputs[3];
   if (flag_varseqlen_) {
+<<<<<<< HEAD
+    if (output_index == 0) {
+      nvinfer1::DimsExprs ret = x_dims;
+      ret.d[1] = new_mask_dims.d[2];
+=======
     // max sum of seqlen: ceil(sum / scale) + n -1 >= for(i=0;i<n;i++) {sum +=
     // floor(num(i) / scale)} auto
     // pruned_sum_length=std::ceil(inputs[4].d[0]*new_mask_dims.d[2]/inputs[6].d[1])+
@@ -279,6 +325,7 @@ nvinfer1::DimsExprs FusedTokenPrunePluginDynamic::getOutputDimensions(
       ret.d[1] = x_dims.d[2];
       ret.d[2] = expr_builder.constant(1);
       ret.d[3] = expr_builder.constant(1);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       return ret;
     } else if (output_index == 1) {
       nvinfer1::DimsExprs ret;
@@ -290,7 +337,22 @@ nvinfer1::DimsExprs FusedTokenPrunePluginDynamic::getOutputDimensions(
       // word id
       nvinfer1::DimsExprs ret;
       ret.nbDims = 1;
+<<<<<<< HEAD
+      // max sum of seqlen: pre_seqlen * new_mask[2] / mask[1] + 2 * batchs
+      const auto* two = expr_builder.constant(2);
+      ret.d[0] = expr_builder.operation(
+          nvinfer1::DimensionOperation::kSUM,
+          *expr_builder.operation(
+              nvinfer1::DimensionOperation::kFLOOR_DIV,
+              *expr_builder.operation(nvinfer1::DimensionOperation::kPROD,
+                                      *inputs[4].d[0],
+                                      *new_mask_dims.d[2]),
+              *inputs[6].d[1]),
+          *expr_builder.operation(
+              nvinfer1::DimensionOperation::kPROD, *two, *inputs[6].d[0]));
+=======
       ret.d[0] = pruned_sum_length;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       return ret;
     } else if (output_index == 3) {
       // pos id
@@ -339,6 +401,28 @@ bool FusedTokenPrunePluginDynamic::supportsFormatCombination(
 
   const nvinfer1::PluginTensorDesc& in = in_out[pos];
   if (flag_varseqlen_) {
+<<<<<<< HEAD
+    if (pos == 0) {
+      if (with_fp16_) {
+#ifdef TRT_PLUGIN_FP16_AVALIABLE
+        return (in.type == nvinfer1::DataType::kFLOAT ||
+                in.type == nvinfer1::DataType::kHALF) &&
+               (in.format == nvinfer1::TensorFormat::kLINEAR);
+#else
+        return (in.type == nvinfer1::DataType::kFLOAT) &&
+               (in.format == nvinfer1::TensorFormat::kLINEAR);
+#endif
+      } else {
+        return (in.type == nvinfer1::DataType::kFLOAT) &&
+               (in.format == nvinfer1::TensorFormat::kLINEAR);
+      }
+    } else if (pos <= 3 || pos == 7) {
+      const nvinfer1::PluginTensorDesc& prev = in_out[0];
+      return in.type == prev.type && in.format == prev.format;
+    } else if (pos == 6 || pos == 11) {  // mask_id, mask_id_out
+      return in.type == nvinfer1::DataType::kFLOAT &&
+             in.format == nvinfer1::TensorFormat::kLINEAR;
+=======
     if (pos <= 3 || pos == 7) {
       if (with_fp16_) {
         return (in.type == nvinfer1::DataType::kHALF) &&
@@ -351,6 +435,7 @@ bool FusedTokenPrunePluginDynamic::supportsFormatCombination(
     } else if (pos == 6 || pos == 11) {  // mask_id, mask_id_out
       return (in.type == nvinfer1::DataType::kFLOAT) &&
              (in.format == nvinfer1::TensorFormat::kLINEAR);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     } else {
       return in.type == nvinfer1::DataType::kINT32 &&
              in.format == nvinfer1::TensorFormat::kLINEAR;
@@ -358,9 +443,20 @@ bool FusedTokenPrunePluginDynamic::supportsFormatCombination(
   } else {
     if (pos == 0) {
       if (with_fp16_) {
+<<<<<<< HEAD
+#ifdef TRT_PLUGIN_FP16_AVALIABLE
+        return (in.type == nvinfer1::DataType::kFLOAT ||
+                in.type == nvinfer1::DataType::kHALF) &&
+               (in.format == nvinfer1::TensorFormat::kLINEAR);
+#else
+        return (in.type == nvinfer1::DataType::kFLOAT) &&
+               (in.format == nvinfer1::TensorFormat::kLINEAR);
+#endif
+=======
         return (in.type == nvinfer1::DataType::kHALF) &&
                (in.format == nvinfer1::TensorFormat::kLINEAR);
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       } else {
         return (in.type == nvinfer1::DataType::kFLOAT) &&
                (in.format == nvinfer1::TensorFormat::kLINEAR);
@@ -381,9 +477,15 @@ nvinfer1::DataType FusedTokenPrunePluginDynamic::getOutputDataType(
     int nb_inputs) const TRT_NOEXCEPT {
   if (flag_varseqlen_) {
     if (index == 0) {
+<<<<<<< HEAD
+      return input_types[1];
+    } else if (index == 4) {
+      return nvinfer1::DataType::kFLOAT;
+=======
       return nvinfer1::DataType::kHALF;
     } else if (index == 4) {  // mask id
       return input_types[6];
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     } else {
       // index = 1,2,3
       return nvinfer1::DataType::kINT32;
@@ -526,7 +628,11 @@ inline void enqueueImpl(const nvinfer1::PluginTensorDesc* input_desc,
       sizeof(T) * 8,
       stream));
   int64_t temp_size = temp_storage_bytes;
+<<<<<<< HEAD
+  framework::Tensor temp_storage;
+=======
   phi::DenseTensor temp_storage;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto* temp_storage_data = temp_storage.mutable_data<uint8_t>(
       {temp_size}, platform::CUDAPlace(device_id));
 
@@ -614,6 +720,17 @@ inline void enqueueImpl(const nvinfer1::PluginTensorDesc* input_desc,
   }
 }
 
+<<<<<<< HEAD
+inline void pos_id_prune(const int32_t* input,
+                         int32_t* output,
+                         int pos_nums,
+                         float scale,
+                         cudaStream_t stream) {
+  pos_id_prune_kernel<<<1, 1, 0, stream>>>(input, output, pos_nums, scale);
+}
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 int FusedTokenPrunePluginDynamic::enqueue(
     const nvinfer1::PluginTensorDesc* input_desc,
     const nvinfer1::PluginTensorDesc* output_desc,
@@ -621,6 +738,70 @@ int FusedTokenPrunePluginDynamic::enqueue(
     void* const* outputs,
     void* workspace,
     cudaStream_t stream) TRT_NOEXCEPT {
+<<<<<<< HEAD
+  auto input_type = input_desc[0].type;
+  auto attn_dims = input_desc[0].dims;
+  auto bsz = attn_dims.d[0], nb_head = attn_dims.d[1],
+       max_seq_len = attn_dims.d[2];
+  int device_id;
+  cudaGetDevice(&device_id);
+
+  if (input_type == nvinfer1::DataType::kFLOAT) {
+    VLOG(1) << "TRT Plugin DataType selected. FusedTokenPrune-->fp32";
+
+    float max = std::numeric_limits<float>::max();
+
+    enqueueImpl<float>(input_desc,
+                       output_desc,
+                       inputs,
+                       outputs,
+                       workspace,
+                       stream,
+                       device_id,
+                       max,
+                       keep_first_token_,
+                       keep_order_);
+
+  } else if (input_type == nvinfer1::DataType::kHALF) {
+#ifdef TRT_PLUGIN_FP16_AVALIABLE
+    VLOG(1) << "TRT Plugin DataType selected. FusedTokenPrune-->fp16";
+
+    half max = 65504.0;
+
+    enqueueImpl<half>(input_desc,
+                      output_desc,
+                      inputs,
+                      outputs,
+                      workspace,
+                      stream,
+                      device_id,
+                      max,
+                      keep_first_token_,
+                      keep_order_);
+
+#else
+    PADDLE_THROW(platform::errors::Fatal(
+        "The Ernie(Bert) TensorRT Plugin should be "
+        "complied with CUDA version >= 10.0 when running with fp16. "
+        "Please recomplie it or try to use fp32 by set "
+        "config.SetTRTDynamicShapeInfo(min_input_shape, "
+        "max_input_shape, opt_input_shape, true"));
+#endif
+  } else {
+    PADDLE_THROW(
+        platform::errors::Fatal("The FusedTokenPrune TRT Plugin's input type "
+                                "should be float or half."));
+  }
+  if (flag_varseqlen_) {
+    float scale =
+        static_cast<float>(input_desc[3].dims.d[2]) / input_desc[6].dims.d[1];
+    // outputs[2]=inputs[4]; // word_id
+    const int32_t* inputs5 = static_cast<const int32_t*>(inputs[5]);
+    int32_t* outputs3 = static_cast<int32_t*>(outputs[3]);
+    pos_id_prune(
+        inputs5, outputs3, input_desc[5].dims.d[0], scale, stream);  // pos_id
+    // outputs[4]=inputs[6]; // new_mask
+=======
   if (flag_varseqlen_) {
     if (!(input_desc[0].type == nvinfer1::DataType::kHALF &&
           input_desc[1].type == nvinfer1::DataType::kHALF)) {
@@ -764,10 +945,15 @@ int FusedTokenPrunePluginDynamic::enqueue(
           platform::errors::Fatal("The FusedTokenPrune TRT Plugin's input type "
                                   "should be float or half."));
     }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
   return cudaGetLastError() != cudaSuccess;
 }
 
+<<<<<<< HEAD
+#endif
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }  // namespace plugin
 }  // namespace tensorrt
 }  // namespace inference

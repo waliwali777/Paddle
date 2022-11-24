@@ -65,7 +65,11 @@ class CBroadcastOpASCENDKernel : public framework::OpKernel<T> {
     dev_ctx->Wait();
 
     if (out != x) {
+<<<<<<< HEAD
+      framework::TensorCopy(*static_cast<const framework::Tensor*>(x),
+=======
       framework::TensorCopy(*static_cast<const phi::DenseTensor*>(x),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                             place,
                             *platform::DeviceContextPool::Instance().Get(place),
                             static_cast<phi::DenseTensor*>(out));

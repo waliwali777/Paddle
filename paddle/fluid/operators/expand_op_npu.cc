@@ -78,7 +78,11 @@ class ExpandNPUKernel : public framework::OpKernel<T> {
                           "of dimensions (%d) of the input.",
                           expand_times.size(),
                           static_cast<size_t>(in_dims.size())));
+<<<<<<< HEAD
+    auto* out0 = context.Output<framework::LoDTensor>("Out");
+=======
     auto* out0 = context.Output<phi::DenseTensor>("Out");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     framework::DDim out_dims(in_dims);
 
     for (size_t i = 0; i < expand_times.size(); ++i) {

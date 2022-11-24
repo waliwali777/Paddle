@@ -39,14 +39,21 @@ paddle.enable_static()
 
 
 class TestCollectiveBroadcastAPI(TestCollectiveAPIRunnerBase):
+
     def __init__(self):
         self.global_ring_id = 0
 
     def get_model(self, main_prog, startup_program, rank):
         with fluid.program_guard(main_prog, startup_program):
+<<<<<<< HEAD
+            tindata = layers.data(name="tindata",
+                                  shape=[10, 1000],
+                                  dtype="float32")
+=======
             tindata = layers.data(
                 name="tindata", shape=[10, 1000], dtype="float32"
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             paddle.distributed.broadcast(tindata, src=1)
             return [tindata]
 

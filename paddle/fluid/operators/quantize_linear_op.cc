@@ -27,11 +27,19 @@ namespace operators {
 template <typename T>
 struct ChannelDequantizeFunctorV2<phi::CPUContext, T> {
   void operator()(const phi::CPUContext &dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor *in,
+                  const framework::Tensor *scale,
+                  T max_range,
+                  const int quant_axis,
+                  framework::Tensor *out) {
+=======
                   const phi::DenseTensor *in,
                   const phi::DenseTensor *scale,
                   T max_range,
                   const int quant_axis,
                   phi::DenseTensor *out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     // Dequant op is before quantized op
     // Dequantize the weight of quantized op
     auto in_dims = in->dims();
@@ -174,7 +182,12 @@ class QuantizeLinearOpMaker : public framework::OpProtoAndCheckerMaker {
                   "nearest ties to even and 1 is rounding to nearest "
                   "ties away from zero.but the received is %d",
                   round_type));
+<<<<<<< HEAD
+        })
+        .AsExtra();
+=======
         });
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     AddAttr<bool>("is_test",
                   "(bool, default false) Set to true for inference only, false "
                   "for training. Some layers may run faster when this is true.")

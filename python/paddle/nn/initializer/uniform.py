@@ -30,6 +30,7 @@ class Uniform(UniformInitializer):
 
     Examples:
         .. code-block:: python
+            :name: initializer_Uniform-example
 
             import paddle
 
@@ -55,6 +56,15 @@ class Uniform(UniformInitializer):
         assert low is not None, 'low should not be None'
         assert high is not None, 'high should not be None'
         assert high >= low, 'high should greater or equal than low'
+<<<<<<< HEAD
+        super(Uniform, self).__init__(low=low,
+                                      high=high,
+                                      seed=0,
+                                      diag_num=0,
+                                      diag_step=0,
+                                      diag_val=1.0)
+=======
         super().__init__(
             low=low, high=high, seed=0, diag_num=0, diag_step=0, diag_val=1.0
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f

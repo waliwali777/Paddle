@@ -120,6 +120,13 @@ class Momentum(Optimizer):
         assert momentum is not None
         predicate = lambda regular: isinstance(regular, L2DecayRegularizer)
         py_regular = None if predicate(regularization) else regularization
+<<<<<<< HEAD
+        super(Momentum, self).__init__(learning_rate=learning_rate,
+                                       parameter_list=parameter_list,
+                                       regularization=py_regular,
+                                       grad_clip=grad_clip,
+                                       name=name)
+=======
         super().__init__(
             learning_rate=learning_rate,
             parameter_list=parameter_list,
@@ -127,6 +134,7 @@ class Momentum(Optimizer):
             grad_clip=grad_clip,
             name=name,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.type = "momentum"
         self._momentum = momentum
         self._use_nesterov = bool(use_nesterov)
@@ -144,6 +152,21 @@ class Momentum(Optimizer):
 
         var_name = param.name + "_fp32_master"
         var_name = unique_name.generate(var_name)
+<<<<<<< HEAD
+        var = layers.create_global_var(name=var_name,
+                                       shape=param.shape,
+                                       value=0,
+                                       dtype='float32',
+                                       persistable=True)
+        block = self.helper.startup_program.global_block()
+        block.append_op(type="cast",
+                        inputs={"X": [param]},
+                        outputs={"Out": [var]},
+                        attrs={
+                            "in_dtype": param.dtype,
+                            "out_dtype": core.VarDesc.VarType.FP32
+                        })
+=======
         var = layers.create_global_var(
             name=var_name,
             shape=param.shape,
@@ -161,6 +184,7 @@ class Momentum(Optimizer):
                 "out_dtype": core.VarDesc.VarType.FP32,
             },
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self._master_weights[param.name] = var
         return var
 
@@ -183,6 +207,13 @@ class Momentum(Optimizer):
             self._master_weights[param.name] if find_master else param
         )
         target_name = target_param.name
+<<<<<<< HEAD
+        if (name not in self._accumulators
+                or target_name not in self._accumulators[name]):
+            raise Exception(
+                "Accumulator {} does not exist for parameter {}".format(
+                    name, target_name))
+=======
         if (
             name not in self._accumulators
             or target_name not in self._accumulators[name]
@@ -192,6 +223,7 @@ class Momentum(Optimizer):
                     name, target_name
                 )
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return self._accumulators[name][target_name]
 
     def _create_accumulators(self, block, parameters):
@@ -277,6 +309,13 @@ class Momentum(Optimizer):
             outputs["MasterParamOut"] = master_weight
 
         # create the momentum optimize op
+<<<<<<< HEAD
+        momentum_op = block.append_op(type=self.type,
+                                      inputs=inputs,
+                                      outputs=outputs,
+                                      attrs=attrs,
+                                      stop_gradient=True)
+=======
         momentum_op = block.append_op(
             type=self.type,
             inputs=inputs,
@@ -284,5 +323,6 @@ class Momentum(Optimizer):
             attrs=attrs,
             stop_gradient=True,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         return momentum_op

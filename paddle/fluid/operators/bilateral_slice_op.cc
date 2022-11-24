@@ -90,6 +90,17 @@ class BilateralSliceOp : public framework::OperatorWithKernel {
     return framework::OpKernelType(
         OperatorWithKernel::IndicateVarDataType(ctx, "X"), ctx.GetPlace());
   }
+<<<<<<< HEAD
+
+  framework::OpKernelType GetKernelTypeForVar(
+      const std::string& var_name,
+      const Tensor& tensor,
+      const framework::OpKernelType& expected_kernel_type) const override {
+    return framework::OpKernelType(
+        expected_kernel_type.data_type_, tensor.place(), tensor.layout());
+  }
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 };
 
 class BilateralSliceOpMaker : public framework::OpProtoAndCheckerMaker {

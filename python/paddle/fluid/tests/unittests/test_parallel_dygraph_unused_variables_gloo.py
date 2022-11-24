@@ -21,48 +21,72 @@ flag_name = os.path.splitext(__file__)[0]
 
 
 class TestParallelDygraphUnusedVar_GLOO(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = False
         self._gloo_mode = True
         self._dygraph = True
 
     def test_net(self):
+<<<<<<< HEAD
+        self.check_with_place("parallel_dygraph_unused_variables.py",
+                              delta=1e-5,
+                              check_error_log=True,
+                              log_name=flag_name)
+=======
         self.check_with_place(
             "parallel_dygraph_unused_variables.py",
             delta=1e-5,
             check_error_log=True,
             log_name=flag_name,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestParallelDygraphNoVar_GLOO(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = False
         self._gloo_mode = True
         self._dygraph = True
 
     def test_net(self):
+<<<<<<< HEAD
+        self.check_with_place("parallel_dygraph_none_var.py",
+                              delta=1e-5,
+                              check_error_log=True,
+                              log_name=flag_name)
+=======
         self.check_with_place(
             "parallel_dygraph_none_var.py",
             delta=1e-5,
             check_error_log=True,
             log_name=flag_name,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestParallelDygraphSharedUnusedVariables_GLOO(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = False
         self._gloo_mode = True
         self._dygraph = True
 
     def test_mnist(self):
+<<<<<<< HEAD
+        self.check_with_place("parallel_dygraph_shared_unused_var.py",
+                              delta=1e-5,
+                              check_error_log=True,
+                              log_name=flag_name)
+=======
         self.check_with_place(
             "parallel_dygraph_shared_unused_var.py",
             delta=1e-5,
             check_error_log=True,
             log_name=flag_name,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

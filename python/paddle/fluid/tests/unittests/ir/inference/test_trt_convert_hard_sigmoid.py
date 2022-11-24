@@ -22,10 +22,12 @@ import unittest
 
 
 class TrtConvertHardSigmoidTest_dim_2(TrtLayerAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         return True
 
     def sample_program_configs(self):
+
         def generate_input(shape):
             return np.random.random(shape).astype(np.float32)
 
@@ -51,9 +53,15 @@ class TrtConvertHardSigmoidTest_dim_2(TrtLayerAutoScanTest):
                             ops=ops,
                             weights={},
                             inputs={
+<<<<<<< HEAD
+                                "input_data":
+                                TensorConfig(
+                                    data_gen=partial(generate_input, shape))
+=======
                                 "input_data": TensorConfig(
                                     data_gen=partial(generate_input, shape)
                                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                             },
                             outputs=["output_data"],
                         )
@@ -61,8 +69,13 @@ class TrtConvertHardSigmoidTest_dim_2(TrtLayerAutoScanTest):
                         yield program_config
 
     def sample_predictor_configs(
+<<<<<<< HEAD
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         def generate_dynamic_shape(attrs):
             if self.input_dim == 2:
                 self.dynamic_shape.min_input_shape = {"input_data": [1, 8]}

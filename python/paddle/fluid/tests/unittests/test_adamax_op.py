@@ -18,6 +18,7 @@ from op_test import OpTest
 
 
 class TestAdamaxOp1(OpTest):
+
     def setUp(self):
         '''Test Adamax Operator with supplied attributes'''
         self.op_type = "adamax"
@@ -45,8 +46,12 @@ class TestAdamaxOp1(OpTest):
         self.attrs = {'beta1': beta1, 'beta2': beta2, 'epsilon': epsilon}
 
         param_out, moment_out, inf_norm_out = adamax_step(
+<<<<<<< HEAD
+            self.inputs, self.attrs)
+=======
             self.inputs, self.attrs
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         self.outputs = {
             'ParamOut': param_out,
@@ -98,6 +103,7 @@ class TestAdamaxOp2(OpTest):
 
 
 class TestAdamaxOpMultipleSteps(OpTest):
+
     def setUp(self):
         '''Test Adamax Operator with supplied attributes'''
         self.op_type = "adamax"
@@ -129,8 +135,12 @@ class TestAdamaxOpMultipleSteps(OpTest):
     def test_check_output(self):
         for _ in range(self.num_steps):
             param_out, moment_out, inf_norm_out = adamax_step(
+<<<<<<< HEAD
+                self.inputs, self.attrs)
+=======
                 self.inputs, self.attrs
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             self.outputs = {
                 'ParamOut': param_out,
@@ -183,12 +193,26 @@ def adamax_step(inputs, attributes):
 
 
 class TestAdamaxOpV2(unittest.TestCase):
+
     def test_adamax_op_invalid_input(self):
         import paddle
 
         paddle.disable_static()
         linear = paddle.nn.Linear(10, 10)
         with self.assertRaises(ValueError):
+<<<<<<< HEAD
+            adam = paddle.optimizer.Adamax(0.1,
+                                           beta1=-1,
+                                           parameters=linear.parameters())
+        with self.assertRaises(ValueError):
+            adam = paddle.optimizer.Adamax(0.1,
+                                           beta2=-1,
+                                           parameters=linear.parameters())
+        with self.assertRaises(ValueError):
+            adam = paddle.optimizer.Adamax(0.1,
+                                           epsilon=-1,
+                                           parameters=linear.parameters())
+=======
             adam = paddle.optimizer.Adamax(
                 0.1, beta1=-1, parameters=linear.parameters()
             )
@@ -200,6 +224,7 @@ class TestAdamaxOpV2(unittest.TestCase):
             adam = paddle.optimizer.Adamax(
                 0.1, epsilon=-1, parameters=linear.parameters()
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

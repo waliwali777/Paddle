@@ -46,6 +46,20 @@ rank_table_file = b"""{
 }"""
 
 need_envs = {
+<<<<<<< HEAD
+    "ASCEND_AICPU_PATH":
+    os.getenv("ASCEND_AICPU_PATH", "/usr/local/Ascend/nnae/latest"),
+    "ASCEND_OPP_PATH":
+    os.getenv("ASCEND_OPP_PATH", "/usr/local/Ascend/nnae/latest/opp"),
+    "HCCL_CONNECT_TIMEOUT":
+    "7200",
+    "HCCL_WHITELIST_DISABLE":
+    "1",
+    "HCCL_SECURITY_MODE":
+    "1",
+    "RANK_TABLE_FILE":
+    "rank_table_file.json",
+=======
     "ASCEND_AICPU_PATH": os.getenv(
         "ASCEND_AICPU_PATH", "/usr/local/Ascend/nnae/latest"
     ),
@@ -56,10 +70,12 @@ need_envs = {
     "HCCL_WHITELIST_DISABLE": "1",
     "HCCL_SECURITY_MODE": "1",
     "RANK_TABLE_FILE": "rank_table_file.json",
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 
 class TestParallelDygraphMnistNPU(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = False
         self._hccl_mode = True
@@ -80,6 +96,7 @@ class TestParallelDygraphMnistNPU(TestDistBase):
 
 
 class TestFleetDygraphMnistNPU(TestParallelDygraphMnistNPU):
+
     def _setup_config(self):
         self._sync_mode = False
         self._hccl_mode = True

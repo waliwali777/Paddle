@@ -190,9 +190,15 @@ class AstVarEnv:
         self.cur_scope = AstVarScope()
 
     def enter_scope(self, scope_name, scope_type):
+<<<<<<< HEAD
+        self.cur_scope = AstVarScope(scope_name,
+                                     scope_type,
+                                     parent_scope=self.cur_scope)
+=======
         self.cur_scope = AstVarScope(
             scope_name, scope_type, parent_scope=self.cur_scope
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return self.cur_scope
 
     def exit_scope(self):
@@ -369,12 +375,18 @@ class StaticAnalysisVisitor:
             # if annotation and value(Constant) are diffent type, we use value type
             if node.value:
                 node_value_type = self.node_to_wrapper_map[
+<<<<<<< HEAD
+                    node.value].node_var_type
+                if not (node_value_type
+                        & {NodeVarType.UNKNOWN, NodeVarType.STATEMENT}):
+=======
                     node.value
                 ].node_var_type
                 if not (
                     node_value_type
                     & {NodeVarType.UNKNOWN, NodeVarType.STATEMENT}
                 ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     ret_type = node_value_type
             if isinstance(node.target, gast.Name):
                 self.node_to_wrapper_map[node.target].node_var_type = ret_type

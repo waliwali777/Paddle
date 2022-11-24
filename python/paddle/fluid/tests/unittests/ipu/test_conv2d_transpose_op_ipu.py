@@ -21,6 +21,10 @@ from op_test_ipu import IPUOpTest
 
 
 class TestBase(IPUOpTest):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def setUp(self):
         self.set_atol()
         self.set_training()
@@ -51,9 +55,15 @@ class TestBase(IPUOpTest):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         x = paddle.static.nn.conv2d_transpose(x, **self.attrs)
         self.fetch_list = [x.name]
 
@@ -69,6 +79,10 @@ class TestBase(IPUOpTest):
 
 
 class TestCase1(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['stride'] = 2
@@ -76,6 +90,10 @@ class TestCase1(TestBase):
 
 @unittest.skip("Only support dilation=1")
 class TestCase2(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['stride'] = 2
@@ -83,18 +101,30 @@ class TestCase2(TestBase):
 
 
 class TestCase3(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['padding'] = 2
 
 
 class TestCase4(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['padding'] = "SAME"
 
 
 class TestCase5(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['stride'] = 2
@@ -102,12 +132,20 @@ class TestCase5(TestBase):
 
 
 class TestCase6(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['padding'] = "VALID"
 
 
 class TestCase7(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['padding'] = "VALID"
@@ -115,6 +153,10 @@ class TestCase7(TestBase):
 
 
 class TestCase8(TestBase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['filter_size'] = 4
@@ -140,11 +182,18 @@ class TestCase10(TestBase):
 
 
 class TestCase11(TestBase):
+<<<<<<< HEAD
+
+    # Depthwise conv2d transpose
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_op_attrs(self):
         super().set_op_attrs()
         self.attrs['groups'] = 3
 
 
+<<<<<<< HEAD
+=======
 # depthwise_conv2d_transpose Op
 class TestCase12(TestBase):
     def set_feed(self):
@@ -177,5 +226,6 @@ class TestCase12(TestBase):
         self.fetch_list = [x.name]
 
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 if __name__ == "__main__":
     unittest.main()

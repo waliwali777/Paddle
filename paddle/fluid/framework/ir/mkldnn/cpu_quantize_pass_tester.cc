@@ -66,7 +66,7 @@ void SetOp(ProgramDesc* prog,
              type == "nearest_interp" || type == "nearest_interp_v2") {
     op->SetInput("X", {inputs[0]});
     op->SetOutput("Out", {outputs[0]});
-  } else if (type == "slice") {
+  } else if (type == "slice" || type == "shape") {
     op->SetInput("Input", {inputs[0]});
     op->SetOutput("Out", {outputs[0]});
   } else if (type == "split") {
@@ -134,7 +134,11 @@ void InitTensorHolder(Scope* scope,
                       const paddle::platform::Place& place,
                       const char* var_name) {
   auto x = scope->Var(var_name);
+<<<<<<< HEAD
+  auto tensor = x->GetMutable<LoDTensor>();
+=======
   auto tensor = x->GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   tensor->mutable_data(
       place, framework::TransToPhiDataType(proto::VarType::FP32), 1);
 }
@@ -562,6 +566,24 @@ void TestImmutableOpWithManyOutputs(const std::string tested_op) {
 const std::vector<std::string> immutables = {"reshape2",
                                              "transpose2",
                                              "slice",
+<<<<<<< HEAD
+                                             "shape",
+                                             "nearest_interp",
+                                             "nearest_interp_v2"};
+
+class TestImmutables : public testing::TestWithParam<std::string> {};
+
+TEST_P(TestImmutables, immutable_basic) { TestImmutableOp(GetParam()); }
+
+TEST_P(TestImmutables, immutable_between_non_quantized) {
+  TestImmutableOpBetweenNonQuantizedOp(GetParam());
+}
+
+TEST_P(TestImmutables, immutable_many_outputs) {
+  TestImmutableOpWithManyOutputs(GetParam());
+}
+
+=======
                                              "nearest_interp",
                                              "nearest_interp_v2",
                                              "split"};
@@ -578,6 +600,7 @@ TEST_P(TestImmutables, immutable_many_outputs) {
   TestImmutableOpWithManyOutputs(GetParam());
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 INSTANTIATE_TEST_CASE_P(
     CpuQuantizePass,
     TestImmutables,
@@ -646,12 +669,18 @@ TEST(CpuQuantizePass, matmul_not_quantized) {
   // nothing change
   int added_nodes = 0;
   std::unordered_map<std::string, int> expected_operators = {
+<<<<<<< HEAD
+      {"matmul", 1}, {"quantize", 0}, {"dequantize", 1}};
+=======
       {"matmul", 1}, {"quantize", 0}, {"dequantize", 0}};
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   MainTest(BuildProgramDescMatmulNotQuantized(),
            variable_names_matmul,
            expected_operators,
            added_nodes,
            1.0f);
+<<<<<<< HEAD
+=======
 }
 
 TEST(CpuQuantizePass, matmul_residual) {
@@ -664,6 +693,7 @@ TEST(CpuQuantizePass, matmul_residual) {
            expected_operators,
            added_nodes,
            SCALE * S8_MAX);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 static const std::initializer_list<std::string> variable_names_elementwise = {

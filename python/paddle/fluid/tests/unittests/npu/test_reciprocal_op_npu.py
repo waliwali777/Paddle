@@ -24,6 +24,7 @@ paddle.enable_static()
 
 
 class TestNPUReciprocal(OpTest):
+
     def setUp(self):
         self.op_type = "reciprocal"
         self.set_npu()
@@ -40,9 +41,15 @@ class TestNPUReciprocal(OpTest):
         self.check_output_with_place(self.place)
 
     def test_check_grad(self):
+<<<<<<< HEAD
+        self.check_grad_with_place(self.place, ['X'],
+                                   'Out',
+                                   max_relative_error=0.01)
+=======
         self.check_grad_with_place(
             self.place, ['X'], 'Out', max_relative_error=0.01
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def set_npu(self):
         self.__class__.use_npu = True
@@ -53,6 +60,7 @@ class TestNPUReciprocal(OpTest):
 
 
 class TestNPUReciprocalFp64(TestNPUReciprocal):
+
     def set_npu(self):
         self.__class__.use_npu = True
         self.place = paddle.NPUPlace(0)
@@ -65,6 +73,7 @@ class TestNPUReciprocalFp64(TestNPUReciprocal):
     reason="The backward test is not supported for float16 type on NPU."
 )
 class TestNPUReciprocalFp16(TestNPUReciprocal):
+
     def set_npu(self):
         self.__class__.use_npu = True
         self.place = paddle.NPUPlace(0)

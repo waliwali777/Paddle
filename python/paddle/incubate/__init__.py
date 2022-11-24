@@ -30,11 +30,19 @@ from .tensor import segment_min
 from .tensor import _npu_identity
 from .passes import fuse_resnet_unit_pass
 
+<<<<<<< HEAD
+from . import autograd  #noqa: F401
+from . import autotune  #noqa: F401
+from . import sparse  #noqa: F401
+from . import nn  #noqa: F401
+from . import asp  #noqa: F401
+=======
 from . import autograd  # noqa: F401
 from . import autotune  # noqa: F401
 from . import nn  # noqa: F401
 from . import asp  # noqa: F401
 from . import multiprocessing  # noqa: F401
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 from ..fluid.layers.loss import identity_loss
 

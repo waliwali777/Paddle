@@ -62,9 +62,15 @@ class ExponentialFamily(distribution.Distribution):
         log_norm = self._log_normalizer(*natural_parameters)
 
         if _non_static_mode():
+<<<<<<< HEAD
+            grads = paddle.grad(log_norm.sum(),
+                                natural_parameters,
+                                create_graph=True)
+=======
             grads = paddle.grad(
                 log_norm.sum(), natural_parameters, create_graph=True
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         else:
             grads = paddle.static.gradients(log_norm.sum(), natural_parameters)
 

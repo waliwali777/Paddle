@@ -22,6 +22,19 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class Optimization_ex1(paddle.nn.Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 shape,
+                 param_attr=paddle.nn.initializer.Uniform(low=-5., high=5.),
+                 dtype='float32'):
+        super(Optimization_ex1, self).__init__()
+
+        self.theta = self.create_parameter(shape=shape,
+                                           attr=param_attr,
+                                           dtype=dtype,
+                                           is_bias=False)
+=======
     def __init__(
         self,
         shape,
@@ -33,6 +46,7 @@ class Optimization_ex1(paddle.nn.Layer):
         self.theta = self.create_parameter(
             shape=shape, attr=param_attr, dtype=dtype, is_bias=False
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.A = paddle.to_tensor(
             np.random.randn(4, 4) + np.random.randn(4, 4) * 1j
         )
@@ -43,6 +57,7 @@ class Optimization_ex1(paddle.nn.Layer):
 
 
 class TestComplexSimpleNet(unittest.TestCase):
+
     def setUp(self):
         self.devices = ['cpu']
         if core.is_compiled_with_cuda():
@@ -55,9 +70,14 @@ class TestComplexSimpleNet(unittest.TestCase):
         paddle.set_device(device)
 
         myLayer = Optimization_ex1(self.theta_size)
+<<<<<<< HEAD
+        optimizer = paddle.optimizer.Adam(learning_rate=self.learning_rate,
+                                          parameters=myLayer.parameters())
+=======
         optimizer = paddle.optimizer.Adam(
             learning_rate=self.learning_rate, parameters=myLayer.parameters()
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         for itr in range(self.iter):
             loss = myLayer()

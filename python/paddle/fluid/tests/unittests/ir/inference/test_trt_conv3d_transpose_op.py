@@ -23,13 +23,21 @@ from paddle.fluid.core import AnalysisConfig
 
 
 class TensorRTSubgraphPassConv3dTransposeTest(InferencePassTest):
+
     def setUp(self):
         self.set_params()
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 4, 4, 32, 32],
+                              dtype="float32")
+            conv_out = fluid.layers.conv3d_transpose(
+=======
             data = fluid.data(
                 name="data", shape=[-1, 4, 4, 32, 32], dtype="float32"
             )
             conv_out = paddle.static.nn.conv3d_transpose(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 input=data,
                 num_filters=self.conv_num_filters,
                 filter_size=self.conv_filter_size,
@@ -68,8 +76,13 @@ class TensorRTSubgraphPassConv3dTransposeTest(InferencePassTest):
 
 
 class TensorRTSubgraphPassConv3dTransposeSamePaddingTest(
+<<<<<<< HEAD
+        TensorRTSubgraphPassConv3dTransposeTest):
+
+=======
     TensorRTSubgraphPassConv3dTransposeTest
 ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_params(self):
         self.conv_num_filters = 6
         self.conv_filter_size = 6
@@ -79,8 +92,13 @@ class TensorRTSubgraphPassConv3dTransposeSamePaddingTest(
 
 
 class TensorRTSubgraphPassConv3dTransposeMultigroupTest(
+<<<<<<< HEAD
+        TensorRTSubgraphPassConv3dTransposeTest):
+
+=======
     TensorRTSubgraphPassConv3dTransposeTest
 ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_params(self):
         self.conv_num_filters = 6
         self.conv_filter_size = 6
@@ -90,13 +108,21 @@ class TensorRTSubgraphPassConv3dTransposeMultigroupTest(
 
 
 class DynamicShapeTensorRTSubgraphPassConv3dTransposeTest(InferencePassTest):
+
     def setUp(self):
         self.set_params()
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            data = fluid.data(name="data",
+                              shape=[-1, 6, -1, -1, -1],
+                              dtype="float32")
+            conv_out = fluid.layers.conv3d_transpose(
+=======
             data = fluid.data(
                 name="data", shape=[-1, 6, -1, -1, -1], dtype="float32"
             )
             conv_out = paddle.static.nn.conv3d_transpose(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 input=data,
                 num_filters=self.conv_num_filters,
                 filter_size=self.conv_filter_size,

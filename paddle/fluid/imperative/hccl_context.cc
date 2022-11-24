@@ -32,8 +32,13 @@ class Variable;
 namespace paddle {
 namespace imperative {
 
+<<<<<<< HEAD
+static void AllReduce(const framework::Tensor &src,
+                      framework::Tensor *dst,
+=======
 static void AllReduce(const phi::DenseTensor &src,
                       phi::DenseTensor *dst,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                       const aclrtStream stream,
                       const platform::HCCLComm *comm) {
   const auto &place = src.place();
@@ -160,8 +165,13 @@ void HCCLParallelContext::AllReduceByStream(const framework::Variable &src,
     if (!dst->IsType<phi::DenseTensor>()) {
       dst->Clear();
     }
+<<<<<<< HEAD
+    AllReduce(src.Get<framework::LoDTensor>(),
+              dst->GetMutable<framework::LoDTensor>(),
+=======
     AllReduce(src.Get<phi::DenseTensor>(),
               dst->GetMutable<phi::DenseTensor>(),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               stream,
               comm);
   } else {

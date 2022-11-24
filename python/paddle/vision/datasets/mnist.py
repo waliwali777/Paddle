@@ -119,9 +119,13 @@ class MNIST(Dataset):
         if backend not in ['pil', 'cv2']:
             raise ValueError(
                 "Expected backend are one of ['pil', 'cv2'], but got {}".format(
+<<<<<<< HEAD
+                    backend))
+=======
                     backend
                 )
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.backend = backend
 
         self.mode = mode.lower()
@@ -189,8 +193,12 @@ class MNIST(Dataset):
                 # label file : 8B
                 magic_byte_lab = '>II'
                 magic_lab, label_num = struct.unpack_from(
+<<<<<<< HEAD
+                    magic_byte_lab, lab_buf, offset_lab)
+=======
                     magic_byte_lab, lab_buf, offset_lab
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 offset_lab += struct.calcsize(magic_byte_lab)
 
                 while True:
@@ -202,12 +210,20 @@ class MNIST(Dataset):
                     step_label += buffer_size
 
                     fmt_images = '>' + str(buffer_size * rows * cols) + 'B'
+<<<<<<< HEAD
+                    images_temp = struct.unpack_from(fmt_images, img_buf,
+                                                     offset_img)
+                    images = np.reshape(
+                        images_temp,
+                        (buffer_size, rows * cols)).astype('float32')
+=======
                     images_temp = struct.unpack_from(
                         fmt_images, img_buf, offset_img
                     )
                     images = np.reshape(
                         images_temp, (buffer_size, rows * cols)
                     ).astype('float32')
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     offset_img += struct.calcsize(fmt_images)
 
                     for i in range(buffer_size):

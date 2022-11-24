@@ -42,6 +42,10 @@ TEST(DataType, float16) {
 }
 
 TEST(DataType, bfloat16) {
+<<<<<<< HEAD
+  using paddle::framework::Tensor;
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   using paddle::platform::bfloat16;
   using paddle::platform::CPUPlace;
   namespace f = paddle::framework;

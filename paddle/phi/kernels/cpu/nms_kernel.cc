@@ -16,17 +16,27 @@
 #include "paddle/phi/backends/cpu/cpu_context.h"
 
 #include "paddle/phi/core/kernel_registry.h"
+<<<<<<< HEAD
+=======
 #include "paddle/phi/core/tensor_utils.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/kernels/funcs/diagonal.h"
 #include "paddle/phi/kernels/funcs/eigen/common.h"
 
 namespace phi {
 
 template <typename T>
+<<<<<<< HEAD
+static void NMS(const T* boxes_data,
+                int64_t* output_data,
+                float threshold,
+                int64_t num_boxes) {
+=======
 static int64_t NMS(const T* boxes_data,
                    int64_t* output_data,
                    float threshold,
                    int64_t num_boxes) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto num_masks = CeilDivide(num_boxes, 64);
   std::vector<uint64_t> masks(num_masks, 0);
 
@@ -55,6 +65,11 @@ static int64_t NMS(const T* boxes_data,
     output_data[output_data_idx++] = i;
   }
 
+<<<<<<< HEAD
+  for (; output_data_idx < num_boxes; ++output_data_idx) {
+    output_data[output_data_idx] = 0;
+  }
+=======
   int64_t num_keep_boxes = output_data_idx;
 
   for (; output_data_idx < num_boxes; ++output_data_idx) {
@@ -62,6 +77,7 @@ static int64_t NMS(const T* boxes_data,
   }
 
   return num_keep_boxes;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 template <typename T, typename Context>
@@ -69,6 +85,10 @@ void NMSKernel(const Context& dev_ctx,
                const DenseTensor& boxes,
                float threshold,
                DenseTensor* output) {
+<<<<<<< HEAD
+  auto output_data = dev_ctx.template Alloc<int64_t>(output);
+  NMS<T>(boxes.data<T>(), output_data, threshold, boxes.dims()[0]);
+=======
   int64_t num_boxes = boxes.dims()[0];
   DenseTensor output_tmp;
   output_tmp.Resize(phi::make_ddim({num_boxes}));
@@ -78,6 +98,7 @@ void NMSKernel(const Context& dev_ctx,
       NMS<T>(boxes.data<T>(), output_tmp_data, threshold, num_boxes);
   auto slice_out = output_tmp.Slice(0, num_keep_boxes);
   phi::Copy(dev_ctx, slice_out, dev_ctx.GetPlace(), false, output);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 }  // namespace phi

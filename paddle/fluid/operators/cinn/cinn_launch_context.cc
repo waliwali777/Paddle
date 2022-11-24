@@ -45,7 +45,11 @@
 namespace paddle {
 namespace operators::details {
 
+<<<<<<< HEAD
+using framework::LoDTensor;
+=======
 using LoDTensor = phi::DenseTensor;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 using framework::ParallelExecutor;
 using framework::Scope;
 using CinnInstruction = ::cinn::hlir::framework::Instruction;
@@ -211,7 +215,11 @@ std::unordered_set<std::string> CinnLaunchContext::ExtractInternalVarNames(
 }
 
 void CinnLaunchContext::CheckTensorEquivalent(
+<<<<<<< HEAD
+    const std::string& var_name, const framework::LoDTensor& paddle_tensor) {
+=======
     const std::string& var_name, const phi::DenseTensor& paddle_tensor) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   PADDLE_ENFORCE_EQ(IsVariableUsed(var_name),
                     true,
                     platform::errors::InvalidArgument(

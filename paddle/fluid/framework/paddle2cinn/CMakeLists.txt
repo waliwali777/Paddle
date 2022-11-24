@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 pass_library(
   build_cinn_pass
   base
@@ -8,14 +10,22 @@ pass_library(
   errors
   enforce)
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 cc_library(
   cinn_cache_key
   SRCS cinn_cache_key.cc
   DEPS graph graph_helper lod_tensor proto_desc)
 cc_library(
+<<<<<<< HEAD
+  build_cinn_pass
+  SRCS build_cinn_pass.cc
+  DEPS pass subgraph_detector graph_pattern_detector cinn_compiler errors
+       enforce)
+=======
   cinn_subgraph_detector
   SRCS cinn_subgraph_detector.cc
   DEPS graph graph_helper subgraph_detector lod_tensor proto_desc)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 cc_library(
   transform_desc
   SRCS transform_desc.cc
@@ -40,6 +50,58 @@ cc_library(
        cinn_launch_context)
 
 if(WITH_TESTING)
+<<<<<<< HEAD
+  cc_test(
+    cinn_lib_test
+    SRCS cinn_lib_test.cc
+    DEPS cinn)
+  set_tests_properties(cinn_lib_test PROPERTIES LABELS "RUN_TYPE=CINN")
+
+  cc_test(
+    cinn_cache_key_test
+    SRCS cinn_cache_key_test.cc
+    DEPS cinn_cache_key)
+  set_tests_properties(cinn_cache_key_test PROPERTIES LABELS "RUN_TYPE=CINN")
+
+  cc_test(
+    build_cinn_pass_test
+    SRCS build_cinn_pass_test.cc
+    DEPS build_cinn_pass cinn_compiler op_registry mul_op activation_op
+         elementwise_add_op)
+  set_tests_properties(build_cinn_pass_test PROPERTIES LABELS "RUN_TYPE=CINN")
+
+  cc_test(
+    transform_desc_test
+    SRCS transform_desc_test.cc
+    DEPS transform_desc)
+  set_tests_properties(transform_desc_test PROPERTIES LABELS "RUN_TYPE=CINN")
+
+  cc_test(
+    transform_type_test
+    SRCS transform_type_test.cc
+    DEPS transform_type)
+  set_tests_properties(transform_type_test PROPERTIES LABELS "RUN_TYPE=CINN")
+
+  cc_test(
+    cinn_graph_symbolization_test
+    SRCS cinn_graph_symbolization_test.cc
+    DEPS cinn_graph_symbolization)
+  set_tests_properties(cinn_graph_symbolization_test PROPERTIES LABELS
+                                                                "RUN_TYPE=CINN")
+
+  cc_test(
+    cinn_compiler_test
+    SRCS cinn_compiler_test.cc
+    DEPS cinn_compiler
+         place
+         proto_desc
+         graph_viz_pass
+         build_cinn_pass
+         cinn
+         mul_op
+         activation_op
+         elementwise_add_op)
+=======
   cc_test_old(cinn_lib_test SRCS cinn_lib_test.cc DEPS cinn)
   set_tests_properties(cinn_lib_test PROPERTIES LABELS "RUN_TYPE=CINN")
 
@@ -89,5 +151,6 @@ if(WITH_TESTING)
     activation_op
     elementwise_add_op
     generated_op)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   set_tests_properties(cinn_compiler_test PROPERTIES LABELS "RUN_TYPE=CINN")
 endif()

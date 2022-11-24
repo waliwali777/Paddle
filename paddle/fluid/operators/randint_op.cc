@@ -77,6 +77,17 @@ class RandintOp : public framework::OperatorWithKernel {
       return;
     }
 
+<<<<<<< HEAD
+    PADDLE_ENFORCE_EQ(shape.empty(),
+                      false,
+                      platform::errors::InvalidArgument(
+                          "if there is no Input(ShapeTensorList) and no "
+                          "Input(ShapeTensor),the "
+                          "attr(shape) information must "
+                          "be set by Attr(shape)."));
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     std::vector<int64_t> tensor_shape;
     tensor_shape.reserve(shape.size());
     for (auto dim : shape) {

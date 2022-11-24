@@ -449,7 +449,11 @@ class InterpolateV2Op : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType& expected_kernel_type) const override {
 #ifdef PADDLE_WITH_MKLDNN
     if ((expected_kernel_type.data_layout_ == phi::DataLayout::ONEDNN) &&
@@ -460,7 +464,11 @@ class InterpolateV2Op : public framework::OperatorWithKernel {
       auto dl = phi::StringToDataLayout(data_format);
       // Some models may have intentionally set "AnyLayout" for pool
       // op. Treat this as NCHW (default data_format value)
+<<<<<<< HEAD
+      if (dl != framework::DataLayout::kAnyLayout) {
+=======
       if (dl != phi::DataLayout::kAnyLayout) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return framework::OpKernelType(
             expected_kernel_type.data_type_, tensor.place(), dl);
       }
@@ -699,7 +707,11 @@ class InterpolateV2OpGrad : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType& expected_kernel_type) const override {
     if (var_name == "SizeTensor" || var_name == "Scale") {
       return expected_kernel_type;

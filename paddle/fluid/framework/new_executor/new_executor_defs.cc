@@ -233,6 +233,16 @@ void InterpretercoreInferShapeContext::ShareAllLoD(
     Variable* in_var = in_var_list[i];
     if (!in_var->IsType<phi::DenseTensor>()) return;
     Variable* out_var = out_var_list[i];
+<<<<<<< HEAD
+    PADDLE_ENFORCE_EQ(out_var->IsType<LoDTensor>(),
+                      true,
+                      platform::errors::PreconditionNotMet(
+                          "The %d-th output of Output(%s) must be LoDTensor.",
+                          i,
+                          out_var_names[i]));
+    auto& in_tensor = in_var->Get<LoDTensor>();
+    auto* out_tensor = out_var->GetMutable<LoDTensor>();
+=======
     PADDLE_ENFORCE_EQ(
         out_var->IsType<phi::DenseTensor>(),
         true,
@@ -242,6 +252,7 @@ void InterpretercoreInferShapeContext::ShareAllLoD(
             out_var_names[i]));
     auto& in_tensor = in_var->Get<phi::DenseTensor>();
     auto* out_tensor = out_var->GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     out_tensor->set_lod(in_tensor.lod());
 #ifdef PADDLE_WITH_MKLDNN
     if (in_tensor.layout() != DataLayout::ONEDNN)
@@ -285,7 +296,11 @@ void InterpretercoreInferShapeContext::ShareLoD(const std::string& in,
   if (!in_var->IsType<phi::DenseTensor>()) return;
   Variable* out_var = out_it->second.at(j);
   PADDLE_ENFORCE_EQ(
+<<<<<<< HEAD
+      out_var->IsType<LoDTensor>(),
+=======
       out_var->IsType<phi::DenseTensor>(),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       true,
       platform::errors::InvalidArgument(
           "The %zu-th output of Output(%s) must be phi::DenseTensor.", j, out));
@@ -616,11 +631,15 @@ void VariableScope::AddVar(const std::string& name,
     auto id = VarSize();
     name2id_[name] = id;
     vec_meta_info_.emplace_back(0, var_desc);
+<<<<<<< HEAD
+    var_list_.push_back(local_scope_->FindVar(name));
+=======
     if (local_scope_ != nullptr) {
       var_list_.push_back(local_scope_->FindVar(name));
     } else {
       var_list_.push_back(scope_->FindVar(name));
     }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     PADDLE_ENFORCE_EQ(
         var_list_.size(),
         name2id_.size(),
@@ -673,6 +692,10 @@ void VariableScope::CheckExist(const std::string& name) const {
 
 Instruction::Instruction(size_t id,
                          OpFuncNode&& op_func_node,
+<<<<<<< HEAD
+                         const platform::DeviceContext& dev_ctx)
+    : id_(id), op_func_node_(op_func_node), dev_ctx_(dev_ctx) {
+=======
                          const platform::DeviceContext& dev_ctx,
                          const Priority priority)
     : is_artificial_(op_func_node.operator_base_->Type() == "depend"),
@@ -680,6 +703,7 @@ Instruction::Instruction(size_t id,
       op_func_node_(op_func_node),
       dev_ctx_(dev_ctx),
       priority_(priority) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   PADDLE_ENFORCE_GE(id,
                     0,
                     platform::errors::PreconditionNotMet(

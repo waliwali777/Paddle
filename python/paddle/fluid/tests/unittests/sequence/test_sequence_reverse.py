@@ -22,6 +22,7 @@ from op_test import OpTest
 
 
 class TestSequenceReverseBase(OpTest):
+
     def initParameters(self):
         pass
 
@@ -35,6 +36,16 @@ class TestSequenceReverseBase(OpTest):
         self.y = self.get_output()
 
         self.inputs = {
+<<<<<<< HEAD
+            'X': (self.x, [
+                self.lod,
+            ]),
+        }
+        self.outputs = {
+            'Y': (self.y, [
+                self.lod,
+            ]),
+=======
             'X': (
                 self.x,
                 [
@@ -49,6 +60,7 @@ class TestSequenceReverseBase(OpTest):
                     self.lod,
                 ],
             ),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         }
 
     def get_output(self):
@@ -70,31 +82,37 @@ class TestSequenceReverseBase(OpTest):
 
 
 class TestSequenceReserve1(TestSequenceReverseBase):
+
     def initParameters(self):
         self.size = (12, 10)
         self.lod = [4, 5, 3]
 
 
 class TestSequenceReverse2(TestSequenceReverseBase):
+
     def initParameters(self):
         self.size = (12, 10)
         self.lod = [12]
 
 
 class TestSequenceReverse3(TestSequenceReverseBase):
+
     def initParameters(self):
         self.size = (12, 10)
         self.lod = [3, 0, 6, 3]
 
 
 class TestSequenceReverse4(TestSequenceReverseBase):
+
     def initParameters(self):
         self.size = (12, 10)
         self.lod = [0, 2, 10, 0]
 
 
 class TestSequenceReverseOpError(unittest.TestCase):
+
     def test_error(self):
+
         def test_variable():
             # the input type must be Variable
             x_data = np.random.random((2, 4)).astype("float32")

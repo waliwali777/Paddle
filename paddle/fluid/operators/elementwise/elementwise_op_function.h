@@ -79,12 +79,21 @@ int PackTensorsIntoVector(const framework::ExecutionContext &ctx,
       platform::errors::InvalidArgument(
           "Unable to get input Variable X, Variable name is %s.\n",
           ctx.InputName("X")));
+<<<<<<< HEAD
+  auto *y = ctx.Input<framework::LoDTensor>("Y");
+  framework::Tensor *z;
+
+  if (x_var->IsType<framework::LoDTensor>()) {
+    auto *x = ctx.Input<framework::LoDTensor>("X");
+    z = ctx.Output<framework::LoDTensor>("Out");
+=======
   auto *y = ctx.Input<phi::DenseTensor>("Y");
   phi::DenseTensor *z;
 
   if (x_var->IsType<phi::DenseTensor>()) {
     auto *x = ctx.Input<phi::DenseTensor>("X");
     z = ctx.Output<phi::DenseTensor>("Out");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     ins->emplace_back(x);
   } else if (x_var->IsType<phi::SelectedRows>()) {
     PADDLE_ENFORCE_EQ(y->dims().size() == 1 && y->dims()[0] == 1,
@@ -152,6 +161,15 @@ template <typename DeviceContext,
           typename DY_OP,
           typename Tout = T>
 void ElemwiseGradCompute(const framework::ExecutionContext &ctx,
+<<<<<<< HEAD
+                         const framework::Tensor &x,
+                         const framework::Tensor &y,
+                         const framework::Tensor &out,
+                         const framework::Tensor &dout,
+                         int axis,
+                         framework::Tensor *dx,
+                         framework::Tensor *dy,
+=======
                          const phi::DenseTensor &x,
                          const phi::DenseTensor &y,
                          const phi::DenseTensor &out,
@@ -159,6 +177,7 @@ void ElemwiseGradCompute(const framework::ExecutionContext &ctx,
                          int axis,
                          phi::DenseTensor *dx,
                          phi::DenseTensor *dy,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                          DX_OP dx_op,
                          DY_OP dy_op) {
   const auto &dev_ctx = ctx.template device_context<DeviceContext>();
@@ -180,11 +199,19 @@ template <typename Functor,
           typename T,
           typename OutType = T>
 void ElementwiseComputeEx(const framework::ExecutionContext &ctx,
+<<<<<<< HEAD
+                          const framework::Tensor *x,
+                          const framework::Tensor *y,
+                          int axis,
+                          Functor func,
+                          framework::Tensor *z) {
+=======
                           const phi::DenseTensor *x,
                           const phi::DenseTensor *y,
                           int axis,
                           Functor func,
                           phi::DenseTensor *z) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   z->mutable_data<OutType>(ctx.GetPlace());
   const auto &dev_ctx = ctx.template device_context<DeviceContext>();
   phi::funcs::ElementwiseCompute<Functor, T, OutType>(
@@ -468,11 +495,19 @@ template <typename DeviceContext,
 void FusedElemwiseAndActComputeNoBroadcast(
     const framework::ExecutionContext &ctx,
     const framework::DDim &x_dim,
+<<<<<<< HEAD
+    const framework::Tensor &x,
+    const framework::Tensor &y,
+    CompoundFunctor compound_functor,
+    framework::Tensor *out,
+    framework::Tensor *intermediate_out) {
+=======
     const phi::DenseTensor &x,
     const phi::DenseTensor &y,
     CompoundFunctor compound_functor,
     phi::DenseTensor *out,
     phi::DenseTensor *intermediate_out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   size_t N = static_cast<size_t>(phi::product(x_dim));
 
   platform::ForRange<DeviceContext> for_range(
@@ -499,12 +534,21 @@ void FusedElemwiseAndActComputeWithBroadcast(
     const framework::ExecutionContext &ctx,
     const framework::DDim &x_dim,
     const framework::DDim &y_dim_untrimed,
+<<<<<<< HEAD
+    const framework::Tensor &x,
+    const framework::Tensor &y,
+    CompoundFunctor compound_functor,
+    int axis,
+    framework::Tensor *out,
+    framework::Tensor *intermediate_out) {
+=======
     const phi::DenseTensor &x,
     const phi::DenseTensor &y,
     CompoundFunctor compound_functor,
     int axis,
     phi::DenseTensor *out,
     phi::DenseTensor *intermediate_out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   axis = (axis == -1 ? x_dim.size() - y_dim_untrimed.size() : axis);
   auto y_dim = trim_trailing_singular_dims(y_dim_untrimed);
   axis = (y_dim.size() == 0) ? x_dim.size() : axis;
@@ -642,6 +686,17 @@ void FusedElemwiseAndActGradComputeNoBroadcast(
     const framework::ExecutionContext &ctx,
     const framework::DDim &x_dim,
     const framework::DDim &y_dim,
+<<<<<<< HEAD
+    const framework::Tensor *x,
+    const framework::Tensor *y,
+    const framework::Tensor *intermediate_out,
+    const framework::Tensor *out,
+    const framework::Tensor *dout,
+    int axis,
+    framework::Tensor *dx,
+    framework::Tensor *dy,
+    framework::Tensor *dintermediate,
+=======
     const phi::DenseTensor *x,
     const phi::DenseTensor *y,
     const phi::DenseTensor *intermediate_out,
@@ -651,6 +706,7 @@ void FusedElemwiseAndActGradComputeNoBroadcast(
     phi::DenseTensor *dx,
     phi::DenseTensor *dy,
     phi::DenseTensor *dintermediate,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     DX_OP dx_op,
     DY_OP dy_op,
     DIntermediate_OP dintermediate_op) {
@@ -1245,6 +1301,17 @@ void FusedElemwiseAndActGradComputeWithBroadcast(
     const framework::ExecutionContext &ctx,
     const framework::DDim &x_dim,
     const framework::DDim &y_dim_untrimed,
+<<<<<<< HEAD
+    const framework::Tensor *x,
+    const framework::Tensor *y,
+    const framework::Tensor *intermediate_out,
+    const framework::Tensor *out,
+    const framework::Tensor *dout,
+    int axis,
+    framework::Tensor *dx,
+    framework::Tensor *dy,
+    framework::Tensor *dintermediate,
+=======
     const phi::DenseTensor *x,
     const phi::DenseTensor *y,
     const phi::DenseTensor *intermediate_out,
@@ -1254,6 +1321,7 @@ void FusedElemwiseAndActGradComputeWithBroadcast(
     phi::DenseTensor *dx,
     phi::DenseTensor *dy,
     phi::DenseTensor *dintermediate,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     DX_OP dx_op,
     DY_OP dy_op,
     DIntermediate_OP dintermediate_op) {
@@ -1386,6 +1454,17 @@ template <typename DeviceContext,
           bool UseIntermediateOut,
           bool SameShapeOfIntermediateOutAndOut>
 void FusedElemwiseAndActGradComputeEx(const framework::ExecutionContext &ctx,
+<<<<<<< HEAD
+                                      const framework::Tensor *x,
+                                      const framework::Tensor *y,
+                                      const framework::Tensor *out,
+                                      const framework::Tensor *intermediate_out,
+                                      const framework::Tensor *dout,
+                                      int axis,
+                                      framework::Tensor *dx,
+                                      framework::Tensor *dy,
+                                      framework::Tensor *dintermediate,
+=======
                                       const phi::DenseTensor *x,
                                       const phi::DenseTensor *y,
                                       const phi::DenseTensor *out,
@@ -1395,6 +1474,7 @@ void FusedElemwiseAndActGradComputeEx(const framework::ExecutionContext &ctx,
                                       phi::DenseTensor *dx,
                                       phi::DenseTensor *dy,
                                       phi::DenseTensor *dintermediate,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                       DX_OP dx_op,
                                       DY_OP dy_op,
                                       DIntermediate_OP dintermediate_op) {
@@ -1498,8 +1578,13 @@ template <typename DeviceContext,
           bool KeepIntermediateOut,
           bool SameShapeOfIntermediateOutAndOut>
 void FusedElemwiseAndActComputeEx(const framework::ExecutionContext &ctx,
+<<<<<<< HEAD
+                                  const framework::Tensor &x,
+                                  const framework::Tensor &y,
+=======
                                   const phi::DenseTensor &x,
                                   const phi::DenseTensor &y,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                   int axis,
                                   CompoundFunctor compound_functor,
                                   phi::DenseTensor *out,
@@ -1579,9 +1664,15 @@ void FusedElemwiseAndActComputeEx(const framework::ExecutionContext &ctx,
 template <typename DeviceContext, typename T>
 static inline void GetDoubleGradSafeTensor(
     const framework::ExecutionContext &ctx,
+<<<<<<< HEAD
+    const framework::Tensor *x,
+    const framework::Tensor *ddx,
+    framework::Tensor *ddx_safe) {
+=======
     const phi::DenseTensor *x,
     const phi::DenseTensor *ddx,
     phi::DenseTensor *ddx_safe) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   const auto &dev_ctx = ctx.template device_context<DeviceContext>();
   phi::funcs::GetDoubleGradSafeTensor<DeviceContext, T>(
       dev_ctx, *x, ddx, ddx_safe);
@@ -1600,10 +1691,17 @@ template <ElementwiseType ET, typename T, typename Functor>
 void GetGradXAndYOut(const phi::GPUContext &dev_ctx,
                      const platform::Place &place,
                      int axis,
+<<<<<<< HEAD
+                     std::vector<const framework::Tensor *> ins,
+                     const framework::Tensor *dout,
+                     framework::Tensor *dx,
+                     framework::Tensor *dy,
+=======
                      std::vector<const phi::DenseTensor *> ins,
                      const phi::DenseTensor *dout,
                      phi::DenseTensor *dx,
                      phi::DenseTensor *dy,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                      Functor func) {
   phi::GetGradXAndYOut<ET, T, Functor>(
       dev_ctx, place, axis, ins, *dout, dx, dy, func);
@@ -1613,9 +1711,15 @@ template <ElementwiseType ET, typename T, typename Functor>
 void GetGradXOrYOut(const phi::GPUContext &dev_ctx,
                     const platform::Place &place,
                     int axis,
+<<<<<<< HEAD
+                    std::vector<const framework::Tensor *> ins,
+                    const framework::Tensor *dout,
+                    framework::Tensor *dxy,
+=======
                     std::vector<const phi::DenseTensor *> ins,
                     const phi::DenseTensor *dout,
                     phi::DenseTensor *dxy,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     Functor func) {
   phi::GetGradXOrYOut<ET, T, Functor>(
       dev_ctx, place, axis, ins, *dout, dxy, func);

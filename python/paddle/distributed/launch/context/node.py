@@ -21,7 +21,12 @@ import struct
 from contextlib import closing
 
 
+<<<<<<< HEAD
+class Node(object):
+
+=======
 class Node:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self):
         # self.device = Device.detect_device()
         self.device = Device.parse_device()

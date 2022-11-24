@@ -18,18 +18,30 @@ import unittest
 import tempfile
 import numpy as np
 from paddle.static import InputSpec
+<<<<<<< HEAD
+from paddle.fluid.framework import _enable_legacy_dygraph
+from paddle.jit.layer import Layer
+from paddle.fluid.dygraph.dygraph_to_static.program_translator import ProgramTranslator
+=======
 from paddle.fluid.framework import _dygraph_place_guard
 from paddle.jit.layer import Layer
 from paddle.fluid.dygraph.dygraph_to_static.program_translator import (
     ProgramTranslator,
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 paddle.seed(1)
 
 
 class Net(paddle.nn.Layer):
+<<<<<<< HEAD
+
+    def __init__(self):
+        super(Net, self).__init__()
+=======
     def __init__(self):
         super().__init__()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.fc1 = paddle.nn.Linear(4, 4)
         self.fc2 = paddle.nn.Linear(4, 4)
         self._bias = 0.4
@@ -51,6 +63,11 @@ class Net(paddle.nn.Layer):
 
 
 class TestMultiLoad(unittest.TestCase):
+<<<<<<< HEAD
+
+    def test_multi_load(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+=======
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
 
@@ -58,6 +75,7 @@ class TestMultiLoad(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def test_multi_load(self):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         x = paddle.full([2, 4], 2)
         model = Net()
@@ -76,6 +94,13 @@ class TestMultiLoad(unittest.TestCase):
         jit_layer.load(model_path, place)
         forward_out2 = jit_layer.forward(x)
         infer_out2 = jit_layer.infer(x)
+<<<<<<< HEAD
+        self.assertEqual(np.allclose(forward_out1, forward_out2[0]), True)
+        self.assertEqual(np.allclose(infer_out1, infer_out2[0]), True)
+
+        self.temp_dir.cleanup()
+
+=======
         np.testing.assert_allclose(forward_out1, forward_out2[0], rtol=1e-05)
         np.testing.assert_allclose(infer_out1, infer_out2[0], rtol=1e-05)
 
@@ -113,6 +138,7 @@ class TestMKLOutput(unittest.TestCase):
             out = paddle.unsqueeze(out[0], 0)
             np.testing.assert_equal(out.shape, [1, 498, 80])
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 if __name__ == '__main__':
     unittest.main()

@@ -23,7 +23,10 @@ limitations under the License. */
 #include "paddle/fluid/framework/operator.h"
 #include "paddle/fluid/framework/shape_inference.h"
 #include "paddle/fluid/framework/var_type_inference.h"
+<<<<<<< HEAD
+=======
 #include "paddle/fluid/operators/ops_extra_info.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/utils/blank.h"
 
 namespace paddle {
@@ -412,6 +415,8 @@ class CompileTimeInferShapeContext : public InferShapeContext {
   const BlockDesc &block_;
 };
 
+<<<<<<< HEAD
+=======
 static void InitRuntimeAttributeMapByOpExtraInfo(const std::string &op_type,
                                                  AttributeMap *runtime_attrs) {
   const auto &extra_attr_map =
@@ -419,6 +424,7 @@ static void InitRuntimeAttributeMapByOpExtraInfo(const std::string &op_type,
   runtime_attrs->insert(extra_attr_map.begin(), extra_attr_map.end());
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 OpDesc::OpDesc(const std::string &type,
                const VariableNameMap &inputs,
                const VariableNameMap &outputs,
@@ -623,10 +629,20 @@ bool OpDesc::HasProtoAttr(const std::string &name) const {
   return false;
 }
 
+<<<<<<< HEAD
+proto::AttrType OpDesc::GetAttrType(const std::string &name) const {
+  auto it = attrs_.find(name);
+  PADDLE_ENFORCE_NE(
+      it,
+      attrs_.end(),
+      platform::errors::NotFound("Attribute %s is not found.", name));
+  return static_cast<proto::AttrType>(it->second.index() - 1);
+=======
 proto::AttrType OpDesc::GetAttrType(const std::string &name,
                                     bool with_attr_var) const {
   auto attr = this->GetAttr(name, with_attr_var);
   return static_cast<proto::AttrType>(attr.index() - 1);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 std::vector<std::string> OpDesc::AttrNames(bool with_attr_var) const {
@@ -735,6 +751,13 @@ void OpDesc::SetAttr(const std::string &name, const Attribute &v) {
   }
 
   // In order to set bool attr properly
+<<<<<<< HEAD
+  if (attr_type == proto::AttrType::INT && HasProtoAttr(name) &&
+      GetProtoAttr(name).type() == proto::AttrType::BOOLEAN) {
+    this->attrs_[name] = static_cast<bool>(PADDLE_GET_CONST(int, v));
+    need_update_ = true;
+    return;
+=======
   if (attr_type == proto::AttrType::INT) {
     if (HasProtoAttr(name) &&
         GetProtoAttr(name).type() == proto::AttrType::BOOLEAN) {
@@ -749,6 +772,7 @@ void OpDesc::SetAttr(const std::string &name, const Attribute &v) {
       need_update_ = true;
       return;
     }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 
   attrs_ptr->operator[](name) = v;
@@ -790,6 +814,12 @@ void OpDesc::SetRuntimeAttrMap(
 
 Attribute OpDesc::GetAttr(const std::string &name, bool with_attr_var) const {
   auto it = attrs_.find(name);
+<<<<<<< HEAD
+  PADDLE_ENFORCE_NE(
+      it,
+      attrs_.end(),
+      platform::errors::NotFound("Attribute %s is not found.", name));
+=======
   if (it == attrs_.end()) {
     it = runtime_attrs_.find(name);
     PADDLE_ENFORCE_NE(
@@ -807,6 +837,7 @@ Attribute OpDesc::GetAttr(const std::string &name, bool with_attr_var) const {
             "currently, such as TensorRT et.al",
             name));
   }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   return it->second;
 }
 
@@ -1000,6 +1031,13 @@ void OpDesc::Flush() {
     auto set_attr_desc = [this](const std::string &attr_name,
                                 const Attribute &attr) -> void {
       auto *attr_desc = desc_.add_attrs();
+<<<<<<< HEAD
+      attr_desc->set_name(attr.first);
+      attr_desc->set_type(
+          static_cast<proto::AttrType>(attr.second.index() - 1));
+      SetAttrDescVisitor visitor(attr_desc);
+      paddle::visit(visitor, attr.second);
+=======
       attr_desc->set_name(attr_name);
       attr_desc->set_type(static_cast<proto::AttrType>(attr.index() - 1));
       SetAttrDescVisitor visitor(attr_desc);
@@ -1028,6 +1066,7 @@ void OpDesc::Flush() {
     }
     for (auto &attr : sorted_runtime_attrs) {
       set_attr_desc(attr.first, attr.second);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
 
     need_update_ = false;

@@ -33,6 +33,7 @@ def ref_softplus(x, beta, threshold):
 
 @OpTestTool.skip_if_not_cpu_bf16()
 class TestSoftplusOneDNNOp(OpTest):
+
     def setUp(self):
         self.op_type = "softplus"
         self.beta = 1
@@ -62,45 +63,57 @@ class TestSoftplusOneDNNOp(OpTest):
 
 
 class TestSoftplus4DOneDNNOp(TestSoftplusOneDNNOp):
+
     def config(self):
         self.x_shape = (10, 5, 4, 2)
 
 
 class TestSoftplus6DOneDNNOp(TestSoftplusOneDNNOp):
+
     def config(self):
         self.x_shape = (3, 2, 2, 5, 4, 2)
 
 
 class TestSoftplus6DExtendedFunctorOneDNNOp(TestSoftplusOneDNNOp):
+
     def config(self):
         self.x_shape = (3, 5, 2, 5, 4, 2)
         self.beta = 2.5
 
 
 class TestSoftplus3DExtendedFunctorOneDNNOp(TestSoftplusOneDNNOp):
+
     def config(self):
         self.x_shape = (20, 4, 2)
         self.beta = 0.4
 
 
 class TestSoftplusBF16OneDNNOp(TestSoftplusOneDNNOp):
+
     def set_dtype(self):
         self.dtype = np.uint16
 
 
 class TestSoftplus4DBF16OneDNNOp(TestSoftplus4DOneDNNOp):
+
     def set_dtype(self):
         self.dtype = np.uint16
 
 
 class TestSoftplus6DBF16OneDNNOp(TestSoftplus6DOneDNNOp):
+
     def set_dtype(self):
         self.dtype = np.uint16
 
 
 class TestSoftplus3DExtendedFunctorBF16OneDNNOp(
+<<<<<<< HEAD
+        TestSoftplus3DExtendedFunctorOneDNNOp):
+
+=======
     TestSoftplus3DExtendedFunctorOneDNNOp
 ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def set_dtype(self):
         self.dtype = np.uint16
 

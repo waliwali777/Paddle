@@ -21,9 +21,15 @@ using Tensor = phi::DenseTensor;
 
 template <typename IndexT>
 void IndexSampleGather(const paddle::platform::NPUDeviceContext& dev_ctx,
+<<<<<<< HEAD
+                       const Tensor* index,
+                       const Tensor* input,
+                       Tensor* out) {
+=======
                        const phi::DenseTensor* index,
                        const phi::DenseTensor* input,
                        phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto index_dims = index->dims();
   auto input_dims = input->dims();
   auto batch_size = input_dims[0];
@@ -72,9 +78,15 @@ class IndexSampleNPUKernel : public framework::OpKernel<T> {
 
 template <typename IndexT>
 void IndexSampleGradScatter(const paddle::platform::NPUDeviceContext& dev_ctx,
+<<<<<<< HEAD
+                            const Tensor* index,
+                            const Tensor* out_grad,
+                            Tensor* x_grad) {
+=======
                             const phi::DenseTensor* index,
                             const phi::DenseTensor* out_grad,
                             phi::DenseTensor* x_grad) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto index_dims = index->dims();
   auto input_dims = x_grad->dims();
   auto batch_size = input_dims[0];

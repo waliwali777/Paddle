@@ -124,8 +124,13 @@ static void Interpolate2DInferShapeCheck(framework::InferShapeContext* ctx) {
                         "or \"nearest\" or \"bicubic\" when "
                         "Input(X) dimension is 4, but got method is %s.",
                         interp_method));
+<<<<<<< HEAD
+  const DataLayout data_layout = framework::StringToDataLayout(
+      ctx->Attrs().Get<std::string>("data_layout"));
+=======
   const DataLayout data_layout =
       phi::StringToDataLayout(ctx->Attrs().Get<std::string>("data_layout"));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   if (ctx->HasInputs("SizeTensor")) {
     // top prority size
@@ -345,7 +350,11 @@ class InterpolateOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType& expected_kernel_type) const override {
 #ifdef PADDLE_WITH_MKLDNN
     if ((expected_kernel_type.data_layout_ == phi::DataLayout::ONEDNN) &&
@@ -356,7 +365,11 @@ class InterpolateOp : public framework::OperatorWithKernel {
       auto dl = phi::StringToDataLayout(data_format);
       // Some models may have intentionally set "AnyLayout" for pool
       // op. Treat this as NCHW (default data_format value)
+<<<<<<< HEAD
+      if (dl != framework::DataLayout::kAnyLayout) {
+=======
       if (dl != phi::DataLayout::kAnyLayout) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return framework::OpKernelType(
             expected_kernel_type.data_type_, tensor.place(), dl);
       }
@@ -598,7 +611,11 @@ class InterpolateOpGrad : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType& expected_kernel_type) const override {
     if (var_name == "SizeTensor" || var_name == "Scale") {
       return expected_kernel_type;

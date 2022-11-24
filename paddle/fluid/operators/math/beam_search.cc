@@ -26,6 +26,15 @@ template <typename T>
 class BeamSearchFunctor<phi::CPUContext, T> {
  public:
   void operator()(const phi::CPUContext &context,
+<<<<<<< HEAD
+                  const framework::LoDTensor *pre_ids,
+                  const framework::LoDTensor *pre_scores,
+                  const framework::LoDTensor *ids,
+                  const framework::LoDTensor *scores,
+                  framework::LoDTensor *selected_ids,
+                  framework::LoDTensor *selected_scores,
+                  framework::Tensor *parent_idx,
+=======
                   const phi::DenseTensor *pre_ids,
                   const phi::DenseTensor *pre_scores,
                   const phi::DenseTensor *ids,
@@ -33,6 +42,7 @@ class BeamSearchFunctor<phi::CPUContext, T> {
                   phi::DenseTensor *selected_ids,
                   phi::DenseTensor *selected_scores,
                   phi::DenseTensor *parent_idx,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                   size_t level,
                   size_t beam_size,
                   int end_id,
@@ -230,10 +240,17 @@ class BeamSearchFunctor<phi::CPUContext, T> {
    * For each source, select top beam_size records.
    */
   std::vector<std::vector<Item>> SelectTopBeamSizeItems(
+<<<<<<< HEAD
+      const framework::LoDTensor *pre_ids,
+      const framework::LoDTensor *pre_scores,
+      const framework::LoDTensor *ids,
+      const framework::LoDTensor *scores,
+=======
       const phi::DenseTensor *pre_ids,
       const phi::DenseTensor *pre_scores,
       const phi::DenseTensor *ids,
       const phi::DenseTensor *scores,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       size_t lod_level,
       size_t beam_size,
       int end_id,

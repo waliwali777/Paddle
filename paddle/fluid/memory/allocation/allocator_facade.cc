@@ -589,7 +589,10 @@ class AllocatorFacadePrivate {
           std::make_shared<AutoGrowthBestFitAllocator>(
               cuda_allocator,
               platform::GpuMinChunkSize(),
+<<<<<<< HEAD
+=======
               /*chunk_size=*/0,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               allow_free_idle_chunk_);
     }
 #else
@@ -828,7 +831,10 @@ class AllocatorFacadePrivate {
     allocators_[p] = std::make_shared<AutoGrowthBestFitAllocator>(
         custom_allocator,
         phi::DeviceManager::GetMinChunkSize(p),
+<<<<<<< HEAD
+=======
         /*chunk_size=*/0,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         allow_free_idle_chunk);
   }
 #endif

@@ -356,6 +356,40 @@ void GridSampleKernel(const Context& dev_ctx,
     enum_mode = Mode::bilinear;
   }
 
+<<<<<<< HEAD
+  const int n = grid.dims()[0];
+  const int out_h = grid.dims()[1];
+  const int out_w = grid.dims()[2];
+  const int c = x.dims()[1];
+  const int in_h = x.dims()[2];
+  const int in_w = x.dims()[3];
+  VLOG(3) << "n: " << n << "; c: " << c << "; out_h: " << out_h
+          << "; out_w: " << out_w;
+
+  auto* output_data = dev_ctx.template Alloc<T>(out);
+  VLOG(3) << "out dims: " << out->dims()[0] << "; " << out->dims()[1] << "; "
+          << out->dims()[2] << "; " << out->dims()[3];
+
+  int count = static_cast<int>(n * out_h * out_w);
+  auto cu_stream = dev_ctx.stream();
+  backends::gpu::GpuLaunchConfig config =
+      backends::gpu::GetGpuLaunchConfig1D(dev_ctx, count);
+  GridSampleCudaKernel<T>
+      <<<config.block_per_grid, config.thread_per_block, 0, cu_stream>>>(
+          count,
+          n,
+          c,
+          out_h,
+          out_w,
+          in_h,
+          in_w,
+          x.data<T>(),
+          grid.data<T>(),
+          output_data,
+          enum_mode,
+          enum_padding_mode,
+          align_corners);
+=======
   if (x.dims().size() == 4) {
     const int n = grid.dims()[0];
     const int out_h = grid.dims()[1];
@@ -428,6 +462,7 @@ void GridSampleKernel(const Context& dev_ctx,
             enum_padding_mode,
             align_corners);
   }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 }  // namespace phi

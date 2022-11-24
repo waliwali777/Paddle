@@ -42,6 +42,16 @@ class SplitOp : public framework::OperatorWithKernel {
     int num = static_cast<int>(ctx->Attrs().Get<int>("num"));
     std::vector<int> sections = static_cast<std::vector<int>>(
         ctx->Attrs().Get<std::vector<int>>("sections"));
+<<<<<<< HEAD
+    const size_t outs_number = outs_names.size();
+
+    if (sections.size() > 0) {
+      PADDLE_ENFORCE_EQ(
+          sections.size(),
+          outs_number,
+          platform::errors::InvalidArgument("tensor split sections size "
+                                            "should be equal to output size."));
+=======
     // Construct MetaTensor for InferMeta Func
     using CompatMetaTensor = framework::CompatMetaTensor;
     CompatMetaTensor x(ctx->GetInputVarPtrs("X")[0], ctx->IsRuntime());
@@ -68,6 +78,7 @@ class SplitOp : public framework::OperatorWithKernel {
       axis_final.SetFromTensor(true);
     } else {
       axis_final = std::move(phi::Scalar(axis));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
 
     // Construct sections_final
@@ -91,6 +102,24 @@ class SplitOp : public framework::OperatorWithKernel {
     } else {
       sections_final = std::move(phi::IntArray(sections));
     }
+<<<<<<< HEAD
+
+    bool each_section_is_known =
+        (sections.size() > 0 && !ctx->HasInputs("SectionsTensorList"));
+
+    auto outs_dims = UpdateOutsDims(ctx->IsRuntime(),
+                                    each_section_is_known,
+                                    in_dims,
+                                    num,
+                                    sections,
+                                    axis,
+                                    outs_number);
+    ctx->SetOutputsDim("Out", outs_dims);
+    if (axis != 0) {
+      // Only pass LoD when not spliting along the first dim.
+      for (size_t i = 0; i < outs_number; ++i) {
+        ctx->ShareLoD("X", "Out", 0, i);
+=======
     if (sections.size() > 0) {
       if (ctx->IsRuntime()) {
         phi::SplitInferMeta(
@@ -104,6 +133,7 @@ class SplitOp : public framework::OperatorWithKernel {
         phi::SplitWithNumInferMeta(x, num, axis_final, out_ptr, {true, false});
       } else {
         phi::SplitWithNumInferMeta(x, num, axis_final, out_ptr, {false, false});
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       }
     }
   }
@@ -124,7 +154,11 @@ class SplitOp : public framework::OperatorWithKernel {
       if (x_md.data.format_desc.blocking.inner_nblks == 0)
         return framework::OpKernelType(input_data_type,
                                        ctx.GetPlace(),
+<<<<<<< HEAD
+                                       framework::DataLayout::kMKLDNN,
+=======
                                        phi::DataLayout::ONEDNN,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                        framework::LibraryType::kMKLDNN);
     }
 #endif
@@ -133,7 +167,11 @@ class SplitOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string &var_name,
+<<<<<<< HEAD
+      const Tensor &tensor,
+=======
       const phi::DenseTensor &tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType &expected_kernel_type) const override {
     if (var_name == "AxisTensor" || var_name == "SectionsTensorList") {
       return expected_kernel_type;

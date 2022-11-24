@@ -25,6 +25,7 @@ num = 32 * 64
 
 
 class TestReshapeTransposeMatmulMkldnnFusePass(PassAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         return True
 
@@ -34,8 +35,13 @@ class TestReshapeTransposeMatmulMkldnnFusePass(PassAutoScanTest):
         alpha = draw(st.floats(min_value=0.01, max_value=2))
         axis = draw(st.sampled_from([[0, 2, 1, 3]]))
         shape = draw(
+<<<<<<< HEAD
+            st.sampled_from([[0, 64, -1, 32], [0, 32, -1, 64], [-1, 32, 1,
+                                                                64]]))
+=======
             st.sampled_from([[0, 64, -1, 32], [0, 32, -1, 64], [-1, 32, 1, 64]])
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         batch_size = draw(st.integers(min_value=1, max_value=4))
         channel = draw(st.integers(min_value=1, max_value=64))
         input_dim = draw(st.sampled_from([32, 64]))

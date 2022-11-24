@@ -20,6 +20,7 @@ import paddle.utils.cpp_extension.extension_utils as utils
 
 
 class TestABIBase(unittest.TestCase):
+
     def test_environ(self):
         compiler_list = ['gcc', 'cl']
         for compiler in compiler_list:
@@ -34,6 +35,7 @@ class TestABIBase(unittest.TestCase):
 
 
 class TestCheckCompiler(TestABIBase):
+
     def test_expected_compiler(self):
         if utils.OS_NAME.startswith('linux'):
             gt = ['gcc', 'g++', 'gnu-c++', 'gnu-cc']
@@ -85,10 +87,15 @@ class TestCheckCompiler(TestABIBase):
                 self.assertFalse(flag)
                 # check ABI Compatibility WARNING
                 self.assertTrue(len(error) == 1)
+<<<<<<< HEAD
+                self.assertTrue("Failed to check compiler version for" in str(
+                    error[0].message))
+=======
                 self.assertTrue(
                     "Failed to check compiler version for"
                     in str(error[0].message)
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_exception_linux(self):
         # clear environ
@@ -108,10 +115,15 @@ class TestCheckCompiler(TestABIBase):
                 self.assertFalse(flag)
                 # check ABI Compatibility WARNING
                 self.assertTrue(len(error) == 1)
+<<<<<<< HEAD
+                self.assertTrue("Failed to check compiler version for" in str(
+                    error[0].message))
+=======
                 self.assertTrue(
                     "Failed to check compiler version for"
                     in str(error[0].message)
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             # restore
             utils._expected_compiler_current_platform = raw_func
@@ -140,6 +152,7 @@ class TestCheckCompiler(TestABIBase):
 
 
 class TestRunCMDException(unittest.TestCase):
+
     def test_exception(self):
         for verbose in [True, False]:
             with self.assertRaisesRegexp(RuntimeError, "Failed to run command"):

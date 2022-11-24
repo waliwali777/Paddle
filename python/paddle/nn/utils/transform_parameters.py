@@ -32,6 +32,16 @@ def _inplace_reshape_dygraph(x, shape):
             tmp_out = _C_ops.reshape(x, shape)
             tmp_out._share_underline_tensor_to(x)
     else:
+<<<<<<< HEAD
+        _dygraph_tracer().trace_op(type="reshape2",
+                                   inputs={'X': x},
+                                   outputs={
+                                       'Out': x,
+                                       'XShape': x_shape
+                                   },
+                                   attrs={'shape': shape},
+                                   stop_gradient=True)
+=======
         _dygraph_tracer().trace_op(
             type="reshape2",
             inputs={'X': x},
@@ -39,6 +49,7 @@ def _inplace_reshape_dygraph(x, shape):
             attrs={'shape': shape},
             stop_gradient=True,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 @dygraph_only
@@ -110,6 +121,13 @@ def parameters_to_vector(parameters, name=None):
             tmp = _C_ops.concat(parameters, 0)
             tmp._share_underline_tensor_to(out)
     else:
+<<<<<<< HEAD
+        _dygraph_tracer().trace_op(type='concat',
+                                   inputs={'X': parameters},
+                                   outputs={'Out': [out]},
+                                   attrs={'axis': 0},
+                                   stop_gradient=True)
+=======
         _dygraph_tracer().trace_op(
             type='concat',
             inputs={'X': parameters},
@@ -117,6 +135,7 @@ def parameters_to_vector(parameters, name=None):
             attrs={'axis': 0},
             stop_gradient=True,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     for i, param in enumerate(parameters):
         _inplace_reshape_dygraph(param, origin_shapes[i])
     return out
@@ -167,6 +186,16 @@ def vector_to_parameters(vec, parameters, name=None):
             for i in range(0, len(parameters)):
                 res[i]._share_underline_tensor_to(parameters[i])
     else:
+<<<<<<< HEAD
+        _dygraph_tracer().trace_op(type='split',
+                                   inputs={'X': [vec]},
+                                   outputs={'Out': parameters},
+                                   attrs={
+                                       'axis': 0,
+                                       'sections': sections
+                                   },
+                                   stop_gradient=True)
+=======
         _dygraph_tracer().trace_op(
             type='split',
             inputs={'X': [vec]},
@@ -174,6 +203,7 @@ def vector_to_parameters(vec, parameters, name=None):
             attrs={'axis': 0, 'sections': sections},
             stop_gradient=True,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     for i, param in enumerate(parameters):
         _inplace_reshape_dygraph(param, origin_shapes[i])

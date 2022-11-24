@@ -72,8 +72,13 @@ class DGCMomentumKernel : public framework::OpKernel<T> {
       auto* param_out = context.Output<phi::DenseTensor>("ParamOut");
       auto* velocity_out = context.Output<phi::DenseTensor>("VelocityOut");
       auto* master_param_out =
+<<<<<<< HEAD
+          context.Output<framework::Tensor>("MasterParamOut");
+      paddle::optional<framework::Tensor> master_param_opt(paddle::none);
+=======
           context.Output<phi::DenseTensor>("MasterParamOut");
       paddle::optional<phi::DenseTensor> master_param_opt(paddle::none);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       float mu = context.Attr<float>("mu");
       bool use_nesterov = context.Attr<bool>("use_nesterov");
       std::string regularization_method =
@@ -136,8 +141,13 @@ class DGCMomentumKernel : public framework::OpKernel<T> {
       auto* param = context.Input<phi::DenseTensor>("Param");
       auto* param_out = context.Output<phi::DenseTensor>("ParamOut");
       auto* master_param_out =
+<<<<<<< HEAD
+          context.Output<framework::Tensor>("MasterParamOut");
+      paddle::optional<framework::Tensor> master_param_opt(paddle::none);
+=======
           context.Output<phi::DenseTensor>("MasterParamOut");
       paddle::optional<phi::DenseTensor> master_param_opt(paddle::none);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       if (multi_precision) {
         auto* master_param = context.Input<phi::DenseTensor>("MasterParam");
         master_param_opt = *master_param;

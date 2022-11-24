@@ -99,11 +99,20 @@ def op_freq_statistic(program):
             else:
                 adj_2_op_freq[op_op] = 1
 
+<<<<<<< HEAD
+    uni_op_freq = sorted(uni_op_freq.items(),
+                         key=lambda item: item[1],
+                         reverse=True)
+    adj_2_op_freq = sorted(adj_2_op_freq.items(),
+                           key=lambda item: item[1],
+                           reverse=True)
+=======
     uni_op_freq = sorted(
         uni_op_freq.items(), key=lambda item: item[1], reverse=True
     )
     adj_2_op_freq = sorted(
         adj_2_op_freq.items(), key=lambda item: item[1], reverse=True
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     return uni_op_freq, adj_2_op_freq

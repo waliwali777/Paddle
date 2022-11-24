@@ -183,6 +183,23 @@ void AttentionLSTMFusePass::FindWhileOp(Graph* graph) const {
   CHECK_P4(x0, x1, x2, x3);          \
   CHECK_P1(x4);
 
+<<<<<<< HEAD
+void PrepareLSTMWeight(const LoDTensor& W_forget_w0,
+                       const LoDTensor& W_forget_w1,
+                       const LoDTensor& W_input_w0,
+                       const LoDTensor& W_input_w1,
+                       const LoDTensor& W_output_w0,
+                       const LoDTensor& W_output_w1,
+                       const LoDTensor& W_cell_w0,
+                       const LoDTensor& W_cell_w1,
+                       LoDTensor* out);
+
+void PrepareLSTMBias(const LoDTensor& B_forget,
+                     const LoDTensor& B_input,
+                     const LoDTensor& B_output,
+                     const LoDTensor& B_cell,
+                     LoDTensor* out);
+=======
 void PrepareLSTMWeight(const phi::DenseTensor& W_forget_w0,
                        const phi::DenseTensor& W_forget_w1,
                        const phi::DenseTensor& W_input_w0,
@@ -198,6 +215,7 @@ void PrepareLSTMBias(const phi::DenseTensor& B_forget,
                      const phi::DenseTensor& B_output,
                      const phi::DenseTensor& B_cell,
                      phi::DenseTensor* out);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 void PrepareParameters(Graph* graph, const Param& param, ir::Node* lstm_op) {
   // Check parameters
@@ -261,6 +279,14 @@ void PrepareParameters(Graph* graph, const Param& param, ir::Node* lstm_op) {
 
   // reshape attention_bias
   auto* attention_bias_t =
+<<<<<<< HEAD
+      scope.FindVar(param.AttentionBias)->GetMutable<LoDTensor>();
+  PADDLE_ENFORCE_EQ(attention_bias_t->dims().size(),
+                    1,
+                    platform::errors::InvalidArgument(
+                        "Tensor attention bias dimension size(%d) must be 1.",
+                        attention_bias_t->dims().size()));
+=======
       scope.FindVar(param.AttentionBias)->GetMutable<phi::DenseTensor>();
   PADDLE_ENFORCE_EQ(
       attention_bias_t->dims().size(),
@@ -268,6 +294,7 @@ void PrepareParameters(Graph* graph, const Param& param, ir::Node* lstm_op) {
       platform::errors::InvalidArgument(
           "phi::DenseTensor attention bias dimension size(%d) must be 1.",
           attention_bias_t->dims().size()));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   attention_bias_t->Resize(phi::make_ddim({1, attention_bias_t->dims()[0]}));
 
   auto* attention_scalar_bias_t =
@@ -289,6 +316,17 @@ void PrepareParameters(Graph* graph, const Param& param, ir::Node* lstm_op) {
 }
 
 // Prepare parameters
+<<<<<<< HEAD
+void PrepareLSTMWeight(const LoDTensor& W_forget_w0,
+                       const LoDTensor& W_forget_w1,
+                       const LoDTensor& W_input_w0,
+                       const LoDTensor& W_input_w1,
+                       const LoDTensor& W_output_w0,
+                       const LoDTensor& W_output_w1,
+                       const LoDTensor& W_cell_w0,
+                       const LoDTensor& W_cell_w1,
+                       LoDTensor* out) {
+=======
 void PrepareLSTMWeight(const phi::DenseTensor& W_forget_w0,
                        const phi::DenseTensor& W_forget_w1,
                        const phi::DenseTensor& W_input_w0,
@@ -298,6 +336,7 @@ void PrepareLSTMWeight(const phi::DenseTensor& W_forget_w0,
                        const phi::DenseTensor& W_cell_w0,
                        const phi::DenseTensor& W_cell_w1,
                        phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   int D = W_forget_w0.dims()[0];
   int M = W_forget_w1.dims()[0];
   out->Resize(phi::make_ddim({D + M, 4 * D}));
@@ -330,22 +369,38 @@ void PrepareLSTMWeight(const phi::DenseTensor& W_forget_w0,
   }
 }
 
+<<<<<<< HEAD
+void PrepareLSTMBias(const LoDTensor& B_forget,
+                     const LoDTensor& B_input,
+                     const LoDTensor& B_output,
+                     const LoDTensor& B_cell,
+                     LoDTensor* out) {
+=======
 void PrepareLSTMBias(const phi::DenseTensor& B_forget,
                      const phi::DenseTensor& B_input,
                      const phi::DenseTensor& B_output,
                      const phi::DenseTensor& B_cell,
                      phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   std::array<const float*, 4> tensors{B_forget.data<float>(),
                                       B_input.data<float>(),
                                       B_output.data<float>(),
                                       B_cell.data<float>()};
 
+<<<<<<< HEAD
+  PADDLE_ENFORCE_EQ(B_forget.dims().size(),
+                    1,
+                    platform::errors::InvalidArgument(
+                        "Tensor B forget dimension size(%d) must be 1.",
+                        B_forget.dims().size()));
+=======
   PADDLE_ENFORCE_EQ(
       B_forget.dims().size(),
       1,
       platform::errors::InvalidArgument(
           "phi::DenseTensor B forget dimension size(%d) must be 1.",
           B_forget.dims().size()));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   int D = B_forget.dims()[0];
   out->Resize(phi::make_ddim({1, 4 * D}));
   auto* out_data = out->mutable_data<float>(platform::CPUPlace());

@@ -46,9 +46,16 @@ def train(to_static, build_strategy=None):
     optimizer = optimizer_setting(parameter_list=resnet.parameters())
     scaler = paddle.amp.GradScaler(init_loss_scaling=1024)
 
+<<<<<<< HEAD
+    resnet, optimizer = paddle.amp.decorate(models=resnet,
+                                            optimizers=optimizer,
+                                            level='O2',
+                                            save_dtype='float32')
+=======
     resnet, optimizer = paddle.amp.decorate(
         models=resnet, optimizers=optimizer, level='O2', save_dtype='float32'
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     for epoch in range(epoch_num):
         loss_data = []
@@ -63,6 +70,16 @@ def train(to_static, build_strategy=None):
                 np.random.random([batch_size, 3, 224, 224]).astype('float32')
             )
             label = paddle.to_tensor(
+<<<<<<< HEAD
+                np.random.randint(0, 100, [batch_size, 1], dtype='int64'))
+            img.stop_gradient = True
+            label.stop_gradient = True
+
+            with paddle.amp.auto_cast(enable=True,
+                                      custom_white_list=None,
+                                      custom_black_list=None,
+                                      level='O2'):
+=======
                 np.random.randint(0, 100, [batch_size, 1], dtype='int64')
             )
             img.stop_gradient = True
@@ -74,6 +91,7 @@ def train(to_static, build_strategy=None):
                 custom_black_list=None,
                 level='O2',
             ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 pred = resnet(img)
                 loss = fluid.layers.cross_entropy(input=pred, label=label)
             avg_loss = paddle.mean(x=pred)
@@ -111,6 +129,7 @@ def train(to_static, build_strategy=None):
 
 
 class TestResnet(unittest.TestCase):
+
     def train(self, to_static):
         program_translator.enable(to_static)
         build_strategy = paddle.static.BuildStrategy()
@@ -124,6 +143,11 @@ class TestResnet(unittest.TestCase):
             static_loss = self.train(to_static=True)
             dygraph_loss = self.train(to_static=False)
             # NOTE: In pure fp16 training, loss is not stable, so we enlarge atol here.
+<<<<<<< HEAD
+            self.assertTrue(np.allclose(static_loss, dygraph_loss, atol=1e-3),
+                            msg="static_loss: {} \n dygraph_loss: {}".format(
+                                static_loss, dygraph_loss))
+=======
             np.testing.assert_allclose(
                 static_loss,
                 dygraph_loss,
@@ -133,6 +157,7 @@ class TestResnet(unittest.TestCase):
                     static_loss, dygraph_loss
                 ),
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == '__main__':

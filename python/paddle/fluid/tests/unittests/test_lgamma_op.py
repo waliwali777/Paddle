@@ -23,6 +23,7 @@ paddle.enable_static()
 
 
 class TestLgammaOp(OpTest):
+
     def setUp(self):
         self.op_type = 'lgamma'
         self.python_api = paddle.lgamma
@@ -47,25 +48,43 @@ class TestLgammaOp(OpTest):
 
 
 class TestLgammaOpFp32(TestLgammaOp):
+
     def init_dtype_type(self):
         self.dtype = np.float32
 
     def test_check_grad_normal(self):
+<<<<<<< HEAD
+        self.check_grad(['X'],
+                        'Out',
+                        numeric_grad_delta=0.005,
+                        check_eager=True)
+
+
+class TestLgammaOpApi(unittest.TestCase):
+
+=======
         self.check_grad(
             ['X'], 'Out', numeric_grad_delta=0.005, check_eager=True
         )
 
 
 class TestLgammaOpApi(unittest.TestCase):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def test_lgamma(self):
         paddle.disable_static()
         self.dtype = "float32"
         shape = (1, 4)
         data = np.random.random(shape).astype(self.dtype) + 1
         data_ = paddle.to_tensor(data)
+<<<<<<< HEAD
+        out = paddle.fluid.layers.lgamma(data_)
+        result = special.gammaln(data)
+        self.assertTrue(np.allclose(result, out.numpy()))
+=======
         out = paddle.lgamma(data_)
         result = special.gammaln(data)
         np.testing.assert_allclose(result, out.numpy(), rtol=1e-05)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         paddle.enable_static()
 
 

@@ -15,7 +15,10 @@
 #include <paddle/fluid/platform/device_context.h>
 
 #include <algorithm>
+<<<<<<< HEAD
+=======
 #include <type_traits>
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 #include "paddle/fluid/framework/op_registry.h"
 #include "paddle/fluid/memory/malloc.h"
@@ -115,6 +118,8 @@ __global__ void TransposeQkvKernel(const int H,
       add_func(input[in_offset + i], bias[bias_offset + i]);
 }
 
+<<<<<<< HEAD
+=======
 template <typename T>
 void TransQKVWithBias(const int batch,
                       const int seq_len,
@@ -126,6 +131,7 @@ void TransQKVWithBias(const int batch,
                       gpuStream_t stream);
 
 template <>
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void TransQKVWithBias(const int batch,
                       const int seq_len,
                       const int head_size,
@@ -260,11 +266,22 @@ template <typename DeviceContext, typename T>
 class MultiHeadMatMulV2Kernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext &context) const override {
+<<<<<<< HEAD
+    using Tensor = framework::Tensor;
+    auto *input = context.Input<framework::Tensor>("Input");
+    auto *w = context.Input<framework::Tensor>("W");
+    auto *bias = context.Input<framework::Tensor>("Bias");
+    auto &bias_qk = GET_DATA_SAFELY(context.Input<framework::Tensor>("BiasQK"),
+                                    "Input",
+                                    "BiasQK",
+                                    "MultiHeadMatMulV2");
+=======
     using Tensor = phi::DenseTensor;
     auto *input = context.Input<phi::DenseTensor>("Input");
     auto *w = context.Input<phi::DenseTensor>("W");
     auto *bias = context.Input<phi::DenseTensor>("Bias");
     auto *bias_qk = context.Input<phi::DenseTensor>("BiasQK");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     auto *input_d = input->data<T>();
     auto *w_d = w->data<T>();
@@ -293,6 +310,8 @@ class MultiHeadMatMulV2Kernel : public framework::OpKernel<T> {
       int block = round_up(seq_len);
       broadcast<<<grid, block, 0, stream>>>(
           bias_qk_d, temp_qk_bias, seq_len, head_number);
+<<<<<<< HEAD
+=======
       bias_qk_d = static_cast<const T *>(temp_qk_bias);
     }
     if (!bias_qk) {
@@ -305,6 +324,7 @@ class MultiHeadMatMulV2Kernel : public framework::OpKernel<T> {
 #else
       cudaMemset(temp_qk_bias, 0, sizeof(float) * size);
 #endif
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       bias_qk_d = static_cast<const T *>(temp_qk_bias);
     }
     int all_head_size = w_dims[2];
@@ -356,6 +376,20 @@ class MultiHeadMatMulV2Kernel : public framework::OpKernel<T> {
                      bias_d,
                      tptr,
                      stream);
+<<<<<<< HEAD
+
+    math::MultiHeadGPUComputeFunctor<T> multihead_compute_func;
+    multihead_compute_func(device_ctx,
+                           batch,
+                           seq_len,
+                           head_number,
+                           head_size,
+                           qkptr,
+                           bias_qk_d,
+                           tptr,
+                           scale,
+                           T(0.0));
+=======
     if (std::is_same<T, platform::float16>::value) {
       math::MultiHeadGPUComputeFunctor<half> multihead_compute_func;
       multihead_compute_func(device_ctx,
@@ -383,6 +417,7 @@ class MultiHeadMatMulV2Kernel : public framework::OpKernel<T> {
                              scale,
                              T(0.0));
     }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     int grid = batch * head_number * seq_len;
     int block = head_size;
@@ -395,6 +430,10 @@ class MultiHeadMatMulV2Kernel : public framework::OpKernel<T> {
 }  // namespace paddle
 
 namespace ops = paddle::operators;
+<<<<<<< HEAD
+REGISTER_OP_CUDA_KERNEL(multihead_matmul,
+                        ops::MultiHeadMatMulV2Kernel<phi::GPUContext, float>);
+=======
 #if defined(PADDLE_WITH_CUDA) && CUDA_VERSION >= 10000
 REGISTER_OP_CUDA_KERNEL(
     multihead_matmul,
@@ -404,3 +443,4 @@ REGISTER_OP_CUDA_KERNEL(
 REGISTER_OP_CUDA_KERNEL(multihead_matmul,
                         ops::MultiHeadMatMulV2Kernel<phi::GPUContext, float>);
 #endif
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f

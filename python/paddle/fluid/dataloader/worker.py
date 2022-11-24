@@ -34,7 +34,12 @@ import queue
 __all__ = ['get_worker_info']
 
 
+<<<<<<< HEAD
+class _IterableDatasetStopIteration(object):
+
+=======
 class _IterableDatasetStopIteration:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, worker_id):
         self.worker_id = worker_id
 
@@ -63,7 +68,12 @@ class _DatasetKind:
             raise NotImplementedError("unknown Dataset kind {}".format(kind))
 
 
+<<<<<<< HEAD
+class ParentWatchDog(object):
+
+=======
 class ParentWatchDog:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self):
         self._parent_pid = os.getppid()
         self._parent_alive = True
@@ -163,7 +173,12 @@ class WorkerInfo:
         return super().__setattr__(key, val)
 
 
+<<<<<<< HEAD
+class _WorkerException(object):
+
+=======
 class _WorkerException:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, worker_id, exc_info=None):
         self.worker_id = worker_id
         exc_info = exc_info or sys.exc_info()
@@ -262,6 +277,11 @@ def _generate_states(base_seed=0, worker_id=0):
     return states
 
 
+<<<<<<< HEAD
+def _worker_loop(dataset, dataset_kind, indices_queue, out_queue, done_event,
+                 auto_collate_batch, collate_fn, drop_last, init_fn, worker_id,
+                 num_workers, use_shared_memory, base_seed):
+=======
 def _worker_loop(
     dataset,
     dataset_kind,
@@ -277,6 +297,7 @@ def _worker_loop(
     use_shared_memory,
     base_seed,
 ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     try:
         # NOTE: [ mmap files clear ] When the child process exits unexpectedly,
         # some shared memory objects may have been applied for but have not yet
@@ -301,12 +322,19 @@ def _worker_loop(
             np.random.seed(_generate_states(base_seed, worker_id))
 
         global _worker_info
+<<<<<<< HEAD
+        _worker_info = WorkerInfo(id=worker_id,
+                                  num_workers=num_workers,
+                                  dataset=dataset,
+                                  seed=base_seed)
+=======
         _worker_info = WorkerInfo(
             id=worker_id,
             num_workers=num_workers,
             dataset=dataset,
             seed=base_seed,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         init_exception = None
         try:
@@ -330,9 +358,15 @@ def _worker_loop(
             if isinstance(data, _ResumeIteration):
                 out_queue.put((data, None, None))
                 iterator_drained = False
+<<<<<<< HEAD
+                fetcher = _DatasetKind.create_fetcher(dataset_kind, dataset,
+                                                      auto_collate_batch,
+                                                      collate_fn, True)
+=======
                 fetcher = _DatasetKind.create_fetcher(
                     dataset_kind, dataset, auto_collate_batch, collate_fn, True
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 continue
 
             # None as poison piil, so worker event should be set

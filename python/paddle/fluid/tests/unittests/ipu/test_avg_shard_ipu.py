@@ -21,6 +21,7 @@ from paddle.fluid.tests.unittests.ipu.op_test_ipu import IPUOpTest
 
 
 class TestBase(IPUOpTest):
+
     def setUp(self):
         self.set_atol()
         self.set_training()
@@ -44,6 +45,27 @@ class TestBase(IPUOpTest):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+        x = paddle.static.nn.conv2d(x,
+                                    num_filters=3,
+                                    filter_size=3,
+                                    bias_attr=False)
+        x = paddle.static.nn.conv2d(x,
+                                    num_filters=3,
+                                    filter_size=3,
+                                    bias_attr=False)
+        x = paddle.static.nn.conv2d(x,
+                                    num_filters=3,
+                                    filter_size=3,
+                                    bias_attr=False)
+        x = paddle.static.nn.conv2d(x,
+                                    num_filters=3,
+                                    filter_size=3,
+                                    bias_attr=False)
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
@@ -59,6 +81,7 @@ class TestBase(IPUOpTest):
         x = paddle.static.nn.conv2d(
             x, num_filters=3, filter_size=3, bias_attr=False
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.fetch_list = [x.name]
 
     def run_model(self, exec_mode):

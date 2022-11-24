@@ -23,6 +23,7 @@ import paddle
 
 
 class TestBatchNorm(unittest.TestCase):
+
     def test_name(self):
         places = [fluid.CPUPlace()]
         if core.is_compiled_with_cuda():
@@ -79,6 +80,10 @@ class TestBatchNorm(unittest.TestCase):
                 self.assertRaises(ValueError, error3d_dataformat)
 
     def test_large_batch(self):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         def compute_baseline(x):
             with fluid.dygraph.guard(p):
                 bn = fluid.dygraph.BatchNorm(shape[1])
@@ -107,16 +112,26 @@ class TestBatchNorm(unittest.TestCase):
             x = np.random.randn(*shape).astype("float32")
             y1, g1 = compute_baseline(x)
             y2, g2 = compute_1d(x)
+<<<<<<< HEAD
+            self.assertTrue(np.allclose(g1, g2))
+            self.assertTrue(np.allclose(y1, y2))
+=======
             np.testing.assert_allclose(g1, g2, rtol=1e-05)
             np.testing.assert_allclose(y1, y2, rtol=1e-05)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             # [N, C, L]
             shape = [1000000, 4, 4]
             x = np.random.randn(*shape).astype("float32")
             y1, g1 = compute_baseline(x)
             y2, g2 = compute_1d(x)
+<<<<<<< HEAD
+            self.assertTrue(np.allclose(g1, g2))
+            self.assertTrue(np.allclose(y1, y2))
+=======
             np.testing.assert_allclose(g1, g2, rtol=1e-05)
             np.testing.assert_allclose(y1, y2, rtol=1e-05)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_eager_api(self):
         places = [fluid.CPUPlace()]
@@ -149,8 +164,13 @@ class TestBatchNorm(unittest.TestCase):
             x = np.random.randn(*shape).astype("float32")
             y1, g1 = compute_v1(x)
             y2, g2 = compute_v2(x)
+<<<<<<< HEAD
+            self.assertTrue(np.allclose(g1, g2))
+            self.assertTrue(np.allclose(y1, y2))
+=======
             np.testing.assert_allclose(g1, g2, rtol=1e-05)
             np.testing.assert_allclose(y1, y2, rtol=1e-05)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_dygraph(self):
         places = [fluid.CPUPlace()]
@@ -200,9 +220,15 @@ class TestBatchNorm(unittest.TestCase):
 
             def compute_v4(x):
                 with fluid.dygraph.guard(p):
+<<<<<<< HEAD
+                    bn = paddle.nn.BatchNorm2D(shape[1],
+                                               weight_attr=False,
+                                               bias_attr=False)
+=======
                     bn = paddle.nn.BatchNorm2D(
                         shape[1], weight_attr=False, bias_attr=False
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     y = bn(paddle.to_tensor(x))
                 return y.numpy()
 
@@ -251,6 +277,7 @@ class TestBatchNorm(unittest.TestCase):
 
 
 class TestBatchNormChannelLast(unittest.TestCase):
+
     def setUp(self):
         self.original_dtyep = paddle.get_default_dtype()
         # MIOPEN not support data type of double
@@ -279,9 +306,14 @@ class TestBatchNormChannelLast(unittest.TestCase):
                 y2 = paddle.transpose(y2, [0, 2, 1])
                 if core.is_compiled_with_rocm():
                     # HIP will fail if no atol
+<<<<<<< HEAD
+                    self.assertEqual(
+                        np.allclose(y1.numpy(), y2.numpy(), atol=1e-07), True)
+=======
                     np.testing.assert_allclose(
                         y1.numpy(), y2.numpy(), rtol=1e-05, atol=1e-07
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 else:
                     np.testing.assert_allclose(
                         y1.numpy(), y2.numpy(), rtol=1e-05
@@ -301,9 +333,14 @@ class TestBatchNormChannelLast(unittest.TestCase):
                 y2 = paddle.transpose(y2, [0, 2, 3, 1])
                 if core.is_compiled_with_rocm():
                     # HIP will fail if no atol
+<<<<<<< HEAD
+                    self.assertEqual(
+                        np.allclose(y1.numpy(), y2.numpy(), atol=1e-07), True)
+=======
                     np.testing.assert_allclose(
                         y1.numpy(), y2.numpy(), rtol=1e-05, atol=1e-07
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 else:
                     np.testing.assert_allclose(
                         y1.numpy(), y2.numpy(), rtol=1e-05
@@ -323,9 +360,14 @@ class TestBatchNormChannelLast(unittest.TestCase):
                 y2 = paddle.transpose(y2, [0, 2, 3, 4, 1])
                 if core.is_compiled_with_rocm():
                     # HIP will fail if no atol
+<<<<<<< HEAD
+                    self.assertEqual(
+                        np.allclose(y1.numpy(), y2.numpy(), atol=1e-07), True)
+=======
                     np.testing.assert_allclose(
                         y1.numpy(), y2.numpy(), rtol=1e-05, atol=1e-07
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 else:
                     np.testing.assert_allclose(
                         y1.numpy(), y2.numpy(), rtol=1e-05
@@ -363,6 +405,7 @@ class TestBatchNormChannelLast(unittest.TestCase):
 
 
 class TestBatchNormUseGlobalStats(unittest.TestCase):
+
     def setUp(self):
         self.places = [fluid.CPUPlace()]
         if core.is_compiled_with_cuda():

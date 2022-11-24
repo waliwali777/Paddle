@@ -30,10 +30,12 @@ paddle.enable_static()
 
 
 class XPUTestReduceAllOp(XPUOpTestWrapper):
+
     def __init__(self):
         self.op_name = 'reduce_all'
 
     class XPUTestReduceAllBase(XPUOpTest):
+
         def setUp(self):
             self.place = paddle.XPUPlace(0)
             self.set_case()
@@ -47,9 +49,14 @@ class XPUTestReduceAllOp(XPUOpTestWrapper):
                 'dim': (3, 5, 4),
             }
             self.inputs = {
+<<<<<<< HEAD
+                'X':
+                np.random.randint(0, 2, (2, 5, 3, 2, 2, 3, 4, 2)).astype("bool")
+=======
                 'X': np.random.randint(0, 2, (2, 5, 3, 2, 2, 3, 4, 2)).astype(
                     "bool"
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             }
             self.outputs = {'Out': self.inputs['X'].all(axis=self.attrs['dim'])}
 
@@ -60,6 +67,7 @@ class XPUTestReduceAllOp(XPUOpTestWrapper):
             pass
 
     class XPUTestReduceAllCase1(XPUTestReduceAllBase):
+
         def set_case(self):
             self.op_type = 'reduce_all'
             self.attrs = {
@@ -74,6 +82,7 @@ class XPUTestReduceAllOp(XPUOpTestWrapper):
             self.outputs = {'Out': self.inputs['X'].all()}
 
     class XPUTestReduceAllCase2(XPUTestReduceAllBase):
+
         def set_case(self):
             self.op_type = 'reduce_all'
             self.attrs = {
@@ -83,13 +92,19 @@ class XPUTestReduceAllOp(XPUOpTestWrapper):
                 'dim': (3, 6),
             }
             self.inputs = {
+<<<<<<< HEAD
+                'X':
+                np.random.randint(0, 2, (2, 5, 3, 2, 2, 3, 4, 2)).astype("bool")
+=======
                 'X': np.random.randint(0, 2, (2, 5, 3, 2, 2, 3, 4, 2)).astype(
                     "bool"
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             }
             self.outputs = {'Out': self.inputs['X'].all(axis=self.attrs['dim'])}
 
     class XPUTestReduceAllCase3(XPUTestReduceAllBase):
+
         def set_case(self):
             self.op_type = 'reduce_all'
             self.attrs = {

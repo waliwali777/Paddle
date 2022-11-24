@@ -30,10 +30,12 @@ paddle.enable_static()
 
 
 class XPUTestReduceMinOp(XPUOpTestWrapper):
+
     def __init__(self):
         self.op_name = 'reduce_min'
 
     class XPUTestReduceMinBase(XPUOpTest):
+
         def setUp(self):
             self.place = paddle.XPUPlace(0)
             self.init_case()
@@ -51,9 +53,15 @@ class XPUTestReduceMinOp(XPUOpTestWrapper):
                 self.outputs = {'Out': self.inputs['X'].min()}
             else:
                 self.outputs = {
+<<<<<<< HEAD
+                    'Out':
+                    self.inputs['X'].min(axis=self.axis,
+                                         keepdims=self.attrs['keep_dim'])
+=======
                     'Out': self.inputs['X'].min(
                         axis=self.axis, keepdims=self.attrs['keep_dim']
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 }
 
         def init_case(self):
@@ -69,6 +77,7 @@ class XPUTestReduceMinOp(XPUOpTestWrapper):
             pass
 
     class XPUTestReduceMinCase1(XPUTestReduceMinBase):
+
         def init_case(self):
             self.shape = (5, 6, 10)
             self.axis = (0,)

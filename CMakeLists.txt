@@ -48,7 +48,10 @@ find_package(CUDA QUIET)
 find_package(MKL CONFIG QUIET)
 option(WITH_ONEMKL "Compile PaddlePaddle with oneMKL" OFF)
 option(WITH_GPU "Compile PaddlePaddle with NVIDIA GPU" ${CUDA_FOUND})
+<<<<<<< HEAD
+=======
 option(WITH_MPI "Compile PaddlePaddle with MPI" OFF)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 option(WITH_TENSORRT "Compile PaddlePaddle with NVIDIA TensorRT" OFF)
 option(WITH_XPU "Compile PaddlePaddle with BAIDU KUNLUN XPU" OFF)
 option(WITH_XPU_KP "Compile PaddlePaddle with BAIDU XPU compiler " OFF)
@@ -251,7 +254,11 @@ option(WITH_SYSTEM_BLAS "Use system blas library" OFF)
 option(WITH_DISTRIBUTE "Compile with distributed support" OFF)
 option(WITH_BRPC_RDMA "Use brpc rdma as the rpc protocal" OFF)
 option(ON_INFER "Turn on inference optimization and inference-lib generation"
+<<<<<<< HEAD
+       OFF)
+=======
        ON)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 ################################ Internal Configurations #######################################
 option(WITH_NV_JETSON "Compile PaddlePaddle with NV JETSON" OFF)
 option(WITH_PROFILER "Compile PaddlePaddle with GPU profiler and gperftools"
@@ -269,7 +276,10 @@ option(WITH_PSCORE "Compile with parameter server support" ${WITH_DISTRIBUTE})
 option(WITH_HETERPS "Compile with heterps" OFF})
 option(WITH_INFERENCE_API_TEST
        "Test fluid inference C++ high-level api interface" OFF)
+<<<<<<< HEAD
+=======
 option(WITH_INFERENCE_NVTX "Paddle inference with nvtx for profiler" OFF)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 option(PY_VERSION "Compile PaddlePaddle with python3 support" ${PY_VERSION})
 option(WITH_DGC "Use DGC(Deep Gradient Compression) or not" ${WITH_DISTRIBUTE})
 option(
@@ -304,11 +314,14 @@ option(WITH_RECORD_BUILDTIME
 option(WITH_CUSTOM_DEVICE "Compile with custom device support" OFF)
 option(WITH_ARM_BRPC "Supprot Brpc in Arm" OFF)
 option(WITH_FLPS "FL PS mode" OFF)
+<<<<<<< HEAD
+=======
 option(WITH_RPC "Compile with rpc support" ${WITH_DISTRIBUTE})
 option(WITH_CUDNN_FRONTEND
        "Compile with CUDNN Frontend API support (experimental)" OFF)
 option(WITH_CUDNN_DSO "Compile PaddlePaddle with cuDNN dynamic-link libraries"
        OFF)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 if(WITH_RECORD_BUILDTIME)
   set_property(
@@ -344,7 +357,11 @@ endif()
 
 if(LINUX
    AND NOT WITH_CUSTOM_DEVICE
+<<<<<<< HEAD
+   AND NOT ON_INFER)
+=======
    AND WITH_PYTHON)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   set(WITH_CUSTOM_DEVICE
       ON
       CACHE BOOL "Enable Custom Device when compiling for Linux" FORCE)
@@ -372,6 +389,8 @@ if(WIN32)
   endif()
 endif()
 
+<<<<<<< HEAD
+=======
 if(NOT WITH_TESTING AND WITH_MULTINODE_TESTING)
   message(
     WARNING
@@ -384,12 +403,15 @@ if(NOT WITH_TESTING AND WITH_MULTINODE_TESTING)
             FORCE)
 endif()
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 if(NOT WITH_GPU AND WITH_NCCL)
   message(
     WARNING "Disable NCCL when compiling without GPU. Force WITH_NCCL=OFF.")
   set(WITH_NCCL
       OFF
       CACHE STRING "Disable NCCL when compiling without GPU" FORCE)
+<<<<<<< HEAD
+=======
 endif()
 
 if(NOT WITH_GPU AND WITH_CUDNN_DSO)
@@ -400,6 +422,7 @@ if(NOT WITH_GPU AND WITH_CUDNN_DSO)
   set(WITH_CUDNN_DSO
       OFF
       CACHE STRING "Disable cuDNN libraries when compiling without GPU" FORCE)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 endif()
 
 # force WITH_XPU on when WITH_XPU_KP
@@ -527,6 +550,8 @@ if(WITH_DISTRIBUTE)
   endif()
 endif()
 
+<<<<<<< HEAD
+=======
 if(WITH_RPC)
   if(NOT LINUX)
     message(
@@ -579,6 +604,7 @@ if(WITH_MPI)
   include(mpi)
 endif()
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 include(third_party
 )# download, build, install third_party, Contains about 20+ dependencies
 

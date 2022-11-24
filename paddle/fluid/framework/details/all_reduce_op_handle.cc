@@ -131,7 +131,11 @@ void AllReduceOpHandle::AllReduceImpl(
         var,
         platform::errors::NotFound("Variable %s is not found in local scope.",
                                    in_var_handles[i]->name()));
+<<<<<<< HEAD
+    auto &lod_tensor = var->Get<LoDTensor>();
+=======
     auto &lod_tensor = var->Get<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     if (i == 0) {
       numel = static_cast<int64_t>(lod_tensor.numel());
@@ -276,10 +280,24 @@ void AllReduceOpHandle::BKCLAllReduceFunc(
     if (all_reduce_calls.size() == 1UL) {
       all_reduce_calls[0]();
     } else {
+<<<<<<< HEAD
+      PADDLE_ENFORCE_EQ(
+          bkcl_group_start(),
+          BKCL_SUCCESS,
+          platform::errors::PreconditionNotMet("bkcl_group_start failed"));
+      for (auto &call : all_reduce_calls) {
+        call();
+      }
+      PADDLE_ENFORCE_EQ(
+          bkcl_group_end(),
+          BKCL_SUCCESS,
+          platform::errors::PreconditionNotMet("bkcl_group_end failed"));
+=======
       platform::BKCLGroupGuard guard;
       for (auto &call : all_reduce_calls) {
         call();
       }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
   });
 

@@ -21,6 +21,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class TestDygraphFleetAPI(unittest.TestCase):
+
     def setUp(self):
         paddle.seed(2022)
         random.seed(2022)
@@ -39,9 +40,14 @@ class TestDygraphFleetAPI(unittest.TestCase):
         strategy.amp = True
         strategy.recompute = True
         fleet.init(is_collective=True, strategy=strategy)
+<<<<<<< HEAD
+        net = paddle.nn.Sequential(paddle.nn.Linear(10, 1),
+                                   paddle.nn.Linear(1, 2))
+=======
         net = paddle.nn.Sequential(
             paddle.nn.Linear(10, 1), paddle.nn.Linear(1, 2)
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         net = dist.fleet.distributed_model(net)
         data = np.random.uniform(-1, 1, [30, 10]).astype('float32')
         data = paddle.to_tensor(data)

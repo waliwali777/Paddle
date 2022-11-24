@@ -59,12 +59,18 @@ def test_mix_cast(x):
 
 
 class TestCastBase(unittest.TestCase):
+
     def setUp(self):
+<<<<<<< HEAD
+        self.place = fluid.CUDAPlace(
+            0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
+=======
         self.place = (
             fluid.CUDAPlace(0)
             if fluid.is_compiled_with_cuda()
             else fluid.CPUPlace()
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.prepare()
         self.set_func()
 
@@ -106,6 +112,7 @@ class TestCastBase(unittest.TestCase):
 
 
 class TestIntCast(TestCastBase):
+
     def prepare(self):
         self.input_shape = (1,)
         self.input_dtype = 'float32'
@@ -121,6 +128,7 @@ class TestIntCast(TestCastBase):
 
 
 class TestFloatCast(TestCastBase):
+
     def prepare(self):
         self.input_shape = (8, 16)
         self.input_dtype = 'bool'
@@ -136,6 +144,7 @@ class TestFloatCast(TestCastBase):
 
 
 class TestMixCast(TestCastBase):
+
     def prepare(self):
         self.input_shape = (8, 32)
         self.input_dtype = 'float32'
@@ -177,6 +186,7 @@ class TestMixCast(TestCastBase):
 
 
 class TestNotVarCast(TestCastBase):
+
     def prepare(self):
         self.input = 3.14
         self.cast_dtype = 'int'

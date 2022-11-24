@@ -31,6 +31,7 @@ paddle.enable_static()
 
 
 class SequenceMaskTestBase(OpTest):
+
     def set_npu(self):
         self.__class__.use_npu = True
 
@@ -59,6 +60,16 @@ class SequenceMaskTestBase(OpTest):
 
     def calc_ground_truth_mask(self):
         maxlen = np.max(self.x) if self.maxlen < 0 else self.maxlen
+<<<<<<< HEAD
+        shape = self.x.shape + (maxlen, )
+        index_broadcast = np.broadcast_to(np.reshape(
+            range(maxlen), newshape=[1] * self.x.ndim + [-1]),
+                                          shape=shape)
+        x_broadcast = np.broadcast_to(np.reshape(self.x,
+                                                 newshape=self.x.shape +
+                                                 (-1, )),
+                                      shape=shape)
+=======
         shape = self.x.shape + (maxlen,)
         index_broadcast = np.broadcast_to(
             np.reshape(range(maxlen), newshape=[1] * self.x.ndim + [-1]),
@@ -67,6 +78,7 @@ class SequenceMaskTestBase(OpTest):
         x_broadcast = np.broadcast_to(
             np.reshape(self.x, newshape=self.x.shape + (-1,)), shape=shape
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return (index_broadcast < x_broadcast).astype(self.mask_dtype)
 
     def test_check_output(self):
@@ -74,36 +86,43 @@ class SequenceMaskTestBase(OpTest):
 
 
 class SequenceMaskTest1(SequenceMaskTestBase):
+
     def initParameters(self):
         self.mask_dtype = 'bool'
 
 
 class SequenceMaskTest2(SequenceMaskTestBase):
+
     def initParameters(self):
         self.mask_dtype = 'uint8'
 
 
 class SequenceMaskTest3(SequenceMaskTestBase):
+
     def initParameters(self):
         self.mask_dtype = 'int32'
 
 
 class SequenceMaskTest4(SequenceMaskTestBase):
+
     def initParameters(self):
         self.mask_dtype = 'float32'
 
 
 class SequenceMaskTest5(SequenceMaskTestBase):
+
     def initParameters(self):
         self.mask_dtype = 'float64'
 
 
 class SequenceMaskTest6(SequenceMaskTestBase):
+
     def initParameters(self):
         self.maxlen = -1
 
 
 class SequenceMaskTestBase_tensor_attr(OpTest):
+
     def set_npu(self):
         self.__class__.use_npu = True
 
@@ -130,6 +149,16 @@ class SequenceMaskTestBase_tensor_attr(OpTest):
 
     def calc_ground_truth_mask(self):
         maxlen = np.max(self.x) if self.maxlen < 0 else self.maxlen
+<<<<<<< HEAD
+        shape = self.x.shape + (maxlen, )
+        index_broadcast = np.broadcast_to(np.reshape(
+            range(maxlen), newshape=[1] * self.x.ndim + [-1]),
+                                          shape=shape)
+        x_broadcast = np.broadcast_to(np.reshape(self.x,
+                                                 newshape=self.x.shape +
+                                                 (-1, )),
+                                      shape=shape)
+=======
         shape = self.x.shape + (maxlen,)
         index_broadcast = np.broadcast_to(
             np.reshape(range(maxlen), newshape=[1] * self.x.ndim + [-1]),
@@ -138,6 +167,7 @@ class SequenceMaskTestBase_tensor_attr(OpTest):
         x_broadcast = np.broadcast_to(
             np.reshape(self.x, newshape=self.x.shape + (-1,)), shape=shape
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return (index_broadcast < x_broadcast).astype(self.mask_dtype)
 
     def test_check_output(self):
@@ -145,31 +175,37 @@ class SequenceMaskTestBase_tensor_attr(OpTest):
 
 
 class SequenceMaskTest1_tensor_attr(SequenceMaskTestBase_tensor_attr):
+
     def initParameters(self):
         self.mask_dtype = 'bool'
 
 
 class SequenceMaskTest2_tensor_attr(SequenceMaskTestBase_tensor_attr):
+
     def initParameters(self):
         self.mask_dtype = 'uint8'
 
 
 class SequenceMaskTest3_tensor_attr(SequenceMaskTestBase_tensor_attr):
+
     def initParameters(self):
         self.mask_dtype = 'int32'
 
 
 class SequenceMaskTest4_tensor_attr(SequenceMaskTestBase_tensor_attr):
+
     def initParameters(self):
         self.mask_dtype = 'float32'
 
 
 class SequenceMaskTest5_tensor_attr(SequenceMaskTestBase_tensor_attr):
+
     def initParameters(self):
         self.mask_dtype = 'float64'
 
 
 class TestSequenceMaskOpError(unittest.TestCase):
+
     def test_errors(self):
         with program_guard(Program(), Program()):
             input_data = np.random.uniform(1, 5, [4]).astype("float32")

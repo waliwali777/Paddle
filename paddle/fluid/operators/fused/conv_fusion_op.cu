@@ -45,12 +45,21 @@ class CUDNNConvFusionOpKernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext& ctx) const override {
     auto& dev_ctx = ctx.template device_context<phi::GPUContext>();
+<<<<<<< HEAD
+    auto* input = ctx.Input<Tensor>("Input");
+    auto* filter = ctx.Input<Tensor>("Filter");
+    auto* bias = ctx.Input<Tensor>("Bias");
+    auto* residual = ctx.Input<Tensor>("ResidualData");
+    auto* output = ctx.Output<Tensor>("Output");
+    output->mutable_data<T>(ctx.GetPlace());
+=======
     auto* input = ctx.Input<phi::DenseTensor>("Input");
     auto* filter = ctx.Input<phi::DenseTensor>("Filter");
     auto* bias = ctx.Input<phi::DenseTensor>("Bias");
     auto* residual = ctx.Input<phi::DenseTensor>("ResidualData");
     auto* output = ctx.Output<phi::DenseTensor>("Output");
     dev_ctx.template Alloc<T>(output, output->numel() * sizeof(T));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     std::vector<int> strides = ctx.Attr<std::vector<int>>("strides");
     std::vector<int> paddings = ctx.Attr<std::vector<int>>("paddings");
@@ -216,7 +225,11 @@ class CUDNNConvFusionOpKernel : public framework::OpKernel<T> {
               cudnn_conv_desc,
               cudnn_output_desc,
               output_data,
+<<<<<<< HEAD
+              kNUM_CUDNN_FWD_ALGS,
+=======
               phi::kNUM_CUDNN_FWD_ALGS,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               &find_count,
               &find_result,
               cudnn_workspace_ptr,
@@ -345,7 +358,11 @@ class CUDNNConvFusionOpKernel : public framework::OpKernel<T> {
               cudnn_filter_desc,
               cudnn_conv_desc,
               cudnn_output_desc,
+<<<<<<< HEAD
+              kNUM_CUDNN_FWD_ALGS,
+=======
               phi::kNUM_CUDNN_FWD_ALGS,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               &perf_count,
               perf_results.get()));
       algo = (perf_results.get())[best_algo_idx].algo;
@@ -372,6 +389,20 @@ class CUDNNConvFusionOpKernel : public framework::OpKernel<T> {
               &workspace_size_in_bytes));
       if (workspace_size_in_bytes > workspace_size_limit)
         workspace_size_limit = workspace_size_in_bytes;
+<<<<<<< HEAD
+#else
+      PADDLE_ENFORCE_GPU_SUCCESS(
+          platform::dynload::cudnnGetConvolutionForwardAlgorithm(
+              handle,
+              cudnn_input_desc,
+              cudnn_filter_desc,
+              cudnn_conv_desc,
+              cudnn_output_desc,
+              CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT,
+              workspace_size_limit,
+              &algo));
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       VLOG(3) << "cuDNN forward algo " << algo;
     } else {
       std::function<SearchFuseResult<cudnnConvolutionFwdAlgo_t>()> search_func =
@@ -391,7 +422,11 @@ class CUDNNConvFusionOpKernel : public framework::OpKernel<T> {
                   cudnn_conv_desc,
                   cudnn_output_desc,
                   output_data,
+<<<<<<< HEAD
+                  kNUM_CUDNN_FWD_ALGS,
+=======
                   phi::kNUM_CUDNN_FWD_ALGS,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                   &returned_algo_count,
                   fwd_perf_stat.data(),
                   cudnn_workspace,
@@ -439,6 +474,42 @@ class CUDNNConvFusionOpKernel : public framework::OpKernel<T> {
         // The searched algo will be cached by `search_times` times for
         // different input dimension. For other dimensions, select the algo
         // of closest area.
+<<<<<<< HEAD
+        algo = algo_cache.GetAlgorithm(
+            x_dims[2] * x_dims[3], search_times, 0, search_func);
+      } else {
+        algo = algo_cache.GetAlgorithm(x_dims,
+                                       f_dims,
+                                       strides,
+                                       paddings,
+                                       dilations,
+                                       0,
+                                       dtype,
+                                       search_func);
+      }
+      VLOG(3) << "choose algo " << algo;
+    }
+
+    PADDLE_ENFORCE_GPU_SUCCESS(
+        platform::dynload::cudnnGetConvolutionForwardWorkspaceSize(
+            handle,
+            cudnn_input_desc,
+            cudnn_filter_desc,
+            cudnn_conv_desc,
+            cudnn_output_desc,
+            algo,
+            &workspace_size_in_bytes));
+    PADDLE_ENFORCE_LE(
+        workspace_size_in_bytes,
+        workspace_size_limit,
+        platform::errors::InvalidArgument(
+            "The actual workspace size to be allocated for cuDNN is expected "
+            "to be less than the limit. But received: the actual workspace "
+            "size = %d, limit = %d.",
+            workspace_size_in_bytes,
+            workspace_size_limit));
+
+=======
         algo_result = algo_cache.GetAlgorithm(
             x_dims[2] * x_dims[3], search_times, 0, search_func);
         algo = algo_result.algo;
@@ -457,6 +528,7 @@ class CUDNNConvFusionOpKernel : public framework::OpKernel<T> {
       }
       VLOG(3) << "choose algo " << algo;
     }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     if ((activation == "identity") && (!residual)) {
       // Only the CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_PRECOMP_GEMM algo is
       // enabled with CUDNN_ACTIVATION_IDENTITY in cuDNN lib.

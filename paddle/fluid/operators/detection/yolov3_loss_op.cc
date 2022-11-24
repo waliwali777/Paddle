@@ -218,10 +218,17 @@ class Yolov3LossGradMaker : public framework::SingleGradOpMaker<T> {
 namespace ops = paddle::operators;
 DECLARE_INFER_SHAPE_FUNCTOR(yolov3_loss,
                             Yolov3LossInferShapeFunctor,
+<<<<<<< HEAD
+                            PD_INFER_META(phi::Yolov3LossInferMeta));
+DECLARE_INFER_SHAPE_FUNCTOR(yolov3_loss_grad,
+                            Yolov3LossGradInferShapeFunctor,
+                            PD_INFER_META(phi::Yolov3LossGradInferMeta));
+=======
                             PD_INFER_META(phi::YoloLossInferMeta));
 DECLARE_INFER_SHAPE_FUNCTOR(yolov3_loss_grad,
                             Yolov3LossGradInferShapeFunctor,
                             PD_INFER_META(phi::YoloLossGradInferMeta));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 REGISTER_OPERATOR(yolov3_loss,
                   ops::Yolov3LossOp,
                   ops::Yolov3LossOpMaker,

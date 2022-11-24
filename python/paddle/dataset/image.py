@@ -34,6 +34,29 @@ import numpy as np
 
 # FIXME(minqiyang): this is an ugly fix for the numpy bug reported here
 # https://github.com/numpy/numpy/issues/12497
+<<<<<<< HEAD
+if six.PY3:
+    import subprocess
+    import sys
+    import os
+    interpreter = sys.executable
+    # Note(zhouwei): if use Python/C 'PyRun_SimpleString', 'sys.executable'
+    # will be the C++ execubable on Windows
+    if sys.platform == 'win32' and 'python.exe' not in interpreter:
+        interpreter = sys.exec_prefix + os.sep + 'python.exe'
+    import_cv2_proc = subprocess.Popen([interpreter, "-c", "import cv2"],
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE)
+    out, err = import_cv2_proc.communicate()
+    retcode = import_cv2_proc.poll()
+    if retcode != 0:
+        cv2 = None
+    else:
+        try:
+            import cv2
+        except ImportError:
+            cv2 = None
+=======
 import subprocess
 import sys
 import os
@@ -52,6 +75,7 @@ out, err = import_cv2_proc.communicate()
 retcode = import_cv2_proc.poll()
 if retcode != 0:
     cv2 = None
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 else:
     try:
         import cv2
@@ -118,11 +142,17 @@ def batch_images_from_tar(
                 output = {}
                 output['label'] = labels
                 output['data'] = data
+<<<<<<< HEAD
+                pickle.dump(output,
+                            open('%s/batch_%d' % (out_path, file_id), 'wb'),
+                            protocol=2)
+=======
                 pickle.dump(
                     output,
                     open('%s/batch_%d' % (out_path, file_id), 'wb'),
                     protocol=2,
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 file_id += 1
                 data = []
                 labels = []
@@ -130,9 +160,15 @@ def batch_images_from_tar(
         output = {}
         output['label'] = labels
         output['data'] = data
+<<<<<<< HEAD
+        pickle.dump(output,
+                    open('%s/batch_%d' % (out_path, file_id), 'wb'),
+                    protocol=2)
+=======
         pickle.dump(
             output, open('%s/batch_%d' % (out_path, file_id), 'wb'), protocol=2
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     with open(meta_file, 'a') as meta:
         for file in os.listdir(out_path):

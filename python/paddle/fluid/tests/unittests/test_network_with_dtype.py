@@ -22,6 +22,7 @@ BATCH_SIZE = 20
 
 
 class TestNetWithDtype(unittest.TestCase):
+
     def setUp(self):
         self.dtype = "float64"
         self.init_dtype()
@@ -39,9 +40,14 @@ class TestNetWithDtype(unittest.TestCase):
             sgd_optimizer.minimize(avg_cost)
 
         fetch_list = [avg_cost]
+<<<<<<< HEAD
+        train_reader = paddle.batch(paddle.dataset.uci_housing.train(),
+                                    batch_size=BATCH_SIZE)
+=======
         train_reader = paddle.batch(
             paddle.dataset.uci_housing.train(), batch_size=BATCH_SIZE
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         feeder = fluid.DataFeeder(place=place, feed_list=[x, y])
         exe = fluid.Executor(place)
         exe.run(startup)

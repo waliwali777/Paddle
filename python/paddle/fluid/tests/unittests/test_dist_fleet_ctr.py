@@ -18,6 +18,7 @@ from test_dist_fleet_base import TestFleetBase
 
 
 class TestDistMnistAsyncInMemoryDataset2x2(TestFleetBase):
+
     def _setup_config(self):
         self._mode = "async"
         # self._reader = "pyreader"
@@ -51,12 +52,19 @@ class TestDistMnistAsyncInMemoryDataset2x2(TestFleetBase):
         tr0_losses, tr1_losses = self._run_cluster(model_file, required_envs)
 
     def test_dist_train(self):
+<<<<<<< HEAD
+        self.check_with_place("dist_fleet_ctr.py",
+                              delta=1e-5,
+                              check_error_log=False)
+=======
         self.check_with_place(
             "dist_fleet_ctr.py", delta=1e-5, check_error_log=False
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestDistMnistAsync2x2(TestFleetBase):
+
     def _setup_config(self):
         self._mode = "async"
         self._reader = "pyreader"
@@ -84,12 +92,19 @@ class TestDistMnistAsync2x2(TestFleetBase):
         tr0_losses, tr1_losses = self._run_cluster(model_file, required_envs)
 
     def test_dist_train(self):
+<<<<<<< HEAD
+        self.check_with_place("dist_fleet_ctr.py",
+                              delta=1e-5,
+                              check_error_log=False)
+=======
         self.check_with_place(
             "dist_fleet_ctr.py", delta=1e-5, check_error_log=False
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestDistCtrHalfAsync2x2(TestFleetBase):
+
     def _setup_config(self):
         self._mode = "async"
         self._reader = "pyreader"
@@ -120,9 +135,15 @@ class TestDistCtrHalfAsync2x2(TestFleetBase):
         tr0_losses, tr1_losses = self._run_cluster(model_file, required_envs)
 
     def test_dist_train(self):
+<<<<<<< HEAD
+        self.check_with_place("dist_fleet_ctr.py",
+                              delta=1e-5,
+                              check_error_log=False)
+=======
         self.check_with_place(
             "dist_fleet_ctr.py", delta=1e-5, check_error_log=False
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

@@ -121,21 +121,32 @@ class VOC2012(Dataset):
         if backend not in ['pil', 'cv2']:
             raise ValueError(
                 "Expected backend are one of ['pil', 'cv2'], but got {}".format(
+<<<<<<< HEAD
+                    backend))
+=======
                     backend
                 )
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.backend = backend
 
         self.flag = MODE_FLAG_MAP[mode.lower()]
 
         self.data_file = data_file
         if self.data_file is None:
+<<<<<<< HEAD
+            assert download, "data_file is not set and downloading automatically is disabled"
+            self.data_file = _check_exists_and_download(data_file, VOC_URL,
+                                                        VOC_MD5, CACHE_DIR,
+                                                        download)
+=======
             assert (
                 download
             ), "data_file is not set and downloading automatically is disabled"
             self.data_file = _check_exists_and_download(
                 data_file, VOC_URL, VOC_MD5, CACHE_DIR, download
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.transform = transform
 
         # read dataset into memory

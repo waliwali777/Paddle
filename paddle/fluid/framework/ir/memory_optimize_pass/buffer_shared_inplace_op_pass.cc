@@ -167,8 +167,12 @@ static std::string GetFirstVarName(const OpDesc &op,
 static std::vector<std::vector<std::pair<std::string, std::string>>>
 GetInplaceVars(const BlockDesc &block,
                bool use_cuda,
+<<<<<<< HEAD
+               const std::vector<std::string> &skip_vars) {
+=======
                const std::vector<std::string> &skip_vars,
                const bool &for_partial_block) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   PADDLE_ENFORCE_EQ(
       block.ID(),
       0,
@@ -274,8 +278,12 @@ void BufferSharedInplaceOpPass::ApplyImpl(ProgramDesc *main_program,
   }
 
   auto *block = main_program->MutableBlock(0);
+<<<<<<< HEAD
+  auto inplace_vars = GetInplaceVars(*block, use_cuda, skip_vars);
+=======
   auto inplace_vars =
       GetInplaceVars(*block, use_cuda, skip_vars, for_partial_block);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   PADDLE_ENFORCE_EQ(inplace_vars.size(),
                     block->OpSize(),
                     platform::errors::PermissionDenied(

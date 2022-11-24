@@ -364,7 +364,11 @@ __global__ LAUNCH_BOUNDS(BlockDim) void DoubleGradComputeDScaleWithGlobal(
 }
 
 // math: dx = ddscale * dy * inv_var
+<<<<<<< HEAD
+template <typename T, framework::DataLayout layout>
+=======
 template <typename T, phi::DataLayout layout>
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 __global__ void DoubleGradComputeDXWithGlobal(const T *dy,
                                               const T *ddscale,
                                               const T *variance,
@@ -387,7 +391,11 @@ __global__ void DoubleGradComputeDXWithGlobal(const T *dy,
 
 // math: ddy = scale * ddx * inv_var + ddbias +
 //             ddscale * (x - mean) * inv_var
+<<<<<<< HEAD
+template <typename T, framework::DataLayout layout>
+=======
 template <typename T, phi::DataLayout layout>
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 __global__ void DoubleGradComputeDDYWithGlobal(const T *ddx,
                                                const T *scale,
                                                const T *mean,

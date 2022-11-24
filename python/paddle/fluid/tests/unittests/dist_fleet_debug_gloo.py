@@ -16,9 +16,14 @@ import logging
 
 # import paddle.fluid.incubate.fleet.base.role_maker as role_maker
 import paddle.distributed.fleet.base.role_maker as role_maker
+<<<<<<< HEAD
+from paddle.fluid.incubate.fleet.parameter_server.distribute_transpiler import fleet
+from paddle.fluid.transpiler.distribute_transpiler import DistributeTranspilerConfig
+=======
 from paddle.fluid.incubate.fleet.parameter_server.distribute_transpiler import (
     fleet,
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("fluid")

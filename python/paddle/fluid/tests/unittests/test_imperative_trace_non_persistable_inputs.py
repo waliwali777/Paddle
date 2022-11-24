@@ -19,6 +19,7 @@ import os
 
 
 class SimpleFCLayer(fluid.dygraph.Layer):
+
     def __init__(self, feature_size, batch_size, fc_size):
         super().__init__()
         self._linear = fluid.dygraph.Linear(feature_size, fc_size)
@@ -32,6 +33,7 @@ class SimpleFCLayer(fluid.dygraph.Layer):
 
 
 class TestTracedLayerRecordNonPersistableInput(unittest.TestCase):
+
     def test_main(self):
         if fluid.framework.in_dygraph_mode():
             return
@@ -55,10 +57,15 @@ class TestTracedLayerRecordNonPersistableInput(unittest.TestCase):
 
             for _ in range(10):
                 in_x = fluid.dygraph.to_variable(
+<<<<<<< HEAD
+                    np.random.random(
+                        (batch_size, feature_size)).astype('float32'))
+=======
                     np.random.random((batch_size, feature_size)).astype(
                         'float32'
                     )
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 if traced_layer is None:
                     dygraph_out, traced_layer = fluid.dygraph.TracedLayer.trace(
                         layer, [in_x]

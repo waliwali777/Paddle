@@ -21,6 +21,7 @@ from paddle.fluid.tests.unittests.ipu.op_test_ipu import IPUOpTest
 
 
 class TestBase(IPUOpTest):
+
     def setUp(self):
         self.set_atol()
         self.set_training()
@@ -47,9 +48,15 @@ class TestBase(IPUOpTest):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         out = paddle.fluid.layers.slice(x, **self.attrs)
         self.fetch_list = [out.name]
 
@@ -65,6 +72,7 @@ class TestBase(IPUOpTest):
 
 
 class TestCase1(TestBase):
+
     def set_op_attrs(self):
         self.attrs = {
             "axes": [0, 1],
@@ -75,6 +83,7 @@ class TestCase1(TestBase):
 
 @unittest.skip('dynamic graph is not support on IPU')
 class TestCase2(TestBase):
+
     def set_data_feed(self):
         x = np.random.uniform(size=[4, 5, 6])
         s = np.array([0, 0, 2])
@@ -95,6 +104,21 @@ class TestCase2(TestBase):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+        starts = paddle.static.data(name=self.feed_list[1],
+                                    shape=self.feed_shape[1],
+                                    dtype='int32')
+        ends = paddle.static.data(name=self.feed_list[2],
+                                  shape=self.feed_shape[2],
+                                  dtype='int32')
+        out = paddle.fluid.layers.slice(x,
+                                        starts=starts,
+                                        ends=ends,
+                                        **self.attrs)
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
@@ -107,6 +131,7 @@ class TestCase2(TestBase):
         out = paddle.fluid.layers.slice(
             x, starts=starts, ends=ends, **self.attrs
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.fetch_list = [out.name]
 
 

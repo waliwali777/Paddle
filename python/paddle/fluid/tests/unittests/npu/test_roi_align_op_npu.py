@@ -26,6 +26,7 @@ np.random.seed(1243)
 
 
 class TestROIAlignNPUOp(OpTest):
+
     def set_data(self):
         self.init_test_case()
         self.make_rois()
@@ -79,11 +80,17 @@ class TestROIAlignNPUOp(OpTest):
         count = roi_bin_grid_h * roi_bin_grid_w
         bilinear_pos = np.zeros(
             [self.channels, self.pooled_height, self.pooled_width, count, 4],
+<<<<<<< HEAD
+            np.float32)
+        bilinear_w = np.zeros([self.pooled_height, self.pooled_width, count, 4],
+                              np.float32)
+=======
             np.float32,
         )
         bilinear_w = np.zeros(
             [self.pooled_height, self.pooled_width, count, 4], np.float32
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         for ph in range(self.pooled_width):
             for pw in range(self.pooled_height):
                 c = 0
@@ -238,6 +245,7 @@ class TestROIAlignNPUOp(OpTest):
 
 
 class TestROIAlignOpWithMinusSample(TestROIAlignNPUOp):
+
     def init_test_case(self):
         self.batch_size = 3
         self.channels = 3

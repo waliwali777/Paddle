@@ -68,11 +68,14 @@ class MemcpyFunctor {
     } else if (dst_place_type_ == DeviceType::NPU_PINNED) { /* npu->npu_pin */
       framework::TensorCopy(
           lod_tensor, platform::NPUPinnedPlace(), dev_ctx_, &out_tensor);
+<<<<<<< HEAD
+=======
 #endif
 #ifdef PADDLE_WTIH_CUSTOM_DEVICE
     } else if (dst_place_type_ == DeviceType::CUSTOM_DEVICE) {
       framework::TensorCopy(
           lod_tensor, dev_ctx_.GetPlace(), dev_ctx_, &out_tensor);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #endif
     } else {
       PADDLE_THROW(platform::errors::Unimplemented(

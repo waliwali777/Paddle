@@ -158,8 +158,13 @@ TEST(Operator, CPUtoGPU) {
       paddle::platform::DeviceContextPool::Instance();
   auto dev_ctx = pool.Get(cuda_place);
 
+<<<<<<< HEAD
+  paddle::framework::Tensor output_tensor;
+  paddle::framework::TensorCopy(output2->Get<paddle::framework::LoDTensor>(),
+=======
   phi::DenseTensor output_tensor;
   paddle::framework::TensorCopy(output2->Get<phi::DenseTensor>(),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                 paddle::platform::CPUPlace(),
                                 *dev_ctx,
                                 &output_tensor);

@@ -1,5 +1,11 @@
 proto_library(profiler_proto SRCS profiler.proto DEPS framework_proto
               simple_threadpool)
+<<<<<<< HEAD
+if(WITH_GPU)
+  proto_library(external_error_proto SRCS external_error.proto)
+endif()
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 if(WITH_PYTHON)
   py_proto_compile(profiler_py_proto SRCS profiler.proto)
   add_custom_target(profiler_py_proto_init ALL COMMAND ${CMAKE_COMMAND} -E
@@ -58,7 +64,11 @@ cc_library(monitor SRCS monitor.cc)
 cc_test(
   enforce_test
   SRCS enforce_test.cc
+<<<<<<< HEAD
+  DEPS stringpiece enforce)
+=======
   DEPS enforce)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 set(CPU_INFO_DEPS gflags glog enforce)
 if(WITH_XBYAK)
@@ -202,6 +212,10 @@ cc_library(
        place
        phi_place
        eigen3
+<<<<<<< HEAD
+       stringpiece
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
        cpu_helper
        cpu_info
        framework_proto
@@ -237,6 +251,16 @@ endif()
 
 if(WITH_ASCEND_CL)
   target_link_libraries(device_context npu_resource_pool)
+<<<<<<< HEAD
+endif()
+
+if(WITH_XPU)
+  target_link_libraries(device_context xpu_resource_pool)
+endif()
+
+if(WITH_MLU)
+  target_link_libraries(device_context mlu_resource_pool)
+=======
 endif()
 
 if(WITH_XPU)
@@ -249,6 +273,7 @@ endif()
 
 if(WITH_CUSTOM_DEVICE)
   target_link_libraries(device_context custom_device_resource_pool)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 endif()
 
 cc_test(
@@ -265,6 +290,18 @@ cc_library(
 set(DEVICE_EVENT_LIBS
     device_event_base
     CACHE INTERNAL "device event libs")
+<<<<<<< HEAD
+if(WITH_XPU)
+  cc_library(
+    device_event_xpu
+    SRCS device_event_xpu.cc
+    DEPS device_event_base xpu_info)
+  set(DEVICE_EVENT_LIBS
+      device_event_xpu
+      CACHE INTERNAL "device event libs")
+endif()
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 if(WITH_ASCEND_CL)
   cc_library(
@@ -284,6 +321,13 @@ if(WITH_GPU)
   set(DEVICE_EVENT_LIBS
       device_event_gpu
       CACHE INTERNAL "device event libs")
+<<<<<<< HEAD
+  nv_test(
+    device_event_test
+    SRCS device_event_test.cc
+    DEPS device_event_gpu)
+
+=======
   if(WITH_CUSTOM_DEVICE)
     nv_test(
       device_event_test
@@ -295,6 +339,7 @@ if(WITH_GPU)
       SRCS device_event_test.cc
       DEPS device_event_gpu)
   endif()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   nv_test(
     device_context_test
     SRCS device_context_test.cu
@@ -317,6 +362,13 @@ if(WITH_ROCM)
   set(DEVICE_EVENT_LIBS
       device_event_gpu
       CACHE INTERNAL "device event libs")
+<<<<<<< HEAD
+  hip_test(
+    device_event_test
+    SRCS device_event_test.cc
+    DEPS device_event_gpu)
+
+=======
   if(WITH_CUSTOM_DEVICE)
     hip_test(
       device_event_test
@@ -328,6 +380,7 @@ if(WITH_ROCM)
       SRCS device_event_test.cc
       DEPS device_event_gpu)
   endif()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   hip_test(
     device_context_test
     SRCS device_context_test.cu

@@ -23,6 +23,7 @@ from paddle.fluid.core import AnalysisConfig
 
 
 class TRTAffineChannelTest(InferencePassTest):
+
     def setUp(self):
         self.bs = 2
         self.channel = 8
@@ -112,8 +113,12 @@ class TRTAffineChannelTest(InferencePassTest):
             opt_shape = [self.bs, self.height, self.width, self.channel]
 
         dynamic_shape_profile = InferencePassTest.DynamicShapeParam(
+<<<<<<< HEAD
+            {'in': min_shape}, {'in': max_shape}, {'in': opt_shape}, False)
+=======
             {'in': min_shape}, {'in': max_shape}, {'in': opt_shape}, False
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         dynamic_shape_opt = [None, dynamic_shape_profile]
 
         for precision, serialize, dynamic_shape in itertools.product(
@@ -139,9 +144,13 @@ class TRTAffineChannelTest(InferencePassTest):
         self.dynamic_shape_params = InferencePassTest.DynamicShapeParam(
             {'in': [self.bs, self.channel, self.height // 2, self.width // 2]},
             {'in': [self.bs, self.channel, self.height * 2, self.width * 2]},
+<<<<<<< HEAD
+            {'in': [self.bs, self.channel, self.height, self.width]}, False)
+=======
             {'in': [self.bs, self.channel, self.height, self.width]},
             False,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.run_test()
 
     def test_nchw_all(self):

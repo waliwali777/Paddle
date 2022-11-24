@@ -25,6 +25,7 @@ paddle.enable_static()
 
 
 class BatchNormAddActNet(nn.Layer):
+
     def __init__(self):
         super().__init__()
 
@@ -45,14 +46,21 @@ class BatchNormAddActNet(nn.Layer):
 
 
 class TestFuseBatchNormAddActPass(DistPassTestBase):
+
     def init(self):
         self.atol = 1e-4
         self.rtol = 1e-4
 
     def get_model(self, place, batch_size=32, image_shape=[224, 224, 3]):
+<<<<<<< HEAD
+        image = paddle.static.data(shape=[batch_size] + image_shape,
+                                   dtype='float32',
+                                   name='image')
+=======
         image = paddle.static.data(
             shape=[batch_size] + image_shape, dtype='float32', name='image'
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         model = BatchNormAddActNet()
         pred_out = model(image)

@@ -27,6 +27,11 @@ np.random.seed(2022)
 @parameterize.place(config.DEVICES)
 @parameterize.parameterize_cls(
     (parameterize.TEST_CASE_NAME, 'dist'),
+<<<<<<< HEAD
+    [('test-mock-exp',
+      mock.Exponential(
+          rate=paddle.rand([100, 200, 99], dtype=config.DEFAULT_DTYPE)))])
+=======
     [
         (
             'test-mock-exp',
@@ -36,7 +41,9 @@ np.random.seed(2022)
         )
     ],
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 class TestExponentialFamily(unittest.TestCase):
+
     def test_entropy(self):
         np.testing.assert_allclose(
             self.dist.entropy(),
@@ -49,6 +56,14 @@ class TestExponentialFamily(unittest.TestCase):
 @parameterize.place(config.DEVICES)
 @parameterize.parameterize_cls(
     (config.TEST_CASE_NAME, 'dist'),
+<<<<<<< HEAD
+    [('test-dummy', mock.DummyExpFamily(0.5, 0.5)),
+     ('test-dirichlet',
+      paddle.distribution.Dirichlet(paddle.to_tensor(parameterize.xrand()))),
+     ('test-beta',
+      paddle.distribution.Beta(paddle.to_tensor(parameterize.xrand()),
+                               paddle.to_tensor(parameterize.xrand())))])
+=======
     [
         ('test-dummy', mock.DummyExpFamily(0.5, 0.5)),
         (
@@ -66,7 +81,9 @@ class TestExponentialFamily(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 class TestExponentialFamilyException(unittest.TestCase):
+
     def test_entropy_exception(self):
         with self.assertRaises(NotImplementedError):
             paddle.distribution.ExponentialFamily.entropy(self.dist)

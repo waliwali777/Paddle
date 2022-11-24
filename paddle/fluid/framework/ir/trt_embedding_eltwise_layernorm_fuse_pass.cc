@@ -330,10 +330,30 @@ int TrtEmbeddingEltwiseLayerNormFusePass::BuildFusion(
     new_op_desc.SetType("fused_embedding_eltwise_layernorm");
     new_op_desc.SetInput("Ids", ids);
     new_op_desc.SetInput("Embs", embs);
+<<<<<<< HEAD
+    new_op_desc.SetInput("WordId", {ids[0]});
+    if (use_varseqlen && pos_id != "" && mask_id != "") {
+      new_op_desc.SetInput("PosId", {pos_id});
+      new_op_desc.SetInput("MaskId", {mask_id});
+    } else {
+      new_op_desc.SetInput("PosId", {ids[1]});
+    }
+    if (ids.size() > 2) {
+      new_op_desc.SetInput("SentId", {ids[2]});
+    }
+
+    new_op_desc.SetInput("WordEmbedding", {embs[0]});
+    new_op_desc.SetInput("PosEmbedding", {embs[1]});
+    if (embs.size() > 2) {
+      new_op_desc.SetInput("SentEmbedding", {embs[2]});
+    }
+
+=======
     if (use_varseqlen && pos_id != "" && mask_id != "") {
       new_op_desc.SetInput("PosId", {pos_id});
       new_op_desc.SetInput("MaskId", {mask_id});
     }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     new_op_desc.SetInput("Bias", {end_pattern_biases[k]->Name()});
     new_op_desc.SetInput("Scale", {end_pattern_scales[k]->Name()});
     new_op_desc.SetOutput("Out", {end_pattern_out[k]->Name()});

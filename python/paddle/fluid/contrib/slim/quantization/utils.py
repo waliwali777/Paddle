@@ -450,6 +450,10 @@ def calculate_quant_cos_error(orig_tensor, qdq_tensor):
     return cos_sim
 
 
+<<<<<<< HEAD
+class tqdm(object):
+
+=======
 def move_persistable_var_to_global_block(program):
     # Move sub blocks persistable var to global block
     global_block = program.global_block()
@@ -473,6 +477,7 @@ def l2_loss(gt, pred):
 
 
 class tqdm:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, total, bar_format='Loading|{bar}', ncols=80):
         self.total = total
         self.bar_format = bar_format
@@ -484,9 +489,14 @@ class tqdm:
         a = "=" * round((self.n / self.total) * self.ncols)
         b = " " * (self.ncols - len(a))
         prefix = self.bar_format.split('|')[0]
+<<<<<<< HEAD
+        sys.stderr.write("\r{}|{}=>{}| {}/{}".format(prefix, a, b, self.n,
+                                                     self.total))
+=======
         sys.stderr.write(
             "\r{}|{}=>{}| {}/{}".format(prefix, a, b, self.n, self.total)
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         sys.stderr.flush()
 
     def __enter__(self):

@@ -29,6 +29,25 @@ void ReduceMeanGradKernel(const Context& dev_ctx,
                           bool keep_dim,
                           bool reduce_all,
                           DenseTensor* x_grad) {
+<<<<<<< HEAD
+  int dim_size = x.dims().size();
+  std::vector<int> reduce_dims =
+      funcs::details::GetReduceDim(dims, dim_size, reduce_all);
+  int reduce_num = 1;
+  for (auto i : reduce_dims) {
+    reduce_num *= (x.dims())[i];
+  }
+  using MPType = typename kps::details::MPTypeTrait<T>::Type;
+  ReduceGradKernel<T, T, Context, kps::DivideFunctor<T, MPType>>(
+      dev_ctx,
+      x,
+      out_grad,
+      dims,
+      keep_dim,
+      reduce_all,
+      x_grad,
+      kps::DivideFunctor<T, MPType>(reduce_num));
+=======
   reduce_all = recompute_reduce_all(x, dims, reduce_all);
   // get reduce_dim and reduce_num for reduce_mean_grad
   int dim_size = x.dims().size();
@@ -55,6 +74,7 @@ void ReduceMeanGradKernel(const Context& dev_ctx,
   using MPType = typename kps::details::MPTypeTrait<T>::Type;
   funcs::BroadcastKernel<phi::ElementwiseType::kUnary, T, T>(
       dev_ctx, inputs, &outputs, 0, kps::DivideFunctor<T, MPType>(reduce_num));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 }  // namespace phi

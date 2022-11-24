@@ -35,8 +35,20 @@ def gen_pow2_warmup_op_lr(warmup_steps, total_steps, base_lr, end_lr, place):
 
 
 class Pow2Warmup(LinearWarmup):
+
     def __init__(self, warmup_steps, total_steps, base_lr, end_lr):
         assert total_steps > warmup_steps
+<<<<<<< HEAD
+        lr_sch = PolynomialDecay(learning_rate=base_lr,
+                                 decay_steps=total_steps - warmup_steps,
+                                 end_lr=end_lr,
+                                 power=2)
+
+        super(Pow2Warmup, self).__init__(learning_rate=lr_sch,
+                                         warmup_steps=warmup_steps,
+                                         start_lr=0.0,
+                                         end_lr=base_lr)
+=======
         lr_sch = PolynomialDecay(
             learning_rate=base_lr,
             decay_steps=total_steps - warmup_steps,
@@ -50,6 +62,7 @@ class Pow2Warmup(LinearWarmup):
             start_lr=0.0,
             end_lr=base_lr,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 def gen_pow2_warmup_py_lr(warmup_steps, total_steps, base_lr, end_lr, place):
@@ -61,6 +74,7 @@ def gen_pow2_warmup_py_lr(warmup_steps, total_steps, base_lr, end_lr, place):
 
 
 class TestPow2WarmupLRScheduler(unittest.TestCase):
+
     def setUp(self):
         paddle.enable_static()
         self.params = {

@@ -43,6 +43,27 @@ input_specs = [
 
 
 class DynamicGRU(fluid.dygraph.Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 size,
+                 h_0=None,
+                 param_attr=None,
+                 bias_attr=None,
+                 is_reverse=False,
+                 gate_activation='sigmoid',
+                 candidate_activation='tanh',
+                 origin_mode=False,
+                 init_size=None):
+        super(DynamicGRU, self).__init__()
+
+        self.gru_unit = GRUUnit(size * 3,
+                                param_attr=param_attr,
+                                bias_attr=bias_attr,
+                                activation=candidate_activation,
+                                gate_activation=gate_activation,
+                                origin_mode=origin_mode)
+=======
     def __init__(
         self,
         size,
@@ -65,6 +86,7 @@ class DynamicGRU(fluid.dygraph.Layer):
             gate_activation=gate_activation,
             origin_mode=origin_mode,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         self.size = size
         self.h_0 = h_0
@@ -84,12 +106,24 @@ class DynamicGRU(fluid.dygraph.Layer):
                 j = i
 
             # input_ = inputs[:, j:j+1, :]  # original code
+<<<<<<< HEAD
+            input_ = fluid.layers.slice(inputs,
+                                        axes=[1],
+                                        starts=[j],
+                                        ends=[j + 1])
+            input_ = fluid.layers.reshape(input_, [-1, input_.shape[2]],
+                                          inplace=False)
+            hidden, reset, gate = self.gru_unit(input_, hidden)
+            hidden_ = fluid.layers.reshape(hidden, [-1, 1, hidden.shape[1]],
+                                           inplace=False)
+=======
             input_ = fluid.layers.slice(
                 inputs, axes=[1], starts=[j], ends=[j + 1]
             )
             input_ = paddle.reshape(input_, [-1, input_.shape[2]])
             hidden, reset, gate = self.gru_unit(input_, hidden)
             hidden_ = paddle.reshape(hidden, [-1, 1, hidden.shape[1]])
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             res.append(hidden_)
 
         if self.is_reverse:
@@ -99,6 +133,7 @@ class DynamicGRU(fluid.dygraph.Layer):
 
 
 class BiGRU(fluid.dygraph.Layer):
+
     def __init__(self, input_dim, grnn_hidden_dim, init_bound, h_0=None):
         super().__init__()
 
@@ -106,9 +141,14 @@ class BiGRU(fluid.dygraph.Layer):
             input_dim=input_dim,
             output_dim=grnn_hidden_dim * 3,
             param_attr=fluid.ParamAttr(
+<<<<<<< HEAD
+                initializer=fluid.initializer.Uniform(low=-init_bound,
+                                                      high=init_bound),
+=======
                 initializer=fluid.initializer.Uniform(
                     low=-init_bound, high=init_bound
                 ),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 regularizer=fluid.regularizer.L2DecayRegularizer(
                     regularization_coeff=1e-4
                 ),
@@ -119,9 +159,14 @@ class BiGRU(fluid.dygraph.Layer):
             size=grnn_hidden_dim,
             h_0=h_0,
             param_attr=fluid.ParamAttr(
+<<<<<<< HEAD
+                initializer=fluid.initializer.Uniform(low=-init_bound,
+                                                      high=init_bound),
+=======
                 initializer=fluid.initializer.Uniform(
                     low=-init_bound, high=init_bound
                 ),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 regularizer=fluid.regularizer.L2DecayRegularizer(
                     regularization_coeff=1e-4
                 ),
@@ -132,9 +177,14 @@ class BiGRU(fluid.dygraph.Layer):
             input_dim=input_dim,
             output_dim=grnn_hidden_dim * 3,
             param_attr=fluid.ParamAttr(
+<<<<<<< HEAD
+                initializer=fluid.initializer.Uniform(low=-init_bound,
+                                                      high=init_bound),
+=======
                 initializer=fluid.initializer.Uniform(
                     low=-init_bound, high=init_bound
                 ),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 regularizer=fluid.regularizer.L2DecayRegularizer(
                     regularization_coeff=1e-4
                 ),
@@ -146,9 +196,14 @@ class BiGRU(fluid.dygraph.Layer):
             is_reverse=True,
             h_0=h_0,
             param_attr=fluid.ParamAttr(
+<<<<<<< HEAD
+                initializer=fluid.initializer.Uniform(low=-init_bound,
+                                                      high=init_bound),
+=======
                 initializer=fluid.initializer.Uniform(
                     low=-init_bound, high=init_bound
                 ),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 regularizer=fluid.regularizer.L2DecayRegularizer(
                     regularization_coeff=1e-4
                 ),
@@ -167,6 +222,7 @@ class BiGRU(fluid.dygraph.Layer):
 
 
 class LinearChainCRF(fluid.dygraph.Layer):
+
     def __init__(self, param_attr, size=None, is_test=False, dtype='float32'):
         super().__init__()
 
@@ -214,6 +270,19 @@ class LinearChainCRF(fluid.dygraph.Layer):
         }
         if length is not None:
             this_inputs['Length'] = [length]
+<<<<<<< HEAD
+        self._helper.append_op(type='linear_chain_crf',
+                               inputs=this_inputs,
+                               outputs={
+                                   "Alpha": [alpha],
+                                   "EmissionExps": [emission_exps],
+                                   "TransitionExps": transition_exps,
+                                   "LogLikelihood": log_likelihood
+                               },
+                               attrs={
+                                   "is_test": self._is_test,
+                               })
+=======
         self._helper.append_op(
             type='linear_chain_crf',
             inputs=this_inputs,
@@ -227,10 +296,12 @@ class LinearChainCRF(fluid.dygraph.Layer):
                 "is_test": self._is_test,
             },
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return log_likelihood
 
 
 class CRFDecoding(fluid.dygraph.Layer):
+
     def __init__(self, param_attr, size=None, is_test=False, dtype='float32'):
         super().__init__()
 
@@ -268,6 +339,14 @@ class CRFDecoding(fluid.dygraph.Layer):
         }
         if length is not None:
             this_inputs['Length'] = [length]
+<<<<<<< HEAD
+        self._helper.append_op(type='crf_decoding',
+                               inputs=this_inputs,
+                               outputs={"ViterbiPath": [viterbi_path]},
+                               attrs={
+                                   "is_test": self._is_test,
+                               })
+=======
         self._helper.append_op(
             type='crf_decoding',
             inputs=this_inputs,
@@ -276,20 +355,37 @@ class CRFDecoding(fluid.dygraph.Layer):
                 "is_test": self._is_test,
             },
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return viterbi_path
 
 
 class ChunkEval(fluid.dygraph.Layer):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 num_chunk_types,
+                 chunk_scheme,
+                 excluded_chunk_types=None):
+        super(ChunkEval, self).__init__()
+=======
     def __init__(
         self, num_chunk_types, chunk_scheme, excluded_chunk_types=None
     ):
         super().__init__()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.num_chunk_types = num_chunk_types
         self.chunk_scheme = chunk_scheme
         self.excluded_chunk_types = excluded_chunk_types
 
     def forward(self, input, label, seq_length=None):
         if _non_static_mode():
+<<<<<<< HEAD
+            return _C_ops.chunk_eval(input, label, seq_length,
+                                     "num_chunk_types", self.num_chunk_types,
+                                     "chunk_scheme", self.chunk_scheme,
+                                     "excluded_chunk_types",
+                                     self.excluded_chunk_types or [])
+=======
             return _legacy_C_ops.chunk_eval(
                 input,
                 label,
@@ -301,6 +397,7 @@ class ChunkEval(fluid.dygraph.Layer):
                 "excluded_chunk_types",
                 self.excluded_chunk_types or [],
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         precision = self._helper.create_variable_for_type_inference(
             dtype="float32"
@@ -325,6 +422,28 @@ class ChunkEval(fluid.dygraph.Layer):
         if seq_length is not None:
             this_input["SeqLength"] = [seq_length]
 
+<<<<<<< HEAD
+        self._helper.append_op(type='chunk_eval',
+                               inputs=this_input,
+                               outputs={
+                                   "Precision": [precision],
+                                   "Recall": [recall],
+                                   "F1-Score": [f1_score],
+                                   "NumInferChunks": [num_infer_chunks],
+                                   "NumLabelChunks": [num_label_chunks],
+                                   "NumCorrectChunks": [num_correct_chunks]
+                               },
+                               attrs={
+                                   "num_chunk_types":
+                                   self.num_chunk_types,
+                                   "chunk_scheme":
+                                   self.chunk_scheme,
+                                   "excluded_chunk_types":
+                                   self.excluded_chunk_types or []
+                               })
+        return (precision, recall, f1_score, num_infer_chunks, num_label_chunks,
+                num_correct_chunks)
+=======
         self._helper.append_op(
             type='chunk_eval',
             inputs=this_input,
@@ -350,9 +469,11 @@ class ChunkEval(fluid.dygraph.Layer):
             num_label_chunks,
             num_correct_chunks,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class LexNet(fluid.dygraph.Layer):
+
     def __init__(self, args, length=None):
         super().__init__()
         """
@@ -380,6 +501,13 @@ class LexNet(fluid.dygraph.Layer):
         self.word_embedding = Embedding(
             size=[self.vocab_size, self.word_emb_dim],
             dtype='float32',
+<<<<<<< HEAD
+            param_attr=fluid.ParamAttr(learning_rate=self.emb_lr,
+                                       name="word_emb",
+                                       initializer=fluid.initializer.Uniform(
+                                           low=-self.init_bound,
+                                           high=self.init_bound)))
+=======
             param_attr=fluid.ParamAttr(
                 learning_rate=self.emb_lr,
                 name="word_emb",
@@ -388,6 +516,7 @@ class LexNet(fluid.dygraph.Layer):
                 ),
             ),
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         h_0 = np.zeros((args.batch_size, self.grnn_hidden_dim), dtype="float32")
         h_0 = to_variable(h_0)
@@ -398,6 +527,12 @@ class LexNet(fluid.dygraph.Layer):
                 self.bigru_units.append(
                     self.add_sublayer(
                         "bigru_units%d" % i,
+<<<<<<< HEAD
+                        BiGRU(self.grnn_hidden_dim,
+                              self.grnn_hidden_dim,
+                              self.init_bound,
+                              h_0=h_0)))
+=======
                         BiGRU(
                             self.grnn_hidden_dim,
                             self.grnn_hidden_dim,
@@ -406,10 +541,33 @@ class LexNet(fluid.dygraph.Layer):
                         ),
                     )
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             else:
                 self.bigru_units.append(
                     self.add_sublayer(
                         "bigru_units%d" % i,
+<<<<<<< HEAD
+                        BiGRU(self.grnn_hidden_dim * 2,
+                              self.grnn_hidden_dim,
+                              self.init_bound,
+                              h_0=h_0)))
+
+        self.fc = Linear(input_dim=self.grnn_hidden_dim * 2,
+                         output_dim=self.num_labels,
+                         param_attr=fluid.ParamAttr(
+                             initializer=fluid.initializer.Uniform(
+                                 low=-self.init_bound, high=self.init_bound),
+                             regularizer=fluid.regularizer.L2DecayRegularizer(
+                                 regularization_coeff=1e-4)))
+
+        self.linear_chain_crf = LinearChainCRF(param_attr=fluid.ParamAttr(
+            name='linear_chain_crfw', learning_rate=self.crf_lr),
+                                               size=self.num_labels)
+
+        self.crf_decoding = CRFDecoding(param_attr=fluid.ParamAttr(
+            name='crfw', learning_rate=self.crf_lr),
+                                        size=self.num_labels)
+=======
                         BiGRU(
                             self.grnn_hidden_dim * 2,
                             self.grnn_hidden_dim,
@@ -443,6 +601,7 @@ class LexNet(fluid.dygraph.Layer):
             param_attr=fluid.ParamAttr(name='crfw', learning_rate=self.crf_lr),
             size=self.num_labels,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         # share weight
         self.crf_decoding.weight = self.linear_chain_crf.weight
 
@@ -460,9 +619,15 @@ class LexNet(fluid.dygraph.Layer):
 
         emission = self.fc(bigru_output)
 
+<<<<<<< HEAD
+        crf_cost = self.linear_chain_crf(input=emission,
+                                         label=target,
+                                         length=length)
+=======
         crf_cost = self.linear_chain_crf(
             input=emission, label=target, length=length
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         avg_cost = paddle.mean(x=crf_cost)
         crf_decode = self.crf_decoding(input=emission, length=length)
         return avg_cost, crf_decode
@@ -489,6 +654,12 @@ def get_random_input_data(batch_size, vocab_size, num_labels, max_seq_len=64):
         batch, init_lens = [], []
         for i in range(iter_num * batch_size):
             cur_len = local_random.randint(3, max_seq_len)
+<<<<<<< HEAD
+            word_ids = local_random.randint(0, vocab_size,
+                                            [cur_len]).astype('int64').tolist()
+            label_ids = local_random.randint(
+                0, num_labels, [cur_len]).astype('int64').tolist()
+=======
             word_ids = (
                 local_random.randint(0, vocab_size, [cur_len])
                 .astype('int64')
@@ -499,6 +670,7 @@ def get_random_input_data(batch_size, vocab_size, num_labels, max_seq_len=64):
                 .astype('int64')
                 .tolist()
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             batch.append((word_ids, label_ids))
             init_lens.append(cur_len)
             if len(batch) == batch_size:
@@ -523,9 +695,15 @@ def get_random_input_data(batch_size, vocab_size, num_labels, max_seq_len=64):
 
 
 def create_dataloader(reader, place):
+<<<<<<< HEAD
+    data_loader = fluid.io.DataLoader.from_generator(capacity=16,
+                                                     use_double_buffer=True,
+                                                     iterable=True)
+=======
     data_loader = fluid.io.DataLoader.from_generator(
         capacity=16, use_double_buffer=True, iterable=True
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     data_loader.set_sample_list_generator(reader, places=place)
 
@@ -533,13 +711,19 @@ def create_dataloader(reader, place):
 
 
 class TestLACModel(unittest.TestCase):
+
     def setUp(self):
         self.args = Args()
+<<<<<<< HEAD
+        self.place = fluid.CUDAPlace(
+            0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
+=======
         self.place = (
             fluid.CUDAPlace(0)
             if fluid.is_compiled_with_cuda()
             else fluid.CPUPlace()
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.temp_dir = tempfile.TemporaryDirectory()
         self.model_save_dir = os.path.join(self.temp_dir.name, 'inference')
         self.model_save_prefix = os.path.join(self.model_save_dir, 'lac')
@@ -549,11 +733,16 @@ class TestLACModel(unittest.TestCase):
 
     def train(self, args, to_static):
         program_translator.enable(to_static)
+<<<<<<< HEAD
+        place = fluid.CUDAPlace(
+            0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
+=======
         place = (
             fluid.CUDAPlace(0)
             if fluid.is_compiled_with_cuda()
             else fluid.CPUPlace()
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         with fluid.dygraph.guard(place):
             paddle.seed(SEED)
             paddle.framework.random._manual_program_seed(SEED)
@@ -566,11 +755,17 @@ class TestLACModel(unittest.TestCase):
             model = LexNet(args)
             optimizer = fluid.optimizer.AdamOptimizer(
                 learning_rate=args.base_learning_rate,
+<<<<<<< HEAD
+                parameter_list=model.parameters())
+            chunk_eval = ChunkEval(int(math.ceil((args.num_labels - 1) / 2.0)),
+                                   "IOB")
+=======
                 parameter_list=model.parameters(),
             )
             chunk_eval = ChunkEval(
                 int(math.ceil((args.num_labels - 1) / 2.0)), "IOB"
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             step = 0
             chunk_evaluator = fluid.metrics.ChunkEvaluator()
@@ -591,6 +786,13 @@ class TestLACModel(unittest.TestCase):
                     end_time = time.time()
 
                     if step % args.print_steps == 0:
+<<<<<<< HEAD
+                        (precision, recall, f1_score, num_infer_chunks,
+                         num_label_chunks,
+                         num_correct_chunks) = chunk_eval(input=crf_decode,
+                                                          label=targets,
+                                                          seq_length=length)
+=======
                         (
                             precision,
                             recall,
@@ -601,6 +803,7 @@ class TestLACModel(unittest.TestCase):
                         ) = chunk_eval(
                             input=crf_decode, label=targets, seq_length=length
                         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                         outputs = [avg_cost, precision, recall, f1_score]
                         avg_cost, precision, recall, f1_score = [
                             np.mean(x.numpy()) for x in outputs
@@ -637,6 +840,11 @@ class TestLACModel(unittest.TestCase):
     def test_train(self):
         st_out = self.train(self.args, to_static=True)
         dy_out = self.train(self.args, to_static=False)
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(dy_out, st_out),
+                        msg="dygraph output:\n{},\nstatic output:\n {}.".format(
+                            dy_out, st_out))
+=======
         np.testing.assert_allclose(
             dy_out,
             st_out,
@@ -645,20 +853,36 @@ class TestLACModel(unittest.TestCase):
                 dy_out, st_out
             ),
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         # Prediction needs trained models, so put `test_predict` at last of `test_train`
         # self.verify_predict()
 
     def verify_predict(self):
+<<<<<<< HEAD
+        reader = get_random_input_data(self.args.batch_size,
+                                       self.args.vocab_size,
+                                       self.args.num_labels)
+=======
         reader = get_random_input_data(
             self.args.batch_size, self.args.vocab_size, self.args.num_labels
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         for batch in reader():
             batch = [np.vstack(var) for var in zip(*batch)]
             dy_pre = self.predict_dygraph(batch)
             st_pre = self.predict_static(batch)
             dy_jit_pre = self.predict_dygraph_jit(batch)
+<<<<<<< HEAD
+            self.assertTrue(np.allclose(dy_pre, st_pre),
+                            msg="dy_pre:\n {}\n, st_pre: \n{}.".format(
+                                dy_pre, st_pre))
+            self.assertTrue(np.allclose(dy_jit_pre, st_pre),
+                            msg="dy_jit_pre:\n {}\n, st_pre: \n{}.".format(
+                                dy_jit_pre, st_pre))
+=======
             np.testing.assert_allclose(dy_pre, st_pre, rtol=1e-05)
             np.testing.assert_allclose(dy_jit_pre, st_pre, rtol=1e-05)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def predict_dygraph(self, batch):
         words, targets, length = batch
@@ -670,9 +894,14 @@ class TestLACModel(unittest.TestCase):
             model.set_dict(model_dict)
             model.eval()
 
+<<<<<<< HEAD
+            _, pred_res = model(to_variable(words), to_variable(targets),
+                                to_variable(length))
+=======
             _, pred_res = model(
                 to_variable(words), to_variable(targets), to_variable(length)
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             return pred_res.numpy()
 
@@ -684,6 +913,21 @@ class TestLACModel(unittest.TestCase):
         paddle.enable_static()
         exe = fluid.Executor(self.place)
         # load inference model
+<<<<<<< HEAD
+        [inference_program, feed_target_names, fetch_targets
+         ] = fluid.io.load_inference_model(self.model_save_dir,
+                                           executor=exe,
+                                           model_filename=self.model_filename,
+                                           params_filename=self.params_filename)
+
+        words, targets, length = batch
+        pred_res = exe.run(inference_program,
+                           feed={
+                               feed_target_names[0]: words,
+                               feed_target_names[1]: length
+                           },
+                           fetch_list=fetch_targets)
+=======
         [
             inference_program,
             feed_target_names,
@@ -701,6 +945,7 @@ class TestLACModel(unittest.TestCase):
             feed={feed_target_names[0]: words, feed_target_names[1]: length},
             fetch_list=fetch_targets,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return pred_res[0]
 
     def predict_dygraph_jit(self, batch):

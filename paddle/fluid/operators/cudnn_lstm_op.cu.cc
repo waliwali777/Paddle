@@ -112,7 +112,11 @@ void LSTMInferece(const bool &has_seq_length,
                   T *out_data,
                   T *last_h_data,
                   T *last_c_data,
+<<<<<<< HEAD
+                  framework::Tensor *workspace_data,
+=======
                   phi::DenseTensor *workspace_data,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                   const size_t &workspace_size) {
   if (!has_seq_length) {
 // for inference
@@ -322,7 +326,11 @@ class CudnnLSTMGPUKernel : public framework::OpKernel<T> {
                   &reserve_size,
                   state_out);
 
+<<<<<<< HEAD
+    framework::Tensor workspace_data_;
+=======
     phi::DenseTensor workspace_data_;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     workspace_data_.mutable_data<uint8_t>(
         {static_cast<int64_t>(workspace_size)}, ctx.GetPlace());
 
@@ -442,6 +450,25 @@ template <typename T>
 class CudnnLSTMGPUGradKernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext &ctx) const override {
+<<<<<<< HEAD
+    auto *input = ctx.Input<Tensor>("Input");
+    auto *init_h = ctx.Input<Tensor>("InitH");
+    auto *init_c = ctx.Input<Tensor>("InitC");
+    auto *reserve = ctx.Input<Tensor>("Reserve");
+    auto *state_out = ctx.Input<Tensor>("StateOut");
+    auto weight_list = ctx.MultiInput<Tensor>("WeightList");
+
+    auto *out = ctx.Input<Tensor>("Out");
+    auto *out_grad = ctx.Input<Tensor>(framework::GradVarName("Out"));
+    auto *last_h_grad = ctx.Input<Tensor>(framework::GradVarName("LastH"));
+    auto *last_c_grad = ctx.Input<Tensor>(framework::GradVarName("LastC"));
+
+    auto *in_grad = ctx.Output<Tensor>(framework::GradVarName("Input"));
+    auto *init_h_grad = ctx.Output<Tensor>(framework::GradVarName("InitH"));
+    auto *init_c_grad = ctx.Output<Tensor>(framework::GradVarName("InitC"));
+    auto weight_grad_list = ctx.MultiOutput<framework::Tensor>(
+        framework::GradVarName("WeightList"));
+=======
     auto *input = ctx.Input<phi::DenseTensor>("Input");
     auto *init_h = ctx.Input<phi::DenseTensor>("InitH");
     auto *init_c = ctx.Input<phi::DenseTensor>("InitC");
@@ -464,6 +491,7 @@ class CudnnLSTMGPUGradKernel : public framework::OpKernel<T> {
         ctx.Output<phi::DenseTensor>(framework::GradVarName("InitC"));
     auto weight_grad_list =
         ctx.MultiOutput<phi::DenseTensor>(framework::GradVarName("WeightList"));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     auto &dev_ctx = ctx.template device_context<phi::GPUContext>();
     auto handle = dev_ctx.cudnn_handle();

@@ -29,6 +29,7 @@ NPUPlace = 0
 
 
 class TestIncrement(OpTest):
+
     def setUp(self):
         self.set_npu()
         self.place = paddle.NPUPlace(NPUPlace)
@@ -56,6 +57,7 @@ class TestIncrement(OpTest):
 
 
 class TestIncrementFP16(OpTest):
+
     def setUp(self):
         self.set_npu()
         self.place = paddle.NPUPlace(NPUPlace)
@@ -83,6 +85,7 @@ class TestIncrementFP16(OpTest):
 
 
 class TestIncrementINT64(OpTest):
+
     def setUp(self):
         self.set_npu()
         self.place = paddle.NPUPlace(NPUPlace)
@@ -110,6 +113,7 @@ class TestIncrementINT64(OpTest):
 
 
 class TestIncrementInplace(unittest.TestCase):
+
     def test_npu(self):
         main_prog = paddle.static.Program()
         startup_prog = paddle.static.Program()
@@ -128,6 +132,11 @@ class TestIncrementInplace(unittest.TestCase):
         exe = paddle.static.Executor(place)
         exe.run(startup_prog)
 
+<<<<<<< HEAD
+        b_value = exe.run(main_prog, feed={
+            "a": a_np,
+        }, fetch_list=[b])
+=======
         b_value = exe.run(
             main_prog,
             feed={
@@ -135,6 +144,7 @@ class TestIncrementInplace(unittest.TestCase):
             },
             fetch_list=[b],
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         print('input a id is : {}'.format(id(a)))
         print('input b id is : {}'.format(id(b)))

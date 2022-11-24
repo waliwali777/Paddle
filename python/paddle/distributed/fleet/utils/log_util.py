@@ -18,6 +18,14 @@ from paddle.distributed.utils.log_utils import get_logger
 
 logger = get_logger("INFO", __name__)
 
+<<<<<<< HEAD
+class LoggerFactory:
+
+    @staticmethod
+    def build_logger(name=None, level=logging.INFO):
+        assert name is not None, "name for logger should not be None"
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 def set_log_level(level):
     """

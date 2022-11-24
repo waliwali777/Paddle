@@ -134,9 +134,15 @@ class TestReduceMaxOpWithOutDtype_fp16(TestMLUReduceMaxOp):
             'out_dtype': int(core.VarDesc.VarType.FP16),
         }
         self.outputs = {
+<<<<<<< HEAD
+            'Out':
+            self.inputs['X'].max(axis=tuple(self.attrs['dim'])).astype(
+                np.float16)
+=======
             'Out': self.inputs['X']
             .max(axis=tuple(self.attrs['dim']))
             .astype(np.float16)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         }
 
     def init_dtype(self):
@@ -164,9 +170,15 @@ class TestReduceMaxOpWithOutDtype_fp32(TestMLUReduceMaxOp):
             'out_dtype': int(core.VarDesc.VarType.FP32),
         }
         self.outputs = {
+<<<<<<< HEAD
+            'Out':
+            self.inputs['X'].max(axis=tuple(self.attrs['dim'])).astype(
+                np.float32)
+=======
             'Out': self.inputs['X']
             .max(axis=tuple(self.attrs['dim']))
             .astype(np.float32)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         }
 
     def init_dtype(self):

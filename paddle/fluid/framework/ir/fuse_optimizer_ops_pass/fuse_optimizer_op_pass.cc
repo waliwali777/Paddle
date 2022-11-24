@@ -392,6 +392,15 @@ void FuseOptimizerOpPass::FuseGradientsToContinuousSpace(
         iter->second.front()->Var(),
         platform::errors::InvalidArgument("The gradient var(%s) node is null.",
                                           grad_var_name));
+<<<<<<< HEAD
+    PADDLE_ENFORCE_EQ(
+        IsLoDTensorType(iter->second.front()->Var()->GetType()),
+        true,
+        platform::errors::InvalidArgument(
+            "Currently the gradient(%s) type only should be LoDTensor when "
+            "fusing optimizer ops.",
+            grad_var_name));
+=======
     PADDLE_ENFORCE_EQ(IsLoDTensorType(iter->second.front()->Var()->GetType()),
                       true,
                       platform::errors::InvalidArgument(
@@ -399,6 +408,7 @@ void FuseOptimizerOpPass::FuseGradientsToContinuousSpace(
                           "phi::DenseTensor when "
                           "fusing optimizer ops.",
                           grad_var_name));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     for (auto var : iter->second) {
       pinned_var_set.insert(var->Var()->Name());
     }

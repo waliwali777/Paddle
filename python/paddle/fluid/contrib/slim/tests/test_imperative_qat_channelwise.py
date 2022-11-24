@@ -31,12 +31,19 @@ os.environ["CPU_NUM"] = "1"
 if core.is_compiled_with_cuda():
     fluid.set_flags({"FLAGS_cudnn_deterministic": True})
 
+<<<<<<< HEAD
+_logger = get_logger(__name__,
+                     logging.INFO,
+                     fmt='%(asctime)s-%(levelname)s: %(message)s')
+=======
 _logger = get_logger(
     __name__, logging.INFO, fmt='%(asctime)s-%(levelname)s: %(message)s'
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestImperativeQatChannelWise(TestImperativeQat):
+
     def set_vars(self):
         self.weight_quantize_type = 'channel_wise_abs_max'
         self.activation_quantize_type = 'moving_average_abs_max'
@@ -47,6 +54,7 @@ class TestImperativeQatChannelWise(TestImperativeQat):
 
 
 class TestImperativeQatChannelWiseONNXFormat(TestImperativeQat):
+
     def set_vars(self):
         self.weight_quantize_type = 'channel_wise_abs_max'
         self.activation_quantize_type = 'moving_average_abs_max'

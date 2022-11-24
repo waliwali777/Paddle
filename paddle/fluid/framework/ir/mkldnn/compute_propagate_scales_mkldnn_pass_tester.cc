@@ -92,11 +92,14 @@ class ComputePropagateScalesMkldnnPassTest : public testing::Test {
         graph, scope, wx_name, wh_name, var_quant_scales);
   }
 
+<<<<<<< HEAD
+=======
   void UpdateReluOutputScales(ir::Graph* graph,
                               StringPairMap* var_quant_scales) const {
     pass->UpdateReluOutputScales(graph, var_quant_scales);
   }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   void InitTensorHolder(Scope* scope,
                         const paddle::platform::Place& place,
                         const std::string& var_name) {
@@ -327,6 +330,17 @@ TEST_F(ComputePropagateScalesMkldnnPassTest, compute_var_scales) {
 }
 
 TEST_F(ComputePropagateScalesMkldnnPassTest, compute_gru_weight_scales) {
+<<<<<<< HEAD
+  ComputeRnnWeightScalesTest("gru",
+                             {"fusion_gru", "multi_gru"},
+                             BuildFusionGruProgramDesc(),
+                             gru_scales);
+}
+
+TEST_F(ComputePropagateScalesMkldnnPassTest, compute_lstm_weight_scales) {
+  ComputeRnnWeightScalesTest(
+      "lstm", {"fusion_lstm"}, BuildFusionLstmProgramDesc(), lstm_scales);
+=======
   ComputeRnnWeightScalesTest("gru", BuildFusionGruProgramDesc(), gru_scales);
 }
 
@@ -345,6 +359,7 @@ TEST_F(ComputePropagateScalesMkldnnPassTest, update_relu_output_scales) {
   }
   UpdateReluOutputScaleTest(
       BuildConv2dReluProgramDesc(), &var_quant_scales, {"conv_out"});
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 }  // namespace ir

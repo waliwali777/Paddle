@@ -19,23 +19,47 @@ import numpy as np
 
 
 class TestPyReader(unittest.TestCase):
+
     def setUp(self):
         self.batch_size = 32
         self.epoch_num = 2
         self.sample_num = 10
 
     def test_returnlist(self):
+
         def reader_creator_random_image(height, width):
+
             def reader():
                 for i in range(self.sample_num):
+<<<<<<< HEAD
+                    yield np.random.uniform(low=0,
+                                            high=255,
+                                            size=[height, width]),
+=======
                     yield np.random.uniform(
                         low=0, high=255, size=[height, width]
                     ),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             return reader
 
         for return_list in [True, False]:
             with fluid.program_guard(fluid.Program(), fluid.Program()):
+<<<<<<< HEAD
+                image = fluid.layers.data(name='image',
+                                          shape=[784, 784],
+                                          dtype='float32')
+                reader = fluid.io.PyReader(feed_list=[image],
+                                           capacity=4,
+                                           iterable=True,
+                                           return_list=return_list)
+
+                user_defined_reader = reader_creator_random_image(784, 784)
+                reader.decorate_sample_list_generator(
+                    paddle.batch(user_defined_reader,
+                                 batch_size=self.batch_size),
+                    fluid.core.CPUPlace())
+=======
                 image = fluid.layers.data(
                     name='image', shape=[784, 784], dtype='float32'
                 )
@@ -53,6 +77,7 @@ class TestPyReader(unittest.TestCase):
                     ),
                     fluid.core.CPUPlace(),
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 # definition of network is omitted
                 executor = fluid.Executor(fluid.core.CPUPlace())
                 executor.run(fluid.default_main_program())

@@ -128,8 +128,13 @@ class SimpleCode {
 template <typename T>
 class CustomCode {
  public:
+<<<<<<< HEAD
+  CustomCode(const framework::Tensor& path_table,
+             const framework::Tensor& path_code,
+=======
   CustomCode(const phi::DenseTensor& path_table,
              const phi::DenseTensor& path_code,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
              const int64_t* ids,
              int index) {
     seq_len_ = path_table.dims()[1];
@@ -188,8 +193,13 @@ class SimpleCodeTable {
 template <typename T>
 class CustomCodeTable {
  public:
+<<<<<<< HEAD
+  CustomCodeTable(const framework::Tensor& path_table,
+                  const framework::Tensor& path_code,
+=======
   CustomCodeTable(const phi::DenseTensor& path_table,
                   const phi::DenseTensor& path_code,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                   const int64_t* ids)
       : ptable_(path_table), pcode_(path_code), ids_(ids) {}
 
@@ -218,8 +228,13 @@ class MatrixBitCodeFunctor {
         ids_(ids),
         code_table_(SimpleCodeTable(num_classes, ids)) {}
 
+<<<<<<< HEAD
+  MatrixBitCodeFunctor(const framework::Tensor& path_table,
+                       const framework::Tensor& path_code,
+=======
   MatrixBitCodeFunctor(const phi::DenseTensor& path_table,
                        const phi::DenseTensor& path_code,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                        const int64_t* ids)
       : num_classes_(static_cast<size_t>(path_table.dims()[1])),
         ids_(ids),
@@ -246,13 +261,36 @@ class MatrixBitCodeFunctor {
   /* For j < code_length
        input.row(i) += tmat(i, j) * weight.row(index(i, j))
   */
+<<<<<<< HEAD
+  void Mul(framework::Tensor* tmat,
+           const framework::Tensor& weight,
+           const framework::Tensor& input);
+=======
   void Mul(phi::DenseTensor* tmat,
            const phi::DenseTensor& weight,
            const phi::DenseTensor& input);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   /* For index(i, j) >= 0:
       weight.row(index(i, j)) += tmat(i, j) * input.row(i)
   */
+<<<<<<< HEAD
+  void MulGradWeight(const framework::Tensor& tmat,
+                     framework::Tensor* weight,
+                     const framework::Tensor& input);
+  /* For SelectedRows Weight, For index(i, j) >= 0:
+      weight.row(index(i, j)) += tmat(i, j) * input.row(i)
+  */
+  void MulGradWeight(const framework::Tensor& tmat,
+                     phi::SelectedRows* weight,
+                     const framework::Tensor& input);
+  /* For j < code_length
+    input.row(i) += tmat(i, j) * weight.row(index(i, j))
+  */
+  void MulGradError(const framework::Tensor& tmat,
+                    const framework::Tensor& weight,
+                    framework::Tensor* input);
+=======
   void MulGradWeight(const phi::DenseTensor& tmat,
                      phi::DenseTensor* weight,
                      const phi::DenseTensor& input);
@@ -268,6 +306,7 @@ class MatrixBitCodeFunctor {
   void MulGradError(const phi::DenseTensor& tmat,
                     const phi::DenseTensor& weight,
                     phi::DenseTensor* input);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   size_t num_classes_;
   const int64_t* ids_;

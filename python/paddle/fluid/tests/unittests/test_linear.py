@@ -21,16 +21,22 @@ import paddle.nn.functional as F
 
 
 class LinearTestCase(unittest.TestCase):
+
     def setUp(self):
         self.dtype = 'float32'
         self.input = np.ones((3, 1, 2)).astype(self.dtype)
         self.weight = np.ones((2, 2)).astype(self.dtype)
         self.bias = np.ones((2)).astype(self.dtype)
+<<<<<<< HEAD
+        self.place = paddle.CUDAPlace(
+            0) if core.is_compiled_with_cuda() else paddle.CPUPlace()
+=======
         self.place = (
             paddle.CUDAPlace(0)
             if core.is_compiled_with_cuda()
             else paddle.CPUPlace()
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def functional(self, place):
         paddle.disable_static(place)
@@ -55,11 +61,19 @@ class LinearTestCase(unittest.TestCase):
             learning_rate=1.0,
             trainable=False,
             regularizer=None,
+<<<<<<< HEAD
+            initializer=paddle.fluid.initializer.ConstantInitializer(value=1.0))
+        linear = paddle.nn.Linear(2,
+                                  2,
+                                  weight_attr=weight_attr,
+                                  bias_attr=bias_attr)
+=======
             initializer=paddle.fluid.initializer.ConstantInitializer(value=1.0),
         )
         linear = paddle.nn.Linear(
             2, 2, weight_attr=weight_attr, bias_attr=bias_attr
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         y = linear(input)
         return y.numpy()
 
@@ -78,9 +92,16 @@ class LinearTestCase(unittest.TestCase):
         if not paddle.is_compiled_with_cuda():
             return
         paddle.seed(100)
+<<<<<<< HEAD
+        linear = paddle.nn.Linear(2,
+                                  3,
+                                  weight_attr=paddle.nn.initializer.Normal(
+                                      0, 1.))
+=======
         linear = paddle.nn.Linear(
             2, 3, weight_attr=paddle.nn.initializer.Normal(0, 1.0)
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         paddle.nn.utils._stride_column(linear.weight)
         expect = [
             [1.4349908, -0.8099171, -2.64788],

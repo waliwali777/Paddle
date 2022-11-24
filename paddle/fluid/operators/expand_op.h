@@ -85,7 +85,11 @@ inline std::vector<int> get_expand_times(
   }
 }
 
+<<<<<<< HEAD
+using Tensor = framework::Tensor;
+=======
 using Tensor = phi::DenseTensor;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 template <typename T,
           int MajorType = Eigen::RowMajor,
           typename IndexType = Eigen::DenseIndex>
@@ -154,7 +158,11 @@ class ExpandKernel : public framework::OpKernel<T> {
                           "of dimensions (%d) of the input.",
                           expand_times.size(),
                           static_cast<size_t>(in_dims.size())));
+<<<<<<< HEAD
+    auto* out0 = context.Output<Tensor>("Out");
+=======
     auto* out0 = context.Output<phi::DenseTensor>("Out");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     Eigen::DSizes<Eigen::DenseIndex, Rank> bcast_dims;
     for (size_t i = 0; i < expand_times.size(); ++i) {
       bcast_dims[i] = expand_times[i];
@@ -287,8 +295,13 @@ class ExpandGradKernel : public framework::OpKernel<T> {
                           "reduce dimensions (%d).",
                           reduce_size,
                           reduce_dims_vec.size()));
+<<<<<<< HEAD
+    auto* in0 = context.Input<Tensor>(framework::GradVarName("Out"));
+    auto* out0 = context.Output<Tensor>(framework::GradVarName("X"));
+=======
     auto* in0 = context.Input<phi::DenseTensor>(framework::GradVarName("Out"));
     auto* out0 = context.Output<phi::DenseTensor>(framework::GradVarName("X"));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     out0->mutable_data<T>(context.GetPlace());
     auto x_grad = EigenVector<T>::Flatten(*out0);
     Eigen::DSizes<Eigen::DenseIndex, Dims * 2> reshape_dims;

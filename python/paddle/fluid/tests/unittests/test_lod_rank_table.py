@@ -21,6 +21,7 @@ import unittest
 
 
 class TestLoDRankTable(unittest.TestCase):
+
     def test_lod_rank_table(self):
         x = data(name='x', shape=[100])
         cpu = core.CPUPlace()
@@ -31,9 +32,14 @@ class TestLoDRankTable(unittest.TestCase):
 
         tensor = core.LoDTensor()
         tensor.set(numpy.random.random(size=(17, 100)), cpu)
+<<<<<<< HEAD
+        tensor.set_recursive_sequence_lengths([[1, 2], [5, 1, 1],
+                                               [3, 1, 5, 1, 3, 3, 1]])
+=======
         tensor.set_recursive_sequence_lengths(
             [[1, 2], [5, 1, 1], [3, 1, 5, 1, 3, 3, 1]]
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         exe.run(scope=scope, feed={'x': tensor})
         var = scope.find_var(rank_table.name)
         table = var.get_lod_rank_table()
@@ -41,6 +47,7 @@ class TestLoDRankTable(unittest.TestCase):
 
 
 class TestLoDRankTableError(unittest.TestCase):
+
     def test_errors(self):
         with program_guard(Program(), Program()):
             x = numpy.random.random((2, 4)).astype("float32")

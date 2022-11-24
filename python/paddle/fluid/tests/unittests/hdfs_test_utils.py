@@ -26,6 +26,7 @@ java_home = os.environ["JAVA_HOME"]
 
 
 class FSTestBase(unittest.TestCase):
+
     def _test_dirs(self, fs):
         dir_path = os.path.abspath("./test_dir")
         fs.delete(dir_path)
@@ -221,12 +222,19 @@ class FSTestBase(unittest.TestCase):
             pass
 
     def _test_list_dir(self, fs):
+<<<<<<< HEAD
+        fs = HDFSClient("/usr/local/hadoop-2.7.7/",
+                        None,
+                        time_out=15 * 1000,
+                        sleep_inter=100)
+=======
         fs = HDFSClient(
             "/usr/local/hadoop-2.7.7/",
             None,
             time_out=15 * 1000,
             sleep_inter=100,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         fs.ls_dir("test_not_exists")
 
     def _test_touch(self, fs):

@@ -202,7 +202,10 @@ class DeviceInterface {  // Driver / Runtime
                          size_t num,
                          ccl::CCLDataType data_type,
                          ccl::CCLReduceOp reduce_op,
+<<<<<<< HEAD
+=======
                          size_t root_id,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                          const ccl::CCLComm& ccl_comm,
                          const stream::Stream& stream);
   virtual void CCLAllGather(void* in_data,
@@ -243,6 +246,8 @@ class DeviceInterface {  // Driver / Runtime
                          float beta,
                          void* y);
 
+<<<<<<< HEAD
+=======
   // profiler
   virtual void ProfilerInitialize(
       paddle::platform::TraceEventCollector* collector, void** user_data);
@@ -264,6 +269,7 @@ class DeviceInterface {  // Driver / Runtime
       uint64_t start_ns,
       void* user_data);
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
  private:
   const std::string type_;
   const uint8_t priority_;

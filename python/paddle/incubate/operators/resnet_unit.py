@@ -53,6 +53,13 @@ def resnet_unit(
     bn_param_dtype = fluid.core.VarDesc.VarType.FP32
     bit_mask_dtype = fluid.core.VarDesc.VarType.INT32
     out = helper.create_variable_for_type_inference(x.dtype)
+<<<<<<< HEAD
+    bit_mask = helper.create_variable_for_type_inference(dtype=bit_mask_dtype,
+                                                         stop_gradient=True)
+    # intermediate_out for x
+    conv_x = helper.create_variable_for_type_inference(dtype=x.dtype,
+                                                       stop_gradient=True)
+=======
     bit_mask = helper.create_variable_for_type_inference(
         dtype=bit_mask_dtype, stop_gradient=True
     )
@@ -60,6 +67,7 @@ def resnet_unit(
     conv_x = helper.create_variable_for_type_inference(
         dtype=x.dtype, stop_gradient=True
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     saved_mean_x = helper.create_variable_for_type_inference(
         dtype=bn_param_dtype, stop_gradient=True
     )
@@ -69,9 +77,14 @@ def resnet_unit(
     running_mean_x = mean_x
     running_var_x = var_x
     # intermediate_out for z
+<<<<<<< HEAD
+    conv_z = helper.create_variable_for_type_inference(dtype=x.dtype,
+                                                       stop_gradient=True)
+=======
     conv_z = helper.create_variable_for_type_inference(
         dtype=x.dtype, stop_gradient=True
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     saved_mean_z = helper.create_variable_for_type_inference(
         dtype=bn_param_dtype, stop_gradient=True
     )
@@ -139,9 +152,16 @@ def resnet_unit(
         'RunningVarZ': running_var_z,
     }
 
+<<<<<<< HEAD
+    helper.append_op(type='resnet_unit',
+                     inputs=inputs,
+                     outputs=outputs,
+                     attrs=attrs)
+=======
     helper.append_op(
         type='resnet_unit', inputs=inputs, outputs=outputs, attrs=attrs
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     return out
 
@@ -209,12 +229,22 @@ class ResNetUnit(Layer):
             std = (2.0 / filter_elem_num) ** 0.5
             return I.Normal(0.0, std)
 
+<<<<<<< HEAD
+        is_nchw = (data_format == 'NCHW')
+=======
         is_nchw = data_format == 'NCHW'
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         # initial filter
         bn_param_dtype = fluid.core.VarDesc.VarType.FP32
         if not is_nchw:
             bn_param_shape = [1, 1, 1, num_filters]
             filter_x_shape = [
+<<<<<<< HEAD
+                num_filters, filter_size, filter_size, num_channels_x
+            ]
+            filter_z_shape = [
+                num_filters, filter_size, filter_size, num_channels_z
+=======
                 num_filters,
                 filter_size,
                 filter_size,
@@ -225,10 +255,17 @@ class ResNetUnit(Layer):
                 filter_size,
                 filter_size,
                 num_channels_z,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             ]
         else:
             bn_param_shape = [1, num_filters, 1, 1]
             filter_x_shape = [
+<<<<<<< HEAD
+                num_filters, num_channels_x, filter_size, filter_size
+            ]
+            filter_z_shape = [
+                num_filters, num_channels_z, filter_size, filter_size
+=======
                 num_filters,
                 num_channels_x,
                 filter_size,
@@ -239,6 +276,7 @@ class ResNetUnit(Layer):
                 num_channels_z,
                 filter_size,
                 filter_size,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             ]
 
         self.filter_x = self.create_parameter(
@@ -250,6 +288,26 @@ class ResNetUnit(Layer):
             shape=bn_param_shape,
             attr=scale_x_attr,
             dtype=bn_param_dtype,
+<<<<<<< HEAD
+            default_initializer=I.Constant(1.0))
+        self.bias_x = self.create_parameter(shape=bn_param_shape,
+                                            attr=bias_x_attr,
+                                            dtype=bn_param_dtype,
+                                            is_bias=True)
+        self.mean_x = self.create_parameter(attr=ParamAttr(
+            name=moving_mean_x_name,
+            initializer=I.Constant(0.0),
+            trainable=False),
+                                            shape=bn_param_shape,
+                                            dtype=bn_param_dtype)
+        self.mean_x.stop_gradient = True
+        self.var_x = self.create_parameter(attr=ParamAttr(
+            name=moving_var_x_name,
+            initializer=I.Constant(1.0),
+            trainable=False),
+                                           shape=bn_param_shape,
+                                           dtype=bn_param_dtype)
+=======
             default_initializer=I.Constant(1.0),
         )
         self.bias_x = self.create_parameter(
@@ -277,6 +335,7 @@ class ResNetUnit(Layer):
             shape=bn_param_shape,
             dtype=bn_param_dtype,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.var_x.stop_gradient = True
         if has_shortcut:
             self.filter_z = self.create_parameter(
@@ -290,6 +349,26 @@ class ResNetUnit(Layer):
                 shape=bn_param_shape,
                 attr=scale_z_attr,
                 dtype=bn_param_dtype,
+<<<<<<< HEAD
+                default_initializer=I.Constant(1.0))
+            self.bias_z = self.create_parameter(shape=bn_param_shape,
+                                                attr=bias_z_attr,
+                                                dtype=bn_param_dtype,
+                                                is_bias=True)
+            self.mean_z = self.create_parameter(attr=ParamAttr(
+                name=moving_mean_z_name,
+                initializer=I.Constant(0.0),
+                trainable=False),
+                                                shape=bn_param_shape,
+                                                dtype=bn_param_dtype)
+            self.mean_z.stop_gradient = True
+            self.var_z = self.create_parameter(attr=ParamAttr(
+                name=moving_var_z_name,
+                initializer=I.Constant(1.0),
+                trainable=False),
+                                               shape=bn_param_shape,
+                                               dtype=bn_param_dtype)
+=======
                 default_initializer=I.Constant(1.0),
             )
             self.bias_z = self.create_parameter(
@@ -317,6 +396,7 @@ class ResNetUnit(Layer):
                 shape=bn_param_shape,
                 dtype=bn_param_dtype,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             self.var_z.stop_gradient = True
         else:
             self.filter_z = None
@@ -329,6 +409,16 @@ class ResNetUnit(Layer):
         if self._fuse_add and z is None:
             raise ValueError("z can not be None")
 
+<<<<<<< HEAD
+        out = resnet_unit(x, self.filter_x, self.scale_x, self.bias_x,
+                          self.mean_x, self.var_x, z, self.filter_z,
+                          self.scale_z, self.bias_z, self.mean_z, self.var_z,
+                          self._stride, self._stride_z, self._padding,
+                          self._dilation, self._groups, self._momentum,
+                          self._eps, self._data_format, self._fuse_add,
+                          self._has_shortcut, self._use_global_stats,
+                          self._is_test, self._act)
+=======
         out = resnet_unit(
             x,
             self.filter_x,
@@ -356,4 +446,5 @@ class ResNetUnit(Layer):
             self._is_test,
             self._act,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return out

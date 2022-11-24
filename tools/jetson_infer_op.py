@@ -51,6 +51,16 @@ def parse_arguments():
     :return:
     """
     parser = argparse.ArgumentParser()
+<<<<<<< HEAD
+    parser.add_argument('--shell_name',
+                        type=str,
+                        default='get_op_list.sh',
+                        help='please input right name')
+    parser.add_argument('--op_list_file',
+                        type=str,
+                        default='list_op.txt',
+                        help='please input right name')
+=======
     parser.add_argument(
         '--shell_name',
         type=str,
@@ -63,6 +73,7 @@ def parse_arguments():
         default='list_op.txt',
         help='please input right name',
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     return parser.parse_args()
 
 

@@ -21,8 +21,13 @@ limitations under the License. */
 namespace paddle {
 namespace operators {
 
+<<<<<<< HEAD
+using Tensor = framework::Tensor;
+using LoDTensor = framework::LoDTensor;
+=======
 using Tensor = phi::DenseTensor;
 using LoDTensor = phi::DenseTensor;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 template <typename T,
           int MajorType = Eigen::RowMajor,
           typename IndexType = Eigen::DenseIndex>
@@ -113,7 +118,11 @@ void AppendRpns(LoDTensor* out, int64_t offset, phi::DenseTensor* to_add) {
 
 template <typename T>
 std::vector<Tensor> FilterStraddleAnchor(const phi::CPUContext& context,
+<<<<<<< HEAD
+                                         const Tensor* anchor,
+=======
                                          const phi::DenseTensor* anchor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                          const float rpn_straddle_thresh,
                                          T im_height,
                                          T im_width) {
@@ -154,8 +163,13 @@ std::vector<Tensor> FilterStraddleAnchor(const phi::CPUContext& context,
 
 template <typename T>
 Tensor FilterCrowdGt(const phi::CPUContext& context,
+<<<<<<< HEAD
+                     Tensor* gt_boxes,
+                     Tensor* is_crowd) {
+=======
                      phi::DenseTensor* gt_boxes,
                      phi::DenseTensor* is_crowd) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   int gt_num = gt_boxes->dims()[0];
   std::vector<int> not_crowd_inds;
   auto* is_crowd_data = is_crowd->data<int>();
@@ -196,8 +210,13 @@ void ReservoirSampling(const int num,
 
 template <typename T>
 void ScoreAssign(const T* anchor_by_gt_overlap_data,
+<<<<<<< HEAD
+                 const Tensor& anchor_to_gt_max,
+                 const Tensor& gt_to_anchor_max,
+=======
                  const phi::DenseTensor& anchor_to_gt_max,
                  const phi::DenseTensor& gt_to_anchor_max,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                  const int rpn_batch_size_per_im,
                  const float rpn_fg_fraction,
                  const float rpn_positive_overlap,
@@ -299,6 +318,16 @@ void ScoreAssign(const T* anchor_by_gt_overlap_data,
 }
 
 template <typename T>
+<<<<<<< HEAD
+std::vector<Tensor> SampleRpnFgBgGt(const phi::CPUContext& ctx,
+                                    const Tensor& anchor_by_gt_overlap,
+                                    const int rpn_batch_size_per_im,
+                                    const float rpn_positive_overlap,
+                                    const float rpn_negative_overlap,
+                                    const float rpn_fg_fraction,
+                                    std::minstd_rand engine,
+                                    bool use_random) {
+=======
 std::vector<Tensor> SampleRpnFgBgGt(
     const phi::CPUContext& ctx,
     const phi::DenseTensor& anchor_by_gt_overlap,
@@ -308,6 +337,7 @@ std::vector<Tensor> SampleRpnFgBgGt(
     const float rpn_fg_fraction,
     std::minstd_rand engine,
     bool use_random) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto* anchor_by_gt_overlap_data = anchor_by_gt_overlap.data<T>();
   int anchor_num = anchor_by_gt_overlap.dims()[0];
   int gt_num = anchor_by_gt_overlap.dims()[1];
@@ -858,9 +888,15 @@ class RetinanetTargetAssignOp : public framework::OperatorWithKernel {
 
 template <typename T>
 std::vector<Tensor> FilterCrowdGtBoxLabel(const phi::CPUContext& context,
+<<<<<<< HEAD
+                                          Tensor* gt_boxes,
+                                          Tensor* gt_labels,
+                                          Tensor* is_crowd) {
+=======
                                           phi::DenseTensor* gt_boxes,
                                           phi::DenseTensor* gt_labels,
                                           phi::DenseTensor* is_crowd) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   int gt_num = gt_boxes->dims()[0];
   std::vector<int> not_crowd_inds;
   auto* is_crowd_data = is_crowd->data<int>();
@@ -893,8 +929,13 @@ std::vector<Tensor> FilterCrowdGtBoxLabel(const phi::CPUContext& context,
 
 template <typename T>
 std::vector<Tensor> GetAllFgBgGt(const phi::CPUContext& ctx,
+<<<<<<< HEAD
+                                 const Tensor& anchor_by_gt_overlap,
+                                 const Tensor& ncrowd_gt_labels,
+=======
                                  const phi::DenseTensor& anchor_by_gt_overlap,
                                  const phi::DenseTensor& ncrowd_gt_labels,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                  const float positive_overlap,
                                  const float negative_overlap,
                                  std::minstd_rand engine) {

@@ -28,8 +28,13 @@ static void ReduceDims(const framework::ExecutionContext& ctx,
                        const int axis,
                        const framework::DDim& ddims,
                        const framework::DDim& brd_ddims,
+<<<<<<< HEAD
+                       const Tensor& in,
+                       Tensor* out) {
+=======
                        const phi::DenseTensor& in,
                        phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   std::vector<int64_t> axes;
   int64_t brd_size = brd_ddims.size();
   int64_t org_size = ddims.size();

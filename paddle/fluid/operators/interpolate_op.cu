@@ -911,8 +911,13 @@ __global__ void KeBicubicInterpBw(T* in,
 
 template <typename T>
 static void Interpolate1DCUDAFwd(const framework::ExecutionContext& ctx,
+<<<<<<< HEAD
+                                 const Tensor& input,
+                                 Tensor* output) {
+=======
                                  const phi::DenseTensor& input,
                                  phi::DenseTensor* output) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto* input_data = input.data<T>();
 
   const std::string data_layout_str = ctx.Attr<std::string>("data_layout");
@@ -1003,8 +1008,13 @@ static void Interpolate1DCUDAFwd(const framework::ExecutionContext& ctx,
 
 template <typename T>
 static void Interpolate2DCUDAFwd(const framework::ExecutionContext& ctx,
+<<<<<<< HEAD
+                                 const Tensor& input,
+                                 Tensor* output) {
+=======
                                  const phi::DenseTensor& input,
                                  phi::DenseTensor* output) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto* input_data = input.data<T>();
 
   const std::string data_layout_str = ctx.Attr<std::string>("data_layout");
@@ -1155,8 +1165,13 @@ static void Interpolate2DCUDAFwd(const framework::ExecutionContext& ctx,
 
 template <typename T>
 static void Interpolate3DCUDAFwd(const framework::ExecutionContext& ctx,
+<<<<<<< HEAD
+                                 const Tensor& input,
+                                 Tensor* output) {
+=======
                                  const phi::DenseTensor& input,
                                  phi::DenseTensor* output) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto* input_data = input.data<T>();
 
   const std::string data_layout_str = ctx.Attr<std::string>("data_layout");
@@ -1287,9 +1302,15 @@ static void Interpolate3DCUDAFwd(const framework::ExecutionContext& ctx,
 
 template <typename T>
 static void Interpolate1DCUDABwd(const framework::ExecutionContext& ctx,
+<<<<<<< HEAD
+                                 Tensor* input_grad,
+                                 const Tensor output_grad) {
+  auto* input = ctx.Input<Tensor>("X");
+=======
                                  phi::DenseTensor* input_grad,
                                  const Tensor output_grad) {
   auto* input = ctx.Input<phi::DenseTensor>("X");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   const std::string data_layout_str = ctx.Attr<std::string>("data_layout");
   const DataLayout data_layout = phi::StringToDataLayout(data_layout_str);
   int n, c, in_d, in_h, in_w;
@@ -1378,9 +1399,15 @@ static void Interpolate1DCUDABwd(const framework::ExecutionContext& ctx,
 
 template <typename T>
 static void Interpolate2DCUDABwd(const framework::ExecutionContext& ctx,
+<<<<<<< HEAD
+                                 Tensor* input_grad,
+                                 const Tensor output_grad) {
+  auto* input = ctx.Input<Tensor>("X");
+=======
                                  phi::DenseTensor* input_grad,
                                  const Tensor output_grad) {
   auto* input = ctx.Input<phi::DenseTensor>("X");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   const std::string data_layout_str = ctx.Attr<std::string>("data_layout");
   const DataLayout data_layout = phi::StringToDataLayout(data_layout_str);
   int n, c, in_d, in_h, in_w;

@@ -31,6 +31,16 @@ struct CommContext {
               const std::vector<std::string> &emap,
               const std::vector<int64_t> &sections,
               const std::vector<std::string> &origin_names,
+<<<<<<< HEAD
+              int id,
+              bool merge_add_ = true,
+              bool is_sparse_ = true,
+              bool is_distributed_ = false,
+              int table_id_ = -1,
+              bool is_tensor_table_ = false,
+              bool is_datanorm_table_ = false,
+              int64_t program_id_ = -1)
+=======
               int trainer_id,
               bool merge_add = true,
               bool is_sparse = true,
@@ -40,6 +50,7 @@ struct CommContext {
               bool is_datanorm_table = false,
               int64_t program_id = -1,
               const std::vector<int32_t> &remote_sparse_ids = {})
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       : var_name(name),
         splited_varnames(names),
         epmap(emap),

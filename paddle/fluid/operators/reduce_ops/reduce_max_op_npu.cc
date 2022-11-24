@@ -115,10 +115,16 @@ template <typename DeviceContext, typename T>
 class ReduceMaxGradNPUKernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext& context) const override {
+<<<<<<< HEAD
+    auto* x = context.Input<Tensor>("X");
+    auto* out = context.Input<Tensor>("Out");
+    auto* out_grad = context.Input<Tensor>(framework::GradVarName("Out"));
+=======
     auto* x = context.Input<phi::DenseTensor>("X");
     auto* out = context.Input<phi::DenseTensor>("Out");
     auto* out_grad =
         context.Input<phi::DenseTensor>(framework::GradVarName("Out"));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto reduce_dims = context.Attr<std::vector<int>>("dim");
     bool reduce_all = context.Attr<bool>("reduce_all");
     int in_dtype = context.Attr<int>("in_dtype");

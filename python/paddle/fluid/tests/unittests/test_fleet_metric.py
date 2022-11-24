@@ -32,6 +32,7 @@ class TestFleetMetric(unittest.TestCase):
         """Set up, set envs."""
 
         class FakeUtil(UtilBase):
+
             def __init__(self, fake_fleet):
                 super().__init__()
                 self.fleet = fake_fleet
@@ -78,6 +79,18 @@ class TestFleetMetric(unittest.TestCase):
         train = fluid.Program()
         startup = fluid.Program()
         with fluid.program_guard(train, startup):
+<<<<<<< HEAD
+            t = fluid.layers.create_global_var(shape=[1, 1],
+                                               value=1,
+                                               dtype='int64',
+                                               persistable=True,
+                                               force_cpu=True)
+            t1 = fluid.layers.create_global_var(shape=[1, 1],
+                                                value=1,
+                                                dtype='int64',
+                                                persistable=True,
+                                                force_cpu=True)
+=======
             t = fluid.layers.create_global_var(
                 shape=[1, 1],
                 value=1,
@@ -92,6 +105,7 @@ class TestFleetMetric(unittest.TestCase):
                 persistable=True,
                 force_cpu=True,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         place = fluid.CPUPlace()
         exe = fluid.Executor(place)
         scope = fluid.Scope()

@@ -84,6 +84,10 @@ class CudnnBNStatsFinalize {
                float momentum,
                int64_t ele_count,
                bool is_train) {
+<<<<<<< HEAD
+    auto place = ctx.GetPlace();
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     if (is_train) {
       TrainInit(ctx);
     } else {

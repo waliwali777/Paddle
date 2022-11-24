@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
+<<<<<<< HEAD
+#include "paddle/fluid/jit/property.h"
+#include "glog/logging.h"
+=======
 #include <fstream>
 #include <streambuf>
 #include <string>
@@ -20,12 +24,17 @@ limitations under the License. */
 
 #include "paddle/fluid/framework/variable.h"
 #include "paddle/fluid/jit/property.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/core/enforce.h"
 #include "paddle/phi/core/errors.h"
 
 namespace paddle {
 namespace jit {
 
+<<<<<<< HEAD
+int Property::Size() const { return property_.entrys_size(); }
+
+=======
 using Variable = paddle::framework::Variable;
 
 void Property::DeserializationFromString(const std::string &str) {
@@ -121,6 +130,7 @@ std::unordered_map<std::string, std::shared_ptr<Variable>> Property::Values() {
   return res;
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void Property::SetFloat(const float &f) {
   auto type = proto::ValueProto::FLOAT;
   auto entry = property_.add_entrys();
@@ -141,6 +151,9 @@ void Property::SetFloat(const std::string &name, const float &f) {
 float Property::GetFloat(const std::string &name) const {
   for (int i = 0; i < Size(); i++) {
     auto e = property_.entrys(i);
+<<<<<<< HEAD
+    if (e.has_name() && e.name() == name) {
+=======
 
     if (e.has_name() && e.name() == name) {
       PADDLE_ENFORCE(
@@ -151,6 +164,7 @@ float Property::GetFloat(const std::string &name) const {
                                           proto::ValueProto::FLOAT,
                                           e.type()));
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       return e.f();
     }
   }
@@ -199,6 +213,8 @@ void Property::SetFloats(const std::string &name, const std::vector<float> &v) {
           << " for name: " << name;
 }
 
+<<<<<<< HEAD
+=======
 std::vector<float> Property::GetFloats(const std::string &name) {
   for (int i = 0; i < Size(); i++) {
     auto e = property_.entrys(i);
@@ -219,6 +235,7 @@ std::vector<float> Property::GetFloats(const std::string &name) {
   return std::vector<float>();
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void Property::SetInt64(const int64_t &i) {
   auto type = proto::ValueProto::INT;
   auto entry = property_.add_entrys();
@@ -236,6 +253,8 @@ void Property::SetInt64(const std::string &name, const int64_t &i) {
   VLOG(3) << "Property: set_int " << i << " name: " << name;
 }
 
+<<<<<<< HEAD
+=======
 int64_t Property::GetInt64(const std::string &name) {
   for (int i = 0; i < Size(); i++) {
     auto e = property_.entrys(i);
@@ -254,6 +273,7 @@ int64_t Property::GetInt64(const std::string &name) {
   return 0;
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void Property::SetInt64s(const std::vector<int64_t> &v) {
   auto type = proto::ValueProto::INTS;
   auto entry = property_.add_entrys();
@@ -276,6 +296,8 @@ void Property::SetInt64s(const std::string &name,
   VLOG(3) << "Property: set_ints " << v[0] << " name: " << name;
 }
 
+<<<<<<< HEAD
+=======
 std::vector<int> Property::GetInt64s(const std::string &name) {
   for (int i = 0; i < Size(); i++) {
     auto e = property_.entrys(i);
@@ -301,6 +323,7 @@ std::vector<int> Property::GetInt64s(const std::string &name) {
   return {};
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void Property::SetString(const std::string &s) {
   auto type = proto::ValueProto::STRING;
   auto entry = property_.add_entrys();
@@ -318,6 +341,8 @@ void Property::SetString(const std::string &name, const std::string &s) {
   VLOG(3) << "Property: set_string " << s << " name: " << name;
 }
 
+<<<<<<< HEAD
+=======
 std::string Property::GetString(const std::string &name) {
   for (int i = 0; i < Size(); i++) {
     auto e = property_.entrys(i);
@@ -336,6 +361,7 @@ std::string Property::GetString(const std::string &name) {
   return {};
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void Property::SetStrings(const std::vector<std::string> &v) {
   auto type = proto::ValueProto::STRINGS;
   auto entry = property_.add_entrys();
@@ -358,6 +384,8 @@ void Property::SetStrings(const std::string &name,
   VLOG(3) << "Property: set_strings " << v[0] << " name: " << name;
 }
 
+<<<<<<< HEAD
+=======
 std::vector<std::string> Property::GetStrings(const std::string &name) {
   for (int i = 0; i < Size(); i++) {
     auto e = property_.entrys(i);
@@ -378,5 +406,6 @@ std::vector<std::string> Property::GetStrings(const std::string &name) {
   return {};
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }  // namespace jit
 }  // namespace paddle

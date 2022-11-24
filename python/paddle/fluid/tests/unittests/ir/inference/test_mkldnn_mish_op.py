@@ -22,19 +22,35 @@ import hypothesis.strategies as st
 
 
 class TestMkldnnMishOp(MkldnnAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         # if mode is channel, and in_shape is 1 rank
+<<<<<<< HEAD
+        if len(program_config.inputs['input_data'].shape
+               ) == 1 and program_config.ops[0].attrs['mode'] == 'channel':
+=======
         if (
             len(program_config.inputs['input_data'].shape) == 1
             and program_config.ops[0].attrs['mode'] == 'channel'
         ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             return False
         return True
 
     def sample_program_configs(self, *args, **kwargs):
+
         def generate_input(*args, **kwargs):
             return np.random.random(kwargs['in_shape']).astype(np.float32)
 
+<<<<<<< HEAD
+        mish_op = OpConfig(type="mish",
+                           inputs={"X": ["input_data"]},
+                           outputs={"Out": ["output_data"]},
+                           attrs={
+                               "mode": kwargs['mode'],
+                               "data_format": kwargs['data_format']
+                           })
+=======
         mish_op = OpConfig(
             type="mish",
             inputs={"X": ["input_data"]},
@@ -44,14 +60,20 @@ class TestMkldnnMishOp(MkldnnAutoScanTest):
                 "data_format": kwargs['data_format'],
             },
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         program_config = ProgramConfig(
             ops=[mish_op],
             weights={},
             inputs={
+<<<<<<< HEAD
+                "input_data":
+                TensorConfig(data_gen=partial(generate_input, *args, **kwargs)),
+=======
                 "input_data": TensorConfig(
                     data_gen=partial(generate_input, *args, **kwargs)
                 ),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             },
             outputs=["output_data"],
         )
@@ -62,6 +84,13 @@ class TestMkldnnMishOp(MkldnnAutoScanTest):
         config = self.create_inference_config(use_mkldnn=True)
         yield config, (1e-5, 1e-5)
 
+<<<<<<< HEAD
+    @given(mode=st.sampled_from(['all', 'channel', 'element']),
+           data_format=st.sampled_from(['NCHW', 'NHWC']),
+           in_shape=st.lists(st.integers(min_value=1, max_value=32),
+                             min_size=1,
+                             max_size=4))
+=======
     @given(
         mode=st.sampled_from(['all', 'channel', 'element']),
         data_format=st.sampled_from(['NCHW', 'NHWC']),
@@ -69,6 +98,7 @@ class TestMkldnnMishOp(MkldnnAutoScanTest):
             st.integers(min_value=1, max_value=32), min_size=1, max_size=4
         ),
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def test(self, *args, **kwargs):
         self.run_test(quant=False, *args, **kwargs)
 

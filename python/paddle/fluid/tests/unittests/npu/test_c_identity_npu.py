@@ -23,14 +23,21 @@ paddle.enable_static()
 
 
 class TestIdentityOp(TestDistBase):
+
     def _setup_config(self):
         pass
 
     def test_identity(self, col_type="identity"):
         dist_env = os.environ
+<<<<<<< HEAD
+        self.check_with_place("collective_identity_op_npu.py",
+                              col_type,
+                              need_envs=dist_env)
+=======
         self.check_with_place(
             "collective_identity_op_npu.py", col_type, need_envs=dist_env
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == '__main__':

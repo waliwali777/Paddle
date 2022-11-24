@@ -202,9 +202,14 @@ def _print_summary(summary_table, total):
     parmas = total['params']
     flops = total['flops']
     print(summary_table)
+<<<<<<< HEAD
+    print('Total PARAMs: {}({:.4f}M)'.format(sum(parmas),
+                                             sum(parmas) / (10**6)))
+=======
     print(
         'Total PARAMs: {}({:.4f}M)'.format(sum(parmas), sum(parmas) / (10**6))
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     print('Total FLOPs: {}({:.2f}G)'.format(sum(flops), sum(flops) / 10**9))
     print(
         "Notice: \n now supported ops include [Conv, DepthwiseConv, FC(mul), BatchNorm, Pool, Activation(sigmoid, tanh, relu, leaky_relu, prelu)]"

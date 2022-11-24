@@ -54,7 +54,11 @@ class CPUQuantizePass : public FusePassBase {
   void QuantizePool(Graph* graph) const;
   void QuantizeConcat(Graph* graph) const;
   void QuantizePriorBox(Graph* graph) const;
+<<<<<<< HEAD
+  void QuantizeMatmul(Graph* graph) const;
+=======
   void QuantizeMatmul(Graph* graph, bool with_residual) const;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   void QuantizeElementwise(Graph* graph,
                            const std::string& elementwise_type) const;
   void QuantizeFusionGru(Graph* graph) const;

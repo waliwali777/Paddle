@@ -31,9 +31,22 @@ os.environ['CPU_NUM'] = '2'
 
 
 class BuildIrMemOptBase(unittest.TestCase):
+
     def setup_reader(self):
         self.batch_size = 32
         self.word_dict = paddle.dataset.imdb.word_dict()
+<<<<<<< HEAD
+        self.train_reader = paddle.batch(paddle.dataset.imdb.train(
+            self.word_dict),
+                                         batch_size=self.batch_size)
+
+    def check_network_convergence(self,
+                                  network,
+                                  use_cuda=True,
+                                  use_ir_memory_optimize=True,
+                                  enable_inplace=True,
+                                  iter=5):
+=======
         self.train_reader = paddle.batch(
             paddle.dataset.imdb.train(self.word_dict),
             batch_size=self.batch_size,
@@ -47,6 +60,7 @@ class BuildIrMemOptBase(unittest.TestCase):
         enable_inplace=True,
         iter=5,
     ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         if use_cuda and not core.is_compiled_with_cuda():
             print('Skip use_cuda=True because Paddle is not compiled with cuda')
             return
@@ -59,9 +73,16 @@ class BuildIrMemOptBase(unittest.TestCase):
         fluid.default_startup_program().random_seed = 100
         fluid.default_main_program().random_seed = 100
 
+<<<<<<< HEAD
+        data = fluid.layers.data(name="words",
+                                 shape=[1],
+                                 dtype="int64",
+                                 lod_level=1)
+=======
         data = fluid.layers.data(
             name="words", shape=[1], dtype="int64", lod_level=1
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         label = fluid.layers.data(name="label", shape=[1], dtype="int64")
 
@@ -80,9 +101,14 @@ class BuildIrMemOptBase(unittest.TestCase):
         exe.run(fluid.default_startup_program())
 
         train_cp = compiler.CompiledProgram(fluid.default_main_program())
+<<<<<<< HEAD
+        train_cp = train_cp.with_data_parallel(loss_name=cost.name,
+                                               build_strategy=build_strategy)
+=======
         train_cp = train_cp.with_data_parallel(
             loss_name=cost.name, build_strategy=build_strategy
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         fetch_list = [cost.name]
 
         begin = time.time()
@@ -102,10 +128,15 @@ class BuildIrMemOptBase(unittest.TestCase):
                 break
         end = time.time()
 
+<<<<<<< HEAD
+        print("%.4f Instance per second" % ((self.batch_size * iter) /
+                                            (end - begin)))
+=======
         print(
             "%.4f Instance per second"
             % ((self.batch_size * iter) / (end - begin))
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         print(first_loss, last_loss)
         avg_last_loss_val = np.array(last_loss).mean()
@@ -119,6 +150,7 @@ class BuildIrMemOptBase(unittest.TestCase):
 
 
 class TestIrMemOptBase(BuildIrMemOptBase):
+
     def setUp(self):
         self.network = None
 
@@ -139,6 +171,14 @@ class TestIrMemOptBase(BuildIrMemOptBase):
                     self.network
                 )
 
+<<<<<<< HEAD
+                self.assertAlmostEquals(np.mean(baseline_last_loss),
+                                        np.mean(cur_last_loss),
+                                        delta=1e-6)
+                self.assertAlmostEquals(np.mean(baseline_first_loss),
+                                        np.mean(cur_first_loss),
+                                        delta=1e-6)
+=======
                 self.assertAlmostEquals(
                     np.mean(baseline_last_loss),
                     np.mean(cur_last_loss),
@@ -149,3 +189,4 @@ class TestIrMemOptBase(BuildIrMemOptBase):
                     np.mean(cur_first_loss),
                     delta=1e-6,
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f

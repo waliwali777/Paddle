@@ -232,11 +232,19 @@ const proto::VarType::TensorDesc &VarDesc::tensor_desc() const {
   PADDLE_ENFORCE_EQ(
       desc_.has_type(),
       true,
+<<<<<<< HEAD
+      platform::errors::NotFound("The variable's type was not be set."));
+  PADDLE_ENFORCE_EQ(
+      desc_.type().has_type(),
+      true,
+      platform::errors::NotFound("The variable's type was not be set."));
+=======
       platform::errors::NotFound("The variable's type was not set."));
   PADDLE_ENFORCE_EQ(
       desc_.type().has_type(),
       true,
       platform::errors::NotFound("The variable's type was not set."));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   switch (desc_.type().type()) {
     case proto::VarType::SELECTED_ROWS:
       return desc_.type().selected_rows();
@@ -359,12 +367,21 @@ void VarDesc::SetAttr(const std::string &name, const Attribute &v) {
   bool valid = attr_type == proto::AttrType::INT ||
                attr_type == proto::AttrType::STRING ||
                attr_type == proto::AttrType::INTS;
+<<<<<<< HEAD
+  PADDLE_ENFORCE_EQ(
+      valid,
+      true,
+      platform::errors::InvalidArgument("The value for attr (%s) must be "
+                                        "one of list or int or string.",
+                                        name));
+=======
   PADDLE_ENFORCE_EQ(valid,
                     true,
                     platform::errors::InvalidArgument(
                         "The value for attr (%s) must be "
                         "one of int, string, list of int for now.",
                         name));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   this->attrs_[name] = v;
   need_updated_ = true;

@@ -23,6 +23,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class TestComplexVariable(unittest.TestCase):
+
     def compare(self):
         a = np.array(
             [[1.0 + 1.0j, 2.0 + 1.0j], [3.0 + 1.0j, 4.0 + 1.0j]]
@@ -46,6 +47,18 @@ class TestComplexVariable(unittest.TestCase):
         self.compare()
 
     def test_convert_np_dtype_to_dtype(self):
+<<<<<<< HEAD
+        self.assertEqual(convert_np_dtype_to_dtype_(np.complex64),
+                         core.VarDesc.VarType.COMPLEX64)
+        self.assertEqual(convert_np_dtype_to_dtype_(np.complex64),
+                         core.VarDesc.VarType.COMPLEX64)
+
+    def test_convert_dtype(self):
+        self.assertEqual(convert_dtype(core.VarDesc.VarType.COMPLEX64),
+                         "complex64")
+        self.assertEqual(convert_dtype(core.VarDesc.VarType.COMPLEX128),
+                         "complex128")
+=======
         self.assertEqual(
             convert_np_dtype_to_dtype_(np.complex64),
             core.VarDesc.VarType.COMPLEX64,
@@ -62,6 +75,7 @@ class TestComplexVariable(unittest.TestCase):
         self.assertEqual(
             convert_dtype(core.VarDesc.VarType.COMPLEX128), "complex128"
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_eager(self):
         with _test_eager_guard():

@@ -76,6 +76,12 @@ class ComputePropagateScalesMkldnnPass : public FusePassBase {
                            Scope* scope,
                            StringPairMap* var_quant_scales) const;
 
+<<<<<<< HEAD
+  void UpdateScaleOpInScale(Node* op_node,
+                            const std::string& input_name,
+                            const std::string& output_name,
+                            StringPairMap* var_quant_scales) const;
+=======
   void UpdateReluOutputScales(ir::Graph* graph,
                               StringPairMap* var_quant_scales) const;
 
@@ -83,6 +89,7 @@ class ComputePropagateScalesMkldnnPass : public FusePassBase {
                                 const std::string& input_name,
                                 const std::string& output_name,
                                 StringPairMap* var_quant_scales) const;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   std::unordered_set<std::string> UpdateScales(
       ir::Graph* graph,

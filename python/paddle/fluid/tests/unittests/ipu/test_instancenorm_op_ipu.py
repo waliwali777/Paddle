@@ -21,6 +21,7 @@ from paddle.fluid.tests.unittests.ipu.op_test_ipu import IPUOpTest
 
 
 class TestBase(IPUOpTest):
+
     def setUp(self):
         self.set_atol()
         self.set_training()
@@ -48,6 +49,24 @@ class TestBase(IPUOpTest):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+
+        if self.is_training:
+            ch = self.feed_shape[0][1]
+            conv1 = paddle.static.nn.conv2d(x,
+                                            num_filters=ch,
+                                            filter_size=3,
+                                            bias_attr=False)
+            scale = paddle.ParamAttr(trainable=True)
+            bias = paddle.ParamAttr(trainable=True)
+            out = paddle.fluid.layers.nn.instance_norm(conv1,
+                                                       param_attr=scale,
+                                                       bias_attr=bias,
+                                                       **self.attrs)
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
@@ -62,14 +81,22 @@ class TestBase(IPUOpTest):
             out = paddle.fluid.layers.nn.instance_norm(
                 conv1, param_attr=scale, bias_attr=bias, **self.attrs
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             loss = paddle.mean(out)
             adam = paddle.optimizer.Adam(learning_rate=1e-2)
             adam.minimize(loss)
             self.fetch_list = [loss.name]
         else:
+<<<<<<< HEAD
+            out = paddle.fluid.layers.nn.instance_norm(x,
+                                                       param_attr=True,
+                                                       bias_attr=True,
+                                                       **self.attrs)
+=======
             out = paddle.fluid.layers.nn.instance_norm(
                 x, param_attr=True, bias_attr=True, **self.attrs
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             self.fetch_list = [out.name]
 
     def run_model(self, exec_mode):
@@ -84,6 +111,7 @@ class TestBase(IPUOpTest):
 
 
 class TestTrainCase1(TestBase):
+
     def set_training(self):
         self.is_training = True
         self.epoch = 10

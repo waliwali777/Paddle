@@ -16,6 +16,11 @@ import paddle
 from paddle.fluid.framework import _test_eager_guard
 
 import numpy as np
+<<<<<<< HEAD
+import scipy
+import scipy.sparse as sp
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 import unittest
 import os
 import re
@@ -37,8 +42,12 @@ def get_cuda_version():
 
 @unittest.skipIf(
     not paddle.is_compiled_with_cuda() or get_cuda_version() < 11000,
+<<<<<<< HEAD
+    "paddle is not compiled with CUDA and cuda version need to >= 11.0")
+=======
     "paddle is not compiled with CUDA and cuda version need to >= 11.0",
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 class TestCsrMv(unittest.TestCase):
     # x: csr-matrix, y: dense-vec, out: dense-vec
     def test_mv(self):
@@ -60,6 +69,17 @@ class TestCsrMv(unittest.TestCase):
             sp_x.stop_gradient = False
             sp_vec = origin_vec.detach()
             sp_vec.stop_gradient = False
+<<<<<<< HEAD
+            sp_out = paddle.incubate.sparse.mv(sp_x, sp_vec)
+            sp_out.backward()
+
+            self.assertTrue(np.allclose(sp_out.numpy(), dense_out.numpy()))
+            self.assertTrue(
+                np.allclose(sp_x.grad.to_dense().numpy(),
+                            (dense_x.grad * mask).numpy()))
+            self.assertTrue(
+                np.allclose(sp_vec.grad.numpy(), dense_vec.grad.numpy()))
+=======
             sp_out = paddle.sparse.mv(sp_x, sp_vec)
             sp_out.backward()
 
@@ -74,12 +94,17 @@ class TestCsrMv(unittest.TestCase):
             np.testing.assert_allclose(
                 sp_vec.grad.numpy(), dense_vec.grad.numpy(), rtol=1e-05
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 @unittest.skipIf(
     not paddle.is_compiled_with_cuda() or get_cuda_version() < 11000,
+<<<<<<< HEAD
+    "paddle is not compiled with CUDA and cuda version need to >= 11.0")
+=======
     "paddle is not compiled with CUDA and cuda version need to >= 11.0",
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 class TestCooMv(unittest.TestCase):
     # x: csr-matrix, y: dense-vec, out: dense-vec
     def test_mv(self):
@@ -101,6 +126,17 @@ class TestCooMv(unittest.TestCase):
             sp_x.stop_gradient = False
             sp_vec = origin_vec.detach()
             sp_vec.stop_gradient = False
+<<<<<<< HEAD
+            sp_out = paddle.incubate.sparse.mv(sp_x, sp_vec)
+            sp_out.backward()
+
+            self.assertTrue(np.allclose(sp_out.numpy(), dense_out.numpy()))
+            self.assertTrue(
+                np.allclose(sp_x.grad.to_dense().numpy(),
+                            (dense_x.grad * mask).numpy()))
+            self.assertTrue(
+                np.allclose(sp_vec.grad.numpy(), dense_vec.grad.numpy()))
+=======
             sp_out = paddle.sparse.mv(sp_x, sp_vec)
             sp_out.backward()
 
@@ -115,6 +151,7 @@ class TestCooMv(unittest.TestCase):
             np.testing.assert_allclose(
                 sp_vec.grad.numpy(), dense_vec.grad.numpy(), rtol=1e-05
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ from paddle.distributed.auto_parallel.tuner import tunable_space as ts
 
 
 class TestTunableSpace(unittest.TestCase):
+
     def test_fixed(self):
         space = ts.TunableSpace()
         fixed = space.fixed("fixed", default=4)
@@ -72,9 +73,16 @@ class TestTunableSpace(unittest.TestCase):
 
     def test_float_range(self):
         space = ts.TunableSpace()
+<<<<<<< HEAD
+        float_range = space.float_range("float_range",
+                                        start=0.4,
+                                        stop=4.4,
+                                        default=2.0)
+=======
         float_range = space.float_range(
             "float_range", start=0.4, stop=4.4, default=2.0
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.assertEqual(space.values["float_range"], 2.0)
         self.assertEqual(len(space.variables), 1)
         self.assertEqual(space.variables["float_range"].name, "float_range")

@@ -19,6 +19,7 @@ import numpy as np
 
 
 class TestLoDTensorArray(unittest.TestCase):
+
     def test_get_set(self):
         scope = core.Scope()
         arr = scope.var('tmp_lod_tensor_array')
@@ -43,11 +44,17 @@ class TestLoDTensorArray(unittest.TestCase):
             t.set_recursive_sequence_lengths([[1]])
             tensor_array[i] = t
             t = tensor_array[i]
+<<<<<<< HEAD
+            self.assertEqual(numpy.array(t),
+                             numpy.array([i + 10], dtype='float32'))
+=======
             self.assertEqual(np.array(t), np.array([i + 10], dtype='float32'))
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             self.assertEqual([[1]], t.recursive_sequence_lengths())
 
 
 class TestCreateArray(unittest.TestCase):
+
     def setUp(self):
         self.place = paddle.CPUPlace()
         self.shapes = [[10, 4], [8, 12], [1]]

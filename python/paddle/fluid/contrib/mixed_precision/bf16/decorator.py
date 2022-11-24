@@ -119,9 +119,15 @@ class OptimizerWithMixedPrecision:
             if loss.dtype != core.VarDesc.VarType.FP32:
                 loss = loss.astype('float32')
 
+<<<<<<< HEAD
+            params_grads = self._optimizer.backward(loss, startup_program,
+                                                    parameter_list, no_grad_set,
+                                                    callbacks)
+=======
             params_grads = self._optimizer.backward(
                 loss, startup_program, parameter_list, no_grad_set, callbacks
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return params_grads
 
     def amp_init(
@@ -187,11 +193,17 @@ class OptimizerWithMixedPrecision:
             )
         if test_program is not None:
             if self._use_pure_bf16:
+<<<<<<< HEAD
+                cast_model_to_bf16(test_program,
+                                   amp_lists=self._amp_lists,
+                                   use_bf16_guard=self._use_bf16_guard)
+=======
                 cast_model_to_bf16(
                     test_program,
                     amp_lists=self._amp_lists,
                     use_bf16_guard=self._use_bf16_guard,
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             elif use_bf16_test:
                 rewrite_program_bf16(test_program, amp_lists=self._amp_lists)
 
@@ -239,12 +251,19 @@ class OptimizerWithMixedPrecision:
                 "The decorated optimizer has its own `minimize` method, but it will not be executed."
             )
 
+<<<<<<< HEAD
+        params_grads = self.backward(loss,
+                                     startup_program=startup_program,
+                                     parameter_list=parameter_list,
+                                     no_grad_set=no_grad_set)
+=======
         params_grads = self.backward(
             loss,
             startup_program=startup_program,
             parameter_list=parameter_list,
             no_grad_set=no_grad_set,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         optimize_ops = self.apply_optimize(loss, startup_program, params_grads)
 

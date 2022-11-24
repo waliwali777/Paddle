@@ -31,9 +31,18 @@ def test_trainable():
 
 
 class TestTrainable(unittest.TestCase):
+<<<<<<< HEAD
+
+    def check_trainable(self,
+                        model,
+                        feed_dict,
+                        op_count,
+                        optimizer=fluid.optimizer.Adam()):
+=======
     def check_trainable(
         self, model, feed_dict, op_count, optimizer=fluid.optimizer.Adam()
     ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         place = fluid.CPUPlace()
         exe = fluid.Executor(place)
 
@@ -61,9 +70,24 @@ class TestTrainable(unittest.TestCase):
         feed_dict = {'image': img, 'label': label}
         # Note that, because the Weight of FC is not trainable and the x is stop_gradient,
         # so the 'mul_grad' should not be appended.
+        self.check_trainable(test_trainable,
+                             feed_dict,
+                             op_count={
+                                 'adam': 1,
+                                 'scale': 0,
+                                 'mul_grad': 0
+                             })
         self.check_trainable(
             test_trainable,
             feed_dict,
+<<<<<<< HEAD
+            op_count={
+                'adamax': 1,
+                'scale': 1,
+                'mul_grad': 0
+            },
+            optimizer=fluid.optimizer.Adamax(learning_rate=0.2))
+=======
             op_count={'adam': 1, 'scale': 0, 'mul_grad': 0},
         )
         self.check_trainable(
@@ -72,6 +96,7 @@ class TestTrainable(unittest.TestCase):
             op_count={'adamax': 1, 'scale': 1, 'mul_grad': 0},
             optimizer=fluid.optimizer.Adamax(learning_rate=0.2),
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == '__main__':

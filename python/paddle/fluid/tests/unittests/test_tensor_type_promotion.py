@@ -19,6 +19,7 @@ from paddle.fluid.framework import _test_eager_guard
 
 
 class TestTensorTypePromotion(unittest.TestCase):
+
     def setUp(self):
         self.x = paddle.to_tensor([2, 3])
         self.y = paddle.to_tensor([1.0, 2.0])
@@ -28,33 +29,52 @@ class TestTensorTypePromotion(unittest.TestCase):
             warnings.simplefilter("always")
             self.x + self.y
             self.assertTrue(
+<<<<<<< HEAD
+                "The dtype of left and right variables are not the same" in str(
+                    context[-1].message))
+=======
                 "The dtype of left and right variables are not the same"
                 in str(context[-1].message)
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def sub_operator(self):
         with warnings.catch_warnings(record=True) as context:
             warnings.simplefilter("always")
             self.x - self.y
             self.assertTrue(
+<<<<<<< HEAD
+                "The dtype of left and right variables are not the same" in str(
+                    context[-1].message))
+=======
                 "The dtype of left and right variables are not the same"
                 in str(context[-1].message)
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def mul_operator(self):
         with warnings.catch_warnings(record=True) as context:
             warnings.simplefilter("always")
             self.x * self.y
             self.assertTrue(
+<<<<<<< HEAD
+                "The dtype of left and right variables are not the same" in str(
+                    context[-1].message))
+=======
                 "The dtype of left and right variables are not the same"
                 in str(context[-1].message)
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def div_operator(self):
         with warnings.catch_warnings(record=True) as context:
             warnings.simplefilter("always")
             self.x / self.y
             self.assertTrue(
+<<<<<<< HEAD
+                "The dtype of left and right variables are not the same" in str(
+                    context[-1].message))
+=======
                 "The dtype of left and right variables are not the same"
                 in str(context[-1].message)
             )
@@ -68,6 +88,7 @@ class TestTensorTypePromotion(unittest.TestCase):
         self.sub_operator()
         self.mul_operator()
         self.div_operator()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == '__main__':

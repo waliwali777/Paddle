@@ -34,7 +34,11 @@ PD_DECLARE_KERNEL(relu, OneDNN, ONEDNN);
 USE_OP_ITSELF(transpose);
 USE_OP_DEVICE_KERNEL(transpose, MKLDNN);
 USE_OP_ITSELF(shape);
+<<<<<<< HEAD
+USE_OP_DEVICE_KERNEL(shape, MKLDNN);
+=======
 PD_DECLARE_KERNEL(shape, OneDNN, ONEDNN);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 USE_OP_ITSELF(crop);
 USE_OP_DEVICE_KERNEL(crop, CPU);
 
@@ -230,9 +234,16 @@ TEST(test_pool2d_crop_nhwc, cpu_place) {
   platform::CPUPlace p;
   framework::Scope scope;
 
+<<<<<<< HEAD
+  InputVars input_name = {"x",
+                          scope.Var("x")->GetMutable<framework::LoDTensor>()};
+  InputVars second_crop_input_name = {
+      "v", scope.Var("v")->GetMutable<framework::LoDTensor>()};
+=======
   InputVars input_name = {"x", scope.Var("x")->GetMutable<phi::DenseTensor>()};
   InputVars second_crop_input_name = {
       "v", scope.Var("v")->GetMutable<phi::DenseTensor>()};
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   // Initialize input data
   std::uniform_real_distribution<float> dist(10.0f, 20.0f);
   std::mt19937 engine;
@@ -255,8 +266,13 @@ TEST(test_pool2d_crop_nhwc, cpu_place) {
                          dnnl::memory::format_tag::nhwc);
   second_crop_input_name.tensor->set_mem_desc(second_crop_input_md);
 
+<<<<<<< HEAD
+  scope.Var("y")->GetMutable<framework::LoDTensor>();
+  auto *z = scope.Var("z")->GetMutable<framework::LoDTensor>();
+=======
   scope.Var("y")->GetMutable<phi::DenseTensor>();
   auto *z = scope.Var("z")->GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   auto &pool = platform::DeviceContextPool::Instance();
 

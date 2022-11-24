@@ -67,6 +67,10 @@ std::vector<phi::MetaTensor> MakeMetaTensor(
 std::vector<phi::MetaTensor> MakeMetaTensor(
     const std::vector<phi::DenseTensor*>& tensors);
 
+<<<<<<< HEAD
+phi::MetaTensor MakeMetaTensor(
+    const paddle::optional<phi::SelectedRows>& tensor);
+=======
 std::vector<phi::MetaTensor> MakeMetaTensor(
     const std::vector<const phi::SelectedRows*>& tensors);
 
@@ -84,6 +88,7 @@ std::vector<phi::MetaTensor> MakeMetaTensor(
 
 std::vector<phi::MetaTensor> MakeMetaTensor(
     const std::vector<const phi::TensorBase*>& tensors);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 /* ------------------ for output ----------------------- */
 

@@ -209,6 +209,20 @@ class ResNetUnitOp : public framework::OperatorWithKernel {
     // and var tensors should be float when input tensor's dtype is float16.
     auto bn_param_type = framework::proto::VarType::FP32;
 
+<<<<<<< HEAD
+    PADDLE_ENFORCE_EQ(
+        bn_param_type,
+        framework::TransToProtoVarType(ctx.Input<Tensor>("ScaleX")->dtype()),
+        platform::errors::InvalidArgument(
+            "Scale input should be of float type"));
+    PADDLE_ENFORCE_EQ(
+        bn_param_type,
+        framework::TransToProtoVarType(ctx.Input<Tensor>("BiasX")->dtype()),
+        platform::errors::InvalidArgument(
+            "Bias input should be of float type"));
+    framework::LibraryType library = framework::LibraryType::kPlain;
+    framework::DataLayout layout = framework::DataLayout::kAnyLayout;
+=======
     PADDLE_ENFORCE_EQ(bn_param_type,
                       framework::TransToProtoVarType(
                           ctx.Input<phi::DenseTensor>("ScaleX")->dtype()),
@@ -221,6 +235,7 @@ class ResNetUnitOp : public framework::OperatorWithKernel {
                           "Bias input should be of float type"));
     framework::LibraryType library = framework::LibraryType::kPlain;
     phi::DataLayout layout = phi::DataLayout::kAnyLayout;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     return framework::OpKernelType(
         input_data_type, ctx.GetPlace(), layout, library);
   }

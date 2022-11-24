@@ -33,6 +33,16 @@ LoD SliceInLevel(const LoD &in,
                  size_t level,
                  size_t elem_begin,
                  size_t elem_end) {
+<<<<<<< HEAD
+  PADDLE_ENFORCE_LT(level,
+                    in.size(),
+                    platform::errors::InvalidArgument(
+                        "The input LoDTensor's lod level should be less than "
+                        "the LoD size, but received level is %d, LoD is %s.",
+                        level,
+                        in));
+  PADDLE_ENFORCE_LT(
+=======
   PADDLE_ENFORCE_LT(
       level,
       in.size(),
@@ -42,6 +52,7 @@ LoD SliceInLevel(const LoD &in,
           level,
           in));
   PADDLE_ENFORCE_LT(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       elem_begin,
       elem_end,
       platform::errors::InvalidArgument(
@@ -205,7 +216,11 @@ LoDAndOffset GetSubLoDAndAbsoluteOffset(const LoD &lod,
 }
 
 void SerializeToStream(std::ostream &os,
+<<<<<<< HEAD
+                       const LoDTensor &tensor,
+=======
                        const phi::DenseTensor &tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                        const platform::DeviceContext &dev_ctx) {
   phi::SerializeToStream(os, tensor, dev_ctx);
 }
@@ -226,6 +241,75 @@ void DeserializeFromStream(std::istream &os, phi::DenseTensor *tensor) {
 }
 
 void DeserializeFromStream(std::istream &is,
+<<<<<<< HEAD
+                           LoDTensor *tensor,
+                           const platform::DeviceContext &dev_ctx,
+                           const size_t &seek,
+                           const std::vector<int64_t> &shape) {
+  {
+    // the 1st field, unit32_t version for LoDTensor
+    uint32_t version;
+    is.read(reinterpret_cast<char *>(&version), sizeof(version));
+    PADDLE_ENFORCE_EQ(framework::IsTensorVersionSupported(version),
+                      true,
+                      platform::errors::InvalidArgument(
+                          "Tensor version %u is not supported.", version));
+    PADDLE_ENFORCE_EQ(
+        version,
+        0U,
+        platform::errors::InvalidArgument(
+            "Deserialize to tensor failed, maybe the loaded file is "
+            "not a paddle model(expected file format: 0, but %u found).",
+            version));
+  }
+  {
+    // the 2st field, LoD information
+    uint64_t lod_level;
+    is.read(reinterpret_cast<char *>(&lod_level), sizeof(lod_level));
+    auto &lod = *tensor->mutable_lod();
+    lod.resize(lod_level);
+  }
+  // the 3st filed, Tensor
+  TensorFromStream(is, static_cast<Tensor *>(tensor), dev_ctx, seek, shape);
+}
+
+void DeserializeFromStream(std::istream &is,
+                           LoDTensor *tensor,
+                           const platform::DeviceContext &dev_ctx) {
+  {
+    // the 1st field, unit32_t version for LoDTensor
+    uint32_t version;
+    is.read(reinterpret_cast<char *>(&version), sizeof(version));
+    PADDLE_ENFORCE_EQ(framework::IsTensorVersionSupported(version),
+                      true,
+                      platform::errors::InvalidArgument(
+                          "Tensor version %u is not supported.", version));
+    PADDLE_ENFORCE_EQ(
+        version,
+        0U,
+        platform::errors::InvalidArgument(
+            "Deserialize to tensor failed, maybe the loaded file is "
+            "not a paddle model(expected file format: 0, but %u found).",
+            version));
+  }
+  {
+    // the 2st field, LoD information
+    uint64_t lod_level;
+    is.read(reinterpret_cast<char *>(&lod_level), sizeof(lod_level));
+    auto &lod = *tensor->mutable_lod();
+    lod.resize(lod_level);
+    for (uint64_t i = 0; i < lod_level; ++i) {
+      uint64_t size;
+      is.read(reinterpret_cast<char *>(&size), sizeof(size));
+      std::vector<size_t> tmp(size / sizeof(size_t));
+      is.read(reinterpret_cast<char *>(tmp.data()),
+              static_cast<std::streamsize>(size));
+      lod[i] = tmp;
+    }
+  }
+  // the 3st filed, Tensor
+  TensorFromStream(is, static_cast<Tensor *>(tensor), dev_ctx);
+=======
                            phi::DenseTensor *tensor,
                            const platform::DeviceContext &dev_ctx,
                            const size_t &seek,
@@ -237,6 +321,7 @@ void DeserializeFromStream(std::istream &is,
                            phi::DenseTensor *tensor,
                            const platform::DeviceContext &dev_ctx) {
   phi::DeserializeFromStream(is, tensor, dev_ctx);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 LoD ConvertToOffsetBasedLoD(const LoD &length_lod) {
@@ -256,8 +341,13 @@ LoD ConvertToOffsetBasedLoD(const LoD &length_lod) {
   return offset_lod;
 }
 
+<<<<<<< HEAD
+std::vector<LoDTensor> SplitLoDTensor(
+    const LoDTensor &src, const std::vector<platform::Place> places) {
+=======
 std::vector<phi::DenseTensor> SplitLoDTensor(
     const phi::DenseTensor &src, const std::vector<platform::Place> places) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   PADDLE_ENFORCE_GT(places.size(),
                     0,
                     platform::errors::InvalidArgument(
@@ -380,6 +470,30 @@ void MergeLoDTensor(phi::DenseTensor *target,
           platform::errors::InvalidArgument(
               "phi::DenseTensor layout does not match, expected layout is %s, "
               "actual layout is %s.",
+<<<<<<< HEAD
+              DataLayoutToString(new_layout),
+              DataLayoutToString(t->layout())));
+      PADDLE_ENFORCE_EQ(
+          phi::product(new_dim) / new_dim[0],
+          phi::product(t->dims()) / t->dims()[0],
+          platform::errors::InvalidArgument(
+              "LoDTensor dimension does not match, all dimensions except the "
+              "first dimension need to be equal,"
+              "but expected dimension is %s, actual dimension is %s.",
+              new_dim,
+              t->dims()));
+      new_dim[0] += t->dims()[0];
+    }
+
+    auto &lod = t->lod();
+    PADDLE_ENFORCE_EQ(new_lod.size(),
+                      lod.size(),
+                      platform::errors::InvalidArgument(
+                          "The LoD information of LoDTensor does not match, "
+                          "expected LoD is %s, actual LoD is %s.",
+                          new_lod,
+                          lod));
+=======
               phi::DataLayoutToString(new_layout),
               phi::DataLayoutToString(t->layout())));
       auto tensor_dims = t->dims();
@@ -411,6 +525,7 @@ void MergeLoDTensor(phi::DenseTensor *target,
             "expected LoD is %s, actual LoD is %s.",
             new_lod,
             lod));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     for (size_t j = 0; j < lod.size(); ++j) {
       auto &sub_lod = new_lod[j];
       size_t offset = sub_lod.back();

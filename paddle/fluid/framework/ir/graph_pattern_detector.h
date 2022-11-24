@@ -526,6 +526,12 @@ struct ConvBN : public PatternBase {
   PATTERN_DECL_NODE(bn_saved_variance);
 };
 
+<<<<<<< HEAD
+struct OperatorActivation : public PatternBase {
+  OperatorActivation(PDPattern* pattern, const std::string& name_scope)
+      : PatternBase(pattern, name_scope, "operator_activation") {}
+
+=======
 struct LayerNormShiftScale : public PatternBase {
   LayerNormShiftScale(PDPattern* pattern, const std::string& name_scope)
       : PatternBase(pattern, name_scope, "layer_norm_shift_scale") {}
@@ -543,6 +549,7 @@ struct OperatorActivation : public PatternBase {
   OperatorActivation(PDPattern* pattern, const std::string& name_scope)
       : PatternBase(pattern, name_scope, "operator_activation") {}
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   PDNode* operator()(const std::string& operator_type,
                      const std::string& activation_type);
 
@@ -657,7 +664,10 @@ struct FCMKLDNN : public PatternBase {
   PATTERN_DECL_NODE(weights);
   PATTERN_DECL_NODE(bias);
   PATTERN_DECL_NODE(output);
+<<<<<<< HEAD
+=======
   PATTERN_DECL_NODE(residual_data);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 };
 
 // Embedding
@@ -1090,6 +1100,8 @@ struct ElementwiseOp : public PatternBase {
   PATTERN_DECL_NODE(elementwise_out);
 };
 
+<<<<<<< HEAD
+=======
 struct MatmulElementwiseAdd : public PatternBase {
   MatmulElementwiseAdd(PDPattern* pattern,
                        const std::string& name_scope,
@@ -1105,6 +1117,7 @@ struct MatmulElementwiseAdd : public PatternBase {
   PATTERN_DECL_NODE(elementwise_add_out);
 };
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 // Residual Elementwise ops
 // This pattern allows operator output to be X or Y
 // and residual data Y or X, based on as_x flag
@@ -1125,7 +1138,11 @@ struct ResidualElementwise : public PatternBase {
 };
 
 // General struct for immutable ops:
+<<<<<<< HEAD
+// reshape, transpose, slice, shape, nearest-interp
+=======
 // reshape, transpose, slice, shape, nearest-interp, split
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 // Forward pass for no weights-op.
 // immutable_out is a result of the operator.
 struct Immutable : public PatternBase {

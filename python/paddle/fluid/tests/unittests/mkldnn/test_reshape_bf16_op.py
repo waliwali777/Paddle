@@ -24,6 +24,7 @@ from paddle import enable_static
     not core.supports_bfloat16(), "place does not support BF16 evaluation"
 )
 class TestReshapeBf16Op(OpTest):
+
     def setUp(self):
         self.op_type = "reshape2"
         self.use_mkldnn = False
@@ -57,6 +58,16 @@ class TestReshapeBf16Op(OpTest):
         self.check_output_with_place(core.CPUPlace(), no_check_set=['XShape'])
 
     def test_check_grad(self):
+<<<<<<< HEAD
+        self.check_grad_with_place(core.CPUPlace(), ["X"],
+                                   "Out",
+                                   check_dygraph=False,
+                                   user_defined_grads=[self.input_data_fp32],
+                                   user_defined_grad_outputs=[
+                                       self.inputs["X"].reshape(
+                                           self.infered_shape)
+                                   ])
+=======
         self.check_grad_with_place(
             core.CPUPlace(),
             ["X"],
@@ -67,6 +78,7 @@ class TestReshapeBf16Op(OpTest):
                 self.inputs["X"].reshape(self.infered_shape)
             ],
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == '__main__':

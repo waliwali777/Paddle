@@ -104,8 +104,12 @@ class SetValueMaker : public framework::OpProtoAndCheckerMaker {
                  framework::proto::VarType::INT32,
                  framework::proto::VarType::INT64,
                  framework::proto::VarType::FP32,
+<<<<<<< HEAD
+                 framework::proto::VarType::FP64})
+=======
                  framework::proto::VarType::FP64,
                  framework::proto::VarType::FP16})
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         .SetDefault(framework::proto::VarType::FP32);
     AddAttr<std::vector<int64_t>>(
         "axes", "(list<int64_t>) Axes that `starts` and `ends` apply to.");

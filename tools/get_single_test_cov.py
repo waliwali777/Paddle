@@ -102,6 +102,11 @@ def analysisFNDAFile(rootPath, test):
                 )
         else:
             if clazz_filename != '':
+<<<<<<< HEAD
+                if clazz_filename not in related_file_list:  # xx.pb.cc in RELATED xx.pb.h not in RELATED
+                    os.system('echo %s >> %s' %
+                              (clazz_filename, notrelated_ut_map_file))
+=======
                 if (
                     clazz_filename not in related_file_list
                 ):  # xx.pb.cc in RELATED xx.pb.h not in RELATED
@@ -109,6 +114,7 @@ def analysisFNDAFile(rootPath, test):
                         'echo %s >> %s'
                         % (clazz_filename, notrelated_ut_map_file)
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     f.close()
 
 

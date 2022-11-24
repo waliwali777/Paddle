@@ -23,7 +23,11 @@ class LeNet(nn.Layer):
     `"Gradient-based learning applied to document recognition" <https://ieeexplore.ieee.org/document/726791>`_.
 
     Args:
+<<<<<<< HEAD
+        num_classes (int, optional): Output dim of last fc layer. If num_classes <= 0, last fc layer 
+=======
         num_classes (int, optional): Output dim of last fc layer. If num_classes <= 0, last fc layer
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                             will not be defined. Default: 10.
 
     Returns:
@@ -47,6 +51,16 @@ class LeNet(nn.Layer):
     def __init__(self, num_classes=10):
         super().__init__()
         self.num_classes = num_classes
+<<<<<<< HEAD
+        self.features = nn.Sequential(nn.Conv2D(1, 6, 3, stride=1, padding=1),
+                                      nn.ReLU(), nn.MaxPool2D(2, 2),
+                                      nn.Conv2D(6, 16, 5, stride=1, padding=0),
+                                      nn.ReLU(), nn.MaxPool2D(2, 2))
+
+        if num_classes > 0:
+            self.fc = nn.Sequential(nn.Linear(400, 120), nn.Linear(120, 84),
+                                    nn.Linear(84, num_classes))
+=======
         self.features = nn.Sequential(
             nn.Conv2D(1, 6, 3, stride=1, padding=1),
             nn.ReLU(),
@@ -62,6 +76,7 @@ class LeNet(nn.Layer):
                 nn.Linear(120, 84),
                 nn.Linear(84, num_classes),
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def forward(self, inputs):
         x = self.features(inputs)

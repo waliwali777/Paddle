@@ -91,6 +91,29 @@ void BeamSearchDecodeTestFrame() {
   LoDTensorArray ids;
   LoDTensorArray scores;
 
+<<<<<<< HEAD
+  paddle::test::GenerateExample(std::vector<size_t>{0, 1, 2},
+                                std::vector<size_t>{0, 1, 2},
+                                std::vector<int>{0, 0},
+                                &ids,
+                                &scores);  // start with start_id
+  paddle::test::GenerateExample(std::vector<size_t>{0, 1, 2},
+                                std::vector<size_t>{0, 2, 4},
+                                std::vector<int>{2, 3, 4, 5},
+                                &ids,
+                                &scores);
+  paddle::test::GenerateExample(std::vector<size_t>{0, 2, 4},
+                                std::vector<size_t>{0, 2, 2, 4, 4},
+                                std::vector<int>{3, 1, 5, 4},
+                                &ids,
+                                &scores);
+  paddle::test::GenerateExample(std::vector<size_t>{0, 2, 4},
+                                std::vector<size_t>{0, 1, 2, 3, 4},
+                                std::vector<int>{1, 1, 3, 5},
+                                &ids,
+                                &scores);
+  paddle::test::GenerateExample(
+=======
   GenerateExample<T>(std::vector<size_t>{0, 1, 2},
                      std::vector<size_t>{0, 1, 2},
                      std::vector<int>{0, 0},
@@ -112,6 +135,7 @@ void BeamSearchDecodeTestFrame() {
                      &ids,
                      &scores);
   GenerateExample<T>(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       std::vector<size_t>{0, 2, 4},
       std::vector<size_t>{0, 0, 0, 2, 2},  // the branchs of the first source
                                            // sentence are pruned since finished

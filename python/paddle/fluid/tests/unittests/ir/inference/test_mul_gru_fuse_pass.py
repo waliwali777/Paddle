@@ -22,6 +22,7 @@ import hypothesis.strategies as st
 
 
 class TestMulGruFusePass(PassAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         return True
 
@@ -42,6 +43,68 @@ class TestMulGruFusePass(PassAutoScanTest):
         def generate_weight(shape):
             return np.full(shape, 0.0001).astype(np.float32)
 
+<<<<<<< HEAD
+        im2sequence_op = OpConfig(type="im2sequence",
+                                  inputs={"X": ["input_data"]},
+                                  outputs={"Out": ["seq_out"]},
+                                  attrs={
+                                      "kernels": [6, 1],
+                                      "out_stride": [1, 1],
+                                      "paddings": [0, 0, 0, 0],
+                                      "strides": [1, 1]
+                                  })
+
+        mul_op = OpConfig(type="mul",
+                          inputs={
+                              "X": ["seq_out"],
+                              "Y": ["mul_weight"]
+                          },
+                          outputs={"Out": ["mul_out"]},
+                          attrs={
+                              "x_num_col_dims": x_col,
+                              "y_num_col_dims": y_col
+                          })
+
+        if has_origin_mode:
+            gru_op = OpConfig(type="gru",
+                              inputs={
+                                  "Input": ["mul_out"],
+                                  "Weight": ["gru_weight"],
+                                  "Bias": ["gru_bias"]
+                              },
+                              outputs={
+                                  "BatchGate": ["batch_gate"],
+                                  "BatchHidden": ["batch_hidden"],
+                                  "BatchResetHiddenPrev": ["batch_reset"],
+                                  "Hidden": ["hidden"]
+                              },
+                              attrs={
+                                  'activation': activation,
+                                  'is_reverse': is_reverse,
+                                  'gate_activation': gate_activation,
+                                  'is_test': True,
+                                  'origin_mode': origin_mode
+                              })
+        else:
+            gru_op = OpConfig(type="gru",
+                              inputs={
+                                  "Input": ["mul_out"],
+                                  "Weight": ["gru_weight"],
+                                  "Bias": ["gru_bias"]
+                              },
+                              outputs={
+                                  "BatchGate": ["batch_gate"],
+                                  "BatchHidden": ["batch_hidden"],
+                                  "BatchResetHiddenPrev": ["batch_reset"],
+                                  "Hidden": ["hidden"]
+                              },
+                              attrs={
+                                  'activation': activation,
+                                  'is_reverse': is_reverse,
+                                  'gate_activation': gate_activation,
+                                  'is_test': True
+                              })
+=======
         im2sequence_op = OpConfig(
             type="im2sequence",
             inputs={"X": ["input_data"]},
@@ -104,6 +167,7 @@ class TestMulGruFusePass(PassAutoScanTest):
                     'is_test': True,
                 },
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         model_net = [im2sequence_op, mul_op, gru_op]
 
@@ -133,9 +197,15 @@ class TestMulGruFusePass(PassAutoScanTest):
         yield config, ["im2sequence", "fusion_gru"], (1e-5, 1e-5)
 
     def test(self):
+<<<<<<< HEAD
+        self.run_and_statis(quant=False,
+                            max_duration=300,
+                            passes=["mul_gru_fuse_pass"])
+=======
         self.run_and_statis(
             quant=False, max_duration=300, passes=["mul_gru_fuse_pass"]
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

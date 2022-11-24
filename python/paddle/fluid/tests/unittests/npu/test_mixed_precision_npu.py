@@ -15,18 +15,25 @@
 import unittest
 import sys
 import paddle
+<<<<<<< HEAD
+=======
 import paddle.fluid as fluid
 from paddle.fluid import core
 from paddle.fluid.contrib.mixed_precision import fp16_utils
 import paddle.nn as nn
 import paddle.static as static
 import numpy as np
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 sys.path.append("..")
 
 paddle.enable_static()
 
 
+<<<<<<< HEAD
+class AMPTestNpu(test_mixed_precision.AMPTest):
+
+=======
 class SimpleNet(nn.Layer):
     def __init__(self, input_size, output_size):
         super().__init__()
@@ -50,6 +57,7 @@ class SimpleNet(nn.Layer):
 
 
 class AMPTestNpu(unittest.TestCase):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def setUp(self):
         self.place = paddle.NPUPlace(0)
 

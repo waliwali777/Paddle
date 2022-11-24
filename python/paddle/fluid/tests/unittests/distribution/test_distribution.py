@@ -25,7 +25,12 @@ import parameterize
 paddle.enable_static()
 
 
+<<<<<<< HEAD
+class DistributionNumpy():
+
+=======
 class DistributionNumpy:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def sample(self):
         raise NotImplementedError
 
@@ -43,6 +48,7 @@ class DistributionNumpy:
 
 
 class DistributionTestName(unittest.TestCase):
+
     def get_prefix(self, string):
         return string.split('.')[0]
 
@@ -134,13 +140,20 @@ class DistributionTestName(unittest.TestCase):
 @parameterize.place(config.DEVICES)
 @parameterize.parameterize_cls(
     (parameterize.TEST_CASE_NAME, 'batch_shape', 'event_shape'),
+<<<<<<< HEAD
+    [('test-tuple', (10, 20), (10, 20)),
+     ('test-list', [100, 100], [100, 200, 300]),
+     ('test-null-eventshape', (100, 100), ())])
+=======
     [
         ('test-tuple', (10, 20), (10, 20)),
         ('test-list', [100, 100], [100, 200, 300]),
         ('test-null-eventshape', (100, 100), ()),
     ],
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 class TestDistributionShape(unittest.TestCase):
+
     def setUp(self):
         paddle.disable_static()
         self.dist = paddle.distribution.Distribution(
@@ -172,6 +185,7 @@ class TestDistributionShape(unittest.TestCase):
 
 
 class TestDistributionException(unittest.TestCase):
+
     def setUp(self):
         self._d = paddle.distribution.Distribution()
 

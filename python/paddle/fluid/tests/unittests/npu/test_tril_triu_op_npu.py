@@ -39,9 +39,15 @@ class TestNPUTrilTriu(OpTest):
             'lower': True if self.real_op_type == 'tril' else False,
         }
         self.outputs = {
+<<<<<<< HEAD
+            'Out':
+            self.real_np_op(self.X, self.diagonal)
+            if self.diagonal else self.real_np_op(self.X)
+=======
             'Out': self.real_np_op(self.X, self.diagonal)
             if self.diagonal
             else self.real_np_op(self.X)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         }
 
     def test_check_output(self):
@@ -79,16 +85,23 @@ def case_generator(op_type, Xshape, diagonal, expected):
     }
 
     class FailureCase(unittest.TestCase):
+
         def test_failure(self):
             paddle.enable_static()
 
             data = fluid.data(shape=Xshape, dtype='float32', name=cls_name)
+<<<<<<< HEAD
+            with self.assertRaisesRegexp(eval(expected.split(':')[-1]),
+                                         errmsg[expected]):
+=======
             with self.assertRaisesRegexp(
                 eval(expected.split(':')[-1]), errmsg[expected]
             ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 getattr(tensor, op_type)(x=data, diagonal=diagonal)
 
     class SuccessCase(TestNPUTrilTriu):
+
         def initTestCase(self):
             paddle.enable_static()
 
@@ -128,11 +141,15 @@ for _op_type in ['tril', 'triu']:
             list(
                 map(
                     lambda _diagonal: case_generator(
+<<<<<<< HEAD
+                        _op_type, _Xshape, _diagonal, _expected), _diaglist))
+=======
                         _op_type, _Xshape, _diagonal, _expected
                     ),
                     _diaglist,
                 )
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestTrilTriuOpAPI(unittest.TestCase):
@@ -157,8 +174,13 @@ class TestTrilTriuOpAPI(unittest.TestCase):
                     feed={"x": data},
                     fetch_list=[tril_out, triu_out],
                 )
+<<<<<<< HEAD
+                self.assertTrue(np.allclose(tril_out, np.tril(data)))
+                self.assertTrue(np.allclose(triu_out, np.triu(data)))
+=======
                 np.testing.assert_allclose(tril_out, np.tril(data))
                 np.testing.assert_allclose(triu_out, np.triu(data))
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_api_with_dygraph(self):
         paddle.disable_static(fluid.NPUPlace(0))
@@ -198,6 +220,7 @@ class TestTrilTriuOpAPI(unittest.TestCase):
 
 # @skip_check_grad_ci(reason="[NPU does not support grad right now.")
 class TestNPUTrilTriu_bool(TestNPUTrilTriu):
+
     def test_check_output(self):
         self.check_output_with_place(self.place)
 

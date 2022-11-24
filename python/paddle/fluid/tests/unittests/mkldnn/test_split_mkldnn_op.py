@@ -19,6 +19,11 @@ from paddle.fluid.tests.unittests.op_test import OpTest
 
 
 class TestSplitSectionsOneDNNOp(OpTest):
+<<<<<<< HEAD
+
+    def init_data(self):
+        self.x = np.random.random((4, 5, 6)).astype("float32")
+=======
     def init_data_type(self):
         self.dtype = np.float32
 
@@ -37,6 +42,7 @@ class TestSplitSectionsOneDNNOp(OpTest):
     def init_test_case(self):
         self.input_shape = (4, 5, 6)
         self.init_x()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.axis = 1
         self.num = 0
         self.sections = [2, 1, 2]
@@ -74,9 +80,15 @@ class TestSplitSectionsOneDNNOp(OpTest):
 
 # test with attr(num)
 class TestSplitNumOneDNNOp(TestSplitSectionsOneDNNOp):
+<<<<<<< HEAD
+
+    def init_data(self):
+        self.x = np.random.random((4, 8, 5, 3)).astype("float32")
+=======
     def init_test_case(self):
         self.input_shape = (4, 8, 5, 3)
         self.init_x()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.axis = 1
         self.num = 4
         self.sections = []
@@ -88,10 +100,16 @@ class TestSplitNumOneDNNOp(TestSplitSectionsOneDNNOp):
 
 
 class TestSplitNumAxisTensorOneDNNOp(TestSplitSectionsOneDNNOp):
+<<<<<<< HEAD
+
+    def init_data(self):
+        self.x = np.random.random((4, 5, 6)).astype("float32")
+=======
     def init_test_case(self):
         self.input_shape = (4, 5, 6)
         self.init_x()
         self.num = 3
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.axis = None
         self.sections = []
         self.axis_tensor = np.array([2]).astype("int32")
@@ -101,10 +119,16 @@ class TestSplitNumAxisTensorOneDNNOp(TestSplitSectionsOneDNNOp):
 
 # attr(sections) is list containing Tensor
 class TestSplitSectionsTensorOneDNNOp(TestSplitSectionsOneDNNOp):
+<<<<<<< HEAD
+
+    def init_data(self):
+        self.x = np.random.random((4, 5, 6)).astype("float32")
+=======
     def init_test_case(self):
         self.input_shape = (4, 5, 6)
         self.init_x()
         self.num = 0
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.axis = 1
         self.sections = [2, 1, 2]
         self.sections_tensor_list = []
@@ -118,10 +142,16 @@ class TestSplitSectionsTensorOneDNNOp(TestSplitSectionsOneDNNOp):
 
 
 class TestSplitOpUnknownSectionOneDNNOp(TestSplitSectionsOneDNNOp):
+<<<<<<< HEAD
+
+    def init_data(self):
+        self.x = np.random.random((4, 5, 6)).astype("float32")
+=======
     def init_test_case(self):
         self.input_shape = (4, 5, 6)
         self.init_x()
         self.num = 0
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.axis = 2
         self.sections = [2, 2, -1]
         indices_or_sections = [2, 4]  # sections

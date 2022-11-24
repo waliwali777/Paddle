@@ -48,9 +48,15 @@ def tokenize(pattern):
         while tf is not None:
             if bool(pattern.match(tf.name)):
                 # newline and punctuations removal and ad-hoc tokenization.
+<<<<<<< HEAD
+                yield tarf.extractfile(tf).read().rstrip(
+                    six.b("\n\r")).translate(None, six.b(
+                        string.punctuation)).lower().split()
+=======
                 yield tarf.extractfile(tf).read().rstrip(b'\n\r').translate(
                     None, string.punctuation.encode('latin-1')
                 ).lower().split()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             tf = tarf.next()
 
 
@@ -116,11 +122,16 @@ def train(word_idx):
     :return: Training reader creator
     :rtype: callable
     """
+<<<<<<< HEAD
+    return reader_creator(re.compile(r"aclImdb/train/pos/.*\.txt$"),
+                          re.compile(r"aclImdb/train/neg/.*\.txt$"), word_idx)
+=======
     return reader_creator(
         re.compile(r"aclImdb/train/pos/.*\.txt$"),
         re.compile(r"aclImdb/train/neg/.*\.txt$"),
         word_idx,
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 @deprecated(
@@ -141,11 +152,16 @@ def test(word_idx):
     :return: Test reader creator
     :rtype: callable
     """
+<<<<<<< HEAD
+    return reader_creator(re.compile(r"aclImdb/test/pos/.*\.txt$"),
+                          re.compile(r"aclImdb/test/neg/.*\.txt$"), word_idx)
+=======
     return reader_creator(
         re.compile(r"aclImdb/test/pos/.*\.txt$"),
         re.compile(r"aclImdb/test/neg/.*\.txt$"),
         word_idx,
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 @deprecated(

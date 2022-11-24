@@ -22,10 +22,14 @@ import paddle.fluid as fluid
 from paddle import enable_static
 from functools import reduce
 
+<<<<<<< HEAD
+from paddle.fluid.tests.unittests.op_test import _set_use_system_allocator, OpTestTool
+=======
 from paddle.fluid.tests.unittests.op_test import (
     _set_use_system_allocator,
     OpTestTool,
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 np.random.random(123)
 
@@ -57,6 +61,7 @@ def _reference_layer_norm_naive(x, scale, beta, epsilon, begin_norm_axis=1):
 
 
 class TestLayerNormMKLDNNOp(unittest.TestCase):
+
     def setUp(self):
         self.use_mkldnn = True
 
@@ -101,9 +106,15 @@ class TestLayerNormMKLDNNOp(unittest.TestCase):
             block = program.global_block()
 
             for name in ground_truth:
+<<<<<<< HEAD
+                block.create_var(name=name,
+                                 dtype='float32',
+                                 shape=ground_truth[name].shape)
+=======
                 block.create_var(
                     name=name, dtype='float32', shape=ground_truth[name].shape
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             inputs = {"X": block.var('x')}
             if with_scale_bias:
@@ -151,6 +162,16 @@ class TestLayerNormMKLDNNOp(unittest.TestCase):
         self.check_forward(shape=[2, 3, 4, 5], begin_norm_axis=3)
 
     def test_check_forward_without_scale_and_bias(self):
+<<<<<<< HEAD
+        self.check_forward(shape=[2, 3, 4, 5],
+                           begin_norm_axis=3,
+                           with_scale_bias=False)
+
+    def test_check_forward_with_is_test(self):
+        self.check_forward(shape=[2, 3, 4, 5],
+                           begin_norm_axis=3,
+                           with_is_test=True)
+=======
         self.check_forward(
             shape=[2, 3, 4, 5], begin_norm_axis=3, with_scale_bias=False
         )
@@ -159,6 +180,7 @@ class TestLayerNormMKLDNNOp(unittest.TestCase):
         self.check_forward(
             shape=[2, 3, 4, 5], begin_norm_axis=3, with_is_test=True
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

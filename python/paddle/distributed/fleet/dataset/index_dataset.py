@@ -16,12 +16,18 @@ from paddle.fluid import core
 __all__ = []
 
 
+<<<<<<< HEAD
+class Index(object):
+
+=======
 class Index:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, name):
         self._name = name
 
 
 class TreeIndex(Index):
+
     def __init__(self, name, path):
         super().__init__(name)
         self._wrapper = core.IndexWrapper()

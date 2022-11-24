@@ -157,7 +157,10 @@ class MLUDeviceContext
   int driver_version_;
   int runtime_version_;
   int cnnl_version_;
+<<<<<<< HEAD
+=======
   int mluOp_version_;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   MLUPlace place_;
   std::shared_ptr<MLUContext> default_ctx_;
 

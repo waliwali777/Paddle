@@ -21,7 +21,11 @@
 #include "paddle/fluid/imperative/parallel_context.h"
 #include "paddle/fluid/operators/math/concat_and_split.h"
 #include "paddle/fluid/operators/strided_memcpy.h"
+<<<<<<< HEAD
+#ifdef PADDLE_WITH_XPU_BKCL
+=======
 #ifdef PADDLE_WITH_XPU
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/fluid/platform/device/xpu/enforce_xpu.h"
 #endif
 #include "paddle/fluid/string/string_helper.h"
@@ -82,17 +86,28 @@ static void ConcatTensorsForAllReduce(
   concat_functor_(context,
                   dense_tensors_,
                   0,
+<<<<<<< HEAD
+                  p_dense_contents->GetMutable<framework::LoDTensor>());
+=======
                   p_dense_contents->GetMutable<phi::DenseTensor>());
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 template <typename DeviceContext, typename T>
 static void SplitTensorsForAllReduce(
     const DeviceContext &context,
     framework::Variable *p_dense_contents,
+<<<<<<< HEAD
+    std::vector<framework::Tensor> *p_dense_tensors) {
+  auto *in = p_dense_contents->GetMutable<framework::LoDTensor>();
+  std::vector<framework::Tensor *> outs;
+  std::vector<const framework::Tensor *> shape_refer;
+=======
     std::vector<phi::DenseTensor> *p_dense_tensors) {
   auto *in = p_dense_contents->GetMutable<phi::DenseTensor>();
   std::vector<phi::DenseTensor *> outs;
   std::vector<const phi::DenseTensor *> shape_refer;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   outs.reserve(p_dense_tensors->size());
   shape_refer.reserve(p_dense_tensors->size());
@@ -140,10 +155,18 @@ static void ConcatTensorsWithType(
 
 // context is used to select the stream for split
 template <typename DeviceContext>
+<<<<<<< HEAD
+static void SplitTensorsWithType(
+    const DeviceContext &context,
+    framework::Variable *p_dense_contents,
+    std::vector<framework::Tensor> *p_dense_tensors,
+    framework::proto::VarType::Type type) {
+=======
 static void SplitTensorsWithType(const DeviceContext &context,
                                  framework::Variable *p_dense_contents,
                                  std::vector<phi::DenseTensor> *p_dense_tensors,
                                  framework::proto::VarType::Type type) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   switch (type) {
     case framework::proto::VarType::FP16:
       SplitTensorsForAllReduce<DeviceContext, platform::float16>(
@@ -462,7 +485,11 @@ void Reducer::InitializeDenseGroups(
                           "GRAD is SelectedRows",
                           var_name));
 
+<<<<<<< HEAD
+    auto lod_tensor = var->MutableVar()->GetMutable<framework::LoDTensor>();
+=======
     auto lod_tensor = var->MutableVar()->GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     PADDLE_ENFORCE_EQ(lod_tensor->IsInitialized(),
                       true,
                       platform::errors::PreconditionNotMet(
@@ -850,7 +877,12 @@ void Reducer::MarkVarReady(const size_t var_index, const bool is_used_var) {
             platform::DeviceContextPool::Instance().Get(place_));
         if (HasGrad(var_index)) {
           auto var_base = vars_[var_index]->GradVarBase();
+<<<<<<< HEAD
+          auto tensor =
+              var_base->MutableVar()->GetMutable<framework::LoDTensor>();
+=======
           auto tensor = var_base->MutableVar()->GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
           group_tensor.ShareDataWith(*tensor).Resize(
               {static_cast<int64_t>(length)});
         } else {
@@ -1024,7 +1056,12 @@ void Reducer::ProcessUnusedDenseVars() {
           << string::join_strings(local_used_vars_, ',');
   const auto *dev_ctx = platform::DeviceContextPool::Instance().Get(place_);
   // H2D is to allreduce the local_used_vars_
+<<<<<<< HEAD
+  auto *global_used_tensor =
+      global_used_vars_.GetMutable<framework::LoDTensor>();
+=======
   auto *global_used_tensor = global_used_vars_.GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   framework::TensorFromVector<int>(
       local_used_vars_, *dev_ctx, global_used_tensor);
   parallel_ctx_->AllReduceByStream(

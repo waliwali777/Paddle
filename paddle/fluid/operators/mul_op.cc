@@ -16,6 +16,14 @@ limitations under the License. */
 #include <string>
 #include <unordered_map>
 #include <vector>
+<<<<<<< HEAD
+
+#include "paddle/fluid/framework/op_registry.h"
+#ifdef PADDLE_WITH_MKLDNN
+#include "paddle/fluid/platform/mkldnn_helper.h"
+#endif
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 #include "paddle/fluid/framework/infershape_utils.h"
 #include "paddle/fluid/framework/op_registry.h"
@@ -34,7 +42,34 @@ class MulOp : public framework::OperatorWithKernel {
   framework::OpKernelType GetExpectedKernelType(
       const framework::ExecutionContext& ctx) const {
     auto input_data_type = OperatorWithKernel::IndicateVarDataType(ctx, "X");
+<<<<<<< HEAD
+#ifdef PADDLE_WITH_MKLDNN
+    if (library == framework::LibraryType::kPlain &&
+        this->CanMKLDNNBeUsed(ctx, input_data_type)) {
+      library = framework::LibraryType::kMKLDNN;
+      layout = framework::DataLayout::kMKLDNN;
+
+      if (input_data_type == framework::DataTypeTrait<int8_t>::DataType() ||
+          input_data_type == framework::DataTypeTrait<uint8_t>::DataType()) {
+        customized_type_value = kMULMKLDNNINT8;
+      } else if (input_data_type ==
+                     framework::DataTypeTrait<
+                         paddle::platform::bfloat16>::DataType() ||
+                 input_data_type ==
+                     framework::DataTypeTrait<float>::DataType()) {
+        customized_type_value = kMULMKLDNNFP32;
+      }
+    }
+#endif
+
+    return framework::OpKernelType(input_data_type,
+                                   ctx.GetPlace(),
+                                   layout,
+                                   library,
+                                   customized_type_value);
+=======
     return framework::OpKernelType(input_data_type, ctx.GetPlace());
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 };
 
@@ -106,7 +141,34 @@ class MulGradOp : public framework::OperatorWithKernel {
   framework::OpKernelType GetExpectedKernelType(
       const framework::ExecutionContext& ctx) const {
     auto input_data_type = OperatorWithKernel::IndicateVarDataType(ctx, "X");
+<<<<<<< HEAD
+#ifdef PADDLE_WITH_MKLDNN
+    if (library == framework::LibraryType::kPlain &&
+        this->CanMKLDNNBeUsed(ctx, input_data_type)) {
+      library = framework::LibraryType::kMKLDNN;
+      layout = framework::DataLayout::kMKLDNN;
+
+      if (input_data_type == framework::DataTypeTrait<int8_t>::DataType() ||
+          input_data_type == framework::DataTypeTrait<uint8_t>::DataType()) {
+        customized_type_value = kMULMKLDNNINT8;
+      } else if (input_data_type ==
+                     framework::DataTypeTrait<
+                         paddle::platform::bfloat16>::DataType() ||
+                 input_data_type ==
+                     framework::DataTypeTrait<float>::DataType()) {
+        customized_type_value = kMULMKLDNNFP32;
+      }
+    }
+#endif
+
+    return framework::OpKernelType(input_data_type,
+                                   ctx.GetPlace(),
+                                   layout,
+                                   library,
+                                   customized_type_value);
+=======
     return framework::OpKernelType(input_data_type, ctx.GetPlace());
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 };
 

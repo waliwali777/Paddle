@@ -36,7 +36,11 @@ class ArrayOp : public framework::OperatorBase {
     auto *i = scope.FindVar(Input("I"));
     PADDLE_ENFORCE_NOT_NULL(
         i, platform::errors::NotFound("Input(I) is not found."));
+<<<<<<< HEAD
+    auto &i_tensor = i->Get<framework::LoDTensor>();
+=======
     auto &i_tensor = i->Get<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     PADDLE_ENFORCE_EQ(i_tensor.numel(),
                       1,
                       platform::errors::InvalidArgument(

@@ -24,10 +24,15 @@ def simple_fc_net_with_inputs(img, label, class_num=10):
             hidden,
             size=100,
             act='relu',
+<<<<<<< HEAD
+            bias_attr=fluid.ParamAttr(initializer=fluid.initializer.Constant(
+                value=1.0)))
+=======
             bias_attr=fluid.ParamAttr(
                 initializer=fluid.initializer.Constant(value=1.0)
             ),
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     prediction = fluid.layers.fc(hidden, size=class_num, act='softmax')
     loss = fluid.layers.cross_entropy(input=prediction, label=label)
     loss = paddle.mean(loss)
@@ -47,10 +52,15 @@ def batchnorm_fc_with_inputs(img, label, class_num=10):
             hidden,
             size=200,
             act='relu',
+<<<<<<< HEAD
+            bias_attr=fluid.ParamAttr(initializer=fluid.initializer.Constant(
+                value=1.0)))
+=======
             bias_attr=fluid.ParamAttr(
                 initializer=fluid.initializer.Constant(value=1.0)
             ),
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         hidden = fluid.layers.batch_norm(input=hidden)
 
@@ -80,6 +90,16 @@ def bow_net(
     This model is from https://github.com/PaddlePaddle/models:
     fluid/PaddleNLP/text_classification/nets.py
     """
+<<<<<<< HEAD
+    data = fluid.layers.data(name="words",
+                             shape=[1],
+                             dtype="int64",
+                             lod_level=1)
+    label = fluid.layers.data(name="label", shape=[1], dtype="int64")
+    emb = fluid.layers.embedding(input=data,
+                                 is_sparse=is_sparse,
+                                 size=[dict_dim, emb_dim])
+=======
     data = fluid.layers.data(
         name="words", shape=[1], dtype="int64", lod_level=1
     )
@@ -87,6 +107,7 @@ def bow_net(
     emb = fluid.layers.embedding(
         input=data, is_sparse=is_sparse, size=[dict_dim, emb_dim]
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     bow = fluid.layers.sequence_pool(input=emb, pool_type='sum')
     bow_tanh = paddle.tanh(bow)
     fc_1 = fluid.layers.fc(input=bow_tanh, size=hid_dim, act="tanh")

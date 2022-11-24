@@ -54,11 +54,22 @@ bool HasAllocation(const phi::TensorBase& t) {
 
 BackendSet GetTensorBackendSet(const phi::TensorBase& t) {
   if (HasAllocation(t) && t.place().GetType() != AllocationType::UNDEFINED) {
+<<<<<<< HEAD
+    BackendSet backend_set(phi::TransToPhiBackend(t.place()));
+    switch (t.layout()) {
+      case DataLayout::MKLDNN:
+        backend_set = backend_set | BackendSet(Backend::ONEDNN);
+        break;
+      default:
+        // do nothing
+        break;
+=======
     phi::Backend backend_key = phi::TransToPhiBackend(t.place());
     BackendSet backend_set(backend_key);
     if (backend_key == Backend::GPU && phi::DenseTensor::classof(&t) &&
         static_cast<const phi::DenseTensor&>(t).meta().use_cudnn) {
       backend_set = backend_set | BackendSet(Backend::GPUDNN);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
     return backend_set;
   }

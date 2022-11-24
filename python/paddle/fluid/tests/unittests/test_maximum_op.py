@@ -19,6 +19,7 @@ import paddle.fluid.core as core
 
 
 class ApiMaximumTest(unittest.TestCase):
+
     def setUp(self):
         if core.is_compiled_with_cuda():
             self.place = core.CUDAPlace(0)
@@ -46,6 +47,17 @@ class ApiMaximumTest(unittest.TestCase):
             data_y = paddle.static.data("y", shape=[10, 15], dtype="float32")
             result_max = paddle.maximum(data_x, data_y)
             exe = paddle.static.Executor(self.place)
+<<<<<<< HEAD
+            res, = exe.run(feed={
+                "x": self.input_x,
+                "y": self.input_y
+            },
+                           fetch_list=[result_max])
+        self.assertTrue(np.allclose(res, self.np_expected1))
+
+        with paddle.static.program_guard(paddle.static.Program(),
+                                         paddle.static.Program()):
+=======
             (res,) = exe.run(
                 feed={"x": self.input_x, "y": self.input_y},
                 fetch_list=[result_max],
@@ -55,10 +67,22 @@ class ApiMaximumTest(unittest.TestCase):
         with paddle.static.program_guard(
             paddle.static.Program(), paddle.static.Program()
         ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             data_x = paddle.static.data("x", shape=[10, 15], dtype="float32")
             data_z = paddle.static.data("z", shape=[15], dtype="float32")
             result_max = paddle.maximum(data_x, data_z)
             exe = paddle.static.Executor(self.place)
+<<<<<<< HEAD
+            res, = exe.run(feed={
+                "x": self.input_x,
+                "z": self.input_z
+            },
+                           fetch_list=[result_max])
+        self.assertTrue(np.allclose(res, self.np_expected2))
+
+        with paddle.static.program_guard(paddle.static.Program(),
+                                         paddle.static.Program()):
+=======
             (res,) = exe.run(
                 feed={"x": self.input_x, "z": self.input_z},
                 fetch_list=[result_max],
@@ -68,10 +92,22 @@ class ApiMaximumTest(unittest.TestCase):
         with paddle.static.program_guard(
             paddle.static.Program(), paddle.static.Program()
         ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             data_a = paddle.static.data("a", shape=[3], dtype="int64")
             data_c = paddle.static.data("c", shape=[3], dtype="int64")
             result_max = paddle.maximum(data_a, data_c)
             exe = paddle.static.Executor(self.place)
+<<<<<<< HEAD
+            res, = exe.run(feed={
+                "a": self.input_a,
+                "c": self.input_c
+            },
+                           fetch_list=[result_max])
+        self.assertTrue(np.allclose(res, self.np_expected3))
+
+        with paddle.static.program_guard(paddle.static.Program(),
+                                         paddle.static.Program()):
+=======
             (res,) = exe.run(
                 feed={"a": self.input_a, "c": self.input_c},
                 fetch_list=[result_max],
@@ -81,15 +117,25 @@ class ApiMaximumTest(unittest.TestCase):
         with paddle.static.program_guard(
             paddle.static.Program(), paddle.static.Program()
         ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             data_b = paddle.static.data("b", shape=[3], dtype="int64")
             data_c = paddle.static.data("c", shape=[3], dtype="int64")
             result_max = paddle.maximum(data_b, data_c)
             exe = paddle.static.Executor(self.place)
+<<<<<<< HEAD
+            res, = exe.run(feed={
+                "b": self.input_b,
+                "c": self.input_c
+            },
+                           fetch_list=[result_max])
+        self.assertTrue(np.allclose(res, self.np_expected4))
+=======
             (res,) = exe.run(
                 feed={"b": self.input_b, "c": self.input_c},
                 fetch_list=[result_max],
             )
         np.testing.assert_allclose(res, self.np_expected4, rtol=1e-05)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_dynamic_api(self):
         paddle.disable_static()

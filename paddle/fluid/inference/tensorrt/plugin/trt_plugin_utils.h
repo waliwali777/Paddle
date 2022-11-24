@@ -47,11 +47,18 @@ template <typename T, class Enable = void>
 struct Serializer {};
 
 template <typename T>
+<<<<<<< HEAD
+struct Serializer<T,
+                  typename std::enable_if<std::is_arithmetic<T>::value ||
+                                          std::is_enum<T>::value ||
+                                          std::is_pod<T>::value>::type> {
+=======
 struct Serializer<
     T,
     typename std::enable_if<std::is_arithmetic<T>::value ||
                             std::is_enum<T>::value || std::is_pod<T>::value ||
                             std::is_same<T, half>::value>::type> {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   static size_t SerializedSize(T const& value) { return sizeof(T); }
 
   static void Serialize(void** buffer, T const& value) {

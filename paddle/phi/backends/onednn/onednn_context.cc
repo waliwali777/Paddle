@@ -16,10 +16,16 @@
 
 #include "paddle/phi/common/place.h"
 #include "paddle/phi/core/enforce.h"
+<<<<<<< HEAD
+
+#include "paddle/fluid/framework/expect.h"
+#include "paddle/fluid/platform/device_context.h"
+=======
 #include "paddle/utils/flat_hash_map.h"
 
 #include "paddle/fluid/platform/device_context.h"
 #include "paddle/phi/core/expect.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 namespace phi {
 
@@ -285,6 +291,8 @@ struct OneDNNContext::Impl {
     return key_it->second;
   }
 
+<<<<<<< HEAD
+=======
   bool HasDnnAttr(const std::string& attr_name) const {
     return dnn_attrs_.count(attr_name) != 0UL;
   }
@@ -348,6 +356,7 @@ struct OneDNNContext::Impl {
     return it->second;
   }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   std::shared_ptr<BlobMap> p_blobmap_;
   // Map key is pointer of executor and value is a data(iterator in map) needed
   // to erase
@@ -355,6 +364,10 @@ struct OneDNNContext::Impl {
   std::shared_ptr<std::mutex> p_mutex_;
   // 0 - clearing is allowed. x > 0 do not clear.
   unsigned int block_next_cache_clearing_ = 0;
+<<<<<<< HEAD
+};
+
+=======
 
   // Holds some attributes only used by the onednn kernel calculation
   // Since original mkldnn op kernel directly adds the operations that require
@@ -384,6 +397,7 @@ thread_local paddle::flat_hash_map<std::string, const DenseTensor*>
 thread_local TensorNameMap OneDNNContext::Impl::inputs_name_ = {};
 thread_local TensorNameMap OneDNNContext::Impl::outputs_name_ = {};
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 OneDNNContext::OneDNNContext(const Place& place)
     : CPUContext(place), impl_(std::make_unique<Impl>()) {}
 
@@ -413,6 +427,8 @@ OneDNNContext::BlobPtr_t<void> OneDNNContext::GetBlob(
   return impl_->GetBlob(name);
 }
 
+<<<<<<< HEAD
+=======
 bool OneDNNContext::HasDnnAttr(const std::string& attr_name) const {
   return impl_->HasDnnAttr(attr_name);
 }
@@ -457,5 +473,6 @@ const std::vector<std::string>& OneDNNContext::GetOutputsName(
   return impl_->GetOutputsName(output);
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }  // namespace phi
 #endif

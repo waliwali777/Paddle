@@ -24,6 +24,7 @@ SEED = 2021
 
 
 class TestMLUSigmoid(OpTest):
+
     def setUp(self):
         self.op_type = "sigmoid"
         self.set_mlu()
@@ -40,9 +41,15 @@ class TestMLUSigmoid(OpTest):
         self.check_output_with_place(self.place)
 
     def test_check_grad(self):
+<<<<<<< HEAD
+        self.check_grad_with_place(self.place, ['X'],
+                                   'Out',
+                                   max_relative_error=0.01)
+=======
         self.check_grad_with_place(
             self.place, ['X'], 'Out', max_relative_error=0.01
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def set_mlu(self):
         self.__class__.use_mlu = True
@@ -53,6 +60,7 @@ class TestMLUSigmoid(OpTest):
 
 
 class TestMLUSigmoidFp16(TestMLUSigmoid):
+
     def test_check_output(self):
         self.check_output_with_place(self.place, atol=1e-3)
 

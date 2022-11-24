@@ -160,9 +160,14 @@ class Categorical(distribution.Distribution):
             sample_shape = shape
             logits = self.logits
 
+<<<<<<< HEAD
+        sample_index = multinomial(self._logits_to_probs(logits), num_samples,
+                                   True)
+=======
         sample_index = multinomial(
             self._logits_to_probs(logits), num_samples, True
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         # multinomial sample shape is (logits.shape[:-1], num_samples), need to
         # tanspose to (num_samples, logits.shape[:-1])
@@ -220,12 +225,20 @@ class Categorical(distribution.Distribution):
         other_z = paddle.sum(other_e_logits, axis=-1, keepdim=True)
         prob = e_logits / z
         kl = paddle.sum(
+<<<<<<< HEAD
+            prob *
+            (logits - paddle.log(z) - other_logits + paddle.log(other_z)),
+            axis=-1,
+            keepdim=True,
+            name=name)
+=======
             prob
             * (logits - paddle.log(z) - other_logits + paddle.log(other_z)),
             axis=-1,
             keepdim=True,
             name=name,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         return kl
 
@@ -300,13 +313,25 @@ class Categorical(distribution.Distribution):
         """
         name = self.name + '_probs'
         if len(self._prob.shape) == 1:  # batch_shape is empty
+<<<<<<< HEAD
+            return paddle.gather(self._prob,
+                                 value.reshape([-1], name=name),
+                                 name=name).reshape(value.shape, name=name)
+=======
             return paddle.gather(
                 self._prob, value.reshape([-1], name=name), name=name
             ).reshape(value.shape, name=name)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         else:
             if len(value.shape) == 1:
                 return paddle.take_along_axis(
                     self._prob,
+<<<<<<< HEAD
+                    paddle.reshape(value,
+                                   (len(self._prob.shape) - 1) * [1] + [-1],
+                                   name=name),
+                    axis=-1)
+=======
                     paddle.reshape(
                         value,
                         (len(self._prob.shape) - 1) * [1] + [-1],
@@ -314,6 +339,7 @@ class Categorical(distribution.Distribution):
                     ),
                     axis=-1,
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             else:
                 return paddle.take_along_axis(self._prob, value, axis=-1)
 

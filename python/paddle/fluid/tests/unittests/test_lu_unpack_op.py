@@ -74,6 +74,11 @@ def Pmat_to_perm(Pmat_org, cut):
             sP[idx, :] = tmp
 
         permmat.append(permlst)
+<<<<<<< HEAD
+    Pivot = np.array(permmat).reshape(list(shape[:-2]) + [
+        rows,
+    ]) + 1
+=======
     Pivot = (
         np.array(permmat).reshape(
             list(shape[:-2])
@@ -83,6 +88,7 @@ def Pmat_to_perm(Pmat_org, cut):
         )
         + 1
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     return Pivot[..., :cut]
 
@@ -140,9 +146,15 @@ class TestLU_UnpackOp(OpTest):
                 place = fluid.CPUPlace()
                 if core.is_compiled_with_cuda():
                     place = fluid.CUDAPlace(0)
+<<<<<<< HEAD
+                xv = paddle.fluid.data(name="input",
+                                       shape=self.x_shape,
+                                       dtype=self.dtype)
+=======
                 xv = paddle.fluid.data(
                     name="input", shape=self.x_shape, dtype=self.dtype
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 lu, p = paddle.linalg.lu(xv)
                 exe = fluid.Executor(place)
                 fetches = exe.run(
@@ -199,10 +211,15 @@ class TestLU_UnpackOp3(TestLU_UnpackOp):
 
 
 class TestLU_UnpackAPI(unittest.TestCase):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def setUp(self):
         np.random.seed(2022)
 
     def test_dygraph(self):
+
         def run_lu_unpack_dygraph(shape, dtype):
             if dtype == "float32":
                 np_dtype = np.float32
@@ -263,9 +280,15 @@ class TestLU_UnpackAPI(unittest.TestCase):
                 with fluid.program_guard(fluid.Program(), fluid.Program()):
                     sP, sL, sU = scipy_lu_unpack(a)
 
+<<<<<<< HEAD
+                    x = paddle.fluid.data(name="input",
+                                          shape=shape,
+                                          dtype=dtype)
+=======
                     x = paddle.fluid.data(
                         name="input", shape=shape, dtype=dtype
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     lu, p = paddle.linalg.lu(x)
                     pP, pL, pU = paddle.linalg.lu_unpack(lu, p)
                     exe = fluid.Executor(place)

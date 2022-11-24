@@ -131,8 +131,13 @@ inline void TransToChannelFirst(const framework::ExecutionContext& context,
 
 template <typename DeviceContext, typename T>
 inline void TransToChannelLast(const framework::ExecutionContext& context,
+<<<<<<< HEAD
+                               const Tensor* input,
+                               Tensor* transformed_input) {
+=======
                                const phi::DenseTensor* input,
                                phi::DenseTensor* transformed_input) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   int dim = input->dims().size() - 2;
   if (dim == 3) {
     auto& dev_ctx = context.template device_context<DeviceContext>();

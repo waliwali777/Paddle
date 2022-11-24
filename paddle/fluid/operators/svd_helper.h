@@ -295,11 +295,19 @@ struct DeviceIndependenceTensorOperations {
     for_range(functor);
     return out;
   }
+<<<<<<< HEAD
+  framework::Tensor Matmul(const framework::Tensor& mat_a,
+                           const framework::Tensor& mat_b,
+                           bool trans_a = false,
+                           bool trans_b = false) {
+    framework::Tensor ret;
+=======
   phi::DenseTensor Matmul(const phi::DenseTensor& mat_a,
                           const phi::DenseTensor& mat_b,
                           bool trans_a = false,
                           bool trans_b = false) {
     phi::DenseTensor ret;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto a_dim = mat_a.dims();
     auto b_dim = mat_b.dims();
     std::vector<int> x_vec = phi::vectorize<int>(a_dim);
@@ -345,10 +353,17 @@ struct DeviceIndependenceTensorOperations {
     }
     return ret;
   }
+<<<<<<< HEAD
+  framework::Tensor Diag(const framework::Tensor& x,
+                         int offset = 0,
+                         // FIXME  link error
+                         int padding_value = 0) {
+=======
   phi::DenseTensor Diag(const phi::DenseTensor& x,
                         int offset = 0,
                         // FIXME  link error
                         int padding_value = 0) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     PADDLE_ENFORCE_EQ(padding_value,
                       0,
                       platform::errors::InvalidArgument(
@@ -529,11 +544,19 @@ struct DeviceIndependenceTensorOperations {
     auto ret = Diag(output);
     return ret;
   }
+<<<<<<< HEAD
+  framework::Tensor Slice(const framework::Tensor& x,
+                          std::vector<int> axes,
+                          std::vector<int> starts,
+                          std::vector<int> ends) {
+    framework::Tensor ret;
+=======
   phi::DenseTensor Slice(const phi::DenseTensor& x,
                          std::vector<int> axes,
                          std::vector<int> starts,
                          std::vector<int> ends) {
     phi::DenseTensor ret;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     std::vector<int> new_axes = axes;
     std::vector<int> out_shape = phi::vectorize<int>(x.dims());
     size_t rank = out_shape.size();
@@ -584,9 +607,15 @@ struct DeviceIndependenceTensorOperations {
     return ret;
   }
 
+<<<<<<< HEAD
+  framework::Tensor TrilTriu(const framework::Tensor& x,
+                             int diagonal,
+                             bool lower) {
+=======
   phi::DenseTensor TrilTriu(const phi::DenseTensor& x,
                             int diagonal,
                             bool lower) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     framework::AttributeMap attrs;
     attrs["diagonal"] = diagonal;
     attrs["lower"] = lower;
@@ -600,11 +629,19 @@ struct DeviceIndependenceTensorOperations {
     return CreateOpRunAndReturnTensor("tril_triu", inputs, attrs, out_shape);
   }
 
+<<<<<<< HEAD
+  framework::Tensor TriangularSolve(const framework::Tensor& x,
+                                    const framework::Tensor& y,
+                                    bool upper,
+                                    bool transpose,
+                                    bool unitriangular) {
+=======
   phi::DenseTensor TriangularSolve(const phi::DenseTensor& x,
                                    const phi::DenseTensor& y,
                                    bool upper,
                                    bool transpose,
                                    bool unitriangular) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     framework::AttributeMap attrs;
     attrs["upper"] = upper;
     attrs["transpose"] = transpose;
@@ -631,9 +668,15 @@ struct DeviceIndependenceTensorOperations {
         "triangular_solve", inputs, attrs, out_shape);
   }
 
+<<<<<<< HEAD
+  framework::Tensor ConcatTwoTensors(const framework::Tensor& x,
+                                     const framework::Tensor& y,
+                                     int axis) {
+=======
   phi::DenseTensor ConcatTwoTensors(const phi::DenseTensor& x,
                                     const phi::DenseTensor& y,
                                     int axis) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     framework::AttributeMap attrs;
     attrs["axis"] = axis;
     std::vector<framework::DDim> inputs_dims({x.dims(), y.dims()});
@@ -678,8 +721,13 @@ struct DeviceIndependenceTensorOperations {
                   const int n,
                   const int num_lower_diags,
                   const int num_upper_diags,
+<<<<<<< HEAD
+                  const Tensor& scale,
+                  const Tensor& input) {
+=======
                   const phi::DenseTensor& scale,
                   const phi::DenseTensor& input) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     Tensor out;
     auto& dev_ctx = context.template device_context<DeviceContext>();
     platform::ForRange<DeviceContext> for_range(dev_ctx, input.numel());
@@ -708,7 +756,11 @@ struct DeviceIndependenceTensorOperations {
   void EigenSliceWrapper(const phi::DenseTensor* in,
                          const std::vector<int>& start,
                          const std::vector<int>& end,
+<<<<<<< HEAD
+                         framework::Tensor* out) {
+=======
                          phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     // Slice by call Eigen Tensor Function `.slice()`
     size_t rank = in->dims().size();
     PADDLE_ENFORCE_EQ(start.size(),
@@ -738,7 +790,11 @@ struct DeviceIndependenceTensorOperations {
         offsets_32bit,
         extents_32bit);
   }
+<<<<<<< HEAD
+  framework::Tensor CreateOpRunAndReturnTensor(
+=======
   phi::DenseTensor CreateOpRunAndReturnTensor(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const std::string& type,
       const NameInTensorMap& inputs,
       const framework::AttributeMap& attrs,

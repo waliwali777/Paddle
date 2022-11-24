@@ -45,6 +45,18 @@ paddle.enable_static()
 SEED = 10
 
 
+<<<<<<< HEAD
+class TestSyncBatchNormRunnerBase(object):
+
+    def get_model(self,
+                  main,
+                  startup,
+                  place,
+                  layout,
+                  seed,
+                  sync_bn=False,
+                  only_forward=False):
+=======
 class TestSyncBatchNormRunnerBase:
     def get_model(
         self,
@@ -56,6 +68,7 @@ class TestSyncBatchNormRunnerBase:
         sync_bn=False,
         only_forward=False,
     ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         raise NotImplementedError(
             "get model should be implemented by child class."
         )
@@ -67,9 +80,14 @@ class TestSyncBatchNormRunnerBase:
             not_ready_endpoints = []
             for ep in endpoints:
                 ip_port = ep.split(":")
+<<<<<<< HEAD
+                with closing(socket.socket(socket.AF_INET,
+                                           socket.SOCK_STREAM)) as sock:
+=======
                 with closing(
                     socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 ) as sock:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     sock.settimeout(2)
                     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                     if hasattr(socket, 'SO_REUSEPORT'):
@@ -83,15 +101,25 @@ class TestSyncBatchNormRunnerBase:
                         not_ready_endpoints.append(ep)
             if not all_ok:
                 sys.stderr.write("server not ready, wait 3 sec to retry...\n")
+<<<<<<< HEAD
+                sys.stderr.write("not ready endpoints:" +
+                                 str(not_ready_endpoints) + "\n")
+=======
                 sys.stderr.write(
                     "not ready endpoints:" + str(not_ready_endpoints) + "\n"
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 sys.stderr.flush()
                 time.sleep(3)
             else:
                 break
 
+<<<<<<< HEAD
+
+#endpoints should be ["ip1:port1","ip2:port2"]
+=======
     # endpoints should be ["ip1:port1","ip2:port2"]
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def initCommunicator(
         self, program, rank, nranks, wait_port, current_endpoint, endpoints
@@ -101,6 +129,28 @@ class TestSyncBatchNormRunnerBase:
         if rank == 0 and wait_port:
             self.wait_server_ready(other_endpoints)
         block = program.global_block()
+<<<<<<< HEAD
+        hccl_id_var = block.create_var(name=nameGen.generate('hccl_id'),
+                                       persistable=True,
+                                       type=core.VarDesc.VarType.RAW)
+        block.append_op(type='c_gen_hccl_id',
+                        inputs={},
+                        outputs={'Out': hccl_id_var},
+                        attrs={
+                            'rank': rank,
+                            'endpoint': current_endpoint,
+                            'other_endpoints': other_endpoints
+                        })
+        block.append_op(type='c_comm_init_hccl',
+                        inputs={'X': hccl_id_var},
+                        outputs={},
+                        attrs={
+                            'rank': rank,
+                            'ring_id': self.global_ring_id,
+                            'device_id': int(os.getenv("FLAGS_selected_npus")),
+                            'rank_ids': nranks
+                        })
+=======
         hccl_id_var = block.create_var(
             name=nameGen.generate('hccl_id'),
             persistable=True,
@@ -127,6 +177,7 @@ class TestSyncBatchNormRunnerBase:
                 'rank_ids': nranks,
             },
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def run_trainer(self, args):
         device_id = int(os.getenv("FLAGS_selected_npus", "0"))
@@ -372,12 +423,19 @@ class TestSyncBatchNormRunnerBase:
         current_endpoint = args["currentendpoint"]
         nranks = 2
 
+<<<<<<< HEAD
+        self.initCommunicator(startup_prog, rank, nranks, True,
+                              current_endpoint, endpoints)
+        sys.stderr.write("after init, startup_prog: " +
+                         startup_prog.to_string(True) + "\n")
+=======
         self.initCommunicator(
             startup_prog, rank, nranks, True, current_endpoint, endpoints
         )
         sys.stderr.write(
             "after init, startup_prog: " + startup_prog.to_string(True) + "\n"
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         train_prog.global_seed(SEED)
         train_prog._sync_with_cpp()
         startup_prog.global_seed(SEED)
@@ -385,6 +443,14 @@ class TestSyncBatchNormRunnerBase:
         paddle.seed(SEED)
 
         self.rank = rank
+<<<<<<< HEAD
+        outs = self.get_model(train_prog, startup_prog, place, layout, SEED,
+                              True, only_forward)
+        sys.stderr.write("after get_model, train_prog: " +
+                         train_prog.to_string(True) + "\n")
+        sys.stderr.write("after get_model, startup_prog: " +
+                         startup_prog.to_string(True) + "\n")
+=======
         outs = self.get_model(
             train_prog, startup_prog, place, layout, SEED, True, only_forward
         )
@@ -396,6 +462,7 @@ class TestSyncBatchNormRunnerBase:
             + startup_prog.to_string(True)
             + "\n"
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         ops = train_prog.blocks[0].ops
         for i, op in enumerate(ops):
@@ -456,6 +523,7 @@ from contextlib import closing
 
 
 class TestDistBase(unittest.TestCase):
+
     def setUp(self):
         self._port_set = set()
         self._trainers = 2
@@ -466,6 +534,7 @@ class TestDistBase(unittest.TestCase):
         self._python_interp = sys.executable
 
     def _find_free_port(self):
+
         def __free_port():
             with closing(
                 socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -509,6 +578,17 @@ class TestDistBase(unittest.TestCase):
         tr1_pipe = open("/tmp/tr1_err.log", "wb")
         # print(tr0_cmd)
         # print(tr1_cmd)
+<<<<<<< HEAD
+        tr0_proc = subprocess.Popen(tr0_cmd.strip().split(),
+                                    stdout=subprocess.PIPE,
+                                    stderr=tr0_pipe,
+                                    env=env0)
+
+        tr1_proc = subprocess.Popen(tr0_cmd.strip().split(),
+                                    stdout=subprocess.PIPE,
+                                    stderr=tr1_pipe,
+                                    env=env1)
+=======
         tr0_proc = subprocess.Popen(
             tr0_cmd.strip().split(),
             stdout=subprocess.PIPE,
@@ -522,6 +602,7 @@ class TestDistBase(unittest.TestCase):
             stderr=tr1_pipe,
             env=env1,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         tr0_out, tr0_err = tr0_proc.communicate()
         tr1_out, tr1_err = tr1_proc.communicate()

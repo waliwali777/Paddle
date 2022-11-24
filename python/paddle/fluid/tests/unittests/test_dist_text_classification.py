@@ -22,31 +22,47 @@ flag_name = os.path.splitext(__file__)[0]
 
 
 class TestDistTextClassification2x2(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = True
         self._enforce_place = "CPU"
 
     def test_text_classification(self):
+<<<<<<< HEAD
+        self.check_with_place("dist_text_classification.py",
+                              delta=1e-6,
+                              check_error_log=True,
+                              log_name=flag_name)
+=======
         self.check_with_place(
             "dist_text_classification.py",
             delta=1e-6,
             check_error_log=True,
             log_name=flag_name,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestDistTextClassification2x2Async(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = False
         self._enforce_place = "CPU"
 
     def test_se_resnext(self):
+<<<<<<< HEAD
+        self.check_with_place("dist_text_classification.py",
+                              delta=100,
+                              check_error_log=True,
+                              log_name=flag_name)
+=======
         self.check_with_place(
             "dist_text_classification.py",
             delta=100,
             check_error_log=True,
             log_name=flag_name,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

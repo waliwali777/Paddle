@@ -283,11 +283,19 @@ enum MINMAX_GRAD_FUNCTOR {
 };
 template <MINMAX_GRAD_FUNCTOR Functor, typename Tin, typename Tout = Tin>
 void MLUMinMaxGradHelper(const framework::ExecutionContext& ctx) {
+<<<<<<< HEAD
+  auto* x = ctx.Input<Tensor>("X");
+  auto* y = ctx.Input<Tensor>("Y");
+  auto* dout = ctx.Input<Tensor>(framework::GradVarName("Out"));
+  auto* dx = ctx.Output<Tensor>(framework::GradVarName("X"));
+  auto* dy = ctx.Output<Tensor>(framework::GradVarName("Y"));
+=======
   auto* x = ctx.Input<phi::DenseTensor>("X");
   auto* y = ctx.Input<phi::DenseTensor>("Y");
   auto* dout = ctx.Input<phi::DenseTensor>(framework::GradVarName("Out"));
   auto* dx = ctx.Output<phi::DenseTensor>(framework::GradVarName("X"));
   auto* dy = ctx.Output<phi::DenseTensor>(framework::GradVarName("Y"));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   int axis = ctx.Attr<int>("axis");
 
   const auto& x_dims = x->dims();

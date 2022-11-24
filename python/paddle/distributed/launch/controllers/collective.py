@@ -13,12 +13,16 @@
 # limitations under the License.
 
 from .controller import Controller, ControleMode
+<<<<<<< HEAD
+=======
 from ..context.device import DeviceType
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 import json
 
 
 class CollectiveController(Controller):
+
     @classmethod
     def enable(cls, ctx):
         # collective is the default mode
@@ -118,6 +122,12 @@ class CollectiveController(Controller):
             }
         )
 
+<<<<<<< HEAD
+        peer_list, rank = self.master.sync_peers('/{}/info'.format(self.job.id),
+                                                 self.pod.name, data,
+                                                 self.job.replicas,
+                                                 self.pod.rank)
+=======
         peer_list, rank = self.master.sync_peers(
             '/{}/info'.format(self.job.id),
             self.pod.name,
@@ -125,6 +135,7 @@ class CollectiveController(Controller):
             self.job.replicas,
             self.pod.rank,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.pod.rank = rank
 
         if len(peer_list) < 1:
@@ -157,7 +168,11 @@ class CollectiveController(Controller):
                 "PADDLE_GLOBAL_RANK": "{}".format(i + rank_offset),
                 "PADDLE_LOCAL_RANK": "{}".format(i),
                 "PADDLE_NNODES": "{}".format(self.job.replicas),
+<<<<<<< HEAD
+                ## compatible env
+=======
                 # compatible env
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 "PADDLE_TRAINER_ENDPOINTS": ",".join(job_endpoints),
                 "PADDLE_CURRENT_ENDPOINT": endpoints[i],
                 "PADDLE_TRAINER_ID": "{}".format(i + rank_offset),
@@ -165,8 +180,11 @@ class CollectiveController(Controller):
                 "PADDLE_RANK_IN_NODE": str(i),
             }
             if len(selected_dev_list) > 0:
+<<<<<<< HEAD
+=======
                 if self.ctx.node.device.dtype == DeviceType.CUSTOM_DEVICE:
                     e.update(self.ctx.node.device.get_custom_device_envs())
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 if self.pod.replicas == 1:
                     e.update({selected_dev_key: ",".join(selected_dev_list)})
                 else:
@@ -174,14 +192,19 @@ class CollectiveController(Controller):
             else:
                 e.update({'PADDLE_DISTRI_BACKEND': 'gloo'})
 
+<<<<<<< HEAD
+            self.add_container(envs=e, log_tag=i)
+=======
             # log_file = "{}.{}.{}.log".format(self.job.id, self.pod.name, i)
             log_file = f"workerlog.{i}"
             self.add_container(envs=e, log_file=log_file)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         return True
 
 
 class CollectiveElasticController(CollectiveController):
+
     @classmethod
     def enable(cls, ctx):
         if ctx.args.master and ctx.args.master.startswith("etcd://"):
@@ -211,9 +234,15 @@ class CollectiveElasticController(CollectiveController):
 
             self.ctx.logger.info("Waiting peer ready...")
 
+<<<<<<< HEAD
+            ok, replicas = self.master.wait_peer_ready(self.job.replicas_min,
+                                                       self.job.replicas_max,
+                                                       timeout)
+=======
             ok, replicas = self.master.wait_peer_ready(
                 self.job.replicas_min, self.job.replicas_max, timeout
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             if ok:
                 self.job.replicas = replicas
             else:

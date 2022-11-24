@@ -35,7 +35,12 @@ class CostNodeType(Enum):
     NOP = 5
 
 
+<<<<<<< HEAD
+class Cost(object):
+
+=======
 class Cost:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self):
         self.runtime = None
         self.static_mem = None
@@ -49,7 +54,12 @@ class CostModelMode(Enum):
     MIXED = 3
 
 
+<<<<<<< HEAD
+class CostNode(object):
+
+=======
 class CostNode:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, node, node_type, id=None):
         self.id = id
         self.node = node
@@ -70,6 +80,7 @@ class CostNode:
 
 
 class MergedOpsCostNode(CostNode):
+
     def __init__(self, node_type, id=None, base_node_list=None, is_bwd=False):
         super().__init__(None, node_type, id)
         self.node_list = base_node_list
@@ -77,10 +88,21 @@ class MergedOpsCostNode(CostNode):
 
 
 class CommOpCostNode(CostNode):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 node,
+                 node_type,
+                 id=None,
+                 comm_node_list=None,
+                 is_bwd=False):
+        super(CommOpCostNode, self).__init__(node, node_type, id)
+=======
     def __init__(
         self, node, node_type, id=None, comm_node_list=None, is_bwd=False
     ):
         super().__init__(node, node_type, id)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.node_list = comm_node_list
         self.ranks = []
         self.comm_type = node.type
@@ -115,6 +137,17 @@ class CommOpCostNode(CostNode):
 
 
 class TensorCostNode(CostNode):
+<<<<<<< HEAD
+
+    def __init__(self,
+                 node,
+                 node_type,
+                 id=None,
+                 base_node_list=None,
+                 batch_size=None,
+                 shared_node_id=None):
+        super(TensorCostNode, self).__init__(node, node_type, id)
+=======
     def __init__(
         self,
         node,
@@ -125,6 +158,7 @@ class TensorCostNode(CostNode):
         shared_node_id=None,
     ):
         super().__init__(node, node_type, id)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         if node.name == "create_py_reader_0" or node.name == "double_buffer_0":
             self.shape = [2, 2]
             self.dtype = paddle.float32
@@ -158,6 +192,7 @@ class TensorCostNode(CostNode):
 
 
 class CompOpCostNode(CostNode):
+
     def __init__(self, node, node_type, id=None, is_bwd=False, is_optim=False):
         super().__init__(node, node_type, id)
         self.is_bwd = is_bwd
@@ -172,7 +207,12 @@ class CompOpCostNode(CostNode):
             self.cost = 0.0
 
 
+<<<<<<< HEAD
+class PipeEvent(object):
+
+=======
 class PipeEvent:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, stage_id, event_name, duration, start_time=-1):
         self.stage_id = stage_id
         self.name = event_name
@@ -181,6 +221,18 @@ class PipeEvent:
         self.e_time = -1
 
 
+<<<<<<< HEAD
+class CostModel(object):
+
+    def __init__(self,
+                 mode=CostModelMode.BENCHMARKING,
+                 cluster=None,
+                 batch_size=1,
+                 microbatch_num=1,
+                 opcall_overhead=0,
+                 standalone_cost_data=None,
+                 pipeline_config=None):
+=======
 class CostModel:
     def __init__(
         self,
@@ -192,6 +244,7 @@ class CostModel:
         standalone_cost_data=None,
         pipeline_config=None,
     ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.mode = mode
 
         # parameters
@@ -270,9 +323,14 @@ class CostModel:
                     op, CostNodeType.COMMUNICATION, op_id, is_bwd
                 )
             else:
+<<<<<<< HEAD
+                is_bwd = (int(op.attr('op_role')) == int(
+                    OpRole.Backward)) or "@GRAD" in op.input_arg_names
+=======
                 is_bwd = (
                     int(op.attr('op_role')) == int(OpRole.Backward)
                 ) or "@GRAD" in op.input_arg_names
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 is_optim = 'LearningRate' in op.input_names
                 op_node = CompOpCostNode(
                     op, CostNodeType.COMPUTATION, op_id, is_bwd, is_optim
@@ -322,12 +380,19 @@ class CostModel:
 
                         write_op_cnt += 1
                         new_var_id = node_id + '_write_{}'.format(write_op_cnt)
+<<<<<<< HEAD
+                        new_var = TensorCostNode(node.node,
+                                                 CostNodeType.VARIABLE,
+                                                 new_var_id,
+                                                 shared_node_id=node_id)
+=======
                         new_var = TensorCostNode(
                             node.node,
                             CostNodeType.VARIABLE,
                             new_var_id,
                             shared_node_id=node_id,
                         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
                         graph[new_var_id] = [[], []]
                         graph[pred_id][SUCC].append(new_var_id)
@@ -353,6 +418,11 @@ class CostModel:
             self.op_graph.append({})
             self.runtime_graph.append({})
             self._parse_sub_program(
+<<<<<<< HEAD
+                sub_prog, self.nodes[sub_idx], self.origin_graph[sub_idx],
+                self.cost_data[0 if self.rank2pp is None else self.
+                               rank2pp[sub_idx]], sub_idx)
+=======
                 sub_prog,
                 self.nodes[sub_idx],
                 self.origin_graph[sub_idx],
@@ -361,6 +431,7 @@ class CostModel:
                 ],
                 sub_idx,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return self.nodes
 
     def _find_succ_op(self, node_id, sub_idx=0):
@@ -442,12 +513,19 @@ class CostModel:
                 )
         merged_node_id = 'merged_' + str(len(nodes))
         is_bwd = to_merge_node_list[0].is_bwd
+<<<<<<< HEAD
+        merged_node = MergedOpsCostNode(CostNodeType.MERGED,
+                                        id=merged_node_id,
+                                        base_node_list=nodes_list,
+                                        is_bwd=is_bwd)
+=======
         merged_node = MergedOpsCostNode(
             CostNodeType.MERGED,
             id=merged_node_id,
             base_node_list=nodes_list,
             is_bwd=is_bwd,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         merged_node.cost = node_cost
         return merged_node_id, merged_node
 
@@ -461,12 +539,21 @@ class CostModel:
         '''
         cnt = 0
         for sub_idx in range(self.total_rank):
+<<<<<<< HEAD
+            cnt += self._merge_linear(self.nodes[sub_idx],
+                                      self.runtime_graph[sub_idx],
+                                      is_bwd=False)
+            cnt += self._merge_linear(self.nodes[sub_idx],
+                                      self.runtime_graph[sub_idx],
+                                      is_bwd=True)
+=======
             cnt += self._merge_linear(
                 self.nodes[sub_idx], self.runtime_graph[sub_idx], is_bwd=False
             )
             cnt += self._merge_linear(
                 self.nodes[sub_idx], self.runtime_graph[sub_idx], is_bwd=True
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return cnt
 
     def merge_branch(self):
@@ -482,12 +569,21 @@ class CostModel:
         '''
         cnt = 0
         for sub_idx in range(self.total_rank):
+<<<<<<< HEAD
+            cnt += self._merge_branch(self.nodes[sub_idx],
+                                      self.runtime_graph[sub_idx],
+                                      is_bwd=False)
+            cnt += self._merge_branch(self.nodes[sub_idx],
+                                      self.runtime_graph[sub_idx],
+                                      is_bwd=True)
+=======
             cnt += self._merge_branch(
                 self.nodes[sub_idx], self.runtime_graph[sub_idx], is_bwd=False
             )
             cnt += self._merge_branch(
                 self.nodes[sub_idx], self.runtime_graph[sub_idx], is_bwd=True
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return cnt
 
     def _merge_linear(self, nodes, runtime_graph, is_bwd=False):
@@ -514,8 +610,12 @@ class CostModel:
                 succ = None
                 try:
                     runtime_graph[merged_node_id][SUCC] = copy.deepcopy(
+<<<<<<< HEAD
+                        edges[SUCC])
+=======
                         edges[SUCC]
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
                     if len(runtime_graph[pred_id][SUCC]) > 1:
                         # predecessor has more than 1 successor
@@ -591,10 +691,15 @@ class CostModel:
 
                 to_merge = True
                 try:
+<<<<<<< HEAD
+                    if len(edges[SUCC]) < 1 or len(
+                            runtime_graph[edges[SUCC][0]][SUCC]) < 1:
+=======
                     if (
                         len(edges[SUCC]) < 1
                         or len(runtime_graph[edges[SUCC][0]][SUCC]) < 1
                     ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                         continue
                 except:
                     continue
@@ -634,6 +739,7 @@ class CostModel:
         return reduct_cnt
 
     def get_runtime_cost(self):
+
         def get_node_cost(node):
             node_cost = node.cost + self.opcall_overhead
             if isinstance(node, MergedOpsCostNode):
@@ -699,9 +805,14 @@ class CostModel:
                     static_mem += size
                 cur_mem += size
             edges = sim_graph[node_id]
+<<<<<<< HEAD
+            if not (node.type == CostNodeType.VARIABLE
+                    and node.node.persistable):
+=======
             if not (
                 node.type == CostNodeType.VARIABLE and node.node.persistable
             ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 for succ_id in edges[SUCC]:
                     sim_graph[succ_id][PRED].remove(node_id)
                     if len(sim_graph[succ_id][PRED]) == 0:
@@ -710,10 +821,15 @@ class CostModel:
                 pred = nodes
                 if pred.type == CostNodeType.VARIABLE:
                     sim_graph[pred_id][SUCC].remove(node_id)
+<<<<<<< HEAD
+                    if len(sim_graph[pred_id]
+                           [SUCC]) == 0 and not pred.node.persistable:
+=======
                     if (
                         len(sim_graph[pred_id][SUCC]) == 0
                         and not pred.node.persistable
                     ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                         cur_mem -= pred.get_size()
         return static_mem, cur_mem, top_mem
 
@@ -745,6 +861,18 @@ class CostModel:
                     event_list.append(e)
                     if stid != stage_num - 1:
                         q.put(
+<<<<<<< HEAD
+                            PipeEvent(stid + 1,
+                                      'fwd',
+                                      self.fwd_time[stid + 1],
+                                      start_time=e.e_time))
+                    else:
+                        q.put(
+                            PipeEvent(stid,
+                                      'bwd',
+                                      self.bwd_time[stid],
+                                      start_time=e.e_time))
+=======
                             PipeEvent(
                                 stid + 1,
                                 'fwd',
@@ -761,6 +889,7 @@ class CostModel:
                                 start_time=e.e_time,
                             )
                         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     fwd_cnt[stid] -= 1
                     global_time[stid] = e.e_time
                 else:
@@ -771,6 +900,12 @@ class CostModel:
                 event_list.append(e)
                 if stid != 0:
                     q.put(
+<<<<<<< HEAD
+                        PipeEvent(stid - 1,
+                                  'bwd',
+                                  self.bwd_time[stid - 1],
+                                  start_time=e.e_time))
+=======
                         PipeEvent(
                             stid - 1,
                             'bwd',
@@ -778,10 +913,17 @@ class CostModel:
                             start_time=e.e_time,
                         )
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 fwd_cnt[stid] += 1
                 bwd_cnt[stid] -= 1
                 if bwd_cnt[stid] == 0:
                     q.put(
+<<<<<<< HEAD
+                        PipeEvent(stid,
+                                  'optim',
+                                  self.optim_time[stid],
+                                  start_time=e.e_time))
+=======
                         PipeEvent(
                             stid,
                             'optim',
@@ -789,6 +931,7 @@ class CostModel:
                             start_time=e.e_time,
                         )
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 global_time[stid] = e.e_time
             elif e.name == 'optim':
                 e.s_time = max(global_time[stid], e.s_time)
@@ -849,12 +992,19 @@ def estimate_cost(
     """
     # the following line is left for now, cluster model will be involved in the future
     assert cluster is None, "For now, cluster remains None"
+<<<<<<< HEAD
+    cm_ctx = CostModel(cluster=cluster,
+                       batch_size=batch_size,
+                       standalone_cost_data=standalone_cost_data,
+                       pipeline_config=pipeline_config)
+=======
     cm_ctx = CostModel(
         cluster=cluster,
         batch_size=batch_size,
         standalone_cost_data=standalone_cost_data,
         pipeline_config=pipeline_config,
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     cm_ctx.init(distributed_program)
     cost = cm_ctx.get_cost()
     return cost

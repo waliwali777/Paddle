@@ -578,6 +578,8 @@ void RemovePaddingRecoverPaddingPass::ApplyImpl(ir::Graph* graph) const {
   };
   gpd6(graph, handler6);
 
+<<<<<<< HEAD
+=======
   GraphPatternDetector gpd7;
   patterns::FusedTokenPrune fused_token_prune(
       gpd7.mutable_pattern(), "remove_padding_recover_padding_pass");
@@ -620,6 +622,7 @@ void RemovePaddingRecoverPaddingPass::ApplyImpl(ir::Graph* graph) const {
   };
   gpd7(graph, handler7);
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   AddStatis(found_subgraph_count);
 }
 

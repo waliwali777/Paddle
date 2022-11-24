@@ -47,7 +47,11 @@ class SkipLayerNormOpConverter : public OpConverter {
           [&](const std::string& arg_name) -> TensorRTEngine::Weight {
         std::string var_name = op_desc.Input(arg_name).front();
         auto* temp_var = scope.FindVar(var_name);
+<<<<<<< HEAD
+        auto* temp_tensor = temp_var->GetMutable<framework::LoDTensor>();
+=======
         auto* temp_tensor = temp_var->GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         auto weight = engine_->GetTrtWeight(var_name, *temp_tensor);
         return weight;
       };
@@ -150,6 +154,8 @@ class SkipLayerNormOpConverter : public OpConverter {
         layer = plugin_layer;
       }
     } else {
+<<<<<<< HEAD
+=======
       auto GetFp16Weight =
           [&](const std::string& arg_name) -> TensorRTEngine::Weight {
         std::string var_name = op_desc.Input(arg_name).front();
@@ -159,15 +165,34 @@ class SkipLayerNormOpConverter : public OpConverter {
         return weight;
       };
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       auto GetFp32Weight =
           [&](const std::string& arg_name) -> TensorRTEngine::Weight {
         std::string var_name = op_desc.Input(arg_name).front();
         auto* temp_var = scope.FindVar(var_name);
+<<<<<<< HEAD
+        auto* temp_tensor = temp_var->GetMutable<framework::LoDTensor>();
+=======
         auto* temp_tensor = temp_var->GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         auto weight = engine_->GetFp32TrtWeight(var_name, *temp_tensor);
         return weight;
       };
 
+<<<<<<< HEAD
+      auto bias_weight = GetFp32Weight("Bias").get();
+      auto scale_weight = GetFp32Weight("Scale").get();
+
+      float eps = PADDLE_GET_CONST(float, op_desc.GetAttr("epsilon"));
+      bool with_fp16 =
+          engine_->WithFp16() && !engine_->disable_trt_plugin_fp16();
+      plugin::SkipLayerNormPluginDynamic* plugin =
+          new plugin::SkipLayerNormPluginDynamic(
+              static_cast<const float*>(bias_weight.values),
+              static_cast<const float*>(scale_weight.values),
+              bias_weight.count,
+              scale_weight.count,
+=======
       // bool with_fp16 = engine_->WithFp16() &&
       //                  !engine_->disable_trt_plugin_fp16() &&
       //                  (input1->getType() == nvinfer1::DataType::kHALF);
@@ -191,6 +216,7 @@ class SkipLayerNormOpConverter : public OpConverter {
                   static_cast<const void*>(scale_weight.get().values)),
               bias_weight.get().count,
               scale_weight.get().count,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               eps,
               with_fp16);
       layer = engine_->AddDynamicPlugin(inputs.data(), 2, plugin);

@@ -30,6 +30,14 @@ paddle.enable_static()
 
 
 @param.place(config.DEVICES)
+<<<<<<< HEAD
+@param.param_cls((param.TEST_CASE_NAME, 'a1', 'b1', 'a2', 'b2'), [
+    ('test_regular_input', 6.0 * np.random.random(
+        (4, 5)) + 1e-4, 6.0 * np.random.random(
+            (4, 5)) + 1e-4, 6.0 * np.random.random(
+                (4, 5)) + 1e-4, 6.0 * np.random.random((4, 5)) + 1e-4),
+])
+=======
 @param.param_cls(
     (param.TEST_CASE_NAME, 'a1', 'b1', 'a2', 'b2'),
     [
@@ -42,7 +50,9 @@ paddle.enable_static()
         ),
     ],
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 class TestKLBetaBeta(unittest.TestCase):
+
     def setUp(self):
         self.mp = paddle.static.Program()
         self.sp = paddle.static.Program()
@@ -71,12 +81,20 @@ class TestKLBetaBeta(unittest.TestCase):
                 self.mp, feed=self.feeds, fetch_list=[out]
             )
 
+<<<<<<< HEAD
+            np.testing.assert_allclose(out,
+                                       self.scipy_kl_beta_beta(
+                                           self.a1, self.b1, self.a2, self.b2),
+                                       rtol=config.RTOL.get(str(self.a1.dtype)),
+                                       atol=config.ATOL.get(str(self.a1.dtype)))
+=======
             np.testing.assert_allclose(
                 out,
                 self.scipy_kl_beta_beta(self.a1, self.b1, self.a2, self.b2),
                 rtol=config.RTOL.get(str(self.a1.dtype)),
                 atol=config.ATOL.get(str(self.a1.dtype)),
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def scipy_kl_beta_beta(self, a1, b1, a2, b2):
         return (
@@ -89,6 +107,12 @@ class TestKLBetaBeta(unittest.TestCase):
 
 
 @param.place(config.DEVICES)
+<<<<<<< HEAD
+@param.param_cls((param.TEST_CASE_NAME, 'conc1', 'conc2'), [
+    ('test-regular-input', np.random.random(
+        (5, 7, 8, 10)), np.random.random((5, 7, 8, 10))),
+])
+=======
 @param.param_cls(
     (param.TEST_CASE_NAME, 'conc1', 'conc2'),
     [
@@ -99,7 +123,9 @@ class TestKLBetaBeta(unittest.TestCase):
         ),
     ],
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 class TestKLDirichletDirichlet(unittest.TestCase):
+
     def setUp(self):
         self.mp = paddle.static.Program()
         self.sp = paddle.static.Program()
@@ -132,6 +158,15 @@ class TestKLDirichletDirichlet(unittest.TestCase):
 
     def scipy_kl_diric_diric(self, conc1, conc2):
         return (
+<<<<<<< HEAD
+            scipy.special.gammaln(np.sum(conc1, -1)) -
+            scipy.special.gammaln(np.sum(conc2, -1)) - np.sum(
+                scipy.special.gammaln(conc1) - scipy.special.gammaln(conc2), -1)
+            + np.sum(
+                (conc1 - conc2) *
+                (scipy.special.digamma(conc1) -
+                 scipy.special.digamma(np.sum(conc1, -1, keepdims=True))), -1))
+=======
             scipy.special.gammaln(np.sum(conc1, -1))
             - scipy.special.gammaln(np.sum(conc2, -1))
             - np.sum(
@@ -146,6 +181,7 @@ class TestKLDirichletDirichlet(unittest.TestCase):
                 -1,
             )
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class DummyDistribution(paddle.distribution.Distribution):
@@ -157,6 +193,7 @@ class DummyDistribution(paddle.distribution.Distribution):
     (param.TEST_CASE_NAME, 'p', 'q'), [('test-dispatch-exception')]
 )
 class TestDispatch(unittest.TestCase):
+
     def setUp(self):
         self.mp = paddle.static.Program()
         self.sp = paddle.static.Program()
@@ -186,17 +223,27 @@ class TestDispatch(unittest.TestCase):
     ],
 )
 class TestKLExpfamilyExpFamily(unittest.TestCase):
+
     def setUp(self):
         self.mp = paddle.static.Program()
         self.sp = paddle.static.Program()
         self.executor = paddle.static.Executor(self.place)
         with paddle.static.program_guard(self.mp, self.sp):
+<<<<<<< HEAD
+            rate1 = paddle.static.data('rate1',
+                                       shape=self.rate1.shape,
+                                       dtype=self.rate1.dtype)
+            rate2 = paddle.static.data('rate2',
+                                       shape=self.rate2.shape,
+                                       dtype=self.rate2.dtype)
+=======
             rate1 = paddle.static.data(
                 'rate1', shape=self.rate1.shape, dtype=self.rate1.dtype
             )
             rate2 = paddle.static.data(
                 'rate2', shape=self.rate2.shape, dtype=self.rate2.dtype
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             self.p = mock.Exponential(rate1)
             self.q = mock.Exponential(rate2)
             self.feeds = {'rate1': self.rate1, 'rate2': self.rate2}

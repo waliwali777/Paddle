@@ -44,7 +44,37 @@ void DeserializeFromStream(std::istream& is, phi::SelectedRows* selected_rows) {
 void DeserializeFromStream(std::istream& is,
                            phi::SelectedRows* selected_rows,
                            const platform::DeviceContext& dev_ctx) {
+<<<<<<< HEAD
+  {
+    // the 1st field, unit32_t version for SelectedRows
+    uint32_t version;
+    is.read(reinterpret_cast<char*>(&version), sizeof(version));
+    PADDLE_ENFORCE_EQ(version,
+                      0U,
+                      platform::errors::InvalidArgument(
+                          "Only version 0 SelectedRows is supported."));
+  }
+  {
+    // the 2st field, rows information
+    uint64_t size;
+    is.read(reinterpret_cast<char*>(&size), sizeof(size));
+    auto& rows = *selected_rows->mutable_rows();
+    rows.resize(size);
+    for (uint64_t i = 0; i < size; ++i) {
+      is.read(reinterpret_cast<char*>(&rows[i]), sizeof(int64_t));
+    }
+  }
+  {
+    // the 3st field, the height of the SelectedRows
+    int64_t height;
+    is.read(reinterpret_cast<char*>(&height), sizeof(int64_t));
+    selected_rows->set_height(height);
+  }
+  // the 4st field, tensor which contains the data
+  TensorFromStream(is, selected_rows->mutable_value(), dev_ctx);
+=======
   phi::DeserializeFromStream(is, selected_rows, dev_ctx);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }
 
 }  // namespace framework

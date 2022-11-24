@@ -22,6 +22,7 @@ import json
 
 
 class KVHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+
     def do_GET(self):
         with self.server.kv_lock:
             ret = {}
@@ -67,7 +68,12 @@ class KVHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         return
 
 
+<<<<<<< HEAD
+class KVServer(HTTPServer, object):
+
+=======
 class KVServer(HTTPServer):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, port):
         super().__init__(('', port), KVHandler)
         self.kv_lock = threading.Lock()
@@ -88,7 +94,12 @@ class KVServer(HTTPServer):
         self.stopped = True
 
 
+<<<<<<< HEAD
+class PKVServer():
+
+=======
 class PKVServer:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, port):
         self._server = KVServer(port)
 

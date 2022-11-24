@@ -38,6 +38,13 @@ class NPUReduceMeanOpKernel : public framework::OpKernel<T> {
       }
     }
 
+<<<<<<< HEAD
+    const auto& runner = NpuOpRunner("ReduceMeanD",
+                                     {*input},
+                                     {*output},
+                                     {{"axes", dims}, {"keep_dims", keep_dim}});
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto stream =
         ctx.template device_context<paddle::platform::NPUDeviceContext>()
             .stream();
@@ -81,11 +88,20 @@ class NPUReduceMeanGradOpKernel : public framework::OpKernel<T> {
       reduce_numel *= input_dims[d];
     }
 
+<<<<<<< HEAD
+    const auto& runner =
+        NpuOpRunner("FillV2D",
+                    {},
+                    {*input_grad},
+                    {{"value", 1.0f / static_cast<float>(reduce_numel)},
+                     {"dims", input_dims_vec}});
+=======
     Tensor tensor_value(input_grad->dtype());
     tensor_value.mutable_data<T>({1}, ctx.GetPlace());
     FillNpuTensorWithConstant<T>(
         &tensor_value, static_cast<T>(1.0f / static_cast<T>(reduce_numel)));
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto stream =
         ctx.template device_context<paddle::platform::NPUDeviceContext>()
             .stream();

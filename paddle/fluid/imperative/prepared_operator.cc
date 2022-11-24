@@ -94,7 +94,11 @@ void HandleComplexGradToRealGrad(const NameVarMap<VarType>& outs) {
                 << " var `" << var->Name() << "` to "
                 << framework::DataTypeToString(var->ForwardDataType())
                 << " real var in dynamic graph.";
+<<<<<<< HEAD
+        framework::Tensor out;
+=======
         phi::DenseTensor out;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         framework::TransComplexToReal(
             var->ForwardDataType(), var->DataType(), *tensor, &out);
         SetTensorToVariable(var->Var(), out, var->MutableVar());
@@ -335,8 +339,13 @@ PreparedOp PrepareImpl(
         && !is_xpu_unsupport
 #endif
     ) {
+<<<<<<< HEAD
+      VLOG(6) << "Dynamic mode PrepareImpl - kernel name: " << pt_kernel_name
+              << " | kernel key: " << pt_kernel_key
+=======
       VLOG(6) << "Dynamic mode PrepareImpl - kernel name: " << phi_kernel_name
               << " | kernel key: " << phi_kernel_key
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               << " | kernel: " << phi_kernel;
 
       if (expected_kernel_key.place_ != place) {
@@ -401,11 +410,19 @@ PreparedOp PrepareImpl(
         return PreparedOp(
             op,
             empty_ctx,
+<<<<<<< HEAD
+            framework::TransPhiKernelKeyToOpKernelType(pt_cpu_kernel_key),
+            arg_map_fn,
+            default_kernel_signature,
+            std::move(kernel_signature),
+            pt_cpu_kernel,
+=======
             framework::TransPhiKernelKeyToOpKernelType(phi_cpu_kernel_key),
             arg_map_fn,
             default_kernel_signature,
             std::move(kernel_signature),
             phi_cpu_kernel,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             cpu_ctx);
       }
     }
@@ -683,7 +700,11 @@ static void PreparedOpRunPtImpl(
 
     PreparePhiData<VarType>(phi_kernel, kernel_signature, ins);
 
+<<<<<<< HEAD
+    phi::KernelContext pt_kernel_context;
+=======
     phi::KernelContext phi_kernel_context;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     BuildDygraphPhiKernelContext<VarType>(kernel_signature,
                                           phi_kernel,
                                           ins,
@@ -691,9 +712,15 @@ static void PreparedOpRunPtImpl(
                                           attrs,
                                           default_attrs,
                                           dev_ctx,
+<<<<<<< HEAD
+                                          &pt_kernel_context);
+
+    phi_kernel(&pt_kernel_context);
+=======
                                           &phi_kernel_context);
 
     phi_kernel(&phi_kernel_context);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 
   if (FLAGS_check_nan_inf) {

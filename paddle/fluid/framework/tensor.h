@@ -14,8 +14,26 @@ limitations under the License. */
 
 #pragma once
 
+<<<<<<< HEAD
+#include <cstdint>
+#include <cstring>
+#include <memory>
+#include <typeindex>
+#include <utility>
+#include <vector>
+
+#include "paddle/fluid/framework/data_layout.h"
+#include "paddle/fluid/framework/framework.pb.h"
+#include "paddle/fluid/framework/mixed_vector.h"
+#include "paddle/fluid/memory/memory.h"
+#include "paddle/fluid/platform/device_context.h"
+#include "paddle/fluid/platform/enforce.h"
+#include "paddle/fluid/platform/place.h"
+#include "paddle/phi/core/ddim.h"
+=======
 #include "paddle/fluid/framework/data_type.h"
 #include "paddle/fluid/framework/mixed_vector.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/core/dense_tensor.h"
 #include "paddle/phi/core/sparse_coo_tensor.h"
 #include "paddle/phi/core/sparse_csr_tensor.h"

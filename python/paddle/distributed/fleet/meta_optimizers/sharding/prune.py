@@ -15,7 +15,12 @@
 __all__ = []
 
 
+<<<<<<< HEAD
+class ProgramDeps(object):
+
+=======
 class ProgramDeps:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, block, start_vars, end_vars):
         self._block = block
         # vars where to start to build the deps
@@ -97,12 +102,17 @@ class ProgramDeps:
                     raise ValueError(
                         "op_idx: {} is not in self._var_to_use_op[{}], "
                         "self._var_to_use_op[{}] is {}".format(
+<<<<<<< HEAD
+                            op_idx, var_name, var_name,
+                            self._var_to_use_op[var_name]))
+=======
                             op_idx,
                             var_name,
                             var_name,
                             self._var_to_use_op[var_name],
                         )
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 self._var_to_use_op[var_name].remove(op_idx)
             # update _should_removed_var
             if var_name in self._start_vars:

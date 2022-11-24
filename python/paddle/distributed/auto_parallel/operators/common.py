@@ -21,6 +21,10 @@ from ..process_group import new_process_group
 _g_distributed_operator_impl_containers = {}
 
 _g_elementwise_ops = [
+<<<<<<< HEAD
+    "elementwise", "gelu", "dropout", "cast", "gather", "concat",
+    "fused_softmax_mask_upper_triangle"
+=======
     "elementwise",
     "gelu",
     "dropout",
@@ -28,6 +32,7 @@ _g_elementwise_ops = [
     "gather",
     "concat",
     "fused_softmax_mask_upper_triangle",
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 ]
 BACKWARD_ONLY_DIST_OPS = {'check_finite_and_unscale', 'update_loss_scaling'}
 
@@ -52,6 +57,7 @@ def is_elementwise_op(op_type):
 
 
 class DistributedOperatorImplContainer:
+
     def __init__(self, op_type):
         self._type = op_type
         self._impls = []
@@ -102,6 +108,7 @@ class DistributedOperatorImplContainer:
 
 
 class DistributedOperatorImpl(abc.ABC):
+
     def __init__(self, name):
         self._name = name
         self._type = None

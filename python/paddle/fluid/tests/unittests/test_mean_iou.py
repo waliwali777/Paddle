@@ -51,6 +51,7 @@ def compute_mean_iou(
 
 
 class TestMeanIOUOp(OpTest):
+
     def setUp(self):
         self.config()
         self.op_type = "mean_iou"
@@ -64,6 +65,10 @@ class TestMeanIOUOp(OpTest):
         in_wrongs = []
         for i in range(self.in_wrong_num):
             in_wrongs.append(
+<<<<<<< HEAD
+                ("in_wrong_%d" % i,
+                 np.random.randint(0, 10, [self.num_classes]).astype("int32")))
+=======
                 (
                     "in_wrong_%d" % i,
                     np.random.randint(0, 10, [self.num_classes]).astype(
@@ -71,10 +76,21 @@ class TestMeanIOUOp(OpTest):
                     ),
                 )
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         in_corrects = []
         for i in range(self.in_correct_num):
             in_corrects.append(
+<<<<<<< HEAD
+                ("in_correct_%d" % i,
+                 np.random.randint(0, 10, [self.num_classes]).astype("int32")))
+
+        in_mean_ious = []
+        for i in range(self.in_mean_iou_num):
+            in_mean_ious.append(("in_mean_iou_%d" % i,
+                                 np.random.uniform(0, 1,
+                                                   [1]).astype("float32")))
+=======
                 (
                     "in_correct_%d" % i,
                     np.random.randint(0, 10, [self.num_classes]).astype(
@@ -91,6 +107,7 @@ class TestMeanIOUOp(OpTest):
                     np.random.uniform(0, 1, [1]).astype("float32"),
                 )
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         self.inputs = {
             'Predictions': predictions,
@@ -126,6 +143,7 @@ class TestMeanIOUOp(OpTest):
 
 
 class TestCase1(TestMeanIOUOp):
+
     def config(self):
         self.num_classes = 5
         self.image_size = [100, 128]
@@ -139,5 +157,24 @@ class TestCase1(TestMeanIOUOp):
         self.check_output(check_dygraph=False, check_eager=False)
 
 
+<<<<<<< HEAD
+class TestMeanIOUOpError(unittest.TestCase):
+
+    def test_errors(self):
+        with fluid.program_guard(fluid.Program(), fluid.Program()):
+            # The input type of accuracy_op must be Variable.
+            x1 = fluid.create_lod_tensor(np.array([[-1]]), [[1]],
+                                         fluid.CPUPlace())
+            y1 = fluid.create_lod_tensor(np.array([[-1]]), [[1]],
+                                         fluid.CPUPlace())
+            self.assertRaises(TypeError, fluid.layers.mean_iou, x1, y1)
+            # The input dtype of accuracy_op must be float32 or float64.
+            x2 = fluid.layers.data(name='x2', shape=[4], dtype="float32")
+            y2 = fluid.layers.data(name='x2', shape=[4], dtype="float32")
+            self.assertRaises(TypeError, fluid.layers.mean_iou, x2, y2)
+
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 if __name__ == '__main__':
     unittest.main()

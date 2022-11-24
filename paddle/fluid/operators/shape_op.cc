@@ -30,13 +30,29 @@ class ShapeOp : public framework::OperatorWithKernel {
       const framework::ExecutionContext &ctx) const override {
     auto input_data_type =
         framework::OperatorWithKernel::IndicateVarDataType(ctx, "Input");
+<<<<<<< HEAD
+
+#ifdef PADDLE_WITH_MKLDNN
+    if (this->CanMKLDNNBeUsed(ctx, input_data_type)) {
+      return framework::OpKernelType(input_data_type,
+                                     ctx.GetPlace(),
+                                     framework::DataLayout::kMKLDNN,
+                                     framework::LibraryType::kMKLDNN);
+    }
+#endif
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     return framework::OpKernelType(input_data_type, ctx.GetPlace());
   }
 
  protected:
   framework::OpKernelType GetKernelTypeForVar(
       const std::string &var_name,
+<<<<<<< HEAD
+      const framework::Tensor &tensor,
+=======
       const phi::DenseTensor &tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType &expected_kernel_type) const override {
     return framework::OpKernelType(expected_kernel_type.data_type_,
                                    expected_kernel_type.place_,

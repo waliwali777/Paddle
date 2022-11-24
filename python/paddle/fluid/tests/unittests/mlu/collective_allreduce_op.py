@@ -36,20 +36,38 @@ paddle.enable_static()
 
 
 class TestCollectiveAllreduce(TestCollectiveRunnerBase):
+
     def __init__(self):
         self.global_ring_id = 0
 
     def get_model(self, main_prog, startup_program, col_type):
         ring_id = 0
         with fluid.program_guard(main_prog, startup_program):
+<<<<<<< HEAD
+            tindata = layers.data(name="tindata",
+                                  shape=[10, 1000],
+                                  dtype='float32')
+=======
             tindata = layers.data(
                 name="tindata", shape=[10, 1000], dtype='float32'
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             toutdata = main_prog.current_block().create_var(
                 name="outof" + col_type,
                 dtype='float32',
                 type=core.VarDesc.VarType.LOD_TENSOR,
                 persistable=False,
+<<<<<<< HEAD
+                stop_gradient=False)
+            main_prog.global_block().append_op(type="c_" + col_type,
+                                               inputs={'X': tindata},
+                                               attrs={'ring_id': ring_id},
+                                               outputs={'Out': toutdata})
+            main_prog.global_block().append_op(type="c_sync_comm_stream",
+                                               inputs={'X': toutdata},
+                                               outputs={'Out': toutdata},
+                                               attrs={'ring_id': ring_id})
+=======
                 stop_gradient=False,
             )
             main_prog.global_block().append_op(
@@ -64,6 +82,7 @@ class TestCollectiveAllreduce(TestCollectiveRunnerBase):
                 outputs={'Out': toutdata},
                 attrs={'ring_id': ring_id},
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             return toutdata
 
 

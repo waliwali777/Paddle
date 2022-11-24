@@ -14,6 +14,10 @@ limitations under the License. */
 #include <algorithm>
 #include <vector>
 
+<<<<<<< HEAD
+#include "paddle/fluid/framework/data_type.h"
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/fluid/memory/malloc.h"
 #include "paddle/fluid/memory/memcpy.h"
 #include "paddle/phi/backends/gpu/gpu_context.h"
@@ -58,6 +62,20 @@ template struct SetConstant<paddle::platform::CUDAPinnedDeviceContext,
 template struct SetConstant<paddle::platform::CUDAPinnedDeviceContext,
                             phi::dtype::complex<double>>;
 
+<<<<<<< HEAD
+#define DEFINE_GPU_TRANS(RANK)                                \
+  template struct Transpose<phi::GPUContext, bool, RANK>;     \
+  template struct Transpose<phi::GPUContext, float, RANK>;    \
+  template struct Transpose<phi::GPUContext, double, RANK>;   \
+  template struct Transpose<phi::GPUContext, float16, RANK>;  \
+  template struct Transpose<phi::GPUContext, bfloat16, RANK>; \
+  template struct Transpose<phi::GPUContext, int8_t, RANK>;   \
+  template struct Transpose<phi::GPUContext, int32_t, RANK>;  \
+  template struct Transpose<phi::GPUContext, int64_t, RANK>;  \
+  template struct Transpose<phi::GPUContext,                  \
+                            phi::dtype::complex<float>,       \
+                            RANK>;                            \
+=======
 #define DEFINE_GPU_TRANS(RANK)                                     \
   template struct Transpose<phi::GPUContext, bool, RANK>;          \
   template struct Transpose<phi::GPUContext, unsigned char, RANK>; \
@@ -72,6 +90,7 @@ template struct SetConstant<paddle::platform::CUDAPinnedDeviceContext,
   template struct Transpose<phi::GPUContext,                       \
                             phi::dtype::complex<float>,            \
                             RANK>;                                 \
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   template struct Transpose<phi::GPUContext, phi::dtype::complex<double>, RANK>;
 
 DEFINE_GPU_TRANS(1);
@@ -257,9 +276,15 @@ __global__ void RowwiseAddKernel(
 template <typename T>
 struct RowwiseAdd<phi::GPUContext, T> {
   void operator()(const phi::GPUContext& context,
+<<<<<<< HEAD
+                  const paddle::framework::Tensor& input,
+                  const paddle::framework::Tensor& vector,
+                  paddle::framework::Tensor* output) {
+=======
                   const phi::DenseTensor& input,
                   const phi::DenseTensor& vector,
                   phi::DenseTensor* output) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto in_dims = input.dims();
     auto out_dims = output->dims();
     auto size = input.numel() / in_dims[0];
@@ -306,8 +331,13 @@ template struct ColwiseSum<phi::GPUContext, int64_t>;
 template <>
 void ColwiseSum<phi::GPUContext, double>::operator()(
     const phi::GPUContext& context,
+<<<<<<< HEAD
+    const paddle::framework::Tensor& input,
+    paddle::framework::Tensor* vector) {
+=======
     const phi::DenseTensor& input,
     phi::DenseTensor* vector) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto in_dims = input.dims();
   auto size = input.numel() / in_dims[0];
   PADDLE_ENFORCE_EQ(vector->numel(),
@@ -342,8 +372,13 @@ template struct RowwiseSum<phi::GPUContext, float>;
 template <>
 void RowwiseSum<phi::GPUContext, double>::operator()(
     const phi::GPUContext& context,
+<<<<<<< HEAD
+    const paddle::framework::Tensor& input,
+    paddle::framework::Tensor* vector) {
+=======
     const phi::DenseTensor& input,
     phi::DenseTensor* vector) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto in_dims = input.dims();
   auto size = input.numel() / in_dims[0];
   PADDLE_ENFORCE_EQ(vector->numel(),
@@ -371,6 +406,24 @@ void RowwiseSum<phi::GPUContext, double>::operator()(
 
 template struct RowwiseMean<phi::GPUContext, float>;
 template struct RowwiseMean<phi::GPUContext, double>;
+<<<<<<< HEAD
+
+template <typename T>
+struct ElementwiseAddTo<phi::GPUContext, T> {
+  void operator()(phi::GPUContext* ctx,
+                  const paddle::framework::Tensor& src,
+                  paddle::framework::Tensor* dst) {
+    auto in = paddle::framework::EigenVector<T>::Flatten(src);
+    auto out = paddle::framework::EigenVector<T>::Flatten(*dst);
+    auto& place = *(ctx->eigen_device());
+    out.device(place) = out + in;
+  }
+};
+
+template struct ElementwiseAddTo<phi::GPUContext, phi::dtype::float16>;
+template struct ElementwiseAddTo<phi::GPUContext, phi::dtype::bfloat16>;
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 }  // namespace funcs
 }  // namespace phi

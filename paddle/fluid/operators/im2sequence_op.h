@@ -136,8 +136,12 @@ class Im2SequenceKernel : public framework::OpKernel<T> {
                                                   kernels[0],
                                                   kernels[1]});
 
+<<<<<<< HEAD
+        math::Im2ColFunctor<math::ColFormat::kOCF, DeviceContext, T> f;
+=======
         phi::funcs::Im2ColFunctor<phi::funcs::ColFormat::kOCF, DeviceContext, T>
             f;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         auto& dev_ctx = ctx.template device_context<DeviceContext>();
         f(dev_ctx, src, dilations, strides, paddings, &dst);
       }

@@ -98,7 +98,11 @@ TEST(Dropout, CPUDense) {
 TEST(Dropout, GPUDense) {
   f::Scope scope;
   p::CUDAPlace place;
+<<<<<<< HEAD
+  p::phi::GPUContext ctx(place);
+=======
   phi::GPUContext ctx(place);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   Compare(scope, ctx);
 }
 */

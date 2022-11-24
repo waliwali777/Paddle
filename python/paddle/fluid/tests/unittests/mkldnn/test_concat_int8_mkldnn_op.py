@@ -18,6 +18,7 @@ from paddle.fluid.tests.unittests.op_test import OpTest
 
 
 class TestConcatOp(OpTest):
+
     def setUp(self):
         self.op_type = "concat"
         self.use_mkldnn = True
@@ -28,9 +29,14 @@ class TestConcatOp(OpTest):
         self.inputs = {'X': [('x0', self.x0), ('x1', self.x1), ('x2', self.x2)]}
         self.attrs = {'axis': self.axis, 'use_mkldnn': True}
 
+<<<<<<< HEAD
+        self.output = np.concatenate((self.x0, self.x1, self.x2),
+                                     axis=self.axis).astype('int')
+=======
         self.output = np.concatenate(
             (self.x0, self.x1, self.x2), axis=self.axis
         ).astype('int')
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         self.outputs = {'Out': self.output}
 
@@ -58,6 +64,7 @@ class TestConcatOp(OpTest):
 
 
 class TestConcatOp2(TestConcatOp):
+
     def init_test_data(self):
         self.x0 = (np.random.randint(0, 100, self.x0_shape)).astype('uint8')
         self.x1 = (np.random.randint(0, 50, self.x1_shape)).astype('uint8')
@@ -77,6 +84,7 @@ def create_test_int8_class(parent):
     # --------------------test concat s8/u8 in with axis 1--------------------
 
     class TestAxis1Case(parent):
+
         def init_axis(self):
             self.axis = 1
 
@@ -88,6 +96,7 @@ def create_test_int8_class(parent):
     # --------------------test concat s8/u8 in with axis 2--------------------
 
     class TestAxis2Case(parent):
+
         def init_axis(self):
             self.axis = 2
 
@@ -96,9 +105,15 @@ def create_test_int8_class(parent):
             self.x1_shape = [2, 3, 5, 5]
             self.x2_shape = [2, 3, 6, 5]
 
+<<<<<<< HEAD
+
+#--------------------test concat s8/u8 in with axis 3--------------------
+=======
     # --------------------test concat s8/u8 in with axis 3--------------------
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     class TestAxis3Case(parent):
+
         def init_axis(self):
             self.axis = 3
 

@@ -21,7 +21,11 @@ template <typename T>
 class ShuffleChannelMKLDNNHandler
     : public phi::funcs::OneDNNHandlerNoCachingT<T, dnnl::shuffle_forward> {
  public:
+<<<<<<< HEAD
+  ShuffleChannelMKLDNNHandler(const Tensor* x,
+=======
   ShuffleChannelMKLDNNHandler(const phi::DenseTensor* x,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                               const int group,
                               const dnnl::engine engine,
                               platform::Place cpu_place)

@@ -40,9 +40,15 @@ class CUDNNConvInceptionFusionOpKernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext& ctx) const override {
     auto& dev_ctx = ctx.template device_context<phi::GPUContext>();
+<<<<<<< HEAD
+    auto* input = ctx.Input<Tensor>("Input");
+    auto filters = ctx.MultiInput<framework::Tensor>("Filter");
+    auto bias = ctx.MultiInput<framework::Tensor>("Bias");
+=======
     auto* input = ctx.Input<phi::DenseTensor>("Input");
     auto filters = ctx.MultiInput<phi::DenseTensor>("Filter");
     auto bias = ctx.MultiInput<phi::DenseTensor>("Bias");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     auto* output = ctx.Output<phi::DenseTensor>("Output");
     auto temp_outs = ctx.MultiOutput<phi::DenseTensor>("TempOutput");
@@ -214,7 +220,11 @@ class CUDNNConvInceptionFusionOpKernel : public framework::OpKernel<T> {
               filter_desc[i],
               conv_desc[i],
               out_desc[i],
+<<<<<<< HEAD
+              kNUM_CUDNN_FWD_ALGS,
+=======
               phi::kNUM_CUDNN_FWD_ALGS,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               &perf_count,
               perf_results.get()));
       algo[i] = (perf_results.get())[best_algo_idx].algo;

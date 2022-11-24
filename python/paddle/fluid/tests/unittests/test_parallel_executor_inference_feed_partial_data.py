@@ -18,6 +18,7 @@ import unittest
 
 
 class TestInferencePartialFeed(unittest.TestCase):
+
     def setUp(self):
         self.iterations = 10
         self.size = 10
@@ -47,11 +48,17 @@ class TestInferencePartialFeed(unittest.TestCase):
         )
 
         gen_random = lambda shape: np.random.uniform(
+<<<<<<< HEAD
+            low=-1.0, high=1.0, size=shape).astype('float32')
+        assert_result = lambda feed, result: self.assertTrue(
+            np.array_equal(np.maximum(0, feed), result))
+=======
             low=-1.0, high=1.0, size=shape
         ).astype('float32')
         assert_result = lambda feed, result: np.testing.assert_array_equal(
             np.maximum(0, feed), result
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         def assert_merged_unmerged(merged, unmerged):
             unmerged = np.concatenate(unmerged, axis=0)
@@ -156,18 +163,26 @@ class TestInferencePartialFeed(unittest.TestCase):
         for p in places:
             for has_persistable in [False, True]:
                 for use_split in [False, True]:
+<<<<<<< HEAD
+                    self.run_network(p,
+                                     use_split=use_split,
+                                     has_persistable=has_persistable)
+=======
                     self.run_network(
                         p, use_split=use_split, has_persistable=has_persistable
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestInferencePartialFeedUsingDataLoader(unittest.TestCase):
+
     def setUp(self):
         self.epoch_num = 3
         self.batch_num = 101  # a prime number
         self.batch_size = 32
 
     def create_reader(self):
+
         def __impl__():
             for _ in range(self.batch_num):
                 yield np.random.random([self.batch_size, 1]).astype('float32'),
@@ -177,9 +192,16 @@ class TestInferencePartialFeedUsingDataLoader(unittest.TestCase):
     def run_network(self, iterable, use_cuda, drop_last):
         x = fluid.data(shape=[None, 1], name='x', dtype='float32')
         places = fluid.cuda_places() if use_cuda else fluid.cpu_places(4)
+<<<<<<< HEAD
+        loader = fluid.io.DataLoader.from_generator(feed_list=[x],
+                                                    capacity=16,
+                                                    iterable=iterable,
+                                                    drop_last=drop_last)
+=======
         loader = fluid.io.DataLoader.from_generator(
             feed_list=[x], capacity=16, iterable=iterable, drop_last=drop_last
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         y = fluid.layers.fc(x, size=10)
         loss = fluid.layers.reduce_mean(y)
 
@@ -187,12 +209,20 @@ class TestInferencePartialFeedUsingDataLoader(unittest.TestCase):
         exe.run(fluid.default_startup_program())
 
         prog = fluid.CompiledProgram(
+<<<<<<< HEAD
+            fluid.default_main_program()).with_data_parallel(
+                places=places, loss_name=loss.name)
+
+        loader.set_batch_generator(self.create_reader(),
+                                   places=places if iterable else None)
+=======
             fluid.default_main_program()
         ).with_data_parallel(places=places, loss_name=loss.name)
 
         loader.set_batch_generator(
             self.create_reader(), places=places if iterable else None
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         for _ in range(self.epoch_num):
             actual_batch_num = 0
@@ -221,9 +251,14 @@ class TestInferencePartialFeedUsingDataLoader(unittest.TestCase):
                 self.assertGreater(self.batch_num, actual_batch_num)
 
     def test_main(self):
+<<<<<<< HEAD
+        use_cuda_list = [False, True
+                         ] if fluid.is_compiled_with_cuda() else [False]
+=======
         use_cuda_list = (
             [False, True] if fluid.is_compiled_with_cuda() else [False]
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         iterable_list = [False, True]
         drop_last_list = [False, True]
         for iterable in iterable_list:

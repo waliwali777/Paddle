@@ -38,6 +38,7 @@ TRAIN_LABEL_MD5 = 'd53e105ee54ea40749a09fcbcd1e9432'
 
 
 def reader_creator(image_filename, label_filename, buffer_size):
+
     def reader():
         with gzip.GzipFile(image_filename, 'rb') as image_file:
             img_buf = image_file.read()
@@ -60,8 +61,12 @@ def reader_creator(image_filename, label_filename, buffer_size):
                 # label file : 8B
                 magic_byte_lab = '>II'
                 magic_lab, label_num = struct.unpack_from(
+<<<<<<< HEAD
+                    magic_byte_lab, lab_buf, offset_lab)
+=======
                     magic_byte_lab, lab_buf, offset_lab
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 offset_lab += struct.calcsize(magic_byte_lab)
 
                 while True:
@@ -73,12 +78,20 @@ def reader_creator(image_filename, label_filename, buffer_size):
                     step_label += buffer_size
 
                     fmt_images = '>' + str(buffer_size * rows * cols) + 'B'
+<<<<<<< HEAD
+                    images_temp = struct.unpack_from(fmt_images, img_buf,
+                                                     offset_img)
+                    images = numpy.reshape(
+                        images_temp,
+                        (buffer_size, rows * cols)).astype('float32')
+=======
                     images_temp = struct.unpack_from(
                         fmt_images, img_buf, offset_img
                     )
                     images = numpy.reshape(
                         images_temp, (buffer_size, rows * cols)
                     ).astype('float32')
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     offset_img += struct.calcsize(fmt_images)
 
                     images = images / 255.0

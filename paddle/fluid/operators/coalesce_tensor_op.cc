@@ -28,8 +28,11 @@
 #ifdef PADDLE_WITH_MLU
 #include "paddle/fluid/operators/mlu/mlu_baseop.h"
 #endif
+<<<<<<< HEAD
+=======
 #include "paddle/fluid/framework/infershape_utils.h"
 #include "paddle/phi/infermeta/multiary.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 namespace paddle {
 namespace operators {
@@ -37,7 +40,11 @@ namespace operators {
 template <typename DeviceContext>
 struct FillConstantVisitor {
   FillConstantVisitor(const DeviceContext &dev_ctx,
+<<<<<<< HEAD
+                      framework::LoDTensor *tensor,
+=======
                       phi::DenseTensor *tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                       const float value,
                       framework::proto::VarType::Type dtype,
                       const framework::ExecutionContext &context)
@@ -317,7 +324,11 @@ class CoalesceTensorOpKernel : public framework::OpKernel<T> {
 
  private:
   void GetMemSizeAndDtype(
+<<<<<<< HEAD
+      const std::vector<const framework::LoDTensor *> &lod_tensors,
+=======
       const std::vector<const phi::DenseTensor *> &lod_tensors,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const std::vector<std::string> var_names,
       size_t *numel,
       const size_t &size_of_dtype,
@@ -414,7 +425,11 @@ class CoalesceTensorOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string &var_name,
+<<<<<<< HEAD
+      const framework::Tensor &tensor,
+=======
       const phi::DenseTensor &tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType &expected_kernel_type) const override {
     return framework::OpKernelType(expected_kernel_type.data_type_,
                                    expected_kernel_type.place_,
@@ -508,6 +523,26 @@ value.
 }  // namespace operators
 }  // namespace paddle
 
+<<<<<<< HEAD
+REGISTER_OPERATOR(coalesce_tensor,
+                  paddle::operators::CoalesceTensorOp,
+                  paddle::operators::CoalesceTensorOpMaker);
+namespace ops = paddle::operators;
+namespace plat = paddle::platform;
+REGISTER_OP_CPU_KERNEL(coalesce_tensor,
+                       ops::CoalesceTensorOpKernel<phi::CPUContext, int>,
+                       ops::CoalesceTensorOpKernel<phi::CPUContext, float>,
+                       ops::CoalesceTensorOpKernel<phi::CPUContext, double>);
+
+#if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
+REGISTER_OP_CUDA_KERNEL(
+    coalesce_tensor,
+    ops::CoalesceTensorOpKernel<phi::GPUContext, plat::float16>,
+    ops::CoalesceTensorOpKernel<phi::GPUContext, int>,
+    ops::CoalesceTensorOpKernel<phi::GPUContext, float>,
+    ops::CoalesceTensorOpKernel<phi::GPUContext, double>);
+#endif
+=======
 DECLARE_INFER_SHAPE_FUNCTOR(coalesce_tensor,
                             CoalesceTensorInferShapeFunctor,
                             PD_INFER_META(phi::CoalesceTensorInferMeta));
@@ -518,6 +553,7 @@ REGISTER_OPERATOR(coalesce_tensor,
                   CoalesceTensorInferShapeFunctor);
 namespace ops = paddle::operators;
 namespace plat = paddle::platform;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 #if defined(PADDLE_WITH_ASCEND_CL)
 REGISTER_OP_CUDA_KERNEL(
@@ -541,6 +577,18 @@ REGISTER_OP_NPU_KERNEL(
 #if defined(PADDLE_WITH_MLU)
 REGISTER_OP_MLU_KERNEL(
     coalesce_tensor,
+<<<<<<< HEAD
+    ops::CoalesceTensorOpKernel<phi::CPUContext, int>,
+    ops::CoalesceTensorOpKernel<phi::CPUContext, float>,
+    ops::CoalesceTensorOpKernel<phi::CPUContext, plat::float16>,
+    ops::CoalesceTensorOpKernel<phi::CPUContext, double>);
+#endif
+
+#if defined(PADDLE_WITH_MLU)
+REGISTER_OP_MLU_KERNEL(
+    coalesce_tensor,
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     ops::CoalesceTensorOpKernel<phi::CPUContext, plat::float16>,
     ops::CoalesceTensorOpKernel<phi::CPUContext, int>,
     ops::CoalesceTensorOpKernel<phi::CPUContext, float>);

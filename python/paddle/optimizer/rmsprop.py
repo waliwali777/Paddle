@@ -168,6 +168,13 @@ class RMSProp(Optimizer):
         if not 0.0 <= rho:
             raise ValueError("Invalid value of rho, expect rho >= 0.")
 
+<<<<<<< HEAD
+        super(RMSProp, self).__init__(learning_rate=learning_rate,
+                                      parameters=parameters,
+                                      weight_decay=weight_decay,
+                                      grad_clip=grad_clip,
+                                      name=name)
+=======
         super().__init__(
             learning_rate=learning_rate,
             parameters=parameters,
@@ -175,6 +182,7 @@ class RMSProp(Optimizer):
             grad_clip=grad_clip,
             name=name,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         self.type = "rmsprop"
         self._rho = rho
@@ -207,6 +215,42 @@ class RMSProp(Optimizer):
         if isinstance(param_and_grad, dict):
             param_and_grad = self._update_param_group(param_and_grad)
 
+<<<<<<< HEAD
+        momentum_acc = self._get_accumulator(self._momentum_acc_str,
+                                             param_and_grad[0])
+        mean_square_acc = self._get_accumulator(self._mean_square_acc_str,
+                                                param_and_grad[0])
+        mean_grad_acc = self._get_accumulator(self._mean_grad_acc_str,
+                                              param_and_grad[0])
+        rmsprop_op = block.append_op(type=self.type,
+                                     inputs={
+                                         "Param":
+                                         param_and_grad[0],
+                                         "Grad":
+                                         param_and_grad[1],
+                                         "Moment":
+                                         momentum_acc,
+                                         "MeanSquare":
+                                         mean_square_acc,
+                                         "MeanGrad":
+                                         mean_grad_acc,
+                                         "LearningRate":
+                                         self._create_param_lr(param_and_grad),
+                                     },
+                                     outputs={
+                                         "ParamOut": param_and_grad[0],
+                                         "MomentOut": momentum_acc,
+                                         "MeanSquareOut": mean_square_acc,
+                                         "MeanGradOut": mean_grad_acc
+                                     },
+                                     attrs={
+                                         "epsilon": self._epsilon,
+                                         "decay": self._rho,
+                                         "momentum": self._momentum,
+                                         "centered": self._centered
+                                     },
+                                     stop_gradient=True)
+=======
         momentum_acc = self._get_accumulator(
             self._momentum_acc_str, param_and_grad[0]
         )
@@ -240,6 +284,7 @@ class RMSProp(Optimizer):
             },
             stop_gradient=True,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         return rmsprop_op
 

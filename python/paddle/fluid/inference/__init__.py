@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD
+from .wrapper import Config, DataType, PlaceType, PrecisionType, BackendType, Tensor, Predictor
+=======
 from .wrapper import (
     Config,
     DataType,
@@ -20,6 +23,7 @@ from .wrapper import (
     Tensor,
     Predictor,
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 from .wrapper import convert_to_mixed_precision
 
 from ..core import (

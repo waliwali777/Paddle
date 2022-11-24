@@ -27,7 +27,12 @@ meta_optimizer_names.remove("HeterParallelOptimizer")
 meta_optimizer_names.remove("DGCMomentumOptimizer")
 
 
+<<<<<<< HEAD
+class MetaOptimizerFactory(object):
+
+=======
 class MetaOptimizerFactory:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self):
         pass
 

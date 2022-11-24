@@ -19,6 +19,7 @@ import unittest
 
 
 class TestAssertOp(unittest.TestCase):
+
     def run_network(self, net_func):
         main_program = fluid.Program()
         startup_program = fluid.Program()
@@ -28,35 +29,57 @@ class TestAssertOp(unittest.TestCase):
         exe.run(main_program)
 
     def test_assert_true(self):
+
         def net_func():
+<<<<<<< HEAD
+            condition = layers.fill_constant(shape=[1],
+                                             dtype='bool',
+                                             value=True)
+=======
             condition = layers.fill_constant(
                 shape=[1], dtype='bool', value=True
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             layers.Assert(condition, [])
 
         self.run_network(net_func)
 
     def test_assert_false(self):
+
         def net_func():
+<<<<<<< HEAD
+            condition = layers.fill_constant(shape=[1],
+                                             dtype='bool',
+                                             value=False)
+=======
             condition = layers.fill_constant(
                 shape=[1], dtype='bool', value=False
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             layers.Assert(condition)
 
         with self.assertRaises(ValueError):
             self.run_network(net_func)
 
     def test_assert_cond_numel_error(self):
+
         def net_func():
+<<<<<<< HEAD
+            condition = layers.fill_constant(shape=[1, 2],
+                                             dtype='bool',
+                                             value=True)
+=======
             condition = layers.fill_constant(
                 shape=[1, 2], dtype='bool', value=True
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             layers.Assert(condition, [])
 
         with self.assertRaises(ValueError):
             self.run_network(net_func)
 
     def test_assert_print_data(self):
+
         def net_func():
             zero = layers.fill_constant(shape=[1], dtype='int64', value=0)
             one = layers.fill_constant(shape=[1], dtype='int64', value=1)
@@ -68,6 +91,7 @@ class TestAssertOp(unittest.TestCase):
             self.run_network(net_func)
 
     def test_assert_summary(self):
+
         def net_func():
             x = layers.fill_constant(shape=[10], dtype='float32', value=2.0)
             condition = paddle.max(x) < 1.0
@@ -78,6 +102,7 @@ class TestAssertOp(unittest.TestCase):
             self.run_network(net_func)
 
     def test_assert_summary_greater_than_size(self):
+
         def net_func():
             x = layers.fill_constant(shape=[2, 3], dtype='float32', value=2.0)
             condition = paddle.max(x) < 1.0

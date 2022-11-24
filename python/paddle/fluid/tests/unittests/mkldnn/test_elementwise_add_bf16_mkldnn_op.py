@@ -23,6 +23,7 @@ from paddle import enable_static
     not core.supports_bfloat16(), "place does not support BF16 evaluation"
 )
 class TestElementwiseAddBf16MklDNNOp(OpTest):
+
     def setUp(self):
         self.op_type = "elementwise_add"
         self.use_mkldnn = True
@@ -51,6 +52,28 @@ class TestElementwiseAddBf16MklDNNOp(OpTest):
 
     # elementwise_add grad (no braodcasting) is just passing upper gradients to either X or Y or both
     def test_check_grad_normal(self):
+<<<<<<< HEAD
+        self.check_grad_with_place(core.CPUPlace(), ["X", "Y"],
+                                   "Out",
+                                   check_dygraph=False,
+                                   user_defined_grads=[self.x, self.x],
+                                   user_defined_grad_outputs=[self.x_bf16])
+
+    def test_check_grad_ingore_x(self):
+        self.check_grad_with_place(core.CPUPlace(), ["Y"],
+                                   "Out",
+                                   check_dygraph=False,
+                                   user_defined_grads=[self.y],
+                                   user_defined_grad_outputs=[self.y_bf16])
+
+    def test_check_grad_ingore_y(self):
+        self.check_grad_with_place(core.CPUPlace(), ["X"],
+                                   "Out",
+                                   check_dygraph=False,
+                                   user_defined_grads=[self.x],
+                                   user_defined_grad_outputs=[self.x_bf16])
+
+=======
         self.check_grad_with_place(
             core.CPUPlace(),
             ["X", "Y"],
@@ -79,11 +102,17 @@ class TestElementwiseAddBf16MklDNNOp(OpTest):
             user_defined_grads=[self.x],
             user_defined_grad_outputs=[self.x_bf16],
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
+class TestElementwiseAddBroadCastingBf16MklDNNOp(TestElementwiseAddBf16MklDNNOp
+                                                 ):
 
+<<<<<<< HEAD
+=======
 class TestElementwiseAddBroadCastingBf16MklDNNOp(
     TestElementwiseAddBf16MklDNNOp
 ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def generate_data(self):
         self.x = np.random.uniform(1, 2, [2, 3, 4, 100]).astype(np.float32)
         self.y = np.random.uniform(1, 2, [100]).astype(np.float32)
@@ -102,9 +131,15 @@ class TestElementwiseAddBroadCastingBf16MklDNNOp(
             ["X", "Y"],
             "Out",
             check_dygraph=False,
+<<<<<<< HEAD
+            user_defined_grads=[self.x,
+                                self.compute_reduced_gradients(self.x)],
+            user_defined_grad_outputs=[self.x_bf16])
+=======
             user_defined_grads=[self.x, self.compute_reduced_gradients(self.x)],
             user_defined_grad_outputs=[self.x_bf16],
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_check_grad_ingore_x(self):
         self.check_grad_with_place(

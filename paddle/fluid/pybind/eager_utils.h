@@ -19,9 +19,14 @@ typedef SSIZE_T ssize_t;
 
 #include "paddle/fluid/eager/hooks.h"
 #include "paddle/fluid/framework/lod_tensor.h"
+<<<<<<< HEAD
+#include "paddle/fluid/framework/tensor.h"
+#include "paddle/fluid/jit/base_function.h"
+=======
 #include "paddle/fluid/framework/lod_tensor_array.h"
 #include "paddle/fluid/framework/tensor.h"
 #include "paddle/fluid/jit/function.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/fluid/platform/place.h"
 #include "paddle/phi/common/backend.h"
 #include "paddle/phi/common/data_type.h"
@@ -76,10 +81,16 @@ framework::proto::VarType::Type CastPyArg2ProtoType(PyObject* obj,
                                                     ssize_t arg_pos);
 std::unordered_map<std::wstring, int> CastPyArg2Vocab(PyObject* obj,
                                                       ssize_t arg_pos);
+<<<<<<< HEAD
+std::vector<std::string> CastPyArg2Strings(PyObject* obj, ssize_t arg_pos);
+std::shared_ptr<jit::BaseFunction> CastPyArg2BaseFunction(PyObject* obj,
+                                                          ssize_t arg_pos);
+=======
 std::vector<std::string> CastPyArg2VectorOfString(PyObject* obj,
                                                   ssize_t arg_pos);
 std::shared_ptr<jit::Function> CastPyArg2JitFunction(PyObject* obj,
                                                      ssize_t arg_pos);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 PyObject* ToPyObject(int value);
 PyObject* ToPyObject(uint32_t value);

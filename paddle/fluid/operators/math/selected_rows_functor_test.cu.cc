@@ -12,7 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
+<<<<<<< HEAD
+#include "paddle/fluid/operators/math/selected_rows_functor.h"
+=======
 #include "paddle/phi/kernels/funcs/selected_rows_functor.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 #include "gtest/gtest.h"
 #include "paddle/phi/kernels/funcs/math_function.h"
@@ -61,7 +65,11 @@ TEST(selected_rows_functor, gpu_add) {
   // simply concat two SelectedRows
   out_value->mutable_data<float>(phi::make_ddim({7, 10}), gpu_place);
 
+<<<<<<< HEAD
+  paddle::operators::math::SelectedRowsAdd<phi::GPUContext, float> add_functor;
+=======
   phi::funcs::SelectedRowsAdd<phi::GPUContext, float> add_functor;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   add_functor(ctx, *selected_rows1, *selected_rows2, output.get());
 
   auto out_height = output->height();
@@ -103,7 +111,12 @@ TEST(selected_rows_functor, gpu_add) {
   std::unique_ptr<phi::DenseTensor> tensor2{new phi::DenseTensor()};
   tensor2->mutable_data<float>(phi::make_ddim({height, row_numel}), gpu_place);
 
+<<<<<<< HEAD
+  paddle::operators::math::SelectedRowsAddTensor<phi::GPUContext, float>
+      add_tensor_functor;
+=======
   phi::funcs::SelectedRowsAddTensor<phi::GPUContext, float> add_tensor_functor;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   add_tensor_functor(ctx, *output, *tensor1, tensor2.get());
 
   phi::DenseTensor tensor2_cpu;
@@ -161,7 +174,12 @@ TEST(selected_rows_functor, gpu_add_to) {
   // simply concat two SelectedRows
   out_value->mutable_data<float>(phi::make_ddim({7, 10}), gpu_place);
 
+<<<<<<< HEAD
+  paddle::operators::math::SelectedRowsAddTo<phi::GPUContext, float>
+      add_to_functor;
+=======
   phi::funcs::SelectedRowsAddTo<phi::GPUContext, float> add_to_functor;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   add_to_functor(ctx, *selected_rows1, 0, output.get());
   add_to_functor(ctx, *selected_rows2, in1_value->numel(), output.get());
 
@@ -201,7 +219,11 @@ TEST(selected_rows_functor, gpu_add_to) {
   tensor1->mutable_data<float>(phi::make_ddim({height, row_numel}), gpu_place);
   functor(ctx, tensor1.get(), 3.0);
 
+<<<<<<< HEAD
+  paddle::operators::math::SelectedRowsAddToTensor<phi::GPUContext, float>
+=======
   phi::funcs::SelectedRowsAddToTensor<phi::GPUContext, float>
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       add_to_tensor_functor;
   add_to_tensor_functor(ctx, *output, tensor1.get());
 
@@ -256,7 +278,12 @@ TEST(selected_rows_functor, gpu_merge_add) {
 
   std::unique_ptr<phi::SelectedRows> output{new phi::SelectedRows()};
   output->set_height(height);
+<<<<<<< HEAD
+  paddle::operators::math::scatter::MergeAdd<phi::GPUContext, float>
+      merge_add_functor;
+=======
   phi::funcs::scatter::MergeAdd<phi::GPUContext, float> merge_add_functor;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   std::vector<const phi::SelectedRows*> inputs;
   inputs.push_back(selected_rows1.get());

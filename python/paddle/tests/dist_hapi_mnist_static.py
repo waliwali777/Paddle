@@ -28,6 +28,7 @@ from paddle.vision.datasets import MNIST
 
 
 class MnistDataset(MNIST):
+
     def __init__(self, mode, return_label=True):
         super().__init__(mode=mode)
         self.return_label = return_label
@@ -55,6 +56,7 @@ def compute_accuracy(pred, gt):
     not fluid.is_compiled_with_cuda(), 'CPU testing is not supported'
 )
 class TestDistTraning(unittest.TestCase):
+
     def test_static_multiple_gpus(self):
         paddle.enable_static()
         device = set_device('gpu')
@@ -66,9 +68,15 @@ class TestDistTraning(unittest.TestCase):
         labels = [Input([None, 1], 'int64', 'label')]
 
         model = Model(LeNet(), inputs, labels)
+<<<<<<< HEAD
+        optim = fluid.optimizer.Momentum(learning_rate=0.001,
+                                         momentum=.9,
+                                         parameter_list=model.parameters())
+=======
         optim = fluid.optimizer.Momentum(
             learning_rate=0.001, momentum=0.9, parameter_list=model.parameters()
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         model.prepare(optim, CrossEntropyLoss(), Accuracy())
 
         train_dataset = MnistDataset(mode='train')
@@ -86,9 +94,15 @@ class TestDistTraning(unittest.TestCase):
 
         eval_result = model.evaluate(val_dataset, batch_size=batch_size)
 
+<<<<<<< HEAD
+        output = model.predict(test_dataset,
+                               batch_size=batch_size,
+                               stack_outputs=True)
+=======
         output = model.predict(
             test_dataset, batch_size=batch_size, stack_outputs=True
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         np.testing.assert_equal(output[0].shape[0], len(test_dataset))
 

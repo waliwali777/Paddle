@@ -38,7 +38,12 @@ from paddle.fluid.incubate.fleet.parameter_server.mode import DistributedMode
 __all__ = ['Communicator', 'FLCommunicator', 'LargeScaleKV']
 
 
+<<<<<<< HEAD
+class Communicator(object):
+
+=======
 class Communicator:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, mode, kwargs=None, envs=None):
         """
         Communicator is used for async distribute training in distribute_transpiler mode.
@@ -69,8 +74,12 @@ class Communicator:
         else:
             if mode == DistributedMode.SYNC:
                 envs["pserver_endpoints"] = ','.join(
+<<<<<<< HEAD
+                    kwargs["pserver_endpoints"])
+=======
                     kwargs["pserver_endpoints"]
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             envs["trainers"] = str(kwargs["trainers"])
             envs["trainer_id"] = str(kwargs["trainer_id"])
@@ -215,10 +224,18 @@ class Communicator:
         self.communicator_.push_sparse_param(var_name, table_id, scope)
 
 
+<<<<<<< HEAD
+class FLCommunicator(Communicator):
+
+    def __init__(self, ps_hosts, kwargs=None):
+        mode = None
+        super(FLCommunicator, self).__init__(mode, kwargs)
+=======
 class FLCommunicator(Communicator):  ## only for coordinator
     def __init__(self, ps_hosts, kwargs=None):
         mode = None
         super().__init__(mode, kwargs)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         send_ctx = {}
         dense_map = {}
         prototxt = ""
@@ -226,6 +243,15 @@ class FLCommunicator(Communicator):  ## only for coordinator
         self.init_with_ctx(send_ctx, dense_map, prototxt, ps_hosts)
 
     def start_coordinator(self, self_endpoint, trainer_endpoints):
+<<<<<<< HEAD
+        if self.communicator_ != None:
+            self.communicator_.start_coordinator(self_endpoint,
+                                                 trainer_endpoints)
+        return
+
+    def save_fl_strategy(self, mp):
+        if self.communicator_ != None:
+=======
         if self.communicator_ is not None:
             self.communicator_.start_coordinator(
                 self_endpoint, trainer_endpoints
@@ -234,6 +260,7 @@ class FLCommunicator(Communicator):  ## only for coordinator
 
     def save_fl_strategy(self, mp):
         if self.communicator_ is not None:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             self.communicator_.save_fl_strategy(mp)
         else:
             raise ValueError("self.communicator_ is null")
@@ -241,12 +268,21 @@ class FLCommunicator(Communicator):  ## only for coordinator
 
     def query_fl_clients_info(self):
         info_mp = {}
+<<<<<<< HEAD
+        if self.communicator_ != None:
+=======
         if self.communicator_ is not None:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             info_mp = self.communicator_.query_fl_clients_info()
         return info_mp
 
 
+<<<<<<< HEAD
+class LargeScaleKV(object):
+
+=======
 class LargeScaleKV:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self):
         self.scale_kv = core.LargeScaleKV()
 
@@ -260,7 +296,12 @@ class LargeScaleKV:
         return self.scale_kv.size(varname)
 
 
+<<<<<<< HEAD
+class HeterClient(object):
+
+=======
 class HeterClient:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, endpoint, previous_endpoint, trainer_id):
         self.heter_client_ = core.HeterClient(
             endpoint, previous_endpoint, trainer_id

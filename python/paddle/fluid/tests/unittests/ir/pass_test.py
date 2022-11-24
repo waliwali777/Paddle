@@ -23,6 +23,7 @@ from paddle.fluid.framework import Block
 
 
 class PassTest(unittest.TestCase):
+
     @classmethod
     def setUpClass(self):
         self.main_program = fluid.Program()
@@ -193,10 +194,16 @@ class PassTest(unittest.TestCase):
         self.assertTrue(
             self.num_fused_ops == acctual_num_fused_ops,
             "Checking of the number of fused operator < {} > failed. "
+<<<<<<< HEAD
+            "Expected: {}, Received: {}".format(self.fused_op_type,
+                                                self.num_fused_ops,
+                                                acctual_num_fused_ops))
+=======
             "Expected: {}, Received: {}".format(
                 self.fused_op_type, self.num_fused_ops, acctual_num_fused_ops
             ),
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def check_program(self, program=None):
         '''

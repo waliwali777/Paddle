@@ -43,6 +43,15 @@ int CtrDymfAccessor::Initialize() {
   if (_config.ctr_accessor_param().show_scale()) {
     _show_scale = true;
   }
+<<<<<<< HEAD
+  for (int i = 0; i < _config.ctr_accessor_param().load_filter_slots_size();
+       i++) {
+    _filtered_slots.insert(_config.ctr_accessor_param().load_filter_slots(i));
+    VLOG(0) << "CtrDymfAccessor::Initialize() load filter slot:"
+            << _config.ctr_accessor_param().load_filter_slots(i);
+  }
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   VLOG(0) << " INTO CtrDymfAccessor::Initialize(); embed_sgd_dim:"
           << common_feature_value.embed_sgd_dim
           << " embedx_dim:" << common_feature_value.embedx_dim
@@ -99,6 +108,15 @@ bool CtrDymfAccessor::SaveCache(float* value,
 
 bool CtrDymfAccessor::SaveSSD(float* value) {
   if (common_feature_value.UnseenDays(value) > _ssd_unseenday_threshold) {
+    return true;
+  }
+  return false;
+}
+
+bool CtrDymfAccessor::FilterSlot(float* value) {
+  // 热启时过滤掉_filtered_slots中的feasign
+  if (_filtered_slots.find(common_feature_value.Slot(value)) !=
+      _filtered_slots.end()) {
     return true;
   }
   return false;
@@ -292,7 +310,8 @@ std::string CtrDymfAccessor::ParseToString(const float* v, int param) {
   thread_local std::ostringstream os;
   os.clear();
   os.str("");
-  os << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4];
+  os << common_feature_value.UnseenDays(const_cast<float*>(v)) << " " << v[1]
+     << " " << v[2] << " " << v[3] << " " << v[4];
   //    << v[5] << " " << v[6];
   for (int i = common_feature_value.EmbedG2SumIndex();
        i < common_feature_value.EmbedxG2SumIndex();
@@ -318,6 +337,19 @@ int CtrDymfAccessor::ParseFromString(const std::string& str, float* value) {
   auto ret = paddle::string::str_to_float(str.data(), value);
   CHECK(ret >= 7) << "expect more than 7 real:" << ret;
   return ret;
+}
+
+bool CtrDymfAccessor::SaveMemCache(float* value,
+                                   int param,
+                                   double global_cache_threshold,
+                                   uint16_t pass_id) {
+  auto base_threshold = _config.ctr_accessor_param().base_threshold();
+  return common_feature_value.Show(value) > global_cache_threshold ||
+         common_feature_value.PassId(value) >= pass_id;
+}
+
+void CtrDymfAccessor::UpdatePassId(float* value, uint16_t pass_id) {
+  common_feature_value.PassId(value) = pass_id;
 }
 
 }  // namespace distributed

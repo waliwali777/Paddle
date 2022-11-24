@@ -1392,7 +1392,11 @@ void CommonGradBroadcastCUDA(const DenseTensor &x,
                                    std::multiplies<int>());
           int block_size = std::min(ELEMWISE_MAX_BLOCK_DIM, mid);
           dim3 grid_size = dim3(pre * post);
+<<<<<<< HEAD
+          paddle::platform::LimitGridDim(ctx, &grid_size);
+=======
           phi::backends::gpu::LimitGridDim(ctx, &grid_size);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
           // we need to calc y offset with blockid, so do x_pre/y_pre to get
           // left size.
           if (k_pre != pre) k_pre = pre / k_pre;
@@ -1423,7 +1427,11 @@ void CommonGradBroadcastCUDA(const DenseTensor &x,
                                    std::multiplies<int>());
           int block_size = std::min(ELEMWISE_MAX_BLOCK_DIM, mid);
           dim3 grid_size = dim3(pre * post);
+<<<<<<< HEAD
+          paddle::platform::LimitGridDim(ctx, &grid_size);
+=======
           phi::backends::gpu::LimitGridDim(ctx, &grid_size);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
           if (k_pre != pre) k_pre = pre / k_pre;
 
           FastCommonGradBroadcastOneCUDAKernel<<<grid_size,

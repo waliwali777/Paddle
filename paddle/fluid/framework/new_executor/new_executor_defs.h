@@ -177,8 +177,11 @@ class VariableScope {
 
   void SetScope(Scope* scope);
 
+<<<<<<< HEAD
+=======
   void SetLocalScope(Scope* local_scope);
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   ~VariableScope();
 
   // Get variable id by name, return -1 if not found
@@ -213,6 +216,12 @@ class VariableScope {
     return vec_meta_info_;
   }
 
+<<<<<<< HEAD
+  void SetVarSikpInplace(const std::string& name, bool skip);
+
+  bool GetVarSikpInplace(int id) const;
+
+=======
   const std::vector<std::pair<std::string, int>>& DataTransferAddedVars()
       const {
     return data_transfer_added_vars_;
@@ -228,6 +237,7 @@ class VariableScope {
 
   bool GetVarSikpInplace(int id) const;
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
  private:
   // not owned, better remove it since all vars should be
   // accessed by Scope instead of VariableScope
@@ -240,9 +250,12 @@ class VariableScope {
   // TODO(zhiqiu): find a better way to support local scope.
   Scope* local_scope_{nullptr};
   // mutable RWLock vars_lock_;
+<<<<<<< HEAD
+=======
 
   // var_name -> var_type
   std::vector<std::pair<std::string, int>> data_transfer_added_vars_;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 };
 
 class NextInstructionList {
@@ -304,10 +317,14 @@ class Instruction {
  public:
   Instruction(size_t id,
               OpFuncNode&& op_func_node,
+<<<<<<< HEAD
+              const platform::DeviceContext& dev_ctx);
+=======
               const platform::DeviceContext& dev_ctx,
               const Priority priority);
 
   bool IsArtificial() const { return is_artificial_; }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   size_t Id() const;
 
@@ -479,6 +496,12 @@ class ResetAtomicGuard {
   std::vector<std::shared_ptr<OpDepInfo>>* deps_;
   std::vector<std::shared_ptr<VarRefInfo>>* refs_;
 };
+
+// is supported heterogeneous place
+static bool IsSupportedHetePlace(const phi::Place& place) {
+  return platform::is_gpu_place(place) || platform::is_npu_place(place) ||
+         platform::is_xpu_place(place) || platform::is_ipu_place(place);
+}
 
 }  // namespace interpreter
 

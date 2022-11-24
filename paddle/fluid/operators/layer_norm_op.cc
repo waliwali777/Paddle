@@ -14,6 +14,11 @@ limitations under the License. */
 
 #include <memory>
 #include <string>
+<<<<<<< HEAD
+
+#include "paddle/fluid/framework/op_registry.h"
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 #include "paddle/fluid/framework/op_registry.h"
 
@@ -107,15 +112,30 @@ class LayerNormOp : public framework::OperatorWithKernel {
       const framework::ExecutionContext &ctx) const override {
     auto input_data_type = OperatorWithKernel::IndicateVarDataType(ctx, "X");
 
+<<<<<<< HEAD
+#ifdef PADDLE_WITH_MKLDNN
+    int begin_norm_axis = ctx.Attr<int>("begin_norm_axis");
+    if (library == framework::LibraryType::kPlain &&
+        this->CanMKLDNNBeUsed(ctx, input_data_type) &&
+        begin_norm_axis == ctx.Input<Tensor>("X")->dims().size() - 1) {
+      library = framework::LibraryType::kMKLDNN;
+      layout = framework::DataLayout::kMKLDNN;
+=======
     // NOTE(jiahongyu): Below codes originally enclosed by PADDLE_WITH_MKLDNN
     int begin_norm_axis = ctx.Attr<int>("begin_norm_axis");
     if (begin_norm_axis !=
         ctx.Input<phi::DenseTensor>("X")->dims().size() - 1) {
       this->SetDnnFallback(true);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
     // NOTE(jiahongyu): Above codes originally enclosed by PADDLE_WITH_MKLDNN
 
+<<<<<<< HEAD
+    return framework::OpKernelType(
+        input_data_type, ctx.GetPlace(), layout, library);
+=======
     return framework::OpKernelType(input_data_type, ctx.GetPlace());
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 };
 

@@ -17,18 +17,27 @@ from ...ps.the_one_ps import TheOnePSRuntime
 __all__ = []
 
 
+<<<<<<< HEAD
+class RuntimeFactory(object):
+
+=======
 class RuntimeFactory:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self):
         pass
 
     def _create_runtime(self, context):
+        # add collective && pslib mode
+        if "use_fleet_ps" in context and context["use_fleet_ps"]:
+            ps_runtime = TheOnePSRuntime()
+            ps_runtime._set_basic_info(context)
+            return ps_runtime
         if context["role_maker"]._is_collective:
             collective_runtime = CollectiveRuntime()
             collective_runtime._set_basic_info(context)
             return collective_runtime
 
         k_steps = context["valid_strategy"].a_sync_configs["k_steps"]
-
         if not context["role_maker"]._is_collective and k_steps >= 0:
             ps_runtime = TheOnePSRuntime()
             ps_runtime._set_basic_info(context)

@@ -40,8 +40,13 @@ class NearestInterpolateOpConverter : public OpConverter {
     auto input = engine_->GetITensor(input_name);
 
     auto data_layout = !op_desc.HasAttr("data_layout")
+<<<<<<< HEAD
+                           ? framework::DataLayout::kNCHW
+                           : framework::StringToDataLayout(PADDLE_GET_CONST(
+=======
                            ? phi::DataLayout::kNCHW
                            : phi::StringToDataLayout(PADDLE_GET_CONST(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                  std::string, op_desc.GetAttr("data_layout")));
     auto interp_method =
         PADDLE_GET_CONST(std::string, op_desc.GetAttr("interp_method"));

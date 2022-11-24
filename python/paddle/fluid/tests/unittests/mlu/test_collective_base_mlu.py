@@ -51,7 +51,12 @@ def DataTypeCast(date_type):
     return np_data_type
 
 
+<<<<<<< HEAD
+class TestCollectiveRunnerBase(object):
+
+=======
 class TestCollectiveRunnerBase:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def get_model(self, train_prog, startup_prog, col_type):
         raise NotImplementedError(
             "get model should be implemented by child class."
@@ -63,9 +68,14 @@ class TestCollectiveRunnerBase:
             not_ready_endpoints = []
             for ep in endpoints:
                 ip_port = ep.split(":")
+<<<<<<< HEAD
+                with closing(socket.socket(socket.AF_INET,
+                                           socket.SOCK_STREAM)) as sock:
+=======
                 with closing(
                     socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 ) as sock:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                     sock.settimeout(2)
                     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                     if hasattr(socket, 'SO_REUSEPORT'):
@@ -79,15 +89,25 @@ class TestCollectiveRunnerBase:
                         not_ready_endpoints.append(ep)
             if not all_ok:
                 sys.stderr.write("server not ready, wait 3 sec to retry...\n")
+<<<<<<< HEAD
+                sys.stderr.write("not ready endpoints:" +
+                                 str(not_ready_endpoints) + "\n")
+=======
                 sys.stderr.write(
                     "not ready endpoints:" + str(not_ready_endpoints) + "\n"
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 sys.stderr.flush()
                 time.sleep(3)
             else:
                 break
 
+<<<<<<< HEAD
+
+#endpoints should be ["ip1:port1","ip2:port2"]
+=======
     # endpoints should be ["ip1:port1","ip2:port2"]
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def initCommunicator(
         self, program, rank, nranks, wait_port, current_endpoint, endpoints
@@ -97,6 +117,29 @@ class TestCollectiveRunnerBase:
         if rank == 0 and wait_port:
             self.wait_server_ready(other_endpoints)
         block = program.global_block()
+<<<<<<< HEAD
+        cncl_id_var = block.create_var(name=nameGen.generate('cncl_id'),
+                                       persistable=True,
+                                       type=core.VarDesc.VarType.RAW)
+
+        block.append_op(type='c_gen_cncl_id',
+                        inputs={},
+                        outputs={'Out': cncl_id_var},
+                        attrs={
+                            'rank': rank,
+                            'endpoint': current_endpoint,
+                            'other_endpoints': other_endpoints
+                        })
+
+        block.append_op(type='c_comm_init',
+                        inputs={'X': cncl_id_var},
+                        outputs={},
+                        attrs={
+                            'nranks': nranks,
+                            'rank': rank,
+                            'ring_id': self.global_ring_id
+                        })
+=======
         cncl_id_var = block.create_var(
             name=nameGen.generate('cncl_id'),
             persistable=True,
@@ -124,6 +167,7 @@ class TestCollectiveRunnerBase:
                 'ring_id': self.global_ring_id,
             },
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def run_trainer(self, args):
         train_prog = fluid.Program()
@@ -168,6 +212,7 @@ from contextlib import closing
 
 
 class TestDistBase(unittest.TestCase):
+
     def setUp(self):
         self._port_set = set()
         self._trainers = 2
@@ -178,6 +223,7 @@ class TestDistBase(unittest.TestCase):
         self._python_interp = sys.executable
 
     def _find_free_port(self):
+
         def __free_port():
             with closing(
                 socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -219,6 +265,17 @@ class TestDistBase(unittest.TestCase):
         tr0_pipe = open("/tmp/tr0_err.log", "wb")
         tr1_pipe = open("/tmp/tr1_err.log", "wb")
 
+<<<<<<< HEAD
+        tr0_proc = subprocess.Popen(tr0_cmd.strip().split(),
+                                    stdout=subprocess.PIPE,
+                                    stderr=tr0_pipe,
+                                    env=env0)
+
+        tr1_proc = subprocess.Popen(tr0_cmd.strip().split(),
+                                    stdout=subprocess.PIPE,
+                                    stderr=tr1_pipe,
+                                    env=env1)
+=======
         tr0_proc = subprocess.Popen(
             tr0_cmd.strip().split(),
             stdout=subprocess.PIPE,
@@ -232,6 +289,7 @@ class TestDistBase(unittest.TestCase):
             stderr=tr1_pipe,
             env=env1,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         tr0_out, tr0_err = tr0_proc.communicate()
         tr1_out, tr1_err = tr1_proc.communicate()
@@ -270,8 +328,12 @@ class TestDistBase(unittest.TestCase):
             required_envs["GLOG_v"] = "3"
             required_envs["GLOG_logtostderr"] = "1"
         tr0_out, tr1_out, pid0, pid1 = self._run_cluster(
+<<<<<<< HEAD
+            model_file, required_envs)
+=======
             model_file, required_envs
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         np_data_type = DataTypeCast(data_type)
         np.random.seed(pid0)
         input1 = np.random.random((10, 1000)).astype(np_data_type)
@@ -283,6 +345,30 @@ class TestDistBase(unittest.TestCase):
             np.testing.assert_allclose(tr1_out[0], need_result)
         elif col_type == "allreduce_sum":
             need_result = input1 + input2
+<<<<<<< HEAD
+            self.assertTrue(
+                np.allclose(tr0_out, need_result, rtol=1e-05, atol=1e-05))
+            self.assertTrue(
+                np.allclose(tr1_out, need_result, rtol=1e-05, atol=1e-05))
+        elif col_type == "allreduce_prod":
+            need_result = input1 * input2
+            self.assertTrue(
+                np.allclose(tr0_out, need_result, rtol=1e-05, atol=1e-05))
+            self.assertTrue(
+                np.allclose(tr1_out, need_result, rtol=1e-05, atol=1e-05))
+        elif col_type == "allreduce_max":
+            need_result = np.maximum(input1, input2)
+            self.assertTrue(
+                np.allclose(tr0_out, need_result, rtol=1e-05, atol=1e-05))
+            self.assertTrue(
+                np.allclose(tr1_out, need_result, rtol=1e-05, atol=1e-05))
+        elif col_type == "allreduce_min":
+            need_result = np.minimum(input1, input2)
+            self.assertTrue(
+                np.allclose(tr0_out, need_result, rtol=1e-05, atol=1e-05))
+            self.assertTrue(
+                np.allclose(tr1_out, need_result, rtol=1e-05, atol=1e-05))
+=======
             np.testing.assert_allclose(
                 tr0_out[0], need_result, rtol=1e-05, atol=1e-05
             )
@@ -313,6 +399,7 @@ class TestDistBase(unittest.TestCase):
             np.testing.assert_allclose(
                 tr1_out[0], need_result, rtol=1e-05, atol=1e-05
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         elif col_type == "reduce_sum":
             need_result = input1 + input2
             np.testing.assert_allclose(tr1_out[0], need_result)

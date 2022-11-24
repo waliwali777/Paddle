@@ -26,6 +26,7 @@ paddle.enable_static()
 
 
 class TestNPUGaussianRandomOp(OpTest):
+
     def setUp(self):
         self.set_npu()
         self.op_type = "gaussian_random"
@@ -67,6 +68,10 @@ class TestNPUGaussianRandomOp(OpTest):
         hist2, _ = np.histogram(data, range=(-3, 5))
         hist2 = hist2.astype("float32")
         hist2 /= float(outs[0].size)
+<<<<<<< HEAD
+        self.assertTrue(np.allclose(hist, hist2, rtol=0, atol=0.01),
+                        "hist: " + str(hist) + " hist2: " + str(hist2))
+=======
         np.testing.assert_allclose(
             hist,
             hist2,
@@ -74,6 +79,7 @@ class TestNPUGaussianRandomOp(OpTest):
             atol=0.01,
             err_msg="hist: " + str(hist) + " hist2: " + str(hist2),
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

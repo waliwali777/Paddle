@@ -19,6 +19,10 @@
 #include <algorithm>
 
 #include "paddle/fluid/framework/ir/graph_helper.h"
+<<<<<<< HEAD
+#include "paddle/fluid/framework/ir/mkldnn/mkldnn_pass_util.h"
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/fluid/framework/op_version_registry.h"
 
 namespace paddle {
@@ -47,8 +51,13 @@ void ComputePropagateScalesMkldnnPass::GetQuantInfo(
   }
 }
 
+<<<<<<< HEAD
+std::vector<float> ComputePropagateScalesMkldnnPass::GetScales(Tensor* tensor,
+                                                               int axis) const {
+=======
 std::vector<float> ComputePropagateScalesMkldnnPass::GetScales(
     phi::DenseTensor* tensor, int axis) const {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   PADDLE_ENFORCE_LT(axis,
                     2,
                     platform::errors::InvalidArgument(
@@ -112,7 +121,11 @@ void ComputePropagateScalesMkldnnPass::ComputeVarScales(
               "The input persistable var [%s] of [%s] op is not found.",
               var_name,
               op_desc->Type()));
+<<<<<<< HEAD
+      auto* weight_tensor = var->GetMutable<LoDTensor>();
+=======
       auto* weight_tensor = var->GetMutable<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const auto dims = weight_tensor->dims();
       int volume = 1;
       for (int i = 1; i < dims.size(); i++) {
@@ -141,7 +154,11 @@ void ComputePropagateScalesMkldnnPass::ComputeSingleGruWeightScales(
     Scope* scope,
     const std::string& wx_var_name,
     const std::string& wh_var_name,
+<<<<<<< HEAD
+    Tensor* tensor) const {
+=======
     phi::DenseTensor* tensor) const {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto* wx_var = scope->FindVar(wx_var_name);
   PADDLE_ENFORCE_NOT_NULL(
       wx_var,
@@ -240,7 +257,11 @@ void ComputePropagateScalesMkldnnPass::ComputeSingleLstmWeightScales(
     Scope* scope,
     const std::string& wx_var_name,
     const std::string& wh_var_name,
+<<<<<<< HEAD
+    Tensor* tensor) const {
+=======
     phi::DenseTensor* tensor) const {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   auto* wx_var = scope->FindVar(wx_var_name);
   PADDLE_ENFORCE_NOT_NULL(
       wx_var,
@@ -336,11 +357,29 @@ void ComputePropagateScalesMkldnnPass::ComputeWeightScales(
   ComputeLstmWeightScales(graph, scope, "WeightX", "WeightH", var_quant_scales);
 }
 
+<<<<<<< HEAD
+void ComputePropagateScalesMkldnnPass::UpdateScaleOpInScale(
+=======
 void ComputePropagateScalesMkldnnPass::UpdateScaleOpInOutScales(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     Node* op_node,
     const std::string& input_name,
     const std::string& output_name,
     StringPairMap* var_quant_scales) const {
+<<<<<<< HEAD
+  auto iter = var_quant_scales->find(output_name);
+  if (iter != var_quant_scales->end()) {
+    auto pair = iter->second;
+    const auto tensor = pair.second;
+
+    const auto scale = PADDLE_GET_CONST(float, op_node->Op()->GetAttr("scale"));
+    Tensor tmp_tensor;
+    tmp_tensor.Resize(tensor.dims());
+    auto* data = tmp_tensor.mutable_data<float>(platform::CPUPlace());
+    for (int i = 0; i < tensor.numel(); i++) {
+      data[i] = data[i] * scale;
+    }
+=======
   auto out_iter = var_quant_scales->find(output_name);
   auto input_iter = var_quant_scales->find(input_name);
   // All the input and output have scales
@@ -353,6 +392,7 @@ void ComputePropagateScalesMkldnnPass::UpdateScaleOpInOutScales(
   if (std::abs(scale) < 1e-6 && out_iter != var_quant_scales->end()) {
     return;
   }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   std::string name = input_name;
   auto iter = out_iter;
@@ -412,6 +452,10 @@ std::unordered_set<std::string> ComputePropagateScalesMkldnnPass::UpdateScales(
       auto out_iter = var_quant_scales->find(op_node->Op()->Output("Out")[0]);
       if (out_iter != var_quant_scales->end()) {
         std::vector<std::string> input_names = op_node->Op()->Input("X");
+<<<<<<< HEAD
+        for (auto input_name : input_names)
+          (*var_quant_scales)[input_name] = out_iter->second;
+=======
         for (auto input_name : input_names) {
           auto concat_in_iter = var_quant_scales->find(input_name);
           if (concat_in_iter == var_quant_scales->end())
@@ -419,15 +463,22 @@ std::unordered_set<std::string> ComputePropagateScalesMkldnnPass::UpdateScales(
           else
             (*var_quant_scales)[input_name].second = out_iter->second.second;
         }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       }
     } else if (op_name == "scale") {
       const std::string output_name = op_node->Op()->Output("Out")[0];
       const std::string input_name = op_node->Op()->Input("X")[0];
       auto out_iter = var_quant_scales->find(output_name);
+<<<<<<< HEAD
+      if (out_iter != var_quant_scales->end()) {
+        const std::string input_name = op_node->Op()->Input("X")[0];
+        UpdateScaleOpInScale(
+=======
       auto input_iter = var_quant_scales->find(input_name);
       if (out_iter != var_quant_scales->end() ||
           input_iter != var_quant_scales->end()) {
         UpdateScaleOpInOutScales(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             op_node, input_name, output_name, var_quant_scales);
       }
     }
@@ -498,8 +549,12 @@ void ComputePropagateScalesMkldnnPass::ApplyImpl(ir::Graph* graph) const {
       "slice",
       "shape",
       "nearest_interp",
+<<<<<<< HEAD
+      "nearest_interp_v2"};
+=======
       "nearest_interp_v2",
       "split"};
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   StringPairMap var_quant_scales{};
 

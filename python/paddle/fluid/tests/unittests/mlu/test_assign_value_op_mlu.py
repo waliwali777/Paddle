@@ -29,6 +29,7 @@ numpy.random.seed(2022)
 
 
 class TestAssignValueMLUOp(op_test.OpTest):
+
     def setUp(self):
         self.set_mlu()
         self.op_type = "assign_value"
@@ -55,22 +56,30 @@ class TestAssignValueMLUOp(op_test.OpTest):
 
 
 class TestAssignValueMLUOp2(TestAssignValueMLUOp):
+
     def init_data(self):
         self.value = numpy.random.random(size=(2, 5)).astype(numpy.int32)
         self.attrs["int32_values"] = [int(v) for v in self.value.flat]
 
 
 class TestAssignValueMLUOp3(TestAssignValueMLUOp):
+
     def init_data(self):
         self.value = numpy.random.random(size=(2, 5)).astype(numpy.int64)
         self.attrs["int64_values"] = [int(v) for v in self.value.flat]
 
 
 class TestAssignValueMLUOp4(TestAssignValueMLUOp):
+
     def init_data(self):
+<<<<<<< HEAD
+        self.value = numpy.random.choice(a=[False, True],
+                                         size=(2, 5)).astype(numpy.bool)
+=======
         self.value = numpy.random.choice(a=[False, True], size=(2, 5)).astype(
             numpy.bool
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         self.attrs["bool_values"] = [int(v) for v in self.value.flat]
 
 

@@ -116,9 +116,13 @@ class Metric(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError(
             "function 'reset' not implemented in {}.".format(
+<<<<<<< HEAD
+                self.__class__.__name__))
+=======
                 self.__class__.__name__
             )
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     @abc.abstractmethod
     def update(self, *args):
@@ -134,9 +138,13 @@ class Metric(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError(
             "function 'update' not implemented in {}.".format(
+<<<<<<< HEAD
+                self.__class__.__name__))
+=======
                 self.__class__.__name__
             )
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     @abc.abstractmethod
     def accumulate(self):
@@ -156,9 +164,13 @@ class Metric(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError(
             "function 'name' not implemented in {}.".format(
+<<<<<<< HEAD
+                self.__class__.__name__))
+=======
                 self.__class__.__name__
             )
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def compute(self, *args):
         """
@@ -261,12 +273,21 @@ class Accuracy(Metric):
             Tensor: Correct mask, a tensor with shape [batch_size, d0, ..., topk].
         """
         pred = paddle.argsort(pred, descending=True)
+<<<<<<< HEAD
+        pred = paddle.slice(pred,
+                            axes=[len(pred.shape) - 1],
+                            starts=[0],
+                            ends=[self.maxk])
+        if (len(label.shape) == 1) or \
+           (len(label.shape) == 2 and label.shape[-1] == 1):
+=======
         pred = paddle.slice(
             pred, axes=[len(pred.shape) - 1], starts=[0], ends=[self.maxk]
         )
         if (len(label.shape) == 1) or (
             len(label.shape) == 2 and label.shape[-1] == 1
         ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             # In static mode, the real label data shape may be different
             # from shape defined by paddle.static.InputSpec in model
             # building, reshape to the right shape.
@@ -823,6 +844,19 @@ def accuracy(input, label, k=1, correct=None, total=None, name=None):
         correct = helper.create_variable_for_type_inference(dtype="int32")
     if total is None:
         total = helper.create_variable_for_type_inference(dtype="int32")
+<<<<<<< HEAD
+    helper.append_op(type="accuracy",
+                     inputs={
+                         "Out": [topk_out],
+                         "Indices": [topk_indices],
+                         "Label": [label]
+                     },
+                     outputs={
+                         "Accuracy": [acc_out],
+                         "Correct": [correct],
+                         "Total": [total],
+                     })
+=======
     helper.append_op(
         type="accuracy",
         inputs={"Out": [topk_out], "Indices": [topk_indices], "Label": [label]},
@@ -832,4 +866,5 @@ def accuracy(input, label, k=1, correct=None, total=None, name=None):
             "Total": [total],
         },
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     return acc_out

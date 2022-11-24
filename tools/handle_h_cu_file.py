@@ -31,12 +31,18 @@ def worker(fun):
 def threadPool(threadPoolNum):
     threadPool = []
     for i in range(threadPoolNum):
+<<<<<<< HEAD
+        thread = threading.Thread(target=worker, args={
+            doFun,
+        })
+=======
         thread = threading.Thread(
             target=worker,
             args={
                 doFun,
             },
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         thread.daemon = True
         threadPool.append(thread)
     return threadPool

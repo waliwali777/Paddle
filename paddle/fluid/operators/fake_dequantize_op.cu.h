@@ -33,10 +33,17 @@ __global__ void KeDequantize(
 template <typename T>
 struct DequantizeFunctor<phi::GPUContext, T> {
   void operator()(const phi::GPUContext& dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor* in,
+                  const framework::Tensor* scale,
+                  T max_range,
+                  framework::Tensor* out) {
+=======
                   const phi::DenseTensor* in,
                   const phi::DenseTensor* scale,
                   T max_range,
                   phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     const T* in_data = in->data<T>();
     const T* scale_factor = scale->data<T>();
     T* out_data = out->mutable_data<T>(dev_ctx.GetPlace());
@@ -88,6 +95,18 @@ __global__ void DequantizeTwoScale(const T* in,
                                    const T* scale_two,
                                    T max_range,
                                    int num,
+<<<<<<< HEAD
+                                   int iter_size,
+                                   int channel,
+                                   T* out) {
+  int tid = threadIdx.x;
+  int channel_size = num / (iter_size * channel);
+  int scale_index = blockIdx.x % channel;
+  const T* in_c = in + blockIdx.x * channel_size;
+  T* out_c = out + blockIdx.x * channel_size;
+  for (int i = tid; i < channel_size; i += blockDim.x) {
+    out_c[i] = in_c[i] * scale_one[scale_index] * scale_two[0] / max_range;
+=======
                                    int n_scales,
                                    int quant_stride,
                                    T* out) {
@@ -96,19 +115,29 @@ __global__ void DequantizeTwoScale(const T* in,
     int scale_index = (i / quant_stride) % n_scales;
     T s = scale_one[scale_index] * scale_two[0];
     out[i] = in[i] * s / max_range;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 }
 
 template <typename T>
 struct ChannelDequantizeFunctor<phi::GPUContext, T> {
   void operator()(const phi::GPUContext& dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor* in,
+                  const framework::Tensor** scales,
+=======
                   const phi::DenseTensor* in,
                   const phi::DenseTensor** scales,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                   const int scale_num,
                   T max_range,
                   const int quant_axis,
                   const int x_num_col_dims,
+<<<<<<< HEAD
+                  framework::Tensor* out) {
+=======
                   phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto in_dims = in->dims();
     const T* in_data = in->data<T>();
     T* out_data = out->mutable_data<T>(dev_ctx.GetPlace());
@@ -151,6 +180,18 @@ struct ChannelDequantizeFunctor<phi::GPUContext, T> {
       int n_scales = in->dims()[x_num_col_dims];
       const T* scale_one = scales[0]->data<T>();
       const T* scale_two = scales[1]->data<T>();
+<<<<<<< HEAD
+      int block = 1024;
+      int grid = iter_size * channel;
+      DequantizeTwoScale<T><<<grid, block, 0, dev_ctx.stream()>>>(in_data,
+                                                                  scale_one,
+                                                                  scale_two,
+                                                                  max_range,
+                                                                  num,
+                                                                  iter_size,
+                                                                  channel,
+                                                                  out_data);
+=======
 
       int64_t block_size = std::min(
           num, static_cast<int64_t>(dev_ctx.GetMaxThreadsPerBlock() / 4));
@@ -173,6 +214,7 @@ struct ChannelDequantizeFunctor<phi::GPUContext, T> {
                                                            n_scales,
                                                            quant_stride,
                                                            out_data);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
   }
 };

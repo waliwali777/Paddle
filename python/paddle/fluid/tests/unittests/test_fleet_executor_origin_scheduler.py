@@ -21,6 +21,7 @@ paddle.enable_static()
 
 
 class TestFleetExecutor(unittest.TestCase):
+
     def fake_fleet_opt(self):
         # TODO: Fake for coverage will be removed in the future
         import paddle.distributed.fleet as fleet
@@ -43,12 +44,21 @@ class TestFleetExecutor(unittest.TestCase):
         exe = paddle.static.Executor(place)
         empty_program = paddle.static.Program()
         with fluid.program_guard(empty_program, empty_program):
+<<<<<<< HEAD
+            x = fluid.layers.data(name='x',
+                                  shape=x_data.shape,
+                                  dtype=x_data.dtype)
+            y = fluid.layers.data(name='y',
+                                  shape=y_data.shape,
+                                  dtype=y_data.dtype)
+=======
             x = fluid.layers.data(
                 name='x', shape=x_data.shape, dtype=x_data.dtype
             )
             y = fluid.layers.data(
                 name='y', shape=y_data.shape, dtype=y_data.dtype
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             z = x + y
             a = 2 * x + 3 * y
             loss = paddle.mean(a)
@@ -57,9 +67,14 @@ class TestFleetExecutor(unittest.TestCase):
             steps_per_pass = 10
             bd = [steps_per_pass * p for p in passes]
             lr = [base_lr * (0.1**i) for i in range(len(bd) + 1)]
+<<<<<<< HEAD
+            lr_val = paddle.optimizer.lr.PiecewiseDecay(boundaries=bd,
+                                                        values=lr)
+=======
             lr_val = paddle.optimizer.lr.PiecewiseDecay(
                 boundaries=bd, values=lr
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             opt = paddle.optimizer.AdamW(
                 learning_rate=lr_val,
                 grad_clip=fluid.clip.GradientClipByGlobalNorm(clip_norm=1.0),
@@ -70,11 +85,20 @@ class TestFleetExecutor(unittest.TestCase):
             "fleet_opt": self.fake_fleet_opt(),
             "section_program": empty_program,
         }
+<<<<<<< HEAD
+        res = exe.run(empty_program,
+                      feed={
+                          'x': x_data,
+                          'y': y_data
+                      },
+                      fetch_list=[z.name, a.name])
+=======
         res = exe.run(
             empty_program,
             feed={'x': x_data, 'y': y_data},
             fetch_list=[z.name, a.name],
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         return res
 
     def test_executor_on_single_device(self):

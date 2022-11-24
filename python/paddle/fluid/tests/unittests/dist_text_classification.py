@@ -67,35 +67,57 @@ def conv_net(
         filter_size=window_size,
         act="tanh",
         pool_type="max",
+<<<<<<< HEAD
+        param_attr=fluid.ParamAttr(initializer=fluid.initializer.Constant(
+            value=0.01)))
+=======
         param_attr=fluid.ParamAttr(
             initializer=fluid.initializer.Constant(value=0.01)
         ),
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     fc_0 = fluid.layers.fc(
         input=[conv_3],
         size=fc0_dim,
+<<<<<<< HEAD
+        param_attr=fluid.ParamAttr(initializer=fluid.initializer.Constant(
+            value=0.01)))
+=======
         param_attr=fluid.ParamAttr(
             initializer=fluid.initializer.Constant(value=0.01)
         ),
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     prediction = fluid.layers.fc(
         input=[fc_0],
         size=class_dim,
         act="softmax",
+<<<<<<< HEAD
+        param_attr=fluid.ParamAttr(initializer=fluid.initializer.Constant(
+            value=0.01)))
+=======
         param_attr=fluid.ParamAttr(
             initializer=fluid.initializer.Constant(value=0.01)
         ),
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     return prediction
 
 
 def inference_network(dict_dim):
+<<<<<<< HEAD
+    data = fluid.layers.data(name="words",
+                             shape=[1],
+                             dtype="int64",
+                             lod_level=1)
+=======
     data = fluid.layers.data(
         name="words", shape=[1], dtype="int64", lod_level=1
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     out = conv_net(data, dict_dim)
     return out
 
@@ -116,6 +138,7 @@ def get_optimizer(learning_rate):
 
 
 class TestDistTextClassification2x2(TestDistRunnerBase):
+
     def get_model(self, batch_size=2):
         vocab = os.path.join(
             paddle.dataset.common.DATA_HOME, "text_classification", "imdb.vocab"
@@ -123,9 +146,16 @@ class TestDistTextClassification2x2(TestDistRunnerBase):
         word_dict, dict_dim = get_worddict(vocab)
 
         # Input data
+<<<<<<< HEAD
+        data = fluid.layers.data(name="words",
+                                 shape=[1],
+                                 dtype="int64",
+                                 lod_level=1)
+=======
         data = fluid.layers.data(
             name="words", shape=[1], dtype="int64", lod_level=1
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         label = fluid.layers.data(name='label', shape=[1], dtype='int64')
 
         # Train program
@@ -170,9 +200,15 @@ def tokenize(pattern):
         while tf is not None:
             if bool(pattern.match(tf.name)):
                 # newline and punctuations removal and ad-hoc tokenization.
+<<<<<<< HEAD
+                yield tarf.extractfile(tf).read().rstrip(
+                    six.b("\n\r")).translate(None, six.b(
+                        string.punctuation)).lower().split()
+=======
                 yield tarf.extractfile(tf).read().rstrip(b'\n\r').translate(
                     None, string.punctuation.encode('latin-1')
                 ).lower().split()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             tf = tarf.next()
 
 
@@ -206,11 +242,16 @@ def train(word_idx):
     :return: Training reader creator
     :rtype: callable
     """
+<<<<<<< HEAD
+    return reader_creator(re.compile(r"train/pos/.*\.txt$"),
+                          re.compile(r"train/neg/.*\.txt$"), word_idx)
+=======
     return reader_creator(
         re.compile(r"train/pos/.*\.txt$"),
         re.compile(r"train/neg/.*\.txt$"),
         word_idx,
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 def test(word_idx):
@@ -225,11 +266,16 @@ def test(word_idx):
     :return: Test reader creator
     :rtype: callable
     """
+<<<<<<< HEAD
+    return reader_creator(re.compile(r"test/pos/.*\.txt$"),
+                          re.compile(r"test/neg/.*\.txt$"), word_idx)
+=======
     return reader_creator(
         re.compile(r"test/pos/.*\.txt$"),
         re.compile(r"test/neg/.*\.txt$"),
         word_idx,
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

@@ -197,7 +197,12 @@ class DataNormOp : public framework::OperatorWithKernel {
                             "bias input should be of float type"));
     }
 
+<<<<<<< HEAD
+    return framework::OpKernelType(
+        input_data_type, ctx.GetPlace(), layout, library);
+=======
     return framework::OpKernelType(input_data_type, ctx.GetPlace());
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 };
 

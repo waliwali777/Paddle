@@ -39,6 +39,7 @@ def logit_grad(x, eps=1e-8):
 
 
 class TestLogitOp(OpTest):
+
     def setUp(self):
         self.op_type = 'logit'
         self.python_api = paddle.logit
@@ -60,22 +61,31 @@ class TestLogitOp(OpTest):
         self.check_output(check_eager=True)
 
     def test_check_grad(self):
+<<<<<<< HEAD
+        self.check_grad(['X'], ['Out'],
+                        user_defined_grads=[self.x_grad],
+                        check_eager=True)
+=======
         self.check_grad(
             ['X'], ['Out'], user_defined_grads=[self.x_grad], check_eager=True
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestLogitShape(TestLogitOp):
+
     def set_attrs(self):
         self.shape = [2, 60]
 
 
 class TestLogitEps(TestLogitOp):
+
     def set_attrs(self):
         self.eps = 1e-8
 
 
 class TestLogitAPI(unittest.TestCase):
+
     def setUp(self):
         self.x_shape = [120]
         self.x = np.random.uniform(0.0, 1.0, self.x_shape).astype(np.float32)

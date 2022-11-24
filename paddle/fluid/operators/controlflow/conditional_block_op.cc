@@ -23,8 +23,11 @@ limitations under the License. */
 #include "paddle/fluid/platform/mkldnn_helper.h"
 #endif
 
+<<<<<<< HEAD
+=======
 DECLARE_bool(use_mkldnn);
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 namespace paddle {
 namespace operators {
 
@@ -100,7 +103,11 @@ class ConditionalBlockOp : public ConditionalOp {
       // depends on the input variables (Input).
       auto xs = InputTensors(scope, ConditionalOp::kInputs);
       need_run =
+<<<<<<< HEAD
+          std::all_of(xs.begin(), xs.end(), [](const framework::LoDTensor *t) {
+=======
           std::all_of(xs.begin(), xs.end(), [](const phi::DenseTensor *t) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             return t->numel() != 0;
           });
     }
@@ -133,12 +140,26 @@ class ConditionalBlockOp : public ConditionalOp {
       // Executors (executors declared inside control ops)
       platform::DontClearMKLDNNCache(dev_place);
 #endif
+<<<<<<< HEAD
+      framework::Executor exec(dev_place);
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       auto *block = Attr<framework::BlockDesc *>("sub_block");
       VLOG(3) << "Conditional block.idx = " << block->ID()
               << ", scope = " << &cur_scope;
 
       auto &skip_vars =
           Attr<std::vector<std::string>>(ConditionalOp::kSkipEagerDeletionVars);
+<<<<<<< HEAD
+      exec.Run(*block->Program(),
+               &cur_scope,
+               block->ID(),
+               false,
+               true,
+               skip_vars,
+               /* force_disable_gc */ false,
+               /* keep_kid_scopes */ true);
+=======
 
       if (FLAGS_control_flow_use_new_executor) {
         std::set<std::string> skip_gc_vars(skip_vars.begin(), skip_vars.end());
@@ -179,6 +200,7 @@ class ConditionalBlockOp : public ConditionalOp {
                                  /* create_vars */ true,
                                  /* keep_kids */ true);
       }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
   }
 
@@ -216,7 +238,11 @@ class ConditionalBlockGradOp : public ConditionalOp {
     } else {
       auto xs = this->InputTensors(scope, ConditionalOp::kInputs);
       need_run =
+<<<<<<< HEAD
+          std::all_of(xs.begin(), xs.end(), [](const framework::LoDTensor *t) {
+=======
           std::all_of(xs.begin(), xs.end(), [](const phi::DenseTensor *t) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             return t->numel() != 0;
           });
     }
@@ -249,6 +275,17 @@ class ConditionalBlockGradOp : public ConditionalOp {
       auto *block = Attr<framework::BlockDesc *>("sub_block");
       VLOG(3) << "Conditional Grad block.idx = " << block->ID()
               << ", scope = " << &cur_scope;
+<<<<<<< HEAD
+      exec.Run(*block->Program(),
+               &cur_scope,
+               block->ID(),
+               false,
+               true,
+               inside_grads,
+               /* force_disable_gc */ false,
+               /* keep_kid_scopes */ false);
+
+=======
 
       if (FLAGS_control_flow_use_new_executor) {
         std::set<std::string> skip_gc_vars(inside_grads.begin(),
@@ -290,6 +327,7 @@ class ConditionalBlockGradOp : public ConditionalOp {
                                  /* keep_kids */ true);
       }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       AssignLocalGradientToParentScope(
           dev_place, cur_scope, scope, inside_grads, outside_grads, inputs);
       return;
@@ -362,18 +400,31 @@ class ConditionalBlockGradOp : public ConditionalOp {
         continue;
       }
 
+<<<<<<< HEAD
+      if (input_var->IsType<framework::LoDTensor>()) {
+        PADDLE_ENFORCE_EQ(outside_var->IsType<framework::LoDTensor>(),
+=======
       if (input_var->IsType<phi::DenseTensor>()) {
         PADDLE_ENFORCE_EQ(outside_var->IsType<phi::DenseTensor>(),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                           true,
                           platform::errors::InvalidArgument(
                               "Type of outside_var %s is NOT LoDTensor, which "
                               "doesn't match input_var %s.",
                               outside_grad_name,
                               input_name));
+<<<<<<< HEAD
+        AssignZeroToOutsideTensor(
+            place,
+            scope,
+            input_var->Get<framework::LoDTensor>(),
+            outside_var->GetMutable<framework::LoDTensor>());
+=======
         AssignZeroToOutsideTensor(place,
                                   scope,
                                   input_var->Get<phi::DenseTensor>(),
                                   outside_var->GetMutable<phi::DenseTensor>());
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       } else if (input_var->IsType<framework::LoDTensorArray>()) {
         PADDLE_ENFORCE_EQ(outside_var->IsType<framework::LoDTensorArray>(),
                           true,
@@ -385,9 +436,12 @@ class ConditionalBlockGradOp : public ConditionalOp {
         const auto &input_tensors = input_var->Get<framework::LoDTensorArray>();
         auto *outside_tensors =
             outside_var->GetMutable<framework::LoDTensorArray>();
+<<<<<<< HEAD
+=======
         if (outside_tensors->size() == 0U) {
           outside_tensors->resize(input_tensors.size());
         }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         PADDLE_ENFORCE_EQ(input_tensors.size(),
                           outside_tensors->size(),
                           platform::errors::InvalidArgument(

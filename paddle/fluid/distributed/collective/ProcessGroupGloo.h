@@ -99,6 +99,15 @@ class ProcessGroupGloo : public ProcessGroup {
     std::shared_ptr<::gloo::transport::Device> device;
   };
 
+<<<<<<< HEAD
+  explicit ProcessGroupGloo(
+      const std::shared_ptr<paddle::distributed::Store>& store,
+      int rank,
+      int world_size,
+      const platform::Place& place,
+      int gid,
+      std::shared_ptr<GlooOptions> options);
+=======
   ProcessGroupGloo(const std::shared_ptr<paddle::distributed::Store>& store,
                    int rank,
                    int world_size,
@@ -110,6 +119,7 @@ class ProcessGroupGloo : public ProcessGroup {
       int rank,
       int world_size,
       int gid);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
   ~ProcessGroupGloo() = default;
 

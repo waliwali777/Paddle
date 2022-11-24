@@ -24,9 +24,17 @@ from functools import partial
 
 
 class TestResnetWithFuseAllReduceCPU(TestResnetBase):
+
     def test_seresnext_with_fused_all_reduce(self):
         # NOTE(zcd): In order to make the program faster,
         # this unit test remove drop_out and batch_norm.
+<<<<<<< HEAD
+        check_func = partial(self.check_network_convergence,
+                             optimizer=seresnext_net.optimizer,
+                             fuse_all_reduce_ops=True)
+        self._compare_result_with_origin_model(check_func,
+                                               use_device=DeviceType.CPU)
+=======
         check_func = partial(
             self.check_network_convergence,
             optimizer=seresnext_net.optimizer,
@@ -35,6 +43,7 @@ class TestResnetWithFuseAllReduceCPU(TestResnetBase):
         self._compare_result_with_origin_model(
             check_func, use_device=DeviceType.CPU
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == '__main__':

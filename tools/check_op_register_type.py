@@ -46,9 +46,14 @@ def get_all_kernels():
             register_type = infos[0].split(":")[-1]
             op_kernel_types[op_type].append(register_type.lower())
 
+<<<<<<< HEAD
+    for (op_type, op_kernels) in sorted(op_kernel_types.items(),
+                                        key=lambda x: x[0]):
+=======
     for (op_type, op_kernels) in sorted(
         op_kernel_types.items(), key=lambda x: x[0]
     ):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         print(op_type, " ".join(sorted(op_kernels)))
 
 
@@ -66,11 +71,16 @@ def print_diff(op_type, register_types):
     if len(FLOATS - register_types) == 1:
         lack_types |= FLOATS - register_types
 
+<<<<<<< HEAD
+    print("{} only supports [{}] now, but lacks [{}].".format(
+        op_type, " ".join(register_types), " ".join(lack_types)))
+=======
     print(
         "{} only supports [{}] now, but lacks [{}].".format(
             op_type, " ".join(register_types), " ".join(lack_types)
         )
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 def check_add_op_valid():

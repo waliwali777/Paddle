@@ -64,9 +64,15 @@ def check_finite_and_unscale(x, scale, name=None, float_status=None):
         )
         inputs['FloatStatus'] = float_status
     outputs = {'Out': x, 'FoundInfinite': found_inf}
+<<<<<<< HEAD
+    helper.append_op(type='check_finite_and_unscale',
+                     inputs=inputs,
+                     outputs=outputs)
+=======
     helper.append_op(
         type='check_finite_and_unscale', inputs=inputs, outputs=outputs
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     return x, found_inf
 
@@ -175,8 +181,15 @@ def update_loss_scaling(
     else:
         attrs['stop_update'] = stop_update
 
+<<<<<<< HEAD
+    helper.append_op(type='update_loss_scaling',
+                     inputs=inputs,
+                     outputs=outputs,
+                     attrs=attrs)
+=======
     helper.append_op(
         type='update_loss_scaling', inputs=inputs, outputs=outputs, attrs=attrs
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     return x

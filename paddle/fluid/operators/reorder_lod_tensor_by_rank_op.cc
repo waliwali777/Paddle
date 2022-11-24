@@ -95,7 +95,11 @@ class ReorderLoDTensorByRankTableBase : public framework::OperatorBase {
                               "Input",
                               "X",
                               "ReorderLoDTensorByRankTable")
+<<<<<<< HEAD
+                  .Get<framework::LoDTensor>();
+=======
                   .Get<phi::DenseTensor>();
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto &rank_table = GET_DATA_SAFELY(scope.FindVar(Input("RankTable")),
                                        "Input",
                                        "RankTable",
@@ -159,8 +163,13 @@ class ReorderLoDTensorByRankTableBase : public framework::OperatorBase {
 
   size_t CopyTensorAndLod(const platform::Place &place,
                           const AbsoluteRankTableItem &item,
+<<<<<<< HEAD
+                          const framework::LoDTensor &x,
+                          framework::LoDTensor *out,
+=======
                           const phi::DenseTensor &x,
                           phi::DenseTensor *out,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                           size_t out_offset) const {
     auto &out_lod = *out->mutable_lod();
     auto len = item.length;
@@ -202,7 +211,11 @@ class ReorderLoDTensorByRankTableOp : public ReorderLoDTensorByRankTableBase {
 
  protected:
   void process(const platform::Place &place,
+<<<<<<< HEAD
+               const framework::LoDTensor &x,
+=======
                const phi::DenseTensor &x,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                const framework::LoDRankTable &rank_table,
                phi::DenseTensor *out) const override {
     auto absolute_table = GetAbsoluteOffsetAndLengthByLoDRankTable(x);
@@ -257,7 +270,11 @@ class ReorderLoDTensorByRankGradOp : public ReorderLoDTensorByRankTableBase {
 
  protected:
   void process(const platform::Place &place,
+<<<<<<< HEAD
+               const framework::LoDTensor &x,
+=======
                const phi::DenseTensor &x,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                const framework::LoDRankTable &rank_table,
                phi::DenseTensor *out) const override {
     auto absolute_table = GetAbsoluteOffsetAndLengthByLoDRankTable(x);

@@ -22,9 +22,14 @@ import unittest
 
 paddle.enable_static()
 
+<<<<<<< HEAD
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+=======
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 logger = logging.getLogger("paddle_with_cinn")
 
 
@@ -89,11 +94,16 @@ def train(dot_save_dir, prefix, seed=1234):
     main_program = paddle.static.Program()
     img, label, loss = build_program(main_program, startup_program)
 
+<<<<<<< HEAD
+    place = paddle.CUDAPlace(
+        0) if paddle.is_compiled_with_cuda() else paddle.CPUPlace()
+=======
     place = (
         paddle.CUDAPlace(0)
         if paddle.is_compiled_with_cuda()
         else paddle.CPUPlace()
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     exe = paddle.static.Executor(place)
     exe.run(startup_program)
 
@@ -114,6 +124,7 @@ def train(dot_save_dir, prefix, seed=1234):
 
 @unittest.skipIf(not set_cinn_flag(True), "Paddle is not compiled with CINN.")
 class TestParallelExecutorRunCinn(unittest.TestCase):
+
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp(prefix="dots_")
 

@@ -160,6 +160,8 @@ struct Layers {
     return unary_op("tanh", x, out);
   }
 
+<<<<<<< HEAD
+=======
   VarDesc* c_identity(VarDesc* x, VarDesc* out = nullptr, int ring_id = -1) {
     AttributeMap attrs;
     attrs["ring_id"] = ring_id;
@@ -174,6 +176,7 @@ struct Layers {
     return unary_op("c_allreduce_sum", x, out, &attrs);
   }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   VarDesc* fc(VarDesc* input,
               VarDesc* w,
               VarDesc* bias,
@@ -352,6 +355,8 @@ struct Layers {
     return outs;
   }
 
+<<<<<<< HEAD
+=======
   std::vector<VarDesc*> split(VarDesc* x, int num_or_section, int axis = 0) {
     std::vector<VarDesc*> outs(num_or_section);
     for (int i = 0; i < num_or_section; i++) {
@@ -383,6 +388,7 @@ struct Layers {
     return out;
   }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   VarDesc* matmul(VarDesc* x,
                   VarDesc* y,
                   VarDesc* alpha = nullptr,

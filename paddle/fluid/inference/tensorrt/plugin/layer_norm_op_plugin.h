@@ -101,6 +101,16 @@ class LayerNormPlugin : public PluginTensorRT {
   void terminate() TRT_NOEXCEPT override;
 
   LayerNormPlugin* clone() const TRT_NOEXCEPT override {
+<<<<<<< HEAD
+    return new LayerNormPlugin(bias_.data(),
+                               bias_.size(),
+                               scale_.data(),
+                               scale_.size(),
+                               begin_norm_axis_,
+                               eps_,
+                               mean_shape_,
+                               variance_shape_);
+=======
     auto ptr = new LayerNormPlugin(bias_.data(),
                                    bias_.size(),
                                    scale_.data(),
@@ -113,6 +123,7 @@ class LayerNormPlugin : public PluginTensorRT {
     ptr->bias_gpu_ = bias_gpu_;
     ptr->scale_gpu_ = scale_gpu_;
     return ptr;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 
   const char* getPluginType() const TRT_NOEXCEPT override {
@@ -187,6 +198,16 @@ class LayerNormPluginDynamic : public DynamicPluginTensorRT {
     DeserializeValue(&serialData, &serialLength, &with_fp16_);
   }
   nvinfer1::IPluginV2DynamicExt* clone() const TRT_NOEXCEPT override {
+<<<<<<< HEAD
+    return new LayerNormPluginDynamic(bias_.data(),
+                                      bias_.size(),
+                                      scale_.data(),
+                                      scale_.size(),
+                                      begin_norm_axis_,
+                                      eps_,
+                                      mean_shape_,
+                                      variance_shape_);
+=======
     auto ptr = new LayerNormPluginDynamic(bias_.data(),
                                           bias_.size(),
                                           scale_.data(),
@@ -199,6 +220,7 @@ class LayerNormPluginDynamic : public DynamicPluginTensorRT {
     ptr->bias_gpu_ = bias_gpu_;
     ptr->scale_gpu_ = scale_gpu_;
     return ptr;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 
   const char* getPluginType() const TRT_NOEXCEPT override {
@@ -225,11 +247,18 @@ class LayerNormPluginDynamic : public DynamicPluginTensorRT {
     SerializeValue(&buffer, with_fp16_);
   }
 
+<<<<<<< HEAD
+  nvinfer1::DimsExprs getOutputDimensions(int output_index,
+                                          const nvinfer1::DimsExprs* inputs,
+                                          int nb_inputs,
+                                          nvinfer1::IExprBuilder& expr_builder)
+=======
   nvinfer1::DimsExprs getOutputDimensions(
       int output_index,
       const nvinfer1::DimsExprs* inputs,
       int nb_inputs,
       nvinfer1::IExprBuilder& expr_builder)  // NOLINT
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       TRT_NOEXCEPT override;
 
   bool supportsFormatCombination(int pos,

@@ -21,14 +21,33 @@
 
 namespace paddle {
 namespace jit {
+<<<<<<< HEAD
+class BaseFunction;
+using Name2FunctionMap =
+    std::unordered_map<std::string, std::shared_ptr<BaseFunction>>;
+=======
 class BaseEngine;
 using EngineMap = std::unordered_map<std::string, std::shared_ptr<BaseEngine>>;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 class CompilationUnit {
  public:
   CompilationUnit() = default;
   ~CompilationUnit() {}
 
+<<<<<<< HEAD
+  std::shared_ptr<BaseFunction> Function(const std::string &name) const;
+
+  void SetFunction(const std::string &name,
+                   const std::shared_ptr<BaseFunction> &function);
+
+  std::vector<std::string> FunctionNames() const;
+
+  const Name2FunctionMap &FunctionMap() const;
+
+ private:
+  Name2FunctionMap function_map_;
+=======
   std::shared_ptr<BaseEngine> GetEngine(const std::string &name) const;
 
   void SetEngine(const std::string &name,
@@ -38,6 +57,7 @@ class CompilationUnit {
 
  private:
   jit::EngineMap engine_map_;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 };
 
 }  // namespace jit

@@ -100,7 +100,11 @@ class CompareOp : public framework::OperatorWithKernel {
   char _##op_type##Comment::equation[]{_equation};                       \
   DECLARE_INFER_SHAPE_FUNCTOR(op_type,                                   \
                               op_type##_InferShapeFunctor,               \
+<<<<<<< HEAD
+                              PD_INFER_META(phi::CompareInferMeta));     \
+=======
                               PD_INFER_META(phi::CompareRawInferMeta));  \
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   REGISTER_OPERATOR(                                                     \
       op_type,                                                           \
       ::paddle::operators::CompareOp<_##op_type##Comment>,               \

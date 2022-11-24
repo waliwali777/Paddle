@@ -21,6 +21,7 @@ import hypothesis.strategies as st
 
 
 class TestConvMishMkldnnFusePass(PassAutoScanTest):
+
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         attrs = [op.attrs for op in program_config.ops]
         # If the problem has been fixed, the judgment
@@ -41,6 +42,17 @@ class TestConvMishMkldnnFusePass(PassAutoScanTest):
 
         def generate_input():
             if data_format == "NCHW":
+<<<<<<< HEAD
+                return np.random.random([batch_size, 48, 64,
+                                         64]).astype(np.float32)
+            else:
+                return np.random.random([batch_size, 64, 64,
+                                         48]).astype(np.float32)
+
+        def generate_weight():
+            return np.random.random([16, int(48 / groups), 3,
+                                     3]).astype(np.float32)
+=======
                 return np.random.random([batch_size, 48, 64, 64]).astype(
                     np.float32
                 )
@@ -53,6 +65,7 @@ class TestConvMishMkldnnFusePass(PassAutoScanTest):
             return np.random.random([16, int(48 / groups), 3, 3]).astype(
                 np.float32
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         ops_config = [
             {
@@ -99,9 +112,14 @@ class TestConvMishMkldnnFusePass(PassAutoScanTest):
         yield config, ["conv2d"], (1e-5, 1e-5)
 
     def test(self):
+<<<<<<< HEAD
+        self.run_and_statis(quant=False,
+                            passes=["conv_activation_mkldnn_fuse_pass"])
+=======
         self.run_and_statis(
             quant=False, passes=["conv_activation_mkldnn_fuse_pass"]
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == "__main__":

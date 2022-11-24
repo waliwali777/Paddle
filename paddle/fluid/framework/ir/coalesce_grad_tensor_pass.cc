@@ -560,6 +560,40 @@ class CoalesceGradTensorPass : public ir::Pass {
         all_persistable = false;
       }
     }
+<<<<<<< HEAD
+
+    if (all_persistable) {
+      // All grads are persistable, only need to be executed once at the
+      // beginning.
+      result->Get<details::ProgramDescs>(details::kStartupProgramDescs)
+          .emplace_back();
+      ProgramDesc &program_desc =
+          result->Get<details::ProgramDescs>(details::kStartupProgramDescs)
+              .back();
+      auto *global_block = program_desc.MutableBlock(0);
+      AppendAllocSpaceForVarsOp(params_name,
+                                grads_name,
+                                fused_var_name,
+                                dtype,
+                                all_persistable,
+                                global_block);
+    } else {
+      // NOTE. In scope_buffered_ssa_graph_executor, after each execution of
+      // DropScope(), non persistable vars will be Erase or Clear. So
+      // coalesce_tensor op needs to be executed again after the execution
+      // of DropScope().
+      result->Get<details::ProgramDescs>(details::kProgramDescs).emplace_back();
+      ProgramDesc &program_desc =
+          result->Get<details::ProgramDescs>(details::kProgramDescs).back();
+      auto *global_block = program_desc.MutableBlock(0);
+      AppendAllocSpaceForVarsOp(params_name,
+                                grads_name,
+                                fused_var_name,
+                                dtype,
+                                any_persistable,
+                                global_block);
+    }
+=======
     VLOG(4) << "all_persistable:" << all_persistable;
     VLOG(4) << "any_persistable:" << any_persistable;
     // NOTE. In scope_buffered_ssa_graph_executor, after each execution of
@@ -580,6 +614,7 @@ class CoalesceGradTensorPass : public ir::Pass {
                               dtype,
                               any_persistable,
                               global_block);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   }
 
   void AppendAllocSpaceForVarsOp(const std::vector<std::string> &params_name,

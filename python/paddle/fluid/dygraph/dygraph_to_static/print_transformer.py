@@ -14,6 +14,10 @@
 
 from paddle.utils import gast
 
+<<<<<<< HEAD
+from paddle.fluid.dygraph.dygraph_to_static.static_analysis import AstNodeWrapper, StaticAnalysisVisitor
+from paddle.fluid.dygraph.dygraph_to_static.base_transformer import BaseTransformer
+=======
 from paddle.fluid.dygraph.dygraph_to_static.static_analysis import (
     AstNodeWrapper,
     StaticAnalysisVisitor,
@@ -21,6 +25,7 @@ from paddle.fluid.dygraph.dygraph_to_static.static_analysis import (
 from paddle.fluid.dygraph.dygraph_to_static.base_transformer import (
     BaseTransformer,
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class PrintTransformer(BaseTransformer):

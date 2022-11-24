@@ -21,6 +21,7 @@ from paddle.fluid.tests.unittests.ipu.op_test_ipu import IPUOpTest
 
 
 class TestBase(IPUOpTest):
+
     def setUp(self):
         self.set_atol()
         self.set_training()
@@ -44,12 +45,21 @@ class TestBase(IPUOpTest):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+        y = paddle.static.data(name=self.feed_list[1],
+                               shape=self.feed_shape[1],
+                               dtype='float32')
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
         y = paddle.static.data(
             name=self.feed_list[1], shape=self.feed_shape[1], dtype='float32'
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         out = paddle.fluid.layers.sum([x, y], **self.attrs)
         self.fetch_list = [out.name]
 
@@ -65,6 +75,7 @@ class TestBase(IPUOpTest):
 
 
 class TestCase1(TestBase):
+
     def set_data_feed(self):
         x = np.random.uniform(size=[1, 3, 2, 2])
         y = np.random.uniform(size=[1, 3, 2, 2])
@@ -82,6 +93,17 @@ class TestCase1(TestBase):
 
     @IPUOpTest.static_graph
     def build_model(self):
+<<<<<<< HEAD
+        x = paddle.static.data(name=self.feed_list[0],
+                               shape=self.feed_shape[0],
+                               dtype='float32')
+        y = paddle.static.data(name=self.feed_list[1],
+                               shape=self.feed_shape[1],
+                               dtype='float32')
+        z = paddle.static.data(name=self.feed_list[2],
+                               shape=self.feed_shape[2],
+                               dtype='float32')
+=======
         x = paddle.static.data(
             name=self.feed_list[0], shape=self.feed_shape[0], dtype='float32'
         )
@@ -91,6 +113,7 @@ class TestCase1(TestBase):
         z = paddle.static.data(
             name=self.feed_list[2], shape=self.feed_shape[2], dtype='float32'
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         out = paddle.fluid.layers.sum([x, y, z], **self.attrs)
         self.fetch_list = [out.name]
 

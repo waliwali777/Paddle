@@ -14,4 +14,22 @@ limitations under the License. */
 
 #pragma once
 
+<<<<<<< HEAD
+// Disable the copy and assignment operator for a class.
+#ifndef DISABLE_COPY_AND_ASSIGN
+#define DISABLE_COPY_AND_ASSIGN(classname)         \
+ private:                                          \
+  classname(const classname&) = delete;            \
+  classname(classname&&) = delete;                 \
+  classname& operator=(const classname&) = delete; \
+  classname& operator=(classname&&) = delete
+#endif
+
+#ifndef PADDLE_WITH_MUSL
+#if defined(__FLT_MAX__)
+#define FLT_MAX __FLT_MAX__
+#endif  // __FLT_MAX__
+#endif  // PADDLE_WITH_MUSL
+=======
 #include "paddle/phi/core/macros.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f

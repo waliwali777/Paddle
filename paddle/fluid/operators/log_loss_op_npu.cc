@@ -25,9 +25,15 @@ using Tensor = phi::DenseTensor;
 template <typename T>
 void LogLossAdds(const platform::Place& place,
                  const aclrtStream& stream,
+<<<<<<< HEAD
+                 const Tensor* x,
+                 float scale,
+                 Tensor* y) {
+=======
                  const phi::DenseTensor* x,
                  float scale,
                  phi::DenseTensor* y) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   //  Calculate y = x + scale
   y->mutable_data<T>(x->dims(), place);
   const auto& runner = NpuOpRunner("Adds", {*x}, {*y}, {{"value", scale}});
@@ -37,9 +43,15 @@ void LogLossAdds(const platform::Place& place,
 template <typename T>
 void LogLossMuls(const platform::Place& place,
                  const aclrtStream& stream,
+<<<<<<< HEAD
+                 const Tensor* x,
+                 float scale,
+                 Tensor* y) {
+=======
                  const phi::DenseTensor* x,
                  float scale,
                  phi::DenseTensor* y) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   //  Calculate y = x + scale
   y->mutable_data<T>(x->dims(), place);
   const auto& runner = NpuOpRunner("Muls", {*x}, {*y}, {{"value", scale}});
@@ -49,9 +61,15 @@ void LogLossMuls(const platform::Place& place,
 template <typename T>
 void LogLossBCE(const platform::Place& place,
                 const aclrtStream& stream,
+<<<<<<< HEAD
+                const Tensor* x,
+                const Tensor* y,
+                Tensor* z) {
+=======
                 const phi::DenseTensor* x,
                 const phi::DenseTensor* y,
                 phi::DenseTensor* z) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   z->mutable_data<T>(x->dims(), place);
   const auto& runner =
       NpuOpRunner("BinaryCrossEntropy",
@@ -64,10 +82,17 @@ void LogLossBCE(const platform::Place& place,
 template <typename T>
 void LogLossBCEGrad(const platform::Place& place,
                     const aclrtStream& stream,
+<<<<<<< HEAD
+                    const Tensor* x,
+                    const Tensor* y,
+                    const Tensor* dout,
+                    Tensor* dx) {
+=======
                     const phi::DenseTensor* x,
                     const phi::DenseTensor* y,
                     const phi::DenseTensor* dout,
                     phi::DenseTensor* dx) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   dx->mutable_data<T>(x->dims(), place);
   const auto& runner =
       NpuOpRunner("BinaryCrossEntropyGrad",

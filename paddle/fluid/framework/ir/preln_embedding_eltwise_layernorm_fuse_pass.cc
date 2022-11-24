@@ -448,7 +448,10 @@ void PrelnEmbeddingEltwiseLayerNormFusePass::ApplyImpl(Graph* graph) const {
                "please reconfig.";
     return;
   }
+<<<<<<< HEAD
+=======
   FusePassBase::Init(name_scope_, graph);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   int fusion_count =
       PrelnEmbeddingEltwiseLayerNormFusePass::BuildFusion(graph, name_scope_);
   if (fusion_count > 0) {

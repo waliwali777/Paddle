@@ -174,7 +174,11 @@ namespace fusion_group = paddle::framework::ir::fusion_group;
 template <typename T>
 void TestMainImpl(std::string func_name,
                   std::string code_str,
+<<<<<<< HEAD
+                  std::vector<paddle::framework::LoDTensor> cpu_tensors,
+=======
                   std::vector<phi::DenseTensor> cpu_tensors,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                   int n,
                   std::vector<int> input_ids,
                   std::vector<int> output_ids) {

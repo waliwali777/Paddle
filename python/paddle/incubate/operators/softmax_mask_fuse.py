@@ -60,9 +60,18 @@ def softmax_mask_fuse(x, mask, name=None):
         return out
     helper = LayerHelper('fused_softmax_mask', **locals())
     out = helper.create_variable_for_type_inference(dtype=x.dtype)
+<<<<<<< HEAD
+    helper.append_op(type='fused_softmax_mask',
+                     inputs={
+                         'X': [x],
+                         'Mask': [mask]
+                     },
+                     outputs={'Out': [out]})
+=======
     helper.append_op(
         type='fused_softmax_mask',
         inputs={'X': [x], 'Mask': [mask]},
         outputs={'Out': [out]},
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     return out

@@ -29,9 +29,15 @@ namespace operators {
 template <typename DeviceContext, typename T>
 struct DequantizeFunctor {
   void operator()(const DeviceContext& dev_ctx,
+<<<<<<< HEAD
+                  const framework::Tensor* in,
+                  const framework::Tensor* dict,
+                  framework::Tensor* out);
+=======
                   const phi::DenseTensor* in,
                   const phi::DenseTensor* dict,
                   phi::DenseTensor* out);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 };
 
 template <typename DeviceContext, typename T>

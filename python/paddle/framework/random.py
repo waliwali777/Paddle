@@ -37,7 +37,11 @@ def seed(seed):
             gen = paddle.seed(102)
 
     """
+<<<<<<< HEAD
+    #TODO(zhiqiu): 1. remove program.random_seed when all random-related op upgrade
+=======
     # TODO(zhiqiu): 1. remove program.random_seed when all random-related op upgrade
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     # 2. support gpu generator by global device
 
     seed = int(seed)

@@ -28,7 +28,11 @@ template <typename DeviceContext>
 struct TensorCheckerVisitor {
   TensorCheckerVisitor(const std::string& op_type,
                        const std::string& var_name,
+<<<<<<< HEAD
+                       const framework::Tensor& tensor,
+=======
                        const phi::DenseTensor& tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                        const platform::Place& place)
       : op_type_(op_type),
         var_name_(var_name),
@@ -58,7 +62,11 @@ struct TensorCheckerVisitor {
 template <typename DeviceContext>
 void tensor_check(const std::string& op_type,
                   const std::string& var_name,
+<<<<<<< HEAD
+                  const framework::Tensor& tensor,
+=======
                   const phi::DenseTensor& tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                   const platform::Place& place);
 
 }  // namespace details

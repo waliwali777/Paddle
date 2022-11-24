@@ -348,7 +348,11 @@ bool NativePaddlePredictor::GetFetch(std::vector<PaddleTensor> *outputs,
             i));
     framework::FetchType &fetch_var =
         framework::GetFetchVariable(*scope, "fetch", idx);
+<<<<<<< HEAD
+    auto fetch = PADDLE_GET_CONST(framework::LoDTensor, fetch_var);
+=======
     auto fetch = PADDLE_GET_CONST(phi::DenseTensor, fetch_var);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto type = framework::TransToProtoVarType(fetch.dtype());
     auto output = &(outputs->at(i));
     output->name = fetchs_[idx]->Input("X")[0];

@@ -78,7 +78,11 @@ class CastOp : public framework::OperatorWithKernel {
   framework::OpKernelType GetExpectedKernelType(
       const framework::ExecutionContext &ctx) const override {
     // CastOp kernel's device type is decided by input tensor place
+<<<<<<< HEAD
+    auto *tensor = ctx.Input<framework::LoDTensor>("X");
+=======
     auto *tensor = ctx.Input<phi::DenseTensor>("X");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     PADDLE_ENFORCE_EQ(tensor->IsInitialized(),
                       true,
                       platform::errors::PreconditionNotMet(
@@ -98,9 +102,20 @@ class CastOp : public framework::OperatorWithKernel {
     int dtype_fp32 = static_cast<int>(framework::proto::VarType::FP32);
     int dtype_bf16 = static_cast<int>(framework::proto::VarType::BF16);
 
+<<<<<<< HEAD
+    if (this->CanMKLDNNBeUsed(
+            ctx, framework::TransToProtoVarType(tensor->dtype())) &&
+        MKLDNNSupportsCast()) {
+      return framework::OpKernelType(
+          framework::TransToProtoVarType(tensor->dtype()),
+          ctx.GetPlace(),
+          framework::DataLayout::kMKLDNN,
+          framework::LibraryType::kMKLDNN);
+=======
     if ((in_dtype != dtype_fp32 && in_dtype != dtype_bf16) ||
         (out_dtype != dtype_fp32 && out_dtype != dtype_bf16)) {
       this->SetDnnFallback(true);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
     // NOTE(jiahongyu): Above codes originally enclosed by PADDLE_WITH_MKLDNN
 

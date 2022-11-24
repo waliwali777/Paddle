@@ -72,6 +72,26 @@ void InstanceNormInferMeta(const MetaTensor& x,
                            MetaTensor* saved_variance,
                            MetaConfig config = MetaConfig());
 
+<<<<<<< HEAD
+void GraphSendRecvInferMeta(const MetaTensor& x,
+                            const MetaTensor& src_index,
+                            const MetaTensor& dst_index,
+                            const std::string& pool_type,
+                            const IntArray& out_size,
+                            MetaTensor* out,
+                            MetaTensor* dst_count);
+=======
+void GroupNormInferMeta(const MetaTensor& x,
+                        const MetaTensor& scale,
+                        const MetaTensor& bias,
+                        float epsilon,
+                        int groups,
+                        const std::string& data_layout,
+                        MetaTensor* y,
+                        MetaTensor* mean,
+                        MetaTensor* variance);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
+
 void GroupNormInferMeta(const MetaTensor& x,
                         const MetaTensor& scale,
                         const MetaTensor& bias,
@@ -177,6 +197,8 @@ void ScatterNdAddInferMeta(const MetaTensor& x,
                            const MetaTensor& updates,
                            MetaTensor* out);
 
+<<<<<<< HEAD
+=======
 void SendURecvInferMeta(const MetaTensor& x,
                         const MetaTensor& src_index,
                         const MetaTensor& dst_index,
@@ -185,6 +207,7 @@ void SendURecvInferMeta(const MetaTensor& x,
                         MetaTensor* out,
                         MetaTensor* dst_count);
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void SpectralNormInferMeta(const MetaTensor& weight,
                            const MetaTensor& u,
                            const MetaTensor& v,

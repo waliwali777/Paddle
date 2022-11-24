@@ -138,6 +138,7 @@ def run_adam_op(
 
 
 class TestMergedAdam(unittest.TestCase):
+
     def setUp(self):
         paddle.disable_static()
         self.shapes = [[3, 4], [2, 7], [5, 6], [7, 8]]
@@ -182,6 +183,22 @@ class TestMergedAdam(unittest.TestCase):
         ) = self.prepare_data(self.shapes, multi_precision, self.seed, place)
 
         def run_op(use_merged):
+<<<<<<< HEAD
+            return run_adam_op(params=params,
+                               grads=grads,
+                               lrs=lrs,
+                               moment1s=moment1s,
+                               moment2s=moment2s,
+                               beta1_pows=beta1_pows,
+                               beta2_pows=beta2_pows,
+                               master_params=master_params,
+                               epsilon=0.9,
+                               beta1=0.9,
+                               beta2=0.99,
+                               place=place,
+                               multi_precision=multi_precision,
+                               use_merged=use_merged)
+=======
             return run_adam_op(
                 params=params,
                 grads=grads,
@@ -198,6 +215,7 @@ class TestMergedAdam(unittest.TestCase):
                 multi_precision=multi_precision,
                 use_merged=use_merged,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         outs1 = run_op(True)
         outs2 = run_op(False)
@@ -210,9 +228,14 @@ class TestMergedAdam(unittest.TestCase):
                 if place == 'gpu':
                     np.testing.assert_array_equal(value1[i], value2[i])
                 else:
+<<<<<<< HEAD
+                    self.assertTrue(np.allclose(value1[i], value2[i],
+                                                atol=1e-7))
+=======
                     np.testing.assert_allclose(
                         value1[i], value2[i], rtol=1e-05, atol=1e-07
                     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def get_places(self):
         places = ['cpu']

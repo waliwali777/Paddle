@@ -20,6 +20,7 @@ import subprocess
 
 
 class TestHighOrderGrad(unittest.TestCase):
+
     def test_dp2(self):
         file_dir = os.path.dirname(os.path.abspath(__file__))
         launch_model_path = os.path.join(file_dir, "high_order_grad.py")
@@ -30,6 +31,12 @@ class TestHighOrderGrad(unittest.TestCase):
             coverage_args = []
 
         tmp_dir = tempfile.TemporaryDirectory()
+<<<<<<< HEAD
+        cmd = [sys.executable, "-u"] + coverage_args + [
+            "-m", "paddle.distributed.launch", "--devices", "0,1", "--log_dir",
+            tmp_dir.name, launch_model_path
+        ]
+=======
         cmd = (
             [sys.executable, "-u"]
             + coverage_args
@@ -43,6 +50,7 @@ class TestHighOrderGrad(unittest.TestCase):
                 launch_model_path,
             ]
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         process = subprocess.Popen(cmd)
         process.wait()

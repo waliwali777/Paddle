@@ -24,7 +24,12 @@ namespace paddle {
 namespace operators {
 
 using framework::LoD;
+<<<<<<< HEAD
+using framework::LoDTensor;
+using framework::Tensor;
+=======
 using LoDTensor = phi::DenseTensor;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 template <typename DeviceContext, typename T>
 class CRFDecodingOpKernel : public framework::OpKernel<T> {
@@ -97,8 +102,12 @@ class CRFDecodingOpKernel : public framework::OpKernel<T> {
         if (lod[level][i] == lod[level][i + 1]) continue;
         int64_t start_pos = static_cast<int64_t>(lod[level][i]);
         int64_t end_pos = static_cast<int64_t>(lod[level][i + 1]);
+<<<<<<< HEAD
+        Tensor decoded_path_one_seq = decoded_path->Slice(start_pos, end_pos);
+=======
         phi::DenseTensor decoded_path_one_seq =
             decoded_path->Slice(start_pos, end_pos);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         Decode(emission_weights->Slice(start_pos, end_pos),
                *transition_weights,
                &decoded_path_one_seq);
@@ -120,9 +129,15 @@ class CRFDecodingOpKernel : public framework::OpKernel<T> {
   }
 
  private:
+<<<<<<< HEAD
+  void Decode(const Tensor& emission_weights,
+              const Tensor& transition_weights,
+              Tensor* decoded_path) const {
+=======
   void Decode(const phi::DenseTensor& emission_weights,
               const phi::DenseTensor& transition_weights,
               phi::DenseTensor* decoded_path) const {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto emission_dims = emission_weights.dims();
     const size_t seq_len = emission_dims[0];
     const size_t tag_num = emission_dims[1];

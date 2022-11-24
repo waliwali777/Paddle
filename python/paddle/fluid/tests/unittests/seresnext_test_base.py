@@ -20,6 +20,18 @@ import numpy as np
 
 
 class TestResnetBase(TestParallelExecutorBase):
+<<<<<<< HEAD
+
+    def _compare_result_with_origin_model(self,
+                                          check_func,
+                                          use_device,
+                                          delta2=1e-5,
+                                          compare_separately=True):
+        if use_device == DeviceType.CUDA and not core.is_compiled_with_cuda():
+            return
+
+        func_1_first_loss, func_1_last_loss, func_1_loss_area = self.check_network_convergence(
+=======
     def _compare_result_with_origin_model(
         self, check_func, use_device, delta2=1e-5, compare_separately=True
     ):
@@ -31,6 +43,7 @@ class TestResnetBase(TestParallelExecutorBase):
             func_1_last_loss,
             func_1_loss_area,
         ) = self.check_network_convergence(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             seresnext_net.model,
             feed_dict=seresnext_net.feed_dict(use_device),
             iter=seresnext_net.iter(use_device),
@@ -54,6 +67,17 @@ class TestResnetBase(TestParallelExecutorBase):
             for loss in zip(func_1_last_loss, func_2_last_loss):
                 self.assertAlmostEquals(loss[0], loss[1], delta=delta2)
         else:
+<<<<<<< HEAD
+            np.testing.assert_allclose(func_1_loss_area,
+                                       func_2_loss_area,
+                                       rtol=delta2)
+            self.assertAlmostEquals(np.mean(func_1_first_loss),
+                                    func_2_first_loss[0],
+                                    delta=1e-5)
+            self.assertAlmostEquals(np.mean(func_1_last_loss),
+                                    func_2_last_loss[0],
+                                    delta=delta2)
+=======
             np.testing.assert_allclose(
                 func_1_loss_area, func_2_loss_area, rtol=delta2
             )
@@ -63,3 +87,4 @@ class TestResnetBase(TestParallelExecutorBase):
             self.assertAlmostEquals(
                 np.mean(func_1_last_loss), func_2_last_loss[0], delta=delta2
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f

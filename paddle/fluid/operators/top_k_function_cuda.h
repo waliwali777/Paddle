@@ -309,15 +309,24 @@ __forceinline__ __device__ Pair<T> WarpReduce(Pair<T> input,
 }
 
 template <typename T, int MaxLength, int BlockSize>
+<<<<<<< HEAD
+__device__ __forceinline__ void BlockReduce(Pair<T>* sh_topk,
+                                            int* maxid,
+=======
 __device__ __forceinline__ void BlockReduce(Pair<T> shared_max[],
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                             Pair<T> topk[],
                                             T** topVal,
                                             int64_t** topIds,
                                             int* beam,
                                             int* k,
                                             const int tid,
+<<<<<<< HEAD
+                                            const int warp,
+=======
                                             const int wid,
                                             const int lane,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                             const bool& largest) {
   while (true) {
     __syncthreads();
@@ -388,6 +397,10 @@ __global__ void KeMatrixTopK(T* output,
                              int grid_dim,
                              int num,
                              bool largest = true) {
+<<<<<<< HEAD
+  __shared__ Pair<T> sh_topk[BlockSize];
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   const int tid = threadIdx.x;
   const int wid = tid / 32;
   const int lane = tid % 32;
@@ -421,15 +434,26 @@ __global__ void KeMatrixTopK(T* output,
                                              dim,
                                              tid,
                                              largest);
+<<<<<<< HEAD
+
+      sh_topk[tid] = topk[0];
+      BlockReduce<T, MaxLength, BlockSize>(sh_topk,
+                                           maxid,
+=======
       BlockReduce<T, MaxLength, BlockSize>(shared_max,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                            topk,
                                            &out,
                                            &inds,
                                            &beam,
                                            &top_num,
                                            tid,
+<<<<<<< HEAD
+                                           warp,
+=======
                                            wid,
                                            lane,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                            largest);
     }
   }
@@ -933,12 +957,21 @@ __global__ void AssignGradWithAxis(const T* grad_out,
 // use the radix sort for the topk
 template <typename T>
 bool SortTopk(const phi::GPUContext& ctx,
+<<<<<<< HEAD
+              const framework::Tensor* input_tensor,
+              const int64_t num_cols,
+              const int64_t num_rows,
+              const int k,
+              framework::Tensor* out_tensor,
+              framework::Tensor* indices_tensor,
+=======
               const phi::DenseTensor* input_tensor,
               const int64_t num_cols,
               const int64_t num_rows,
               const int k,
               phi::DenseTensor* out_tensor,
               phi::DenseTensor* indices_tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               bool largest = true) {
   auto cu_stream = ctx.stream();
 

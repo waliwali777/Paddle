@@ -25,6 +25,7 @@ import paddle.fluid.layers as layers
 
 
 class TestSignOp(OpTest):
+
     def setUp(self):
         self.op_type = "sign"
         self.inputs = {
@@ -40,12 +41,26 @@ class TestSignOp(OpTest):
 
 
 class TestSignOpError(unittest.TestCase):
+
     def test_errors(self):
         with program_guard(Program(), Program()):
             # The input type of sign_op must be Variable or numpy.ndarray.
             input1 = 12
             self.assertRaises(TypeError, fluid.layers.sign, input1)
             # The input dtype of sign_op must be float16, float32, float64.
+<<<<<<< HEAD
+            input2 = fluid.layers.data(name='input2',
+                                       shape=[12, 10],
+                                       dtype="int32")
+            input3 = fluid.layers.data(name='input3',
+                                       shape=[12, 10],
+                                       dtype="int64")
+            self.assertRaises(TypeError, fluid.layers.sign, input2)
+            self.assertRaises(TypeError, fluid.layers.sign, input3)
+            input4 = fluid.layers.data(name='input4',
+                                       shape=[4],
+                                       dtype="float16")
+=======
             input2 = fluid.layers.data(
                 name='input2', shape=[12, 10], dtype="int32"
             )
@@ -57,10 +72,12 @@ class TestSignOpError(unittest.TestCase):
             input4 = fluid.layers.data(
                 name='input4', shape=[4], dtype="float16"
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             fluid.layers.sign(input4)
 
 
 class TestSignAPI(unittest.TestCase):
+
     def test_dygraph(self):
         with fluid.dygraph.guard():
             np_x = np.array([-1.0, 0.0, -0.0, 1.2, 1.5], dtype='float64')
@@ -76,6 +93,19 @@ class TestSignAPI(unittest.TestCase):
             input1 = 12
             self.assertRaises(TypeError, paddle.tensor.math.sign, input1)
             # The input dtype of sign_op must be float16, float32, float64.
+<<<<<<< HEAD
+            input2 = fluid.layers.data(name='input2',
+                                       shape=[12, 10],
+                                       dtype="int32")
+            input3 = fluid.layers.data(name='input3',
+                                       shape=[12, 10],
+                                       dtype="int64")
+            self.assertRaises(TypeError, paddle.tensor.math.sign, input2)
+            self.assertRaises(TypeError, paddle.tensor.math.sign, input3)
+            input4 = fluid.layers.data(name='input4',
+                                       shape=[4],
+                                       dtype="float16")
+=======
             input2 = fluid.layers.data(
                 name='input2', shape=[12, 10], dtype="int32"
             )
@@ -87,6 +117,7 @@ class TestSignAPI(unittest.TestCase):
             input4 = fluid.layers.data(
                 name='input4', shape=[4], dtype="float16"
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             paddle.sign(input4)
 
 

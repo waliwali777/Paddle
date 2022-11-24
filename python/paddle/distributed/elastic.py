@@ -16,7 +16,12 @@ import argparse
 import os
 
 
+<<<<<<< HEAD
+class Command(object):
+
+=======
 class Command:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def __init__(self, server, name):
         import etcd3
 
@@ -46,9 +51,15 @@ class Command:
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Elastic Command')
+<<<<<<< HEAD
+    parser.add_argument("--elastic_server",
+                        type=str,
+                        help="etcd server host:port")
+=======
     parser.add_argument(
         "--elastic_server", type=str, help="etcd server host:port"
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     parser.add_argument("--job_id", type=str, help="job unique id")
     parser.add_argument(
         "--np",

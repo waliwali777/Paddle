@@ -40,6 +40,15 @@ function(find_python_module module)
         ${_${module}_version}
         CACHE STRING "Version of Python module ${module}")
   endif()
+<<<<<<< HEAD
+
+  set(PY_${module_upper}_FOUND
+      ${PY_${module_upper}_FOUND}
+      PARENT_SCOPE)
+  set(PY_${module_upper}_VERSION
+      ${PY_${module_upper}_VERSION}
+      PARENT_SCOPE)
+=======
 
   set(PY_${module_upper}_FOUND
       ${PY_${module_upper}_FOUND}
@@ -64,4 +73,5 @@ function(check_py_version py_version)
   else()
     message(FATAL_ERROR "Paddle only support Python version >=3.7 now!")
   endif()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 endfunction()

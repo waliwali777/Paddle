@@ -33,7 +33,19 @@ init_scale = 0.1
 
 
 class TestSparseEmbeddingOverHeight(TestSparseEmbedding):
+
     def get_model(self):
+<<<<<<< HEAD
+        model = SimpleNet(hidden_size=hidden_size,
+                          vocab_size=vocab_size,
+                          num_steps=num_steps,
+                          init_scale=init_scale,
+                          is_sparse=True)
+
+        train_reader = paddle.batch(fake_sample_reader(),
+                                    batch_size=batch_size,
+                                    drop_last=True)
+=======
         model = SimpleNet(
             hidden_size=hidden_size,
             vocab_size=vocab_size,
@@ -45,6 +57,7 @@ class TestSparseEmbeddingOverHeight(TestSparseEmbedding):
         train_reader = paddle.batch(
             fake_sample_reader(), batch_size=batch_size, drop_last=True
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         optimizer = fluid.optimizer.SGD(
             learning_rate=0.001, parameter_list=model.parameters()

@@ -20,6 +20,16 @@ from op_test import OpTest
 def box_clip(input_box, im_info, output_box):
     im_w = round(im_info[1] / im_info[2])
     im_h = round(im_info[0] / im_info[2])
+<<<<<<< HEAD
+    output_box[:, :, 0] = np.maximum(np.minimum(input_box[:, :, 0], im_w - 1),
+                                     0)
+    output_box[:, :, 1] = np.maximum(np.minimum(input_box[:, :, 1], im_h - 1),
+                                     0)
+    output_box[:, :, 2] = np.maximum(np.minimum(input_box[:, :, 2], im_w - 1),
+                                     0)
+    output_box[:, :, 3] = np.maximum(np.minimum(input_box[:, :, 3], im_h - 1),
+                                     0)
+=======
     output_box[:, :, 0] = np.maximum(
         np.minimum(input_box[:, :, 0], im_w - 1), 0
     )
@@ -32,6 +42,7 @@ def box_clip(input_box, im_info, output_box):
     output_box[:, :, 3] = np.maximum(
         np.minimum(input_box[:, :, 3], im_h - 1), 0
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 def batch_box_clip(input_boxes, im_info, lod):
@@ -50,6 +61,7 @@ def batch_box_clip(input_boxes, im_info, lod):
 
 
 class TestBoxClipOp(OpTest):
+
     def test_check_output(self):
         self.check_output()
 

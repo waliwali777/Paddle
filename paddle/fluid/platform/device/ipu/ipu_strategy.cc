@@ -94,7 +94,10 @@ IpuStrategy::IpuStrategy() {
   ADD_UINT64_OPTION(micro_batch_size);
   ADD_UINT64_OPTION(random_seed);
   ADD_UINT64_OPTION(tiles_per_ipu);
+<<<<<<< HEAD
+=======
   ADD_UINT64_OPTION(num_buffers);
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   ADD_DOUBLE_OPTION(available_memory_proportion);
   ADD_DOUBLE_OPTION(loss_scaling);
   ADD_DOUBLE_OPTION(max_weight_norm);
@@ -106,6 +109,10 @@ IpuStrategy::IpuStrategy() {
   ADD_STRING_OPTION(accl3_type);
   ADD_STRING_OPTION(onnx_dump_path);
   ADD_STRING_OPTION(weight_decay_mode);
+
+  // dy2static support
+  ADD_DOUBLE_OPTION(lr);
+  ADD_BOOL_OPTION(is_dynamic);
 
 #undef ADD_STRING_OPTION
 #undef ADD_DOUBLE_OPTION

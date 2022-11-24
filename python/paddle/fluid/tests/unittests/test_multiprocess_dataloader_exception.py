@@ -23,6 +23,7 @@ from paddle.fluid.dataloader.dataloader_iter import _worker_loop
 
 
 class RandomDataset(Dataset):
+
     def __init__(self, sample_num):
         self.sample_num = sample_num
 
@@ -37,6 +38,7 @@ class RandomDataset(Dataset):
 
 
 class TestDataLoaderAssert(unittest.TestCase):
+
     def test_main(self):
         place = fluid.cpu_places()[0]
         with fluid.dygraph.guard(place):
@@ -59,9 +61,15 @@ class TestDataLoaderAssert(unittest.TestCase):
 
             # num_workers < 0
             try:
+<<<<<<< HEAD
+                loader = DataLoader(dataset=dataset,
+                                    places=place,
+                                    num_workers=-1)
+=======
                 loader = DataLoader(
                     dataset=dataset, places=place, num_workers=-1
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 self.assertTrue(False)
             except AssertionError:
                 pass
@@ -75,6 +83,13 @@ class TestDataLoaderAssert(unittest.TestCase):
 
             # set batch_sampler and shuffle/batch_size/drop_last
             try:
+<<<<<<< HEAD
+                loader = DataLoader(dataset=dataset,
+                                    places=place,
+                                    batch_sampler=batch_sampler,
+                                    shuffle=True,
+                                    drop_last=True)
+=======
                 loader = DataLoader(
                     dataset=dataset,
                     places=place,
@@ -82,21 +97,29 @@ class TestDataLoaderAssert(unittest.TestCase):
                     shuffle=True,
                     drop_last=True,
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 self.assertTrue(False)
             except AssertionError:
                 pass
 
             # set batch_sampler correctly
             try:
+<<<<<<< HEAD
+                loader = DataLoader(dataset=dataset,
+                                    places=place,
+                                    batch_sampler=batch_sampler)
+=======
                 loader = DataLoader(
                     dataset=dataset, places=place, batch_sampler=batch_sampler
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 self.assertTrue(True)
             except AssertionError:
                 self.assertTrue(False)
 
 
 class TestDatasetRuntimeError(unittest.TestCase):
+
     def test_main(self):
         dataset = Dataset()
 
@@ -144,6 +167,7 @@ class TestDatasetRuntimeError(unittest.TestCase):
     not core.is_compiled_with_cuda(), "core is not compiled with CUDA"
 )
 class TestDataLoaderWorkerLoop(unittest.TestCase):
+
     def run_without_worker_done(self, use_shared_memory=True):
         try:
             place = fluid.cpu_places()[0]
@@ -160,6 +184,14 @@ class TestDataLoaderWorkerLoop(unittest.TestCase):
                         np.stack(s, axis=0) for s in list(zip(*sample_list))
                     ]
 
+<<<<<<< HEAD
+                loader = DataLoader(dataset,
+                                    num_workers=1,
+                                    places=place,
+                                    use_shared_memory=use_shared_memory)
+                assert loader.num_workers > 0, \
+                    "go to AssertionError and pass in Mac and Windows"
+=======
                 loader = DataLoader(
                     dataset,
                     num_workers=1,
@@ -169,6 +201,7 @@ class TestDataLoaderWorkerLoop(unittest.TestCase):
                 assert (
                     loader.num_workers > 0
                 ), "go to AssertionError and pass in Mac and Windows"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 loader = iter(loader)
                 print("loader length", len(loader))
                 indices_queue = multiprocessing.Queue()
@@ -176,6 +209,12 @@ class TestDataLoaderWorkerLoop(unittest.TestCase):
                     indices_queue.put([i, i + 10])
                 indices_queue.put(None)
                 base_seed = 1234
+<<<<<<< HEAD
+                _worker_loop(loader._dataset, 0, indices_queue,
+                             loader._data_queue, loader._workers_done_event,
+                             True, _collate_fn, True, _init_fn, 0, 1,
+                             loader._use_shared_memory, base_seed)
+=======
                 _worker_loop(
                     loader._dataset,
                     0,
@@ -191,6 +230,7 @@ class TestDataLoaderWorkerLoop(unittest.TestCase):
                     loader._use_shared_memory,
                     base_seed,
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 self.assertTrue(False)
         except AssertionError:
             pass
@@ -217,6 +257,14 @@ class TestDataLoaderWorkerLoop(unittest.TestCase):
                         np.stack(s, axis=0) for s in list(zip(*sample_list))
                     ]
 
+<<<<<<< HEAD
+                loader = DataLoader(dataset,
+                                    num_workers=1,
+                                    places=place,
+                                    use_shared_memory=use_shared_memory)
+                assert loader.num_workers > 0, \
+                    "go to AssertionError and pass in Mac and Windows"
+=======
                 loader = DataLoader(
                     dataset,
                     num_workers=1,
@@ -226,6 +274,7 @@ class TestDataLoaderWorkerLoop(unittest.TestCase):
                 assert (
                     loader.num_workers > 0
                 ), "go to AssertionError and pass in Mac and Windows"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 loader = iter(loader)
                 print("loader length", len(loader))
                 indices_queue = multiprocessing.Queue()
@@ -234,6 +283,12 @@ class TestDataLoaderWorkerLoop(unittest.TestCase):
                 indices_queue.put(None)
                 loader._workers_done_event.set()
                 base_seed = 1234
+<<<<<<< HEAD
+                _worker_loop(loader._dataset, 0, indices_queue,
+                             loader._data_queue, loader._workers_done_event,
+                             True, _collate_fn, True, _init_fn, 0, 1,
+                             loader._use_shared_memory, base_seed)
+=======
                 _worker_loop(
                     loader._dataset,
                     0,
@@ -249,6 +304,7 @@ class TestDataLoaderWorkerLoop(unittest.TestCase):
                     loader._use_shared_memory,
                     base_seed,
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 self.assertTrue(True)
         except AssertionError:
             pass

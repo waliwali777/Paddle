@@ -37,8 +37,12 @@ from .framework import set_flags  # noqa: F401
 from .framework import disable_static  # noqa: F401
 from .framework import enable_static  # noqa: F401
 from .framework import in_dynamic_mode  # noqa: F401
+<<<<<<< HEAD
+from .fluid.dataset import *  # noqa: F401
+=======
 from .fluid.dataset import *  # noqa: F401, F403
 from .fluid.lazy_init import LazyGuard  # noqa: F401
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 from .framework.dtype import iinfo  # noqa: F401
 from .framework.dtype import dtype as dtype  # noqa: F401
@@ -82,9 +86,13 @@ import paddle.onnx  # noqa: F401
 import paddle.reader  # noqa: F401
 import paddle.static  # noqa: F401
 import paddle.vision  # noqa: F401
+<<<<<<< HEAD
+import paddle.geometric  # noqa: F401
+=======
 import paddle.audio  # noqa: F401
 import paddle.geometric  # noqa: F401
 import paddle.sparse  # noqa: F401
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 from .tensor.attribute import is_complex  # noqa: F401
 from .tensor.attribute import is_integer  # noqa: F401
@@ -114,8 +122,12 @@ from .tensor.creation import empty_like  # noqa: F401
 from .tensor.creation import assign  # noqa: F401
 from .tensor.creation import complex  # noqa: F401
 from .tensor.creation import clone  # noqa: F401
+<<<<<<< HEAD
+from .tensor.creation import tril_indices  #noqa: F401
+=======
 from .tensor.creation import tril_indices  # noqa: F401
 from .tensor.creation import triu_indices  # noqa: F401
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 from .tensor.linalg import matmul  # noqa: F401
 from .tensor.linalg import dot  # noqa: F401
 from .tensor.linalg import norm  # noqa: F401
@@ -394,7 +406,10 @@ if is_compiled_with_cinn():
 
 disable_static()
 __all__ = [  # noqa
+<<<<<<< HEAD
+=======
     'iinfo',
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     'dtype',
     'uint8',
     'int8',
@@ -430,7 +445,10 @@ __all__ = [  # noqa
     'cumprod',
     'logcumsumexp',
     'logit',
+<<<<<<< HEAD
+=======
     'LazyGuard',
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     'sign',
     'is_empty',
     'equal',
@@ -462,9 +480,13 @@ __all__ = [  # noqa
     'flops',
     'sort',
     'searchsorted',
+<<<<<<< HEAD
+    'split',
+=======
     'bucketize',
     'split',
     'vsplit',
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     'logical_and',
     'full_like',
     'less_than',
@@ -666,6 +688,10 @@ __all__ = [  # noqa
     'renorm',
     'take_along_axis',
     'put_along_axis',
+<<<<<<< HEAD
+    'heaviside',
+    'tril_indices',
+=======
     'nan_to_num',
     'heaviside',
     'tril_indices',
@@ -675,4 +701,5 @@ __all__ = [  # noqa
     'triu_indices',
     'take',
     'frexp',
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 ]

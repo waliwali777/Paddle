@@ -24,9 +24,15 @@ using LoDTensor = phi::DenseTensor;
 template <typename T>
 void LabelSmoothMuls(const platform::Place& place,
                      const aclrtStream& stream,
+<<<<<<< HEAD
+                     const Tensor* in,
+                     float val,
+                     Tensor* out) {
+=======
                      const phi::DenseTensor* in,
                      float val,
                      phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   out->mutable_data<T>(in->dims(), place);
   const auto& runner = NpuOpRunner("Muls", {*in}, {*out}, {{"value", val}});
   runner.Run(stream);
@@ -35,9 +41,15 @@ void LabelSmoothMuls(const platform::Place& place,
 template <typename T>
 void LabelSmoothAdds(const platform::Place& place,
                      const aclrtStream& stream,
+<<<<<<< HEAD
+                     const Tensor* in,
+                     float val,
+                     Tensor* out) {
+=======
                      const phi::DenseTensor* in,
                      float val,
                      phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   out->mutable_data<T>(in->dims(), place);
   const auto& runner = NpuOpRunner("Adds", {*in}, {*out}, {{"value", val}});
   runner.Run(stream);
@@ -46,9 +58,15 @@ void LabelSmoothAdds(const platform::Place& place,
 template <typename T>
 void LabelSmoothAddBroadCast(const platform::Place& place,
                              const aclrtStream& stream,
+<<<<<<< HEAD
+                             const Tensor* in1,
+                             const Tensor* in2,
+                             Tensor* out) {
+=======
                              const phi::DenseTensor* in1,
                              const phi::DenseTensor* in2,
                              phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   out->mutable_data<T>(place);
   const auto& runner = NpuOpRunner("AddV2", {*in1, *in2}, {*out}, {});
   runner.Run(stream);

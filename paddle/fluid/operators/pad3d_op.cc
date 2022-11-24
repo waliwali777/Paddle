@@ -37,12 +37,20 @@ class Pad3dOp : public framework::OperatorWithKernel {
     // only constant mode and non-blocked layouts are supported for oneDNN
     if (this->CanMKLDNNBeUsed(ctx, input_data_type) &&
         ctx.Attr<std::string>("mode") == "constant" &&
+<<<<<<< HEAD
+        ctx.Input<Tensor>("X")
+=======
         ctx.Input<phi::DenseTensor>("X")
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 ->mem_desc()
                 .data.format_desc.blocking.inner_nblks == 0) {
       return framework::OpKernelType(input_data_type,
                                      ctx.GetPlace(),
+<<<<<<< HEAD
+                                     framework::DataLayout::kMKLDNN,
+=======
                                      phi::DataLayout::ONEDNN,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                                      framework::LibraryType::kMKLDNN);
     }
 #endif
@@ -51,6 +59,20 @@ class Pad3dOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+      const framework::OpKernelType& expected_kernel_type) const {
+#ifdef PADDLE_WITH_MKLDNN
+    if ((expected_kernel_type.data_layout_ == framework::DataLayout::kMKLDNN) &&
+        (tensor.layout() != framework::DataLayout::kMKLDNN)) {
+      auto attrs = Attrs();
+      auto ar = paddle::framework::AttrReader(attrs);
+      const std::string data_format = ar.Get<std::string>("data_format");
+      return framework::OpKernelType(
+          expected_kernel_type.data_type_,
+          tensor.place(),
+          framework::StringToDataLayout(data_format));
+=======
       const phi::DenseTensor& tensor,
       const framework::OpKernelType& expected_kernel_type) const override {
 #ifdef PADDLE_WITH_MKLDNN
@@ -62,6 +84,7 @@ class Pad3dOp : public framework::OperatorWithKernel {
       return framework::OpKernelType(expected_kernel_type.data_type_,
                                      tensor.place(),
                                      phi::StringToDataLayout(data_format));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     }
 #endif
     return framework::OpKernelType(
@@ -108,6 +131,10 @@ class Pad3dOpMaker : public framework::OpProtoAndCheckerMaker {
         "An optional string from: \"NDHWC\", \"NCDHW\". "
         "Defaults to \"NDHWC\". Specify the data format of the input data.")
         .SetDefault("NCDHW");
+    AddAttr<bool>("use_mkldnn",
+                  "(bool, default false) Only used in mkldnn kernel")
+        .SetDefault(false)
+        .AsExtra();
     AddComment(R"DOC(
 Pad3d Operator.
 Pad 3-d images according to 'paddings' and 'mode'.

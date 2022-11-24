@@ -26,9 +26,21 @@ os.environ['NVIDIA_TF32_OVERRIDE'] = '0'
 
 
 class TRTDeformableConvTest(InferencePassTest):
+
     def setUp(self):
         self.set_params()
         with fluid.program_guard(self.main_program, self.startup_program):
+<<<<<<< HEAD
+            input = fluid.data(name='input',
+                               shape=self.input_size,
+                               dtype=self.dtype)
+            offset = fluid.data(name='offset',
+                                shape=self.offset_size,
+                                dtype=self.dtype)
+            mask = fluid.data(name='mask',
+                              shape=self.mask_size,
+                              dtype=self.dtype)
+=======
             input = fluid.data(
                 name='input', shape=self.input_size, dtype=self.dtype
             )
@@ -38,6 +50,7 @@ class TRTDeformableConvTest(InferencePassTest):
             mask = fluid.data(
                 name='mask', shape=self.mask_size, dtype=self.dtype
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             output = paddle.static.nn.common.deformable_conv(
                 input,

@@ -21,7 +21,14 @@ namespace framework {
 class InterpreterCoreFastGarbageCollector
     : public InterpreterCoreGarbageCollector {
  public:
+<<<<<<< HEAD
+  void Add(Variable* var) override;
+  void Add(Variable* var,
+           platform::DeviceEvent* event,
+           const platform::DeviceContext* ctx) override;
+=======
   void Add(Variable* var, const Instruction& instr) override;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
  private:
   void Add(Variable* var);

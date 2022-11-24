@@ -68,6 +68,8 @@ PADDLE_DEFINE_EXPORTED_bool(
     "Checking whether operator produce NAN/INF or not. It will be "
     "extremely slow so please use this flag wisely.");
 
+<<<<<<< HEAD
+=======
 /**
  * Operator related FLAG
  * Name: FLAGS_check_nan_inf_level
@@ -97,6 +99,7 @@ PADDLE_DEFINE_EXPORTED_int32(
  * Example:
  * Note: Used to debug. Checking whether operator produce NAN/INF or not.
  */
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 PADDLE_DEFINE_EXPORTED_bool(
     enable_opt_get_features,
     false,
@@ -845,6 +848,35 @@ PADDLE_DEFINE_EXPORTED_bool(
     "It controls get all neighbor id when running sub part graph.");
 
 /**
+<<<<<<< HEAD
+ * Distributed related FLAG
+ * Name: enable_exit_when_partial_worker
+ * Since Version: 2.2.0
+ * Value Range: bool, default=false
+ * Example:
+ * Note: Control  whether exit trainer when an worker has no ins.
+ *       If it is not set, trainer will exit until all worker finish train.
+ */
+PADDLE_DEFINE_EXPORTED_bool(
+    enable_exit_when_partial_worker,
+    false,
+    "It controls whether exit trainer when an worker has no ins.");
+
+/**
+ * Distributed related FLAG
+ * Name: enable_exit_when_partial_worker
+ * Since Version: 2.2.0
+ * Value Range: bool, default=false
+ * Example:
+ * Note: represent gpugraph storage mode, 1 for full hbm, 2 for hbm + mem + ssd.
+ */
+PADDLE_DEFINE_EXPORTED_int32(gpugraph_storage_mode,
+                             1,
+                             "gpugraph storage mode, default 1");
+
+/**
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
  * KP kernel related FLAG
  * Name: FLAGS_run_kp_kernel
  * Since Version: 2.3.0
@@ -972,6 +1004,12 @@ PADDLE_DEFINE_EXPORTED_uint64(
     gpugraph_merge_grads_segment_size,
     128,
     "segment size with segment gradient merge, default 128");
+<<<<<<< HEAD
+PADDLE_DEFINE_EXPORTED_uint64(gpugraph_slot_feasign_max_num,
+                              5,
+                              "max feasign number in one slot, default 5");
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 PADDLE_DEFINE_EXPORTED_int32(
     gpugraph_dedup_pull_push_mode,
     0,
@@ -979,7 +1017,31 @@ PADDLE_DEFINE_EXPORTED_int32(
 PADDLE_DEFINE_EXPORTED_bool(gpugraph_load_node_list_into_hbm,
                             true,
                             "enable load_node_list_into_hbm, default true");
+<<<<<<< HEAD
+PADDLE_DEFINE_EXPORTED_int32(gpugraph_sparse_table_storage_mode,
+                             0,
+                             "parse_table_storage_mode, default 0");
+PADDLE_DEFINE_EXPORTED_bool(enable_auto_detect_gpu_topo,
+                            true,
+                            "enable auto detect gpu topo, default true");
+PADDLE_DEFINE_EXPORTED_bool(enable_auto_rdma_trans,
+                            true,
+                            "enable auto gpu rdma trans, default true");
+PADDLE_DEFINE_EXPORTED_bool(enable_tracker_all2all,
+                            false,
+                            "enable tracker all2all log, default false");
+PADDLE_DEFINE_EXPORTED_bool(enable_all2all_use_fp16,
+                            false,
+                            "enable all2all use fp16, default false");
+PADDLE_DEFINE_EXPORTED_bool(enable_sparse_inner_gather,
+                            false,
+                            "enable sparse inner gather, default false");
+PADDLE_DEFINE_EXPORTED_bool(gpugraph_debug_gpu_memory,
+                            false,
+                            "enable debug gpu memory, default false");
+=======
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 /**
  * ProcessGroupNCCL related FLAG
  * Name: nccl_blocking_wait
@@ -1002,6 +1064,8 @@ PADDLE_DEFINE_EXPORTED_bool(nccl_blocking_wait, false, "nccl blocking wait");
 PADDLE_DEFINE_EXPORTED_bool(use_autotune, false, "Whether enable autotune.");
 
 /**
+<<<<<<< HEAD
+=======
  * Conv Search cache max number related FLAG
  * Name: FLAGS_search_cache_max_number
  * Since Version: 2.3.0
@@ -1013,6 +1077,7 @@ PADDLE_DEFINE_EXPORTED_int32(search_cache_max_number,
                              "search_cache_max_number.");
 
 /**
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
  * Preformance related FLAG
  * Name: einsum_opt
  * Since Version: 2.3.0
@@ -1031,6 +1096,17 @@ PADDLE_DEFINE_EXPORTED_bool(
  * Name: FLAGS_jit_engine_type
  * Since Version: 2.3.0
  * Value Range: string, {Executor, PE},
+<<<<<<< HEAD
+ * default=PE
+ * Example:
+ * Note:
+ * FLAGS_jit_engine_type == Executor, using ExecutorFunction by default
+ * FLAGS_jit_engine_type == PE, using PEFunction by default
+ */
+PADDLE_DEFINE_EXPORTED_string(jit_engine_type,
+                              "PE",
+                              "Choose default funciton type in JitLayer.");
+=======
  * default=Predictor
  * Example:
  * Note:
@@ -1067,3 +1143,4 @@ PADDLE_DEFINE_EXPORTED_bool(enable_cudnn_frontend, false, "");
  */
 PADDLE_DEFINE_EXPORTED_int32(cudnn_cache_saturation_count, 1, "");
 #endif  // PADDLE_WITH_CUDNN_FRONTEND
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f

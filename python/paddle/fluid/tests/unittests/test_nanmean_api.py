@@ -27,12 +27,18 @@ class TestNanmeanAPI(unittest.TestCase):
         self.x_shape = [2, 3, 4, 5]
         self.x = np.random.uniform(-1, 1, self.x_shape).astype(np.float32)
         self.x[0, :, :, :] = np.nan
+<<<<<<< HEAD
+        self.x_grad = np.array([[np.nan, np.nan, 3.], [0., np.nan,
+                                                       2.]]).astype(np.float32)
+        self.place = paddle.CUDAPlace(0) if core.is_compiled_with_cuda() \
+=======
         self.x_grad = np.array(
             [[np.nan, np.nan, 3.0], [0.0, np.nan, 2.0]]
         ).astype(np.float32)
         self.place = (
             paddle.CUDAPlace(0)
             if core.is_compiled_with_cuda()
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             else paddle.CPUPlace()
         )
 
@@ -73,7 +79,12 @@ class TestNanmeanAPI(unittest.TestCase):
                 out_np[nan_mask] = 0
                 np.testing.assert_allclose(out_np, out_ref, rtol=0.0001)
             else:
+<<<<<<< HEAD
+                self.assertEqual(np.allclose(out.numpy(), out_ref, rtol=1e-04),
+                                 True)
+=======
                 np.testing.assert_allclose(out.numpy(), out_ref, rtol=0.0001)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         test_case(self.x)
         test_case(self.x, [])

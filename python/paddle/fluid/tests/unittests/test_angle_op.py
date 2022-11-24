@@ -38,6 +38,7 @@ def angle_grad(x, dout):
 
 
 class TestAngleOpFloat(OpTest):
+
     def setUp(self):
         self.op_type = "angle"
         self.python_api = paddle.angle
@@ -51,6 +52,15 @@ class TestAngleOpFloat(OpTest):
         self.check_output(check_eager=True)
 
     def test_check_grad(self):
+<<<<<<< HEAD
+        self.check_grad(['X'],
+                        'Out',
+                        user_defined_grads=[
+                            angle_grad(self.x,
+                                       np.ones_like(self.x) / self.x.size)
+                        ],
+                        check_eager=True)
+=======
         self.check_grad(
             ['X'],
             'Out',
@@ -59,9 +69,11 @@ class TestAngleOpFloat(OpTest):
             ],
             check_eager=True,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestAngleOpComplex(OpTest):
+
     def setUp(self):
         self.op_type = "angle"
         self.python_api = paddle.angle
@@ -77,6 +89,15 @@ class TestAngleOpComplex(OpTest):
         self.check_output(check_eager=True)
 
     def test_check_grad(self):
+<<<<<<< HEAD
+        self.check_grad(['X'],
+                        'Out',
+                        user_defined_grads=[
+                            angle_grad(self.x,
+                                       np.ones_like(self.x) / self.x.size)
+                        ],
+                        check_eager=True)
+=======
         self.check_grad(
             ['X'],
             'Out',
@@ -85,9 +106,11 @@ class TestAngleOpComplex(OpTest):
             ],
             check_eager=True,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestAngleAPI(unittest.TestCase):
+
     def setUp(self):
         self.x = np.random.randn(2, 3) + 1j * np.random.randn(2, 3)
         self.out = np.angle(self.x)

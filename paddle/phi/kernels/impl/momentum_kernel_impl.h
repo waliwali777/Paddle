@@ -14,12 +14,19 @@
 
 #pragma once
 
+<<<<<<< HEAD
+#include "paddle/fluid/operators/math/selected_rows_functor.h"
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/common/amp_type_traits.h"
 #include "paddle/phi/common/float16.h"
 #include "paddle/phi/kernels/funcs/algorithm.h"
 #include "paddle/phi/kernels/funcs/eigen/common.h"
 #include "paddle/phi/kernels/funcs/for_range.h"
+<<<<<<< HEAD
+=======
 #include "paddle/phi/kernels/funcs/selected_rows_functor.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/kernels/momentum_kernel.h"
 
 namespace phi {

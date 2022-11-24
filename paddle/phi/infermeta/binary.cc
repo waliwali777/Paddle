@@ -184,7 +184,11 @@ void BCELossInferMeta(const MetaTensor& input,
 
 void BincountInferMeta(const MetaTensor& x,
                        const MetaTensor& weights,
+<<<<<<< HEAD
+                       int minlength,
+=======
                        const Scalar& minlength,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                        MetaTensor* out) {
   auto input_dim = x.dims();
 
@@ -195,10 +199,17 @@ void BincountInferMeta(const MetaTensor& x,
                                    "But the dimension of Input(X) is [%d]",
                                    input_dim.size()));
 
+<<<<<<< HEAD
+  VLOG(1) << "####### CHECK weights";
+  if (weights) {
+    auto weights_dim = weights.dims();
+    VLOG(1) << "##### weights_dim " << weights_dim;
+=======
   VLOG(4) << "####### CHECK weights";
   if (weights) {
     auto weights_dim = weights.dims();
     VLOG(4) << "##### weights_dim " << weights_dim;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     PADDLE_ENFORCE_EQ(weights_dim.size(),
                       1,
                       phi::errors::InvalidArgument(
@@ -1020,7 +1031,11 @@ void DistributeFpnProposalsInferMeta(
 
 void DropoutInferMeta(const MetaTensor& x,
                       const MetaTensor& seed_tensor,
+<<<<<<< HEAD
+                      float p,
+=======
                       const Scalar& p,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                       bool is_test,
                       const std::string& mode,
                       int seed,
@@ -1040,7 +1055,11 @@ void DropoutInferMeta(const MetaTensor& x,
 
 void DropoutNdInferMeta(const MetaTensor& x,
                         const MetaTensor& seed_tensor,
+<<<<<<< HEAD
+                        float p,
+=======
                         const Scalar& p,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                         bool is_test,
                         const std::string& mode,
                         int seed,
@@ -1191,6 +1210,10 @@ void ElementwiseRawInferMeta(const MetaTensor& x,
 void EmbeddingInferMeta(const MetaTensor& x,
                         const MetaTensor& weight,
                         int64_t padding_idx,
+<<<<<<< HEAD
+                        bool sparse,
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                         MetaTensor* out) {
   const auto& table_dims = weight.dims();
   const auto& ids_dims = x.dims();
@@ -1704,6 +1727,8 @@ void LUUnpackInferMeta(const MetaTensor& x,
   }
 }
 
+<<<<<<< HEAD
+=======
 void MarginCrossEntropyInferMeta(const MetaTensor& logits,
                                  const MetaTensor& label,
                                  bool return_softmax,
@@ -1763,6 +1788,7 @@ void MarginCrossEntropyInferMeta(const MetaTensor& logits,
   loss->share_lod(logits);
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void MaskedSelectInferMeta(const MetaTensor& x,
                            const MetaTensor& mask,
                            MetaTensor* out) {
@@ -2248,6 +2274,8 @@ void PriorBoxInferMeta(const MetaTensor& input,
   var->set_dims(phi::make_ddim(dim_vec));
 }
 
+<<<<<<< HEAD
+=======
 void RepeatInterleaveWithTensorIndexInferMeta(const MetaTensor& x,
                                               const MetaTensor& repeats,
                                               int dim,
@@ -2294,6 +2322,7 @@ void RepeatInterleaveWithTensorIndexInferMeta(const MetaTensor& x,
   out->share_lod(x);
   out->set_dtype(x.dtype());
 }
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 void SearchsortedInferMeta(const MetaTensor& sorted_sequence,
                            const MetaTensor& value,
                            bool out_int32,
@@ -2807,6 +2836,8 @@ void SolveInferMeta(const MetaTensor& x, const MetaTensor& y, MetaTensor* out) {
   out->share_lod(x);
 }
 
+<<<<<<< HEAD
+=======
 void UnpoolInferMeta(const MetaTensor& x,
                      const MetaTensor& indices,
                      const std::vector<int>& ksize,
@@ -2895,6 +2926,7 @@ void Unpool3dInferMeta(const MetaTensor& x,
   }
 }
 
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 }  // namespace phi
 
 PD_REGISTER_INFER_META_FN(add_raw, phi::ElementwiseRawInferMeta);

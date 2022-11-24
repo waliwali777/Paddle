@@ -38,6 +38,20 @@ def multiclass_nms(
     inputs = {'BBoxes': bboxes, 'Scores': scores}
     outputs = {'Out': output, 'Index': index, 'NmsRoisNum': nms_rois_num}
 
+<<<<<<< HEAD
+    helper.append_op(type="multiclass_nms3",
+                     inputs=inputs,
+                     attrs={
+                         'background_label': background_label,
+                         'score_threshold': score_threshold,
+                         'nms_top_k': nms_top_k,
+                         'nms_threshold': nms_threshold,
+                         'keep_top_k': keep_top_k,
+                         'nms_eta': nms_eta,
+                         'normalized': normalized
+                     },
+                     outputs=outputs)
+=======
     helper.append_op(
         type="multiclass_nms3",
         inputs=inputs,
@@ -52,6 +66,7 @@ def multiclass_nms(
         },
         outputs=outputs,
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     output.stop_gradient = True
     index.stop_gradient = True
 
@@ -59,6 +74,7 @@ def multiclass_nms(
 
 
 class TestYoloBoxPass(unittest.TestCase):
+
     def test_yolo_box_pass(self):
         program = paddle.static.Program()
         with paddle.static.program_guard(program):

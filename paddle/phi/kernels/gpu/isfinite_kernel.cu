@@ -17,6 +17,22 @@
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/core/kernel_registry.h"
 #include "paddle/phi/kernels/impl/isfinite_kernel_impl.h"
+<<<<<<< HEAD
+
+namespace phi {
+
+template <typename T, typename Context, typename Functor>
+inline void IsfiniteKernelImpl(const Context& dev_ctx,
+                               const DenseTensor& x,
+                               DenseTensor* out) {
+  dev_ctx.template Alloc<T>(out);
+  Functor functor;
+  functor(x, out);
+}
+
+}  // namespace phi
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 PD_REGISTER_KERNEL(isinf,
                    GPU,

@@ -17,6 +17,7 @@ import paddle.fluid as fluid
 
 
 class TestAvoidTwiceInitialization(unittest.TestCase):
+
     def test_avoid_twice_initialization(self):
         cur_program = fluid.Program()
         cur_block = cur_program.current_block()
@@ -24,6 +25,21 @@ class TestAvoidTwiceInitialization(unittest.TestCase):
             initializer=fluid.initializer.Constant(value=0.01),
             shape=[2, 2],
             dtype='float32',
+<<<<<<< HEAD
+            name='var_a')
+        cur_block.append_op(type="c_broadcast",
+                            inputs={"X": [var]},
+                            outputs={"Out": [var]},
+                            attrs={
+                                'root': 0,
+                                'ring_id': 0,
+                                'use_calc_stream': False
+                            })
+        cur_block.append_op(type="c_sync_comm_stream",
+                            inputs={'X': [var]},
+                            outputs={'Out': [var]},
+                            attrs={'ring_id': 0})
+=======
             name='var_a',
         )
         cur_block.append_op(
@@ -38,6 +54,7 @@ class TestAvoidTwiceInitialization(unittest.TestCase):
             outputs={'Out': [var]},
             attrs={'ring_id': 0},
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         var2 = cur_block.create_parameter(
             initializer=fluid.initializer.Constant(value=0.01),
             shape=[2, 2],

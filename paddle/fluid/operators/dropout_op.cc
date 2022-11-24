@@ -35,7 +35,11 @@ class DropoutOp : public framework::OperatorWithKernel {
 
   framework::OpKernelType GetKernelTypeForVar(
       const std::string& var_name,
+<<<<<<< HEAD
+      const Tensor& tensor,
+=======
       const phi::DenseTensor& tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType& expected_kernel_type) const override {
     if (var_name == "Seed") {
       VLOG(10) << "var_name:" << var_name

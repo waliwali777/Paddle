@@ -302,7 +302,9 @@ class TestMatMuklOpBroadcast2(TestMatMulV2Op):
 
 
 def create_test_fp16_class(parent, atol=0.001, max_relative_error=2.5):
+
     class TestMatMulOpFp16Case(parent):
+
         def init_kernel_type(self):
             self.dtype = np.float16
 
@@ -310,12 +312,18 @@ def create_test_fp16_class(parent, atol=0.001, max_relative_error=2.5):
             self.check_output_with_place(self.place, atol=atol)
 
         def test_check_grad(self):
+<<<<<<< HEAD
+            self.check_grad_with_place(self.place, ['X', 'Y'],
+                                       'Out',
+                                       max_relative_error=max_relative_error)
+=======
             self.check_grad_with_place(
                 self.place,
                 ['X', 'Y'],
                 'Out',
                 max_relative_error=max_relative_error,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     cls_name = "{0}_{1}".format(parent.__name__, "Fp16")
     TestMatMulOpFp16Case.__name__ = cls_name
@@ -343,6 +351,7 @@ create_test_fp16_class(TestMatMuklOp18)
 
 
 class TestMatMulV2API(unittest.TestCase):
+
     def setUp(self):
         self.places = [paddle.CPUPlace()]
         if paddle.is_compiled_with_mlu():
@@ -359,11 +368,20 @@ class TestMatMulV2API(unittest.TestCase):
             y_np = np.random.random([3, 4]).astype("float32")
 
             exe = fluid.Executor(place)
+<<<<<<< HEAD
+            fetches = exe.run(fluid.default_main_program(),
+                              feed={
+                                  "input_x": x_np,
+                                  "input_y": y_np
+                              },
+                              fetch_list=[result])
+=======
             fetches = exe.run(
                 fluid.default_main_program(),
                 feed={"input_x": x_np, "input_y": y_np},
                 fetch_list=[result],
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_static(self):
         for place in self.places:

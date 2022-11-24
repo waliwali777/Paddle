@@ -21,6 +21,7 @@ from paddle.fluid import Program, program_guard
 
 
 class TestRollOp(OpTest):
+
     def setUp(self):
         self.python_api = paddle.roll
         self.op_type = "roll"
@@ -28,9 +29,14 @@ class TestRollOp(OpTest):
         self.inputs = {'X': np.random.random(self.x_shape).astype(self.dtype)}
         self.attrs = {'shifts': self.shifts, 'axis': self.axis}
         self.outputs = {
+<<<<<<< HEAD
+            'Out':
+            np.roll(self.inputs['X'], self.attrs['shifts'], self.attrs['axis'])
+=======
             'Out': np.roll(
                 self.inputs['X'], self.attrs['shifts'], self.attrs['axis']
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         }
 
     def init_dtype_type(self):
@@ -47,6 +53,7 @@ class TestRollOp(OpTest):
 
 
 class TestRollOpCase2(TestRollOp):
+
     def init_dtype_type(self):
         self.dtype = np.float32
         self.x_shape = (100, 10, 5)
@@ -55,10 +62,16 @@ class TestRollOpCase2(TestRollOp):
 
 
 class TestRollAPI(unittest.TestCase):
+
     def input_data(self):
+<<<<<<< HEAD
+        self.data_x = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0],
+                                [7.0, 8.0, 9.0]])
+=======
         self.data_x = np.array(
             [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def test_roll_op_api(self):
         self.input_data()

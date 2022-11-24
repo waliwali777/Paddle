@@ -77,6 +77,19 @@ template <typename T>
 class GenerateProposalsKernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext &context) const override {
+<<<<<<< HEAD
+    auto *scores = context.Input<Tensor>("Scores");
+    auto *bbox_deltas = context.Input<Tensor>("BboxDeltas");
+    auto *im_info = context.Input<Tensor>("ImInfo");
+    auto anchors = GET_DATA_SAFELY(context.Input<Tensor>("Anchors"),
+                                   "Input",
+                                   "Anchors",
+                                   "GenerateProposals");
+    auto variances = GET_DATA_SAFELY(context.Input<Tensor>("Variances"),
+                                     "Input",
+                                     "Variances",
+                                     "GenerateProposals");
+=======
     auto *scores = context.Input<phi::DenseTensor>("Scores");
     auto *bbox_deltas = context.Input<phi::DenseTensor>("BboxDeltas");
     auto *im_info = context.Input<phi::DenseTensor>("ImInfo");
@@ -89,6 +102,7 @@ class GenerateProposalsKernel : public framework::OpKernel<T> {
                         "Input",
                         "Variances",
                         "GenerateProposals");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     auto *rpn_rois = context.Output<LoDTensor>("RpnRois");
     auto *rpn_roi_probs = context.Output<LoDTensor>("RpnRoiProbs");

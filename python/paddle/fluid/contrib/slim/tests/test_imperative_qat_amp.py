@@ -33,9 +33,15 @@ os.environ["CPU_NUM"] = "1"
 if paddle.is_compiled_with_cuda():
     fluid.set_flags({"FLAGS_cudnn_deterministic": True})
 
+<<<<<<< HEAD
+_logger = get_logger(__name__,
+                     logging.INFO,
+                     fmt='%(asctime)s-%(levelname)s: %(message)s')
+=======
 _logger = get_logger(
     __name__, logging.INFO, fmt='%(asctime)s-%(levelname)s: %(message)s'
 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 class TestImperativeQatAmp(unittest.TestCase):
@@ -46,8 +52,12 @@ class TestImperativeQatAmp(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.root_path = tempfile.TemporaryDirectory(
+<<<<<<< HEAD
+            prefix="imperative_qat_amp_")
+=======
             prefix="imperative_qat_amp_"
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         cls.save_path = os.path.join(cls.root_path.name, "model")
 
         cls.download_path = 'dygraph_int8/download'
@@ -70,8 +80,12 @@ class TestImperativeQatAmp(unittest.TestCase):
     def cache_unzipping(self, target_folder, zip_path):
         if not os.path.exists(target_folder):
             cmd = 'mkdir {0} && tar xf {1} -C {0}'.format(
+<<<<<<< HEAD
+                target_folder, zip_path)
+=======
                 target_folder, zip_path
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             os.system(cmd)
 
     def download_model(self, data_url, data_md5, folder_name):
@@ -96,6 +110,19 @@ class TestImperativeQatAmp(unittest.TestCase):
     def model_train(self, model, batch_num=-1, batch_size=32, use_amp=False):
         model.train()
 
+<<<<<<< HEAD
+        train_reader = paddle.batch(paddle.dataset.mnist.train(),
+                                    batch_size=batch_size)
+        adam = paddle.optimizer.Adam(learning_rate=0.001,
+                                     parameters=model.parameters())
+        scaler = paddle.amp.GradScaler(init_loss_scaling=500)
+
+        for batch_id, data in enumerate(train_reader()):
+            x_data = np.array([x[0].reshape(1, 28, 28)
+                               for x in data]).astype('float32')
+            y_data = np.array([x[1]
+                               for x in data]).astype('int64').reshape(-1, 1)
+=======
         train_reader = paddle.batch(
             paddle.dataset.mnist.train(), batch_size=batch_size
         )
@@ -111,6 +138,7 @@ class TestImperativeQatAmp(unittest.TestCase):
             y_data = (
                 np.array([x[1] for x in data]).astype('int64').reshape(-1, 1)
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             img = paddle.to_tensor(x_data)
             label = paddle.to_tensor(y_data)
@@ -149,6 +177,17 @@ class TestImperativeQatAmp(unittest.TestCase):
     def model_test(self, model, batch_num=-1, batch_size=32, use_amp=False):
         model.eval()
 
+<<<<<<< HEAD
+        test_reader = paddle.batch(paddle.dataset.mnist.test(),
+                                   batch_size=batch_size)
+
+        acc_top1_list = []
+        for batch_id, data in enumerate(test_reader()):
+            x_data = np.array([x[0].reshape(1, 28, 28)
+                               for x in data]).astype('float32')
+            y_data = np.array([x[1]
+                               for x in data]).astype('int64').reshape(-1, 1)
+=======
         test_reader = paddle.batch(
             paddle.dataset.mnist.test(), batch_size=batch_size
         )
@@ -161,6 +200,7 @@ class TestImperativeQatAmp(unittest.TestCase):
             y_data = (
                 np.array([x[1] for x in data]).astype('int64').reshape(-1, 1)
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
             img = paddle.to_tensor(x_data)
             label = paddle.to_tensor(y_data)
@@ -212,6 +252,16 @@ class TestImperativeQatAmp(unittest.TestCase):
             )
 
             _logger.info("Test int8 model")
+<<<<<<< HEAD
+            int8_acc_top1 = self.model_test(model, self.test_batch_num,
+                                            self.test_batch_size, use_amp)
+
+            _logger.info('fp32_acc_top1: %f, int8_acc_top1: %f' %
+                         (fp32_acc_top1, int8_acc_top1))
+            self.assertTrue(int8_acc_top1 > fp32_acc_top1 - 0.01,
+                            msg='fp32_acc_top1: %f, int8_acc_top1: %f' %
+                            (fp32_acc_top1, int8_acc_top1))
+=======
             int8_acc_top1 = self.model_test(
                 model, self.test_batch_num, self.test_batch_size, use_amp
             )
@@ -225,6 +275,7 @@ class TestImperativeQatAmp(unittest.TestCase):
                 msg='fp32_acc_top1: %f, int8_acc_top1: %f'
                 % (fp32_acc_top1, int8_acc_top1),
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         input_spec = [
             paddle.static.InputSpec(shape=[None, 1, 28, 28], dtype='float32')

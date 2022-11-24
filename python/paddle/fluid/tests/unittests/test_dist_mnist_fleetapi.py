@@ -20,6 +20,7 @@ paddle.enable_static()
 
 
 class TestDistMnistNCCL2FleetApi(TestDistBase):
+
     def _setup_config(self):
         self._sync_mode = True
         self._use_reduce = False
@@ -41,6 +42,7 @@ class TestDistMnistNCCL2FleetApi(TestDistBase):
 
 
 class FleetCollectiveTest(unittest.TestCase):
+
     def test_open_sync_batch_norm(self):
         import paddle.fluid as fluid
         import paddle.fluid.incubate.fleet.base.role_maker as role_maker
@@ -65,9 +67,14 @@ class FleetCollectiveTest(unittest.TestCase):
         dist_strategy = DistributedStrategy()
         dist_strategy.sync_batch_norm = True
 
+<<<<<<< HEAD
+        dist_optimizer = fleet.distributed_optimizer(optimizer,
+                                                     strategy=dist_strategy)
+=======
         dist_optimizer = fleet.distributed_optimizer(
             optimizer, strategy=dist_strategy
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         dist_optimizer.minimize(loss)
 
         self.assertEqual(dist_strategy.exec_strategy.num_threads, 1)

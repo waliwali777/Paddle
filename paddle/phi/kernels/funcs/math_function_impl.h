@@ -16,7 +16,11 @@ limitations under the License. */
 #include <memory>
 #include <vector>
 
+<<<<<<< HEAD
+#include "paddle/fluid/framework/data_type.h"
+=======
 #include "paddle/phi/common/data_type.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/kernels/funcs/math_function.h"
 
 namespace phi {
@@ -102,8 +106,13 @@ template <typename T>
 class ColwiseSum<phi::CPUContext, T> {
  public:
   void operator()(const phi::CPUContext& context,
+<<<<<<< HEAD
+                  const paddle::framework::Tensor& input,
+                  paddle::framework::Tensor* out) {
+=======
                   const phi::DenseTensor& input,
                   phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto& in_dims = input.dims();
     auto height = in_dims[0];
     auto size = in_dims[1];
@@ -164,8 +173,13 @@ template <typename T>
 class RowwiseMean<phi::CPUContext, T> {
  public:
   void operator()(const phi::CPUContext& context,
+<<<<<<< HEAD
+                  const paddle::framework::Tensor& input,
+                  paddle::framework::Tensor* out) {
+=======
                   const phi::DenseTensor& input,
                   phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto& in_dims = input.dims();
     PADDLE_ENFORCE_EQ(
         in_dims.size(),
@@ -230,8 +244,13 @@ template <typename T>
 class RowwiseSum<phi::CPUContext, T> {
  public:
   void operator()(const phi::CPUContext& context,
+<<<<<<< HEAD
+                  const paddle::framework::Tensor& input,
+                  paddle::framework::Tensor* out) {
+=======
                   const phi::DenseTensor& input,
                   phi::DenseTensor* out) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     auto& in_dims = input.dims();
     PADDLE_ENFORCE_EQ(
         in_dims.size(),

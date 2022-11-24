@@ -17,6 +17,9 @@
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/backends/gpu/gpu_launch_config.h"
 #include "paddle/phi/core/kernel_registry.h"
+<<<<<<< HEAD
+#include "paddle/phi/kernels/impl/lerp_grad_kernel_impl.h"
+=======
 
 #include "paddle/phi/kernels/broadcast_tensors_kernel.h"
 #include "paddle/phi/kernels/empty_kernel.h"
@@ -258,6 +261,7 @@ void LerpGradKernel(const Context& ctx,
 }
 
 }  // namespace phi
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 PD_REGISTER_KERNEL(
     lerp_grad, GPU, ALL_LAYOUT, phi::LerpGradKernel, float, double) {}

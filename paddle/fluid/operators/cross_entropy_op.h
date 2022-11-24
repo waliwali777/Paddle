@@ -51,7 +51,11 @@ class CrossEntropyOpKernel : public framework::OpKernel<T> {
     }
 
     int axis_dim = x->dims()[rank - 1];
+<<<<<<< HEAD
+    math::CrossEntropyFunctor<DeviceContext, T>()(
+=======
     phi::funcs::CrossEntropyFunctor<DeviceContext, T>()(
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         ctx.template device_context<DeviceContext>(),
         &y_2d,
         &x_2d,

@@ -12,20 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD
+from trt_layer_auto_scan_test import TrtLayerAutoScanTest, SkipReasons
+=======
 from trt_layer_auto_scan_test import TrtLayerAutoScanTest
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 from program_config import TensorConfig, ProgramConfig
 import unittest
 import numpy as np
 import paddle.inference as paddle_infer
 from functools import partial
+<<<<<<< HEAD
+from typing import Optional, List, Callable, Dict, Any, Set
+
+
+class TrtConvertSplitTest(TrtLayerAutoScanTest):
+
+=======
 from typing import Any, Dict, List
 
 
 class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     def is_program_valid(self, program_config: ProgramConfig) -> bool:
         return True
 
     def sample_program_configs(self):
+<<<<<<< HEAD
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         def generate_value_data(attrs: List[Dict[str, Any]]):
             return np.array([1]).astype(np.int32)
 
@@ -36,7 +52,11 @@ class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
             return np.array([4]).astype(np.int32)
 
         for shape in [[2, 3, 4]]:
+<<<<<<< HEAD
+            for num_input in [0, 1, 2, 3]:
+=======
             for num_input in [0, 1, 2]:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 for dtype in [5, 2, 3]:
                     for str_value in ["2", "23", "-1"]:
                         self.num_input = num_input
@@ -45,6 +65,23 @@ class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
                             str_value = str_value
                         else:
                             str_value = ""
+<<<<<<< HEAD
+                        dics = [{
+                            "str_value": str_value,
+                            "value": value,
+                            "shape": shape,
+                            "dtype": dtype
+                        }, {
+                            "axis": -1
+                        }]
+                        dics_intput = [{
+                            "ValueTensor": ["value_data"]
+                        }, {
+                            "ShapeTensor": ["shape_data"],
+                        }, {
+                            "ShapeTensorList": ["shapeT1_data", "shapeT2_data"],
+                        }, {}]
+=======
                         dics = [
                             {
                                 "str_value": str_value,
@@ -67,6 +104,7 @@ class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
                             },
                             {},
                         ]
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                         ops_config = [
                             {
                                 "op_type": "fill_constant",
@@ -74,7 +112,11 @@ class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
                                 "op_outputs": {
                                     "Out": ["out_data"],
                                 },
+<<<<<<< HEAD
+                                "op_attrs": dics[0]
+=======
                                 "op_attrs": dics[0],
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                             },
                         ]
 
@@ -86,6 +128,22 @@ class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
                             ops=ops,
                             weights={},
                             inputs={
+<<<<<<< HEAD
+                                "value_data":
+                                TensorConfig(data_gen=partial(
+                                    generate_value_data, dics)),
+                                "shape_data":
+                                TensorConfig(data_gen=partial(
+                                    generate_shape_data, dics)),
+                                "shapeT1_data":
+                                TensorConfig(data_gen=partial(
+                                    generate_shapelist_data, dics)),
+                                "shapeT2_data":
+                                TensorConfig(data_gen=partial(
+                                    generate_shapelist_data, dics)),
+                            },
+                            outputs=["out_data"])
+=======
                                 "value_data": TensorConfig(
                                     data_gen=partial(generate_value_data, dics)
                                 ),
@@ -105,12 +163,18 @@ class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
                             },
                             outputs=["out_data"],
                         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
                         yield program_config
 
     def sample_predictor_configs(
+<<<<<<< HEAD
+            self, program_config) -> (paddle_infer.Config, List[int], float):
+
+=======
         self, program_config
     ) -> (paddle_infer.Config, List[int], float):
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         def generate_dynamic_shape(attrs):
             self.input_shape = [1, 1]
             max_shape = list(self.input_shape)
@@ -128,7 +192,11 @@ class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
             self.dynamic_shape.opt_input_shape = {}
 
         def generate_trt_nodes_num(attrs, dynamic_shape):
+<<<<<<< HEAD
+            if (self.num_input < 3):
+=======
             if self.num_input < 3:
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 return 0, 6
             return 1, 5
 
@@ -141,12 +209,19 @@ class TrtConvertFillConstantTest(TrtLayerAutoScanTest):
         generate_dynamic_shape(attrs)
         self.trt_param.precision = paddle_infer.PrecisionType.Float32
         yield self.create_inference_config(), generate_trt_nodes_num(
+<<<<<<< HEAD
+            attrs, True), 1e-5
+        self.trt_param.precision = paddle_infer.PrecisionType.Half
+        yield self.create_inference_config(), generate_trt_nodes_num(
+            attrs, True), 1e-5
+=======
             attrs, True
         ), 1e-5
         self.trt_param.precision = paddle_infer.PrecisionType.Half
         yield self.create_inference_config(), generate_trt_nodes_num(
             attrs, True
         ), 1e-3
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     def add_skip_trt_case(self):
         pass

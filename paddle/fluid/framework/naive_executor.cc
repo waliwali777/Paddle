@@ -141,7 +141,11 @@ phi::DenseTensor *NaiveExecutor::FindTensor(const std::string &name) {
   PADDLE_ENFORCE_NOT_NULL(
       var,
       platform::errors::NotFound("No variable [%s] in current scope.", name));
+<<<<<<< HEAD
+  auto *tensor = const_cast<LoDTensor *>(&var->Get<LoDTensor>());
+=======
   auto *tensor = const_cast<phi::DenseTensor *>(&var->Get<phi::DenseTensor>());
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   return tensor;
 }
 

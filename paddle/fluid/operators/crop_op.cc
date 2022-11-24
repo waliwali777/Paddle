@@ -100,8 +100,13 @@ Crop Operator.
 Crop input into output, as specified by offsets and shape.
 
 There are two ways to set the offsets:
+<<<<<<< HEAD
+1. In runtime: Using the input 'Offsets', which is a Variable and can be 
+               output of other operators. This way is suitable for 
+=======
 1. In runtime: Using the input 'Offsets', which is a Variable and can be
                output of other operators. This way is suitable for
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                dynamic offsets.
 2. In network configuration: Using the attribute 'offsets', which will be
                              set in Python configure script. This way is

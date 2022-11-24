@@ -13,6 +13,14 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 #pragma once
 #ifndef _WIN32
+<<<<<<< HEAD
+#include <cuda.h>
+#include <nvToolsExt.h>
+
+#include <mutex>  // NOLINT
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/backends/dynload/nvtx.h"
 
 namespace paddle {

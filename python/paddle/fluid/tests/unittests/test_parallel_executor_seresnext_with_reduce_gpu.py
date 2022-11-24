@@ -20,10 +20,16 @@ from test_parallel_executor_seresnext_with_reduce_cpu import (
 
 
 class TestResnetWithReduceGPU(TestResnetWithReduceBase):
+
     def test_seresnext_with_reduce(self):
+<<<<<<< HEAD
+        self._compare_reduce_and_allreduce(use_device=DeviceType.CUDA,
+                                           delta2=1e-2)
+=======
         self._compare_reduce_and_allreduce(
             use_device=DeviceType.CUDA, delta2=1e-2
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == '__main__':

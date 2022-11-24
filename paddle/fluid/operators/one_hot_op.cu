@@ -38,8 +38,13 @@ struct OneHotOpCUDAFunctor {
   const DeviceContext& ctx_;
   int depth_;
 
+<<<<<<< HEAD
+  OneHotOpCUDAFunctor(const framework::LoDTensor* in,
+                      framework::LoDTensor* out,
+=======
   OneHotOpCUDAFunctor(const phi::DenseTensor* in,
                       phi::DenseTensor* out,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                       int depth,
                       const DeviceContext& ctx)
       : in_(in), out_(out), depth_(depth), ctx_(ctx) {}
@@ -72,7 +77,11 @@ class OneHotCUDAKernel : public framework::OpKernel<T> {
     if (context.HasInput("depth_tensor")) {
       auto* depth_tensor = context.Input<phi::DenseTensor>("depth_tensor");
       if (platform::is_gpu_place(depth_tensor->place())) {
+<<<<<<< HEAD
+        framework::Tensor temp;
+=======
         phi::DenseTensor temp;
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         paddle::framework::TensorCopySync(
             *depth_tensor, platform::CPUPlace(), &temp);
         depth = *temp.data<int32_t>();

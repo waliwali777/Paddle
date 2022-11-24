@@ -22,6 +22,30 @@ import sys
 import os
 
 
+<<<<<<< HEAD
+def convolution_net(data,
+                    label,
+                    input_dim,
+                    class_dim=2,
+                    emb_dim=32,
+                    hid_dim=32):
+    emb = fluid.layers.embedding(input=data,
+                                 size=[input_dim, emb_dim],
+                                 is_sparse=True)
+    conv_3 = fluid.nets.sequence_conv_pool(input=emb,
+                                           num_filters=hid_dim,
+                                           filter_size=3,
+                                           act="tanh",
+                                           pool_type="sqrt")
+    conv_4 = fluid.nets.sequence_conv_pool(input=emb,
+                                           num_filters=hid_dim,
+                                           filter_size=4,
+                                           act="tanh",
+                                           pool_type="sqrt")
+    prediction = fluid.layers.fc(input=[conv_3, conv_4],
+                                 size=class_dim,
+                                 act="softmax")
+=======
 def convolution_net(
     data, label, input_dim, class_dim=2, emb_dim=32, hid_dim=32
 ):
@@ -45,18 +69,31 @@ def convolution_net(
     prediction = fluid.layers.fc(
         input=[conv_3, conv_4], size=class_dim, act="softmax"
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     cost = fluid.layers.cross_entropy(input=prediction, label=label)
     avg_cost = paddle.mean(cost)
     accuracy = fluid.layers.accuracy(input=prediction, label=label)
     return avg_cost, accuracy, prediction
 
 
+<<<<<<< HEAD
+def dyn_rnn_lstm(data,
+                 label,
+                 input_dim,
+                 class_dim=2,
+                 emb_dim=32,
+                 lstm_size=128):
+    emb = fluid.layers.embedding(input=data,
+                                 size=[input_dim, emb_dim],
+                                 is_sparse=True)
+=======
 def dyn_rnn_lstm(
     data, label, input_dim, class_dim=2, emb_dim=32, lstm_size=128
 ):
     emb = fluid.layers.embedding(
         input=data, size=[input_dim, emb_dim], is_sparse=True
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     sentence = fluid.layers.fc(input=emb, size=lstm_size, act='tanh')
 
     rnn = fluid.layers.DynamicRNN()
@@ -70,6 +107,16 @@ def dyn_rnn_lstm(
             gate1 = fluid.layers.fc(input=hidden, size=size, bias_attr=False)
             return gate0 + gate1
 
+<<<<<<< HEAD
+        forget_gate = fluid.layers.sigmoid(
+            x=gate_common(word, prev_hidden, lstm_size))
+        input_gate = fluid.layers.sigmoid(
+            x=gate_common(word, prev_hidden, lstm_size))
+        output_gate = fluid.layers.sigmoid(
+            x=gate_common(word, prev_hidden, lstm_size))
+        cell_gate = fluid.layers.sigmoid(
+            x=gate_common(word, prev_hidden, lstm_size))
+=======
         forget_gate = paddle.nn.functional.sigmoid(
             x=gate_common(word, prev_hidden, lstm_size)
         )
@@ -82,6 +129,7 @@ def dyn_rnn_lstm(
         cell_gate = paddle.nn.functional.sigmoid(
             x=gate_common(word, prev_hidden, lstm_size)
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         cell = forget_gate * prev_cell + input_gate * cell_gate
         hidden = output_gate * paddle.tanh(x=cell)
@@ -102,9 +150,15 @@ def stacked_lstm_net(
 ):
     assert stacked_num % 2 == 1
 
+<<<<<<< HEAD
+    emb = fluid.layers.embedding(input=data,
+                                 size=[input_dim, emb_dim],
+                                 is_sparse=True)
+=======
     emb = fluid.layers.embedding(
         input=data, size=[input_dim, emb_dim], is_sparse=True
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     # add bias attr
 
     # TODO(qijun) linear act
@@ -115,9 +169,15 @@ def stacked_lstm_net(
 
     for i in range(2, stacked_num + 1):
         fc = fluid.layers.fc(input=inputs, size=hid_dim)
+<<<<<<< HEAD
+        lstm, cell = fluid.layers.dynamic_lstm(input=fc,
+                                               size=hid_dim,
+                                               is_reverse=(i % 2) == 0)
+=======
         lstm, cell = fluid.layers.dynamic_lstm(
             input=fc, size=hid_dim, is_reverse=(i % 2) == 0
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
         inputs = [fc, lstm]
 
     fc_last = fluid.layers.sequence_pool(input=inputs[0], pool_type='max')
@@ -145,6 +205,19 @@ def train(
     dict_dim = len(word_dict)
     class_dim = 2
 
+<<<<<<< HEAD
+    data = fluid.layers.data(name="words",
+                             shape=[1],
+                             dtype="int64",
+                             lod_level=1)
+    label = fluid.layers.data(name="label", shape=[1], dtype="int64")
+
+    if not parallel:
+        cost, acc_out, prediction = net_method(data,
+                                               label,
+                                               input_dim=dict_dim,
+                                               class_dim=class_dim)
+=======
     data = fluid.layers.data(
         name="words", shape=[1], dtype="int64", lod_level=1
     )
@@ -154,18 +227,25 @@ def train(
         cost, acc_out, prediction = net_method(
             data, label, input_dim=dict_dim, class_dim=class_dim
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     else:
         raise NotImplementedError()
 
     adagrad = fluid.optimizer.Adagrad(learning_rate=0.002)
     adagrad.minimize(cost)
 
+<<<<<<< HEAD
+    train_data = paddle.batch(paddle.reader.shuffle(
+        paddle.dataset.imdb.train(word_dict), buf_size=1000),
+                              batch_size=BATCH_SIZE)
+=======
     train_data = paddle.batch(
         paddle.reader.shuffle(
             paddle.dataset.imdb.train(word_dict), buf_size=1000
         ),
         batch_size=BATCH_SIZE,
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
     exe = fluid.Executor(place)
     feeder = fluid.DataFeeder(feed_list=[data, label], place=place)
@@ -253,9 +333,17 @@ def infer(word_dict, use_cuda, save_dirname=None):
         recursive_seq_lens = [[3, 4, 2]]
         base_shape = [1]
         # The range of random integers is [low, high]
+<<<<<<< HEAD
+        tensor_words = fluid.create_random_int_lodtensor(recursive_seq_lens,
+                                                         base_shape,
+                                                         place,
+                                                         low=0,
+                                                         high=word_dict_len - 1)
+=======
         tensor_words = fluid.create_random_int_lodtensor(
             recursive_seq_lens, base_shape, place, low=0, high=word_dict_len - 1
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         # Construct feed as a dictionary of {feed_target_name: feed_target_data}
         # and results will contain a list of data corresponding to fetch_targets.
@@ -276,6 +364,13 @@ def main(word_dict, net_method, use_cuda, parallel=False, save_dirname=None):
     if use_cuda and not fluid.core.is_compiled_with_cuda():
         return
 
+<<<<<<< HEAD
+    train(word_dict,
+          net_method,
+          use_cuda,
+          parallel=parallel,
+          save_dirname=save_dirname)
+=======
     train(
         word_dict,
         net_method,
@@ -283,10 +378,12 @@ def main(word_dict, net_method, use_cuda, parallel=False, save_dirname=None):
         parallel=parallel,
         save_dirname=save_dirname,
     )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     infer(word_dict, use_cuda, save_dirname)
 
 
 class TestUnderstandSentiment(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.word_dict = paddle.dataset.imdb.word_dict()
@@ -302,6 +399,19 @@ class TestUnderstandSentiment(unittest.TestCase):
 
     def test_conv_cpu(self):
         with self.new_program_scope():
+<<<<<<< HEAD
+            main(self.word_dict,
+                 net_method=convolution_net,
+                 use_cuda=False,
+                 save_dirname="understand_sentiment_conv.inference.model")
+
+    def test_conv_cpu_parallel(self):
+        with self.new_program_scope():
+            main(self.word_dict,
+                 net_method=convolution_net,
+                 use_cuda=False,
+                 parallel=True)
+=======
             main(
                 self.word_dict,
                 net_method=convolution_net,
@@ -317,6 +427,7 @@ class TestUnderstandSentiment(unittest.TestCase):
                 use_cuda=False,
                 parallel=True,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     @unittest.skip(reason="make CI faster")
     def test_stacked_lstm_cpu(self):
@@ -325,11 +436,35 @@ class TestUnderstandSentiment(unittest.TestCase):
                 self.word_dict,
                 net_method=stacked_lstm_net,
                 use_cuda=False,
+<<<<<<< HEAD
+                save_dirname="understand_sentiment_stacked_lstm.inference.model"
+=======
                 save_dirname="understand_sentiment_stacked_lstm.inference.model",
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             )
 
     def test_stacked_lstm_cpu_parallel(self):
         with self.new_program_scope():
+<<<<<<< HEAD
+            main(self.word_dict,
+                 net_method=stacked_lstm_net,
+                 use_cuda=False,
+                 parallel=True)
+
+    def test_conv_gpu(self):
+        with self.new_program_scope():
+            main(self.word_dict,
+                 net_method=convolution_net,
+                 use_cuda=True,
+                 save_dirname="understand_sentiment_conv.inference.model")
+
+    def test_conv_gpu_parallel(self):
+        with self.new_program_scope():
+            main(self.word_dict,
+                 net_method=convolution_net,
+                 use_cuda=True,
+                 parallel=True)
+=======
             main(
                 self.word_dict,
                 net_method=stacked_lstm_net,
@@ -354,6 +489,7 @@ class TestUnderstandSentiment(unittest.TestCase):
                 use_cuda=True,
                 parallel=True,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     @unittest.skip(reason="make CI faster")
     def test_stacked_lstm_gpu(self):
@@ -362,21 +498,45 @@ class TestUnderstandSentiment(unittest.TestCase):
                 self.word_dict,
                 net_method=stacked_lstm_net,
                 use_cuda=True,
+<<<<<<< HEAD
+                save_dirname="understand_sentiment_stacked_lstm.inference.model"
+=======
                 save_dirname="understand_sentiment_stacked_lstm.inference.model",
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             )
 
     def test_stacked_lstm_gpu_parallel(self):
         with self.new_program_scope():
+<<<<<<< HEAD
+            main(self.word_dict,
+                 net_method=stacked_lstm_net,
+                 use_cuda=True,
+                 parallel=True)
+=======
             main(
                 self.word_dict,
                 net_method=stacked_lstm_net,
                 use_cuda=True,
                 parallel=True,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
     @unittest.skip(reason='make CI faster')
     def test_dynrnn_lstm_gpu(self):
         with self.new_program_scope():
+<<<<<<< HEAD
+            main(self.word_dict,
+                 net_method=dyn_rnn_lstm,
+                 use_cuda=True,
+                 parallel=False)
+
+    def test_dynrnn_lstm_gpu_parallel(self):
+        with self.new_program_scope():
+            main(self.word_dict,
+                 net_method=dyn_rnn_lstm,
+                 use_cuda=True,
+                 parallel=True)
+=======
             main(
                 self.word_dict,
                 net_method=dyn_rnn_lstm,
@@ -392,6 +552,7 @@ class TestUnderstandSentiment(unittest.TestCase):
                 use_cuda=True,
                 parallel=True,
             )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 
 if __name__ == '__main__':

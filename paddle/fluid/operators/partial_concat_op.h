@@ -15,7 +15,10 @@ limitations under the License. */
 #include <utility>
 #include <vector>
 
+<<<<<<< HEAD
+=======
 #include "paddle/fluid/framework/eigen.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/fluid/framework/op_registry.h"
 #include "paddle/fluid/operators/math/concat_and_split.h"
 #include "paddle/fluid/operators/strided_memcpy.h"
@@ -44,8 +47,13 @@ template <typename DeviceContext, typename T>
 class PartialConcatKernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext& ctx) const override {
+<<<<<<< HEAD
+    auto ins = ctx.MultiInput<framework::Tensor>("X");
+    framework::Tensor* out = ctx.Output<framework::Tensor>("Out");
+=======
     auto ins = ctx.MultiInput<phi::DenseTensor>("X");
     phi::DenseTensor* out = ctx.Output<phi::DenseTensor>("Out");
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     PADDLE_ENFORCE_EQ(ins[0] != nullptr,
                       true,
                       platform::errors::InvalidArgument(

@@ -15,10 +15,17 @@
 #include "paddle/phi/kernels/sgd_kernel.h"
 
 #include "paddle/fluid/framework/mixed_vector.h"
+<<<<<<< HEAD
+#include "paddle/fluid/operators/amp/fp16_type_traits.h"
+#include "paddle/fluid/platform/device/gpu/gpu_primitives.h"
+#include "paddle/phi/backends/gpu/gpu_context.h"
+#include "paddle/phi/backends/gpu/gpu_helper.h"
+=======
 #include "paddle/phi/backends/gpu/gpu_context.h"
 #include "paddle/phi/backends/gpu/gpu_helper.h"
 #include "paddle/phi/backends/gpu/gpu_primitives.h"
 #include "paddle/phi/common/amp_type_traits.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/phi/core/kernel_registry.h"
 
 namespace phi {

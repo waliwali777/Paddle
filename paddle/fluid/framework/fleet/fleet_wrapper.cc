@@ -615,6 +615,14 @@ void FleetWrapper::PullSparseVarsSync(
 #endif
 }
 
+<<<<<<< HEAD
+void FleetWrapper::PullSparseToTensorSync(const uint64_t table_id,
+                                          int fea_dim,
+                                          uint64_t padding_id,
+                                          platform::Place place,
+                                          std::vector<const LoDTensor*>* inputs,
+                                          std::vector<LoDTensor*>* outputs) {
+=======
 void FleetWrapper::PullSparseToTensorSync(
     const uint64_t table_id,
     int fea_dim,
@@ -622,6 +630,7 @@ void FleetWrapper::PullSparseToTensorSync(
     platform::Place place,
     std::vector<const phi::DenseTensor*>* inputs,
     std::vector<phi::DenseTensor*>* outputs) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #ifdef PADDLE_WITH_PSLIB
   std::vector<uint64_t> fea_keys;
   std::vector<float*> pull_result_ptr;

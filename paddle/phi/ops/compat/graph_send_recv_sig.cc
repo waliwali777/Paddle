@@ -19,6 +19,16 @@ namespace phi {
 KernelSignature GraphSendRecvOpArgumentMapping(
     const ArgumentMappingContext& ctx) {
   if (ctx.HasInput("Out_size")) {
+<<<<<<< HEAD
+    return KernelSignature("graph_send_recv",
+                           {"X", "Src_index", "Dst_index"},
+                           {"pool_type", "Out_size"},
+                           {"Out", "Dst_count"});
+  } else {
+    return KernelSignature("graph_send_recv",
+                           {"X", "Src_index", "Dst_index"},
+                           {"pool_type", "out_size"},
+=======
     return KernelSignature("send_u_recv",
                            {"X", "Src_index", "Dst_index"},
                            {"reduce_op", "Out_size"},
@@ -27,6 +37,7 @@ KernelSignature GraphSendRecvOpArgumentMapping(
     return KernelSignature("send_u_recv",
                            {"X", "Src_index", "Dst_index"},
                            {"reduce_op", "out_size"},
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                            {"Out", "Dst_count"});
   }
 }

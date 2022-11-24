@@ -62,10 +62,19 @@ DECLARE_INPLACE_OP_INFERER(AllreduceSumInplaceInferer, {"X", "Out"});
 namespace ops = paddle::operators;
 namespace plat = paddle::platform;
 
+<<<<<<< HEAD
+REGISTER_OPERATOR(c_allreduce_sum,
+                  ops::CAllReduceOp,
+                  ops::CAllReduceSumOpGradMaker<paddle::framework::OpDesc>,
+                  ops::CAllReduceSumOpGradMaker<paddle::imperative::OpBase>,
+                  ops::CAllReduceSumOpMaker,
+                  ops::AllreduceSumInplaceInferer);
+=======
 REGISTER_OP_WITHOUT_GRADIENT(c_allreduce_sum,
                              ops::CAllReduceOp,
                              ops::CAllReduceSumOpMaker,
                              ops::AllreduceSumInplaceInferer)
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
 REGISTER_OP_CPU_KERNEL(c_allreduce_sum,
                        ops::CAllReduceOpCPUKernel<ops::kRedSum, float>,

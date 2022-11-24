@@ -103,7 +103,27 @@ DECLARE_NO_NEED_BUFFER_VARS_INFERER(SlogDeterminantGradNoNeedBufferVarsInferer,
 
 namespace ops = paddle::operators;
 namespace plat = paddle::platform;
+<<<<<<< HEAD
+DECLARE_INFER_SHAPE_FUNCTOR(determinant,
+                            DeterminantInferShapeFunctor,
+                            PD_INFER_META(phi::UnchangedInferMeta));
+REGISTER_OPERATOR(determinant,
+                  ops::DeterminantOp,
+                  ops::DeterminantOpMaker,
+                  ops::DeterminantGradOpMaker<paddle::framework::OpDesc>,
+                  ops::DeterminantGradOpMaker<paddle::imperative::OpBase>,
+                  DeterminantInferShapeFunctor);
 
+DECLARE_INFER_SHAPE_FUNCTOR(determinant_grad,
+                            DeterminantGradInferShapeFunctor,
+                            PD_INFER_META(phi::GeneralUnaryGradInferMeta));
+REGISTER_OPERATOR(determinant_grad,
+                  ops::DeterminantGradOp,
+                  DeterminantGradInferShapeFunctor);
+
+=======
+
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 DECLARE_INFER_SHAPE_FUNCTOR(slogdeterminant,
                             SlogDeterminantInferShapeFunctor,
                             PD_INFER_META(phi::UnchangedInferMeta));

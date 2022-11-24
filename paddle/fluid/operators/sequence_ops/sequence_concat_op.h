@@ -113,7 +113,11 @@ class SeqConcatGradKernel : public framework::OpKernel<T> {
   void Compute(const framework::ExecutionContext &context) const override {
     auto xs = context.MultiInput<phi::DenseTensor>("X");
     auto dxs =
+<<<<<<< HEAD
+        context.MultiOutput<framework::LoDTensor>(framework::GradVarName("X"));
+=======
         context.MultiOutput<phi::DenseTensor>(framework::GradVarName("X"));
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     PADDLE_ENFORCE_EQ(xs.size(),
                       dxs.size(),
                       platform::errors::InvalidArgument(
@@ -174,7 +178,11 @@ class SeqConcatGradKernel : public framework::OpKernel<T> {
     math::SplitFunctor<DeviceContext, T> functor;
     functor(context.template device_context<DeviceContext>(),
             GET_DATA_SAFELY(
+<<<<<<< HEAD
+                context.Input<framework::Tensor>(framework::GradVarName("Out")),
+=======
                 context.Input<phi::DenseTensor>(framework::GradVarName("Out")),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 "Input",
                 framework::GradVarName("Out"),
                 "SeqConcatGrad"),

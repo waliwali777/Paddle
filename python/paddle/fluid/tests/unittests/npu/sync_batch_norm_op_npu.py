@@ -49,6 +49,7 @@ paddle.enable_static()
 
 
 class TestSyncBatchNormOpTraining(TestSyncBatchNormRunnerBase):
+
     def __init__(self):
         self.global_ring_id = 0
 
@@ -74,12 +75,19 @@ class TestSyncBatchNormOpTraining(TestSyncBatchNormRunnerBase):
         use_cudnn = False
         with fluid.unique_name.guard():
             with fluid.program_guard(main, startup):
+<<<<<<< HEAD
+                data = fluid.layers.data(name='input',
+                                         shape=self.dshape,
+                                         dtype=self.dtype,
+                                         append_batch_size=False)
+=======
                 data = fluid.layers.data(
                     name='input',
                     shape=self.dshape,
                     dtype=self.dtype,
                     append_batch_size=False,
                 )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                 conv = fluid.layers.conv2d(
                     input=data,
                     num_filters=32,

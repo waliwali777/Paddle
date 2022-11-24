@@ -19,6 +19,7 @@ import os, shutil
 
 
 class PSController(Controller):
+
     @classmethod
     def enable(cls, ctx):
         if (
@@ -139,6 +140,12 @@ class PSController(Controller):
             }
         )
 
+<<<<<<< HEAD
+        peer_list, rank = self.master.sync_peers('/{}/info'.format(self.job.id),
+                                                 self.pod.name, data,
+                                                 self.job.replicas,
+                                                 self.pod.rank)
+=======
         peer_list, rank = self.master.sync_peers(
             '/{}/info'.format(self.job.id),
             self.pod.name,
@@ -146,6 +153,7 @@ class PSController(Controller):
             self.job.replicas,
             self.pod.rank,
         )
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 
         self.ctx.logger.debug("sync peers done {}".format(peer_list))
 
@@ -184,6 +192,24 @@ class PSController(Controller):
 
         for i in range(server_num):
             e = {
+<<<<<<< HEAD
+                "PADDLE_NNODES":
+                "{}".format(self.job.replicas),
+                "PADDLE_PSERVERS_IP_PORT_LIST":
+                ",".join(server_endpoints),
+                "PADDLE_TRAINER_ENDPOINTS":
+                ",".join(trainer_endpoints),
+                "PADDLE_PORT":
+                server_endpoints[i + server_rank_offset].split(":")[1],
+                "PADDLE_ROLE":
+                "PSERVER",
+                "TRAINING_ROLE":
+                "PSERVER",
+                "PADDLE_TRAINERS_NUM":
+                "{}".format(len(trainer_endpoints)),
+                "POD_IP":
+                self.ctx.node.ip,
+=======
                 "PADDLE_NNODES": "{}".format(self.job.replicas),
                 "PADDLE_PSERVERS_IP_PORT_LIST": ",".join(server_endpoints),
                 "PADDLE_TRAINER_ENDPOINTS": ",".join(trainer_endpoints),
@@ -194,6 +220,7 @@ class PSController(Controller):
                 "TRAINING_ROLE": "PSERVER",
                 "PADDLE_TRAINERS_NUM": "{}".format(len(trainer_endpoints)),
                 "POD_IP": self.ctx.node.ip,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             }
             e.update(_gloo_envs)
             log_file = "serverlog.{}".format(i)
@@ -201,6 +228,26 @@ class PSController(Controller):
 
         for i in range(trainer_num):
             e = {
+<<<<<<< HEAD
+                "PADDLE_NNODES":
+                "{}".format(self.job.replicas),
+                "PADDLE_PSERVERS_IP_PORT_LIST":
+                ",".join(server_endpoints),
+                "PADDLE_TRAINER_ENDPOINTS":
+                ",".join(trainer_endpoints),
+                "PADDLE_PORT":
+                trainer_endpoints[i + trainer_rank_offset].split(":")[1],
+                "PADDLE_ROLE":
+                "TRAINER",
+                "TRAINING_ROLE":
+                "TRAINER",
+                "PADDLE_TRAINER_ID":
+                "{}".format(i + trainer_rank_offset),
+                "PADDLE_TRAINERS_NUM":
+                "{}".format(len(trainer_endpoints)),
+                "POD_IP":
+                self.ctx.node.ip,
+=======
                 "PADDLE_NNODES": "{}".format(self.job.replicas),
                 "PADDLE_PSERVERS_IP_PORT_LIST": ",".join(server_endpoints),
                 "PADDLE_TRAINER_ENDPOINTS": ",".join(trainer_endpoints),
@@ -212,6 +259,7 @@ class PSController(Controller):
                 "PADDLE_TRAINER_ID": "{}".format(i + trainer_rank_offset),
                 "PADDLE_TRAINERS_NUM": "{}".format(len(trainer_endpoints)),
                 "POD_IP": self.ctx.node.ip,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
             }
             e.update(_gloo_envs)
             log_file = "workerlog.{}".format(i)

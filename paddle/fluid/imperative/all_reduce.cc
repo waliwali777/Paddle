@@ -53,8 +53,13 @@ static const platform::Place &GetVarPlace(const framework::Variable &src) {
   }
 }
 
+<<<<<<< HEAD
+static void AllReduce(const framework::Tensor &src,
+                      framework::Tensor *dst,
+=======
 static void AllReduce(const phi::DenseTensor &src,
                       phi::DenseTensor *dst,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
                       const gpuStream_t stream,
                       const platform::NCCLComm *comm) {
   const auto &place = src.place();
@@ -230,8 +235,13 @@ void AllReduce(const framework::Variable &src,
     if (!dst->IsType<phi::DenseTensor>()) {
       dst->Clear();
     }
+<<<<<<< HEAD
+    AllReduce(src.Get<framework::LoDTensor>(),
+              dst->GetMutable<framework::LoDTensor>(),
+=======
     AllReduce(src.Get<phi::DenseTensor>(),
               dst->GetMutable<phi::DenseTensor>(),
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
               stream,
               comm);
 #if NCCL_VERSION_CODE >= 2212

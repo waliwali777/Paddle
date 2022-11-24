@@ -12,9 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */
 
+<<<<<<< HEAD
+#include "paddle/fluid/operators/fill_constant_op.h"
+
+#include <string>
+
+=======
 #include <string>
 
 #include "paddle/fluid/framework/op_registry.h"
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
 #include "paddle/fluid/framework/op_version_registry.h"
 
 namespace paddle {
@@ -58,7 +65,11 @@ class FillConstantOp : public framework::OperatorWithKernel {
  protected:
   framework::OpKernelType GetKernelTypeForVar(
       const std::string &var_name,
+<<<<<<< HEAD
+      const framework::Tensor &tensor,
+=======
       const phi::DenseTensor &tensor,
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
       const framework::OpKernelType &expected_kernel_type) const override {
     if (var_name == "ShapeTensor" || var_name == "ShapeTensorList") {
       return expected_kernel_type;
@@ -104,6 +115,21 @@ class FillConstantOp : public framework::OperatorWithKernel {
       }
     }
 
+<<<<<<< HEAD
+#ifdef PADDLE_WITH_MKLDNN
+    auto input_data_type =
+        framework::proto::VarType::Type(ctx.Attr<int>("dtype"));
+
+    if (this->CanMKLDNNBeUsed(ctx, input_data_type)) {
+      return framework::OpKernelType(input_data_type,
+                                     ctx.GetPlace(),
+                                     framework::DataLayout::kMKLDNN,
+                                     framework::LibraryType::kMKLDNN);
+    }
+#endif
+
+=======
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
     return kt;
   }
 };

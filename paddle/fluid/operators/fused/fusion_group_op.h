@@ -23,11 +23,18 @@ limitations under the License. */
 namespace paddle {
 namespace operators {
 
+<<<<<<< HEAD
+static void MutableMultiTypeData(
+    std::vector<paddle::framework::LoDTensor*>* var,
+    const std::vector<int>& data_type,
+    const platform::Place& place) {
+=======
 template <typename DeviceContext>
 static void MutableMultiTypeData(std::vector<phi::DenseTensor*>* var,
                                  const std::vector<int>& data_type,
                                  const DeviceContext& dev_ctx,
                                  const platform::Place& place) {
+>>>>>>> 43b92b633f5d2db98f45d4b9597e5389f6f9712f
   for (size_t i = 0; i < var->size(); i++) {
     if (data_type[i] == framework::proto::VarType::FP32) {
       dev_ctx.template Alloc<float>((*var)[i],
