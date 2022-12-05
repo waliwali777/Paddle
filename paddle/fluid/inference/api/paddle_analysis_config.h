@@ -693,6 +693,11 @@ struct PD_INFER_DECL AnalysisConfig {
   void Exp_DisableTensorRtOPs(const std::vector<std::string>& ops);
 
   ///
+  /// \brief Turn on CUTLASS.
+  ///  NOTE: just experimental, not an official stable API, easy to be broken.
+  void Exp_EnableUseCutlass();
+
+  ///
   /// \brief Replace some TensorRT plugins to TensorRT OSS(
   /// https://github.com/NVIDIA/TensorRT), with which some models's inference
   /// may be more high-performance. Libnvinfer_plugin.so greater than
@@ -1029,6 +1034,7 @@ struct PD_INFER_DECL AnalysisConfig {
 
   // GPU related.
   bool use_gpu_{false};
+  bool use_cutlass_{false};
   int gpu_device_id_{0};
   uint64_t memory_pool_init_size_mb_{100};  // initial size is 100MB.
   bool thread_local_stream_{false};
