@@ -55,11 +55,19 @@ void CastDataLayout(const Context& dev_ctx,
 template <typename Context>
 void TransferLayoutGeneral(const Context& dev_ctx,
                            const DenseTensor& x,
+                           DataLayout src_layout,
                            DataLayout dst_layout,
                            DenseTensor* out) {
   auto src_dim = x.dims();
 
-  auto axis = GetAxis(x.layout(), dst_layout);
+  PADDLE_ENFORCE_EQ(
+      x.layout(),
+      src_layout,
+      phi::errors::InvalidArgument(
+          "Layout obtained from the src_layout attribute of transfer_layout op"
+          "should be equal to the layout of the input tensor"));
+
+  auto axis = GetAxis(src_layout, dst_layout);
 
   std::vector<int64_t> dst_dim;
   dst_dim.resize(axis.size());
@@ -166,7 +174,7 @@ void TransferLayoutMKLDNN(const Context& dev_ctx,
         errors::PreconditionNotMet(
             "No layout transform needed between two oneDNN OPKernels."));
   } else {
-    TransferLayoutGeneral<Context>(dev_ctx, x, dst_layout, out);
+    TransferLayoutGeneral<Context>(dev_ctx, x, src_layout, dst_layout, out);
   }
 }
 #endif
@@ -198,8 +206,11 @@ void TransferLayoutKernel(const Context& dev_ctx,
                                 static_cast<DataLayout>(dst_layout),
                                 out);
 #else
-  TransferLayoutGeneral<Context>(
-      dev_ctx, x, static_cast<DataLayout>(dst_layout), out);
+  TransferLayoutGeneral<Context>(dev_ctx,
+                                 x,
+                                 static_cast<DataLayout>(src_layout),
+                                 static_cast<DataLayout>(dst_layout),
+                                 out);
 #endif
 }
 
