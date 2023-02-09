@@ -85,6 +85,7 @@ void PaddlePassBuilder::AppendAnalysisPass(const std::string &pass) {
 void PaddlePassBuilder::ClearPasses() { passes_.clear(); }
 
 const std::vector<std::string> kTRTSubgraphPasses({
+  "record_reshape_pass",
   "trt_support_nhwc_pass",
       "adaptive_pool2d_convert_global_pass",       //
       "shuffle_channel_detect_pass",               //
