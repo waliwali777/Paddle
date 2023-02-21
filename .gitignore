@@ -26,7 +26,7 @@ paddle/phi/api/lib/tensor_operants.cc
 paddle/phi/extension.h
 paddle/phi/include/*
 paddle/phi/infermeta/generated.*
-
+.pre-commit-config.yaml
 *.DS_Store
 *.vs
 build/

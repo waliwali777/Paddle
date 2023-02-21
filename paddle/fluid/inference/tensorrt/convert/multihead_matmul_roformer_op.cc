@@ -14,6 +14,7 @@ limitations under the License. */
 
 #include "paddle/fluid/inference/tensorrt/convert/op_converter.h"
 #include "paddle/fluid/inference/tensorrt/plugin/multihead_matmul_roformer_plugin.h"
+#include "paddle/fluid/inference/tensorrt/plugin/roformer_op_plugin.h"
 
 namespace paddle {
 namespace inference {
@@ -30,8 +31,15 @@ class MultiheadMatMulRoformerOpConverter : public OpConverter {
     framework::OpDesc op_desc(op, nullptr);
     // Declare inputs
     auto* input = engine_->GetITensor(op_desc.Input("Input").front());
-    auto* input_cos = engine_->GetITensor(op_desc.Input("Input_cos").front());
-    auto* input_sin = engine_->GetITensor(op_desc.Input("Input_sin").front());
+    int input_cos_len = op_desc.Input("Input_cos").front().length();
+    std::string new_input_cos =
+        op_desc.Input("Input_cos").front().substr(0, input_cos_len - 1);
+    int input_sin_len = op_desc.Input("Input_sin").front().length();
+    std::string new_input_sin =
+        op_desc.Input("Input_sin").front().substr(0, input_sin_len - 1);
+
+    auto* input_cos = engine_->GetITensor(new_input_cos);
+    auto* input_sin = engine_->GetITensor(new_input_sin);
     // fc weights and fc bias
     auto weight_name = op_desc.Input("W").front();
     auto bias_name = op_desc.Input("Bias").front();
@@ -43,6 +51,9 @@ class MultiheadMatMulRoformerOpConverter : public OpConverter {
     auto* bias_t = bias_v->GetMutable<phi::DenseTensor>();
 
     float* weight_data = nullptr;
+    // bool qkv2context_plugin_int8 = op_desc.HasAttr("qkv2context_plugin_int8");
+    // Do not use int8 in qkv2context_plugin!
+    bool qkv2context_plugin_int8 = false;
     float in_scale = 0.;
 
     if (op_desc.HasAttr("Input_scale")) {
@@ -84,11 +95,187 @@ class MultiheadMatMulRoformerOpConverter : public OpConverter {
                           engine_->tensorrt_transformer_posid() != "" &&
                           engine_->tensorrt_transformer_maskid() != "";
 
+    VLOG(3) << "flag_varseqlen: " << flag_varseqlen;
     if (engine_->with_dynamic_shape()) {
       if (flag_varseqlen) {
-        PADDLE_THROW(
-            platform::errors::Fatal("roformer not support varseqlen yet"));
-      } else {
+        if (engine_->precision() == AnalysisConfig::Precision::kFloat32) {
+          PADDLE_THROW(platform::errors::Fatal(
+              "use use_oss must be int8 or half, not float32."));
+        }
+        if (engine_->with_interleaved()) {
+          PADDLE_THROW(platform::errors::Fatal(
+              "not support interleaved in roformer yet"));
+        }
+        nvinfer1::Weights weight{nvinfer1::DataType::kFLOAT,
+                                 static_cast<void*>(weight_data),
+                                 static_cast<int32_t>(weight_t->numel())};
+        nvinfer1::Weights bias{nvinfer1::DataType::kFLOAT,
+                               static_cast<void*>(bias_data),
+                               static_cast<int32_t>(bias_t->numel())};
+
+        nvinfer1::ITensor* mask_tensor;
+        nvinfer1::ITensor* pos_id_tensor;
+        nvinfer1::ITensor* max_seqlen_tensor;
+        mask_tensor = engine_->GetITensor("qkv_plugin_mask");
+        pos_id_tensor = engine_->GetITensor("pos_id");
+        max_seqlen_tensor = engine_->GetITensor("max_seqlen_tensor");
+
+        int head_size = hidden_out / head_number;
+        // [3, head_number, head_size, hidden_in] -> [head_number, 3,
+        // head_size, hidden_in]
+        auto transpose_weight_v2 = [](const float* src,
+                                      float* dst,
+                                      int three,
+                                      int head_number,
+                                      int head_size,
+                                      int hidden_in) {
+          const int HH = head_size * hidden_in;
+          for (int i = 0; i < three; ++i) {
+            for (int n = 0; n < head_number; ++n) {
+              for (int hh = 0; hh < HH; ++hh) {
+                dst[n * three * HH + i * HH + hh] =
+                    src[i * head_number * HH + n * HH + hh];
+              }
+            }
+          }
+        };
+        // [3, head_number, head_size] -> [head_number, 3, head_size]
+        auto transpose_bias_v2 =
+            [](const float* src, float* dst, int N, int H) {
+              for (int i = 0; i < 3; ++i) {
+                for (int n = 0; n < N; ++n) {
+                  for (int h = 0; h < H; ++h) {
+                    dst[n * 3 * H + i * H + h] = src[i * N * H + n * H + h];
+                  }
+                }
+              }
+            };
+        memcpy(weight_data_tmp.data(),
+               weight_data,
+               weight_t->numel() * sizeof(float));
+        transpose_weight_v2(weight_data_tmp.data(),
+                            weight_data,
+                            three,
+                            head_number,
+                            head_size,
+                            hidden_in);
+        std::vector<float> bias_data_tmp;
+        bias_data_tmp.reserve(bias_t->numel());
+        memcpy(
+            bias_data_tmp.data(), bias_data, bias_t->numel() * sizeof(float));
+        transpose_bias_v2(
+            bias_data_tmp.data(), bias_data, head_number, head_size);
+        nvinfer1::ILayer* fc_layer = nullptr;
+        float dp_probs = 1.0 / 127.0;
+        if (op_desc.HasAttr("Input_scale")) {
+          nvinfer1::DimsHW nv_ksize(1, 1);
+          fc_layer = TRT_ENGINE_ADD_LAYER(
+              engine_, Convolution, *input, n, nv_ksize, weight, bias);
+        } else {
+          fc_layer = TRT_ENGINE_ADD_LAYER(
+              engine_, FullyConnected, *input, n, weight, bias);
+        }
+        if (op_desc.HasAttr("fc_out_threshold")) {
+          PADDLE_ENFORCE_EQ(op_desc.HasAttr("fc_out_threshold"),
+                            true,
+                            platform::errors::InvalidArgument(
+                                "must have out threshold in multihead layers "
+                                "in int8 mode"));
+          float out_scale =
+              PADDLE_GET_CONST(float, op_desc.GetAttr("fc_out_threshold"));
+          engine_->SetTensorDynamicRange(fc_layer->getOutput(0), out_scale);
+          if (qkv2context_plugin_int8) {
+            dp_probs =
+                PADDLE_GET_CONST(float, op_desc.GetAttr("dp_probs")) / 127.0;
+          }
+        }
+        // where to insert roformer kernel
+        std::vector<nvinfer1::ITensor*> roformerplugin_inputs;
+        roformerplugin_inputs.push_back(fc_layer->getOutput(0));
+        roformerplugin_inputs.push_back(input_cos);
+        roformerplugin_inputs.push_back(input_sin);
+        roformerplugin_inputs.push_back(pos_id_tensor);
+
+        plugin::DynamicPluginTensorRT* roformerplugin =
+            new plugin::RoformerPlugin(
+                "roformerplugin", head_number, head_size);
+        auto roformerlayer = engine_->AddDynamicPlugin(
+            roformerplugin_inputs.data(), 4, roformerplugin);
+        roformerlayer->setName(
+            ("roformerlayer(Output: " + output_name + ")").c_str());
+        //roformerlayer->setPrecision(nvinfer1::DataType::kFLOAT);
+	//set roformerlayer output tensor or not
+        if (op_desc.HasAttr("fc_out_threshold")) {
+          PADDLE_ENFORCE_EQ(op_desc.HasAttr("fc_out_threshold"),
+                            true,
+                            platform::errors::InvalidArgument(
+                                "must have out threshold in multihead layers "
+                                "in int8 mode"));
+          float out_scale =
+              PADDLE_GET_CONST(float, op_desc.GetAttr("fc_out_threshold"));
+          engine_->SetTensorDynamicRange(roformerlayer->getOutput(0), out_scale);
+	}
+        // auto mask_tensor = engine_->GetITensor("qkv_plugin_mask");
+        auto creator = GetPluginRegistry()->getPluginCreator(
+            "CustomQKVToContextPluginDynamic", "2");
+        assert(creator != nullptr);
+        int type = static_cast<int>(nvinfer1::DataType::kHALF);
+        if (qkv2context_plugin_int8 &&
+            (engine_->precision() == AnalysisConfig::Precision::kInt8)) {
+          type = static_cast<int>(nvinfer1::DataType::kINT8);
+        }
+        bool has_mask = true;
+        int var_seqlen = 1;
+        std::vector<nvinfer1::PluginField> fields{
+            {"type_id", &type, nvinfer1::PluginFieldType::kINT32, 1},
+            {"hidden_size", &hidden_out, nvinfer1::PluginFieldType::kINT32, 1},
+            {"num_heads", &head_number, nvinfer1::PluginFieldType::kINT32, 1},
+            {"has_mask", &has_mask, nvinfer1::PluginFieldType::kINT32, 1},
+            {"var_seqlen", &var_seqlen, nvinfer1::PluginFieldType::kINT32, 1}};
+        if (qkv2context_plugin_int8) {
+          fields.push_back(
+              {"dq_probs", &dp_probs, nvinfer1::PluginFieldType::kFLOAT32, 1});
+        }
+        nvinfer1::PluginFieldCollection* plugin_collection =
+            static_cast<nvinfer1::PluginFieldCollection*>(
+                malloc(sizeof(*plugin_collection) +
+                       fields.size() *
+                           sizeof(nvinfer1::PluginField)));  // remember to free
+        plugin_collection->nbFields = static_cast<int>(fields.size());
+        plugin_collection->fields = fields.data();
+        auto plugin = creator->createPlugin("CustomQKVToContextPluginDynamic",
+                                            plugin_collection);
+        free(plugin_collection);
+        std::vector<nvinfer1::ITensor*> plugin_inputs;
+        // remeber to modify
+        plugin_inputs.emplace_back(roformerlayer->getOutput(0));
+        plugin_inputs.emplace_back(mask_tensor);
+        plugin_inputs.emplace_back(pos_id_tensor);
+        plugin_inputs.emplace_back(
+            max_seqlen_tensor);  // max_seqlen, eval_placeholder_3
+
+        // engine_->SetTensorDynamicRange(shuffle_layer->getOutput(0), 1.0f);
+
+        auto plugin_layer = engine_->network()->addPluginV2(
+            plugin_inputs.data(), plugin_inputs.size(), *plugin);
+        plugin_layer->setName(
+            ("CustomQKVToContextPluginDynamic: " + output_name).c_str());
+        engine_->SetITensor(output_name, plugin_layer->getOutput(0));
+	layer = plugin_layer;
+
+	// add for plan3 
+	if (op_desc.HasAttr("out_threshold")) {
+          PADDLE_ENFORCE_EQ(op_desc.HasAttr("out_threshold"),
+                            true,
+                            platform::errors::InvalidArgument(
+                                "must have out threshold in multihead layers "
+                                "in int8 mode"));
+          float out_scale =
+              PADDLE_GET_CONST(float, op_desc.GetAttr("out_threshold"));
+          engine_->SetTensorDynamicRange(plugin_layer->getOutput(0), out_scale);
+        }
+
+      } else {  // no varlen
         PADDLE_ENFORCE_EQ(
             input->getDimensions().nbDims,
             3,
@@ -108,7 +295,6 @@ class MultiheadMatMulRoformerOpConverter : public OpConverter {
         TensorRTEngine::Weight bias{nvinfer1::DataType::kFLOAT,
                                     static_cast<void*>(bias_data),
                                     static_cast<size_t>(bias_t->numel())};
-
         // add shuffle before fc
         nvinfer1::Dims reshape_before_fc_dim;
         reshape_before_fc_dim.nbDims = 5;
@@ -185,6 +371,8 @@ class MultiheadMatMulRoformerOpConverter : public OpConverter {
             new plugin::MultiheadMatmulRoformerPlugin(
                 hidden_in, head_number, head_size, scale, with_fp16);
         layer = engine_->AddDynamicPlugin(plugin_inputs.data(), 4, plugin);
+        RreplenishLayerAndOutput(
+            layer, "multihead_matmul_roformer", {output_name}, test_mode);
       }
     } else {
       PADDLE_THROW(platform::errors::Fatal(
@@ -193,9 +381,9 @@ class MultiheadMatMulRoformerOpConverter : public OpConverter {
           "You can use the config.SetTRTDynamicShapeInfo(...) interface to set "
           "the shape information to run the dynamic shape mode."));
     }
-    RreplenishLayerAndOutput(
-        layer, "multihead_matmul_roformer", {output_name}, test_mode);
-  }
+    //RreplenishLayerAndOutput(
+    //    layer, "multihead_matmul_roformer", {output_name}, test_mode);
+    }
 };
 
 }  // namespace tensorrt
