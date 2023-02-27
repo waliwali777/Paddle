@@ -122,6 +122,10 @@ __global__ void naive_conv2d_kernel(const half *input,
     case CONV2D_BIAS_LEAKY_RELU:
       *out_ptr = x > 0 ? x : (x * alpha);
       break;
+    case CONV2D_BIAS_SILU_ADD:
+      auto residual_input = __half2float(*(residual + out_offset));
+      *out_ptr = x * (1.f / (1 + exp(-x))) + residual_input;
+      break;
     default:
       break;
   }
@@ -212,13 +216,17 @@ std::string OpType2String(OpType op_type) {
       return "conv2d_bias_relu";
       break;
     case CONV2D_BIAS_SILU:
-      return "conv2d_bias_add_silu";
+      return "conv2d_bias_silu";
       break;
     case CONV2D_BIAS_ADD_RELU:
       return "conv2d_bias_add_relu";
       break;
     case CONV2D_BIAS_LEAKY_RELU:
       return "conv2d_bias_leaky_relu";
+      break;
+    case CONV2D_BIAS_SILU_ADD:
+      return "conv2d_bias_silu_add";
+      break;
     default:
       break;
   }
@@ -250,6 +258,9 @@ int ProfileToGetBestConfig(
     for (int ii = 0; ii < REPEAT; ii++) {
       status = func(params);
     }
+    if (status != cutlass::Status::kSuccess) {
+      printf("失败了\n");
+    }
 
     PADDLE_ENFORCE_GPU_SUCCESS(cudaEventRecord(end));
     PADDLE_ENFORCE_GPU_SUCCESS(cudaEventSynchronize(end));
@@ -260,9 +271,13 @@ int ProfileToGetBestConfig(
       min_time_index = i;
     }
     // debug code
-    VLOG(3) << OpType2String(op_type) << ": tactic " << i << " has max diff "
-            << conv2d_diff_gpu(params, op_type) << " compared with baseline.";
+    std::cout << OpType2String(op_type) << ": tactic " << i << " has max diff "
+              << conv2d_diff_gpu(params, op_type) << "  " << elapsed_time
+              << std::endl
+              << " compared with baseline.\n";
   }
+
+  std::cout << min_time_index << "  " << min_time << std::endl;
 
   if (min_time_index < 0) {
     PADDLE_THROW(

@@ -48,6 +48,7 @@ typedef struct {
   int ow;
   const phi::GPUContext *ctx;
   float alpha;  // for leaky_relu use
+  int sm_version = 75;
 } ConvAllParams;
 
 // Below functions are provided by cutlass, they are called by phi.
@@ -56,6 +57,7 @@ void Conv2dBiasRelu(ConvAllParams params);
 void Conv2dBiasLeakyRelu(ConvAllParams params);
 void Conv2dBiasSilu(ConvAllParams params);
 void Conv2dBias(ConvAllParams params);
+void Conv2dBiasSiluAdd(ConvAllParams params);
 }  // namespace cutlass_internal
 }  // namespace fusion
 }  // namespace phi

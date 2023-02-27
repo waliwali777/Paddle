@@ -40,7 +40,8 @@ typedef enum {
   CONV2D_BIAS_RELU,
   CONV2D_BIAS_ADD_RELU,
   CONV2D_BIAS_SILU,
-  CONV2D_BIAS_LEAKY_RELU
+  CONV2D_BIAS_LEAKY_RELU,
+  CONV2D_BIAS_SILU_ADD
 } OpType;
 
 // conv2d_diff_gpu calculate diff of cutlass output and baseline output, you can

@@ -182,7 +182,7 @@ void Conv2dFusionLayoutTransferPass::ApplyImpl(ir::Graph *graph) const {
 
     if (is_residual) {
       if (!cutlass_cbaa_act_set.count(act_type)) {
-        return false;
+        // return false;
       }
     } else {
       if (!cutlass_cba_act_set.count(act_type)) {
@@ -199,8 +199,9 @@ void Conv2dFusionLayoutTransferPass::ApplyImpl(ir::Graph *graph) const {
       auto *op_desc = op_node->Op();
       op_desc->SetAttr("data_format", std::string{"NHWC"});
       if (cutlass_enable && CutlassIsValid(op_node)) {
-        op_desc->SetType("conv2d_fusion_cutlass");
+        op_desc->SetType("conv2d_fusion");
       }
+      op_desc->SetAttr("library", std::string{"CUTLASS"});
       op_desc->Flush();
 
       // transfer weights
