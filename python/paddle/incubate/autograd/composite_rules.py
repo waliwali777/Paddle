@@ -420,6 +420,18 @@ def relu_composite(x):
     return maximum(x, zeros_like(x))
 
 
+@REGISTER_COMPOSITE('where')
+def where_composite(condition, x, y):
+    """define composite rule of op where"""
+    """using cast and broadcast_to to implement where op"""
+    x_exp = broadcast_to(x, condition.shape)
+    y_exp = broadcast_to(y, condition.shape)
+    condition_int = cast(condition, x.dtype)
+    condition_nint = 1 - condition_int
+    out = (x_exp * condition_int) + (y_exp * condition_nint)
+    return out
+
+
 @REGISTER_COMPOSITE('unsqueeze2')
 def unsqueeze_composite(x, axis):
     """define composite rule of op unsqueeze"""
