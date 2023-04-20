@@ -309,6 +309,39 @@ void TensorRtSubgraphPass::CreateTensorRTOp(
   // record the origin output data type
   std::vector<int> origin_outputs_dtype;
   std::map<std::string, int> map_origin_outputs_dtype;
+
+  // Whether to mark Output
+  auto mark_output = Get<bool>("mark_output");
+  auto output_tensor_names =
+      Get<std::vector<std::string>>("output_tensor_names");
+  VLOG(1) << "mark Output: " << mark_output;
+
+  if (mark_output == 1) {
+    VLOG(1) << "begin to mark output ...";
+    for (auto node : subgraph) {
+      if (node->NodeType() == Node::Type::kOperation) {
+        if (node->Op()->Outputs().count("XShape")) continue;
+        for (auto *x : node->outputs) {
+          if (std::count(params.begin(), params.end(), x->Name()) > 0) continue;
+          if (output_tensor_names.empty() ||
+              std::count(output_tensor_names.begin(),
+                         output_tensor_names.end(),
+                         x->Name())) {
+            std::string output_name_withid =
+                x->Name() + std::to_string(x->id());
+            output_names.insert(x->Name());
+            output_names_with_id.insert(output_name_withid);
+            origin_name_output_rank[x->Name()] = x->Var()->GetShape().size();
+            trt_outputs.insert(x);
+            map_origin_outputs_dtype[x->Name()] =
+                static_cast<int>(x->Var()->GetDataType());
+          }
+        }
+      }
+    }
+  }
+  // Because the above code may exclude the output of the engine,
+  // the following code is executed by default
   for (auto *x : node->outputs) {
     output_names.insert(x->Name());
     output_names_with_id.insert(x->Name() + std::to_string(x->id()));
@@ -317,7 +350,6 @@ void TensorRtSubgraphPass::CreateTensorRTOp(
     map_origin_outputs_dtype[x->Name()] =
         static_cast<int>(x->Var()->GetDataType());
   }
-
   OutputProcess(
       graph, trt_outputs, phi::Backend::GPU, model_precision, mixed_black_list);
 

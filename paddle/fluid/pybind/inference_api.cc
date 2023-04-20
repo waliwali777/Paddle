@@ -837,6 +837,9 @@ void BindAnalysisConfig(py::module *m) {
            py::arg("precision_mode") = AnalysisConfig::Precision::kFloat32,
            py::arg("use_static") = false,
            py::arg("use_calib_mode") = true)
+      .def("mark_trt_engine_outputs",
+           &AnalysisConfig::MarkTrtEngineOutputs,
+           py::arg("output_tensor_names") = std::vector<std::string>({}))
       .def("enable_tensorrt_memory_optim",
            &AnalysisConfig::EnableTensorRTMemoryOptim,
            py::arg("engine_memory_sharing") = true,

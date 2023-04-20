@@ -582,12 +582,21 @@ struct PD_INFER_DECL AnalysisConfig {
                             Precision precision = Precision::kFloat32,
                             bool use_static = false,
                             bool use_calib_mode = true);
+
   ///
   /// \brief A boolean state telling whether the TensorRT engine is used.
   ///
   /// \return bool Whether the TensorRT engine is used.
   ///
   bool tensorrt_engine_enabled() const { return use_tensorrt_; }
+
+  ///
+  /// \brief Whether to get the intermediate output of TensorRT Engine.
+  ///
+  /// \param output_tensor_names The name of the Tensor that needs to be marked
+  ///
+  void MarkTrtEngineOutputs(
+      const std::vector<std::string>& output_tensor_names = {});
   ///
   /// \brief Turn on the TensorRT memory optimization.
   ///
@@ -1098,6 +1107,8 @@ struct PD_INFER_DECL AnalysisConfig {
   //  and aggregate these Ops into subgraphs for TRT execution.
   //  We set this variable to control the minimum number of nodes in the
   //  subgraph, 3 as default value.
+  bool trt_mark_output_{false};
+  std::vector<std::string> trt_output_tensor_names_{};
   int tensorrt_min_subgraph_size_{3};
   Precision tensorrt_precision_mode_{Precision::kFloat32};
   bool trt_use_static_engine_{false};
