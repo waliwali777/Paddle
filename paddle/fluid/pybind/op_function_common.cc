@@ -247,10 +247,17 @@ double CastPyArg2Double(PyObject* obj,
 phi::dtype::complex<float> CastPyArg2Complex(PyObject* obj,
                                              const std::string& op_type,
                                              ssize_t arg_pos) {
+  PyTypeObject* type = obj->ob_type;
+  auto type_name = std::string(type->tp_name);
   if (PyComplex_Check(obj)) {
     double real = PyComplex_RealAsDouble(obj);
     double imag = PyComplex_ImagAsDouble(obj);
     return phi::dtype::complex<float>(real, imag);
+  } else if (type_name == "numpy.complex64") {
+    // `PyComplex_Check` cannot recognize `numpy.complex64`.
+    // So, we use type_name to judge this data type.
+    Py_complex v = PyComplex_AsCComplex(obj);
+    return phi::dtype::complex<float>(v.real, v.imag);
   } else {
     PADDLE_THROW(platform::errors::InvalidArgument(
         "%s(): argument (position %d) must be "
