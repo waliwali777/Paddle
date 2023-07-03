@@ -85,6 +85,72 @@ phi::KernelKey GetCheckFiniteAndUnscaleExpectedKernelType(
   return phi::KernelKey(dtype, ctx.GetPlace());
 }
 
+phi::KernelKey GetElementwiseOpExpectedKernelType(
+    const framework::ExecutionContext& ctx,
+    const framework::OperatorWithKernel* op_ptr) {
+  auto input_data_type =
+      op_ptr->OperatorWithKernel::IndicateOrPromoteVarDataTypes(ctx, "X", "Y");
+  return phi::KernelKey(input_data_type, ctx.GetPlace());
+}
+
+phi::KernelKey GetElementwiseOpGradExpectedKernelType(
+    const framework::ExecutionContext& ctx,
+    const framework::OperatorWithKernel* op_ptr) {
+  auto input_data_type = op_ptr->OperatorWithKernel::IndicateVarDataType(
+      ctx, framework::GradVarName("Out"));
+  return phi::KernelKey(input_data_type, ctx.GetPlace());
+}
+
+phi::KernelKey GetElementwiseOpDoubleGradExpectedKernelType(
+    const framework::ExecutionContext& ctx,
+    const framework::OperatorWithKernel* op_ptr) {
+  auto DOut_name = framework::GradVarName("Out");
+  auto input_data_type =
+      op_ptr->OperatorWithKernel::IndicateVarDataType(ctx, DOut_name);
+  return phi::KernelKey(input_data_type, ctx.GetPlace());
+}
+
+phi::KernelKey GetElementwiseOpDoubleGradWithoutDXDYExpectedKernelType(
+    const framework::ExecutionContext& ctx,
+    const framework::OperatorWithKernel* op_ptr) {
+  framework::proto::VarType::Type input_data_type;
+  auto DDY_name = framework::GradVarName("grad_y");
+  auto DDX_name = framework::GradVarName("grad_x");
+
+  VLOG(7) << "DDX_name: " << DDX_name << " DDY_name: " << DDY_name;
+
+  if (ctx.HasInput(DDX_name) && ctx.HasInput(DDY_name)) {
+    VLOG(7) << "ctx.HasInput(DDX_name) && ctx.HasInput(DDY_name)";
+    input_data_type = op_ptr->OperatorWithKernel::IndicateOrPromoteVarDataTypes(
+        ctx, DDX_name, DDY_name);
+  } else if (ctx.HasInput(DDY_name)) {
+    VLOG(7) << "ctx.HasInput(DDY_name)";
+    input_data_type =
+        op_ptr->OperatorWithKernel::IndicateVarDataType(ctx, DDY_name);
+  } else if (ctx.HasInput(DDX_name)) {
+    VLOG(7) << "ctx.HasInput(DDX_name)";
+    input_data_type =
+        op_ptr->OperatorWithKernel::IndicateVarDataType(ctx, DDX_name);
+  } else {
+    VLOG(7) << "not ctx.HasInput(DDX_name) && not ctx.HasInput(DDY_name)";
+    input_data_type = op_ptr->OperatorWithKernel::IndicateOrPromoteVarDataTypes(
+        ctx, DDX_name, DDY_name);
+  }
+
+  VLOG(7) << "end of GetElementwiseOpDoubleGradWithoutDXDYExpectedKernelType";
+  return phi::KernelKey(input_data_type, ctx.GetPlace());
+}
+
+phi::KernelKey GetElementwiseOpTripleGradExpectedKernelType(
+    const framework::ExecutionContext& ctx,
+    const framework::OperatorWithKernel* op_ptr) {
+  framework::proto::VarType::Type input_data_type;
+  auto D_DDOut_name = framework::GradVarName("grad_grad_out");
+  input_data_type =
+      op_ptr->OperatorWithKernel::IndicateVarDataType(ctx, D_DDOut_name);
+  return phi::KernelKey(input_data_type, ctx.GetPlace());
+}
+
 phi::KernelKey GetReduceExpectedKernelType(
     const framework::ExecutionContext& ctx,
     const framework::OperatorWithKernel* op_ptr) {

@@ -491,7 +491,6 @@ if(WITH_MKLDNN)
       generated_op
       generated_static_op
       activation_op
-      elementwise_add_op
       concat_and_split
       naive_executor
       device_context
