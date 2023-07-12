@@ -166,9 +166,35 @@ class OpConverter {
         platform::errors::Unimplemented("no OpConverter for optype [%s]",
                                         op_desc.Type()));
 
-    it->SetEngine(engine);
-    engine->SetScope(scope);
-    it->SetBlockDesc(block);
+  it->SetEngine(engine);
+  engine->SetScope(scope);
+  it->SetBlockDesc(block);
+
+ std::cout << op_desc.Type() << " is to be converted" << std::endl;
+ for(auto it1 : op_desc.InputNames())
+ {
+  std::cout << it1 << std::endl;
+   for (auto it2 : op_desc.Input(it1))
+   {
+     auto input_name = it2;
+     std::cout << engine->GetITensor(input_name) << "engine->GetITensor(input_name)" << std::endl;
+      nvinfer1::Dims tmp_dims = engine->GetITensor(input_name)->getDimensions();
+      std::vector<int> tmp_vec;
+      for (int i = 0; i < tmp_dims.nbDims; i++)
+        tmp_vec.push_back(tmp_dims.d[i]);
+      PADDLE_ENFORCE_GE(
+          engine->GetITensor(input_name)->getDimensions().nbDims,
+          0,
+          platform::errors::InvalidArgument(
+              "Error occures in Paddle-TRT layer with output name: %s",
+              input_name.c_str()));
+
+      std::cout << input_name << "'s dimension :["
+              << string::join_strings(tmp_vec, ',') << "]" << "is int: " 
+              << (int)(engine->GetITensor(input_name)->getType() == nvinfer1::DataType::kINT32) <<  std::endl;
+   }
+ }
+
     (*it)(op, scope, test_mode);
 
     size_t output_num = op_desc.OutputNames().size();
@@ -308,9 +334,15 @@ class OpConverter {
       auto var_shape = var->GetShape();
       if (engine->with_dynamic_shape()) {
 #if IS_TRT_VERSION_GE(6000)
-        auto min_input_shape = engine->min_input_shape()[input];
-        auto max_input_shape = engine->max_input_shape()[input];
-        auto optim_input_shape = engine->optim_input_shape()[input];
+        if (!(engine->min_input_shape().count(input) &&
+              engine->max_input_shape().count(input) &&
+              engine->optim_input_shape().count(input))) {
+          PADDLE_THROW(platform::errors::InvalidArgument(
+              "Cannot get %s min/max/opt shape", input));
+        }
+        auto min_input_shape = engine->min_input_shape().at(input);
+        auto max_input_shape = engine->max_input_shape().at(input);
+        auto optim_input_shape = engine->optim_input_shape().at(input);
         size_t ranks = min_input_shape.size();
 
         std::vector<int64_t> input_shape;
@@ -732,6 +764,23 @@ class OpConverter {
       layer_name += output_tensor_names[i];
       if (i != num_out - 1) layer_name += ", ";
     }
+
+    for (size_t i = 0; i < num_out; i++) {
+      nvinfer1::Dims tmp_dims = layer->getOutput(i)->getDimensions();
+      std::vector<int> tmp_vec;
+      for (int i = 0; i < tmp_dims.nbDims; i++)
+        tmp_vec.push_back(tmp_dims.d[i]);
+      PADDLE_ENFORCE_GE(
+          layer->getOutput(i)->getDimensions().nbDims,
+          0,
+          platform::errors::InvalidArgument(
+              "Error occures in Paddle-TRT layer with output name: %s",
+              output_tensor_names[i].c_str()));
+
+      std::cout << output_tensor_names[i] << "'s dimension :["
+              << string::join_strings(tmp_vec, ',') << "]" << "is int: " << (int)(layer->getOutput(i)->getType() == nvinfer1::DataType::kINT32) <<  std::endl;
+    }
+
     layer->setName((layer_name + ")").c_str());
   }
   void SetEngine(TensorRTEngine* engine) { engine_ = engine; }
