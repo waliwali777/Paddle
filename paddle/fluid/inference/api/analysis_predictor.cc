@@ -705,8 +705,11 @@ bool AnalysisPredictor::PrepareExecutor() {
         inference::analysis::PassResultInfoForRuntime::Instance();
     auto reuse_table =
         pass_res_info->Get<std::unordered_map<std::string, std::string>>(
-            root_predictor_id_, "memory_optimize_pass");
-    executor_->MakeReusePlan(reuse_table);
+            root_predictor_id_, "memory_optimize_pass_node2cluster");
+    auto shape_table = 
+        pass_res_info->Get<std::unordered_map<std::string, std::vector<int>>>(
+            root_predictor_id_, "memory_optimize_pass_shape_table");
+    executor_->MakeReusePlan(reuse_table, shape_table);
   }
 
   PADDLE_ENFORCE_NOT_NULL(sub_scope_,
@@ -1379,6 +1382,7 @@ void AnalysisPredictor::PrepareArgument() {
   argument_->SetOptimInputShape(config_.optim_input_shape_);
   argument_->SetTensorRtTunedDynamicShape(
       config_.tuned_tensorrt_dynamic_shape());
+  argument_->SetTensorRtShapeRangeInfoPath(config_.shape_range_info_path_);
   argument_->SetUseTensorRT(false);
   if (config_.use_gpu() && config_.tensorrt_engine_enabled()) {
     LOG(INFO) << "TensorRT subgraph engine is enabled";
@@ -1393,7 +1397,6 @@ void AnalysisPredictor::PrepareArgument() {
     argument_->SetTensorRtUseCalibMode(config_.trt_use_calib_mode_);
     argument_->SetTensorRtUseCudaGraph(config_.trt_use_cuda_graph_);
     argument_->SetCloseTrtPluginFp16(config_.disable_trt_plugin_fp16_);
-    argument_->SetTensorRtShapeRangeInfoPath(config_.shape_range_info_path());
     argument_->SetTensorRtAllowBuildAtRuntime(
         config_.trt_allow_build_at_runtime());
     argument_->SetTensorRtUseInspector(config_.trt_use_inspector_);
@@ -2218,6 +2221,8 @@ void AnalysisPredictor::HookCollectShapeRangeInfo() {
     }
     auto tensor = new_var->Get<phi::DenseTensor>();
     if (!tensor.initialized()) return;
+
+
     framework::DDim dim = tensor.dims();
     std::vector<int32_t> shape(dim.size());
     for (size_t i = 0; i < shape.size(); ++i) shape[i] = dim[i];

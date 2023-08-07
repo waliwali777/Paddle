@@ -60,6 +60,7 @@ void NaiveExecutor::Run() {
 #ifdef PADDLE_WITH_NVTX
   platform::CudaNvtxRangePush("model", platform::NvtxRangeColor::Yellow);
 #endif
+
   for (auto &op : ops_) {
     VLOG(4) << std::this_thread::get_id() << " run "
             << op->DebugStringEx(scope_) << " on scope " << scope_;
@@ -68,6 +69,7 @@ void NaiveExecutor::Run() {
     platform::CudaNvtxRangePush(op->Type() + "|" + op->OutputVars(true).front(),
                                 platform::NvtxRangeColor::Green);
 #endif
+    
 
     for (auto &func : input_hookfuncs_) {
       func(op.get(), scope_);
@@ -83,7 +85,12 @@ void NaiveExecutor::Run() {
     if (reuse_cache_.count(op.get())) {
       for (auto &it : reuse_cache_[op.get()]) {
         if (it.first->memory_size() >
-            cluster_buffer_[it.second]->memory_size()) {
+            cluster_buffer_[it.second]->memory_size()) { 
+          
+          std::cout <<"\033[31mdense tensor is initialized?:\033[0m " << cluster_buffer_[it.second]->IsInitialized() << std::endl;
+          std::cout << "\033[31mdense tenser memory size:\033[0m " << cluster_buffer_[it.second]->memory_size() << std::endl;
+          std::cout << "\033[31mdense tenser dims:\033[0m " << cluster_buffer_[it.second]->dims().to_str() << std::endl;
+
           cluster_buffer_[it.second] = it.first;
           int updated_cluster_id = it.second;
 
@@ -197,7 +204,8 @@ void NaiveExecutor::RegisterInputHook(const HookFunc &hookfunc) {
 }
 
 void NaiveExecutor::MakeReusePlan(
-    const std::unordered_map<std::string, std::string> &reuse_table) {
+    const std::unordered_map<std::string, std::string> &reuse_table,
+    std::unordered_map<std::string, std::vector<int>> &shape_table) {
   std::unordered_map<std::string, std::unordered_set<std::string>> clusters;
   for (auto &it : reuse_table) {
     clusters[it.second].insert(it.first);
@@ -231,6 +239,25 @@ void NaiveExecutor::MakeReusePlan(
           }
         }
       }
+    }
+  }
+  // allocate space in advance for the variable.
+  auto& pool = phi::DeviceContextPool::Instance();
+  auto ctx = pool.Get(place_);
+  for(int i = 0; i < static_cast<int>(cluster_names.size()); i++) {
+    if(cluster_buffer_[i] == nullptr) continue;
+    
+    std::vector<int> shape = shape_table[cluster_names[i]];
+    int size = std::accumulate(
+          shape.begin(), shape.end(), 1, std::multiplies<int>());
+    ctx->Alloc(cluster_buffer_[i], FindTensor(cluster_names[i])->dtype(), size); 
+    cluster_buffer_[i]->Resize({{phi::make_ddim(shape_table[cluster_names[i]])}});
+  }
+
+  // update the shared_holder
+  for (auto &op_map : reuse_cache_) {
+    for (auto &it2 : op_map.second) {
+      it2.first->ShareBufferWith(*cluster_buffer_[it2.second], true);
     }
   }
 }

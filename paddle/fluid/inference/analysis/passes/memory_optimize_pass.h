@@ -44,6 +44,7 @@ namespace analysis {
 class MemoryOptimizePass : public AnalysisPass {
  public:
   using space_table_t = std::unordered_map<std::string, size_t>;
+  using shape_table_t = std::unordered_map<std::string, std::vector<int32_t>>;
   using lifecycle_t = std::pair<int, int>;
 
   virtual ~MemoryOptimizePass() = default;
@@ -53,12 +54,13 @@ class MemoryOptimizePass : public AnalysisPass {
 
  private:
   void CollectLifeCycle(
-      framework::ir::Graph *graph,
+      Argument *argument,
       std::unordered_map<std::string, lifecycle_t> *lifecycles,
       int sort_kind) const;
 
-  void CollectVarMemorySize(framework::ir::Graph *graph,
-                            space_table_t *space_table) const;
+  void CollectVarInfo(Argument *argument,
+                            space_table_t *space_table, 
+                            shape_table_t *shape_table) const;
 
  public:
   std::string repr() const override;

@@ -22,6 +22,7 @@
 #include "glog/logging.h"
 #include "paddle/fluid/framework/ir/graph_helper.h"
 #include "paddle/fluid/inference/analysis/pass_result_info.h"
+#include "paddle/fluid/inference/utils/io_utils.h"
 #include "paddle/fluid/platform/enforce.h"
 
 namespace paddle {
@@ -41,6 +42,7 @@ using framework::ir::Graph;
 using framework::ir::Node;
 using framework::ir::TopologyVarientSort;
 using space_table_t = MemoryOptimizePass::space_table_t;
+using shape_table_t = MemoryOptimizePass::shape_table_t;
 
 typedef struct {
   std::string name;
@@ -55,9 +57,10 @@ typedef struct {
 // The traversal order also affect the lifecycles, so different sort_kind is
 // used.
 void MemoryOptimizePass::CollectLifeCycle(
-    Graph* graph,
+    Argument* argument,
     std::unordered_map<std::string, lifecycle_t>* lifecycles,
     int sort_kind) const {
+  framework::ir::Graph* graph = argument->main_graph_ptr();
   int max_lifecycle = 0;
   double persis_byte = 0;
   for (auto* op_node : framework::ir::TopologyVarientSort(
@@ -119,9 +122,31 @@ void MemoryOptimizePass::CollectLifeCycle(
             << (persis_byte / (1 << 20)) << "MB";
 }
 
-void MemoryOptimizePass::CollectVarMemorySize(
-    Graph* graph, space_table_t* space_table) const {
+void MemoryOptimizePass::CollectVarInfo(Argument* argument,
+                                        space_table_t* space_table,
+                                        shape_table_t* shape_table) const {
+  framework::ir::Graph* graph = argument->main_graph_ptr();
   const int fake_batch_size = 1;
+  std::map<std::string, std::vector<int32_t>> min_shape;
+  std::map<std::string, std::vector<int32_t>> max_shape;
+  std::map<std::string, std::vector<int32_t>> opt_shape;
+  std::map<std::string, std::vector<int32_t>> min_value;
+  std::map<std::string, std::vector<int32_t>> max_value;
+  std::map<std::string, std::vector<int32_t>> opt_value;
+
+  if (argument->use_gpu() && argument->use_tensorrt() &&
+      argument
+          ->tensorrt_tuned_dynamic_shape()) {  // turn on tensorrt dynamic shape
+    // get shape information and dtype information from the specified file.
+    paddle::inference::DeserializeShapeRangeInfo(
+        argument->tensorrt_shape_range_info_path(),
+        &min_shape,
+        &max_shape,
+        &opt_shape,
+        &min_value,
+        &max_value,
+        &opt_value);
+  }
 
   auto valid_var = [&](framework::ir::Node* node) -> bool {
     // lod operator reuse may cause unknown errors.
@@ -178,10 +203,30 @@ void MemoryOptimizePass::CollectVarMemorySize(
         !black_list.count(node->Var()->Name())) {
       // Parameters will not be reused.
       if (node->Var()->Persistable()) continue;
-      auto shape = node->Var()->GetShape();
-      for (auto& v : shape) {
-        if (v < 0) v = fake_batch_size;
+
+      std::vector<int32_t> shape;
+      if (argument->use_gpu() && argument->use_tensorrt() &&
+          argument->tensorrt_tuned_dynamic_shape() &&
+          max_shape.count(
+              node->Var()->Name())) {  // turn on tensorrt dynamic shape
+        shape = max_shape[node->Var()->Name()];
+      } else {  // turn off tensorrt dynamic shape
+        // int64 -> int32
+        std::vector<int64_t> shape_int64 = node->Var()->GetShape();
+        std::transform(shape_int64.begin(),
+                       shape_int64.end(),
+                       back_inserter(shape),
+                       [](int64_t i) { return static_cast<int32_t>(i); });
+
+        for (auto& v : shape) {
+          if (v < 0) {
+            v = fake_batch_size;  // If TRT dynamic shape is not enabled,
+                                  // then set the dimensions with a value of -1
+                                  // in the varaible to 1
+          }
+        }
       }
+      (*shape_table)[node->Var()->Name()] = shape;
 
       int size = std::accumulate(
           shape.begin(), shape.end(), 1, std::multiplies<int>());
@@ -254,32 +299,37 @@ void MemoryOptimizePass::RunImpl(Argument* argument) {
   // Memory optimization.
   // We will perform the following operation:
   // 1. Collect all var's lifetime.
-  // 2. Make reuse plan: the vars can be reused if there is no overlap(on
+  // 2. Collect all var's memory size, shape and dtype.
+  // 3. Make reuse plan: the vars can be reused if there is no overlap(on
   // lifetime) between
   // them.
   // The final plan is a mapping table in which the key represents the original
   // name of var and the value in the table represents the current name of var.
-  // 3. Perform reuse plan: Replace all var's name in the model according to the
+  // 4. Perform reuse plan: Replace all var's name in the model according to the
   // mapping table.
   if (!argument->enable_memory_optim()) return;
   // Because of pass is a singleton, graph can not be member
   // variables, otherwise, errors will be caused under multithreading
   // conditions.
-  auto graph = argument->main_graph_ptr();
 
   int sort_kind = 0;
   std::unordered_map<std::string, lifecycle_t> lifecycles;
   space_table_t space_table;
+  shape_table_t shape_table;
   std::unordered_map<std::string, std::string> node2cluster;
   std::unordered_map<std::string, int> cluster_size;
 
-  CollectLifeCycle(graph, &lifecycles, sort_kind);
-  CollectVarMemorySize(graph, &space_table);
+  CollectLifeCycle(argument, &lifecycles, sort_kind);
+  CollectVarInfo(argument, &space_table, &shape_table);
   MakeSimpleReusePlan(lifecycles, space_table, &node2cluster, &cluster_size);
 
   auto* pass_res_info = PassResultInfoForRuntime::Instance();
-  pass_res_info->Set(
-      argument->root_predictor_id(), "memory_optimize_pass", node2cluster);
+  pass_res_info->Set(argument->root_predictor_id(),
+                     "memory_optimize_pass_node2cluster",
+                     node2cluster);
+  pass_res_info->Set(argument->root_predictor_id(),
+                     "memory_optimize_pass_shape_table",
+                     shape_table);
 
   return;
 }
