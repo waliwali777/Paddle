@@ -13,24 +13,17 @@
 // limitations under the License.
 
 #pragma once
-
-#include <vector>
-
-#include "paddle/ir/core/value.h"
+#include "paddle/primitive/backend/eager_backend.h"
+#include "paddle/primitive/backend/static_backend.h"
 
 namespace paddle {
-namespace dialect {
-
-ir::OpResult mean(ir::OpResult x,
-                  std::vector<int64_t> axis = {},
-                  bool keepdim = false);
-
-ir::OpResult tanh_grad(ir::OpResult out, ir::OpResult grad_out);
-
-ir::OpResult mean_grad(ir::OpResult x,
-                       ir::OpResult out_grad,
-                       std::vector<int64_t> axis = {},
-                       bool keepdim = false,
-                       bool reduce_all = false);
-}  // namespace dialect
+namespace primitive {
+namespace experimental {
+// why exist this file?
+// We provide this file to divide
+// the primitive ops set in the backend.
+// It will be called by the vjp composite
+// rules and composite ops rules.
+}  // namespace experimental
+}  // namespace primitive
 }  // namespace paddle

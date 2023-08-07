@@ -12,25 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
-
-#include <vector>
-
-#include "paddle/ir/core/value.h"
+#include "paddle/primitive/backend/eager_backend.h"
+#include "paddle/fluid/eager/api/all.h"
+#include "paddle/fluid/eager/api/generated/eager_generated/forwards/dygraph_functions.h"
+#include "paddle/primitive/primitive/primitive.h"
 
 namespace paddle {
-namespace dialect {
-
-ir::OpResult mean(ir::OpResult x,
-                  std::vector<int64_t> axis = {},
-                  bool keepdim = false);
-
-ir::OpResult tanh_grad(ir::OpResult out, ir::OpResult grad_out);
-
-ir::OpResult mean_grad(ir::OpResult x,
-                       ir::OpResult out_grad,
-                       std::vector<int64_t> axis = {},
-                       bool keepdim = false,
-                       bool reduce_all = false);
-}  // namespace dialect
+namespace primitive {
+namespace backend {
+namespace experimental {}  // namespace experimental
+}  // namespace backend
+}  // namespace primitive
 }  // namespace paddle
