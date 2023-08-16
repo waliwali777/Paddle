@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "paddle/fluid/framework/new_executor/interpreter/static_build.h"
+#include "paddle/fluid/framework/new_executor/interpreter_base_impl.h"
 
 #include "paddle/fluid/eager/api/utils/global_utils.h"
 #include "paddle/fluid/framework/reader.h"
@@ -51,7 +52,8 @@ namespace paddle {
 namespace framework {
 namespace interpreter {
 
-bool BlockCanBeStaticBuilt(const framework::BlockDesc& block) {
+bool BlockCanBeStaticBuilt(const framework::BlockDesc& block,
+                           std::string debug_str) {
   // in_black_list = (kernelCode >> 7) & 1
   // is_operator_base = (kernelCode >> 6) & 1
   // is_custom_op = (kernelCode >> 5) & 1
@@ -109,6 +111,7 @@ bool BlockCanBeStaticBuilt(const framework::BlockDesc& block) {
          << ", has_structed_kerenl = " << (item.second >> 2 & 1)
          << ", need_move_to_phi = " << (item.second >> 1 & 1) << "]\n";
     }
+    debug_str = ss.str();
     VLOG(1) << ss.str();
   }
 
@@ -347,8 +350,11 @@ void FakeInitializeOutputsForOperatorBase(const OperatorBase& op,
       }
     }
   } else {
-    PADDLE_THROW(
-        phi::errors::Unimplemented("Can not static build for op: %s", op_type));
+    if (FLAGS_new_executor_static_build_debug)
+      VLOG(1) << "executor_debug:: Can not static build for op: %s" << op_type;
+    else
+      PADDLE_THROW(phi::errors::Unimplemented("Can not static build for op: %s",
+                                              op_type));
   }
 }
 
