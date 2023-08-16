@@ -1768,8 +1768,8 @@ class OpTest(unittest.TestCase):
         inplace_atol=None,
         check_cinn=False,
     ):
-        core._set_prim_all_enabled(False)
-        core.set_prim_eager_enabled(False)
+        paddle.framework.core._set_prim_all_enabled(False)
+        paddle.framework.core.set_prim_eager_enabled(False)
 
         if hasattr(self, "use_custom_device") and self.use_custom_device:
             check_dygraph = False
@@ -2528,8 +2528,8 @@ class OpTest(unittest.TestCase):
         if hasattr(self, "use_custom_device") and self.use_custom_device:
             check_dygraph = False
 
-        core._set_prim_all_enabled(False)
-        core.set_prim_eager_enabled(False)
+        paddle.framework.core._set_prim_all_enabled(False)
+        paddle.framework.core.set_prim_eager_enabled(False)
         if check_prim:
             self._check_grad_helper()
             prim_grad_checker = PrimGradChecker(

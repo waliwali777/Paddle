@@ -976,11 +976,11 @@ def apply_to_static(net, use_cinn):
 class TestCompositeGroupNorm(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        core._set_prim_all_enabled(True)
+        paddle.framework.core._set_prim_all_enabled(True)
 
     @classmethod
     def tearDownClass(cls):
-        core._set_prim_all_enabled(False)
+        paddle.framework.core._set_prim_all_enabled(False)
 
     def setUp(self):
         np.random.seed(1234)
@@ -1028,7 +1028,7 @@ class TestCompositeGroupNorm(unittest.TestCase):
             paddle.set_device("cpu")
         if isinstance(place, fluid.CUDAPlace):
             paddle.set_device("gpu")
-        core.set_prim_eager_enabled(False)
+        paddle.framework.core.set_prim_eager_enabled(False)
         paddle.disable_static()
         input_ = paddle.to_tensor(
             data=self.x, dtype=self.dtype, place=place, stop_gradient=False
@@ -1059,7 +1059,7 @@ class TestCompositeGroupNorm(unittest.TestCase):
         return output, grad[0]
 
     def get_static_desire(self, place):
-        core._set_prim_all_enabled(False)
+        paddle.framework.core._set_prim_all_enabled(False)
         paddle.enable_static()
         if isinstance(place, fluid.CPUPlace):
             paddle.set_device("cpu")
@@ -1118,7 +1118,7 @@ class TestCompositeGroupNorm(unittest.TestCase):
             # Ensure that group_norm in original block
             assert 'group_norm' in fwd_ops
 
-            if core._is_fwd_prim_enabled():
+            if paddle.framework.core._is_fwd_prim_enabled():
                 paddle.incubate.autograd.primapi.to_prim(mp.blocks)
                 fwd_ops_new = [op.type for op in blocks[0].ops]
                 # Ensure that group_norm is splitted into small ops
@@ -1138,7 +1138,7 @@ class TestCompositeGroupNorm(unittest.TestCase):
             fetch_list=vars_list + [grads],
         )
         paddle.disable_static()
-        core._set_prim_all_enabled(True)
+        paddle.framework.core._set_prim_all_enabled(True)
         if self.dtype == "bfloat16":
             out_list[0] = convert_uint16_to_float(out_list[0])
             i = 3
@@ -1210,7 +1210,7 @@ class TestCompositeGroupNorm(unittest.TestCase):
                     # Ensure that group_norm in original block
                     assert 'group_norm' in fwd_ops
 
-                    if core._is_fwd_prim_enabled():
+                    if paddle.framework.core._is_fwd_prim_enabled():
                         paddle.incubate.autograd.primapi.to_prim(mp.blocks)
                         fwd_ops_new = [op.type for op in blocks[0].ops]
                         # Ensure that group_norm is splitted into small ops
