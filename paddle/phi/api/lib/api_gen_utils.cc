@@ -303,7 +303,7 @@ phi::TensorBase* SetStringsKernelOutput(Tensor* out, TensorType type) {
 
 phi::DenseTensor* ProcessStrideBackup(phi::DenseTensor** tensor) {
   if (!FLAGS_use_stride_kernel || *tensor == nullptr ||
-      !(*tensor)->IsInitialized() || (*tensor)->meta().is_contiguous()) {
+      !(*tensor)->initialized() || (*tensor)->meta().is_contiguous()) {
     return nullptr;
   } else {
     phi::DenseTensor* backup = *tensor;
@@ -317,7 +317,7 @@ std::vector<phi::DenseTensor*> ProcessStrideBackup(
   std::vector<phi::DenseTensor*> backup;
   backup.reserve(tensor->size());
   for (auto& t : *tensor) {
-    if (!FLAGS_use_stride_kernel || t == nullptr || !t->IsInitialized() ||
+    if (!FLAGS_use_stride_kernel || t == nullptr || !t->initialized() ||
         t->meta().is_contiguous()) {
       backup.emplace_back(nullptr);
     } else {

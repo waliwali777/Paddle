@@ -93,7 +93,7 @@ phi::KernelKey GetConcatExpectedKernelType(
   auto input_data_type = framework::proto::VarType::Type(0);
   bool flag = false;
   for (auto* input : inputs) {
-    if (input->IsInitialized()) {
+    if (input->initialized()) {
       input_data_type = framework::TransToProtoVarType(input->dtype());
       flag = true;
       break;

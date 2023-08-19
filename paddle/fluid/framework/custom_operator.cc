@@ -84,7 +84,7 @@ static void RunKernelFunc(
                   "The %d-th tensor in input vector<tensor> (%s) is nullptr.",
                   i,
                   in_name));
-          PADDLE_ENFORCE_EQ(x->IsInitialized(),
+          PADDLE_ENFORCE_EQ(x->initialized(),
                             true,
                             platform::errors::InvalidArgument(
                                 "The %d-th tensor in input vector<tensor> (%s) "
@@ -118,7 +118,7 @@ static void RunKernelFunc(
                                 platform::errors::NotFound(
                                     "Input tensor (%s) is nullptr.", in_name));
         PADDLE_ENFORCE_EQ(
-            x->IsInitialized(),
+            x->initialized(),
             true,
             platform::errors::InvalidArgument(
                 "Input tensor (%s) is not initialized.", in_name));
