@@ -168,6 +168,10 @@ struct SimpleOpTypeSetTeller : public Teller {
       if (x_shape.empty() && unary_list.find(op_type) != unary_list.end()) {
         VLOG(3) << op_type
                 << " op does not support 0 dim input when TensorRT < 8.6.";
+        std::cout << "trt version = "
+                  << (NV_TENSORRT_MAJOR * 1000 + NV_TENSORRT_MINOR * 100 +
+                      NV_TENSORRT_PATCH * 10 + NV_TENSORRT_BUILD)
+                  << std::endl;
         return false;
       }
 #endif
@@ -1286,6 +1290,30 @@ struct SimpleOpTypeSetTeller : public Teller {
       }
     }
 
+    if (op_type == "linspace") {
+      auto* block = desc.Block();
+      if (block == nullptr) {
+        VLOG(3) << "The block desc is nullptr, we can't continue to analyze. "
+                   "Developers need to check whether block_desc is passed in "
+                   "the pass.";
+        return false;
+      }
+#if !IS_TRT_VERSION_GE(7000)
+      VLOG(3) << "linspace converter does not support trt versions below 7.0";
+      return false;
+#endif
+    }
+
+    if (op_type == "share_data") {
+      auto* block = desc.Block();
+      if (block == nullptr) {
+        VLOG(3) << "The block desc is nullptr, we can't continue to analyze. "
+                   "Developers need to check whether block_desc is passed in "
+                   "the pass.";
+        return false;
+      }
+    }
+
     if (op_type == "fill_any_like") {
       if (!with_dynamic_shape) {
         VLOG(3) << "the fill_any_like does not support static shape yet";
@@ -1664,7 +1692,9 @@ struct SimpleOpTypeSetTeller : public Teller {
       }
       if (fill_constant_inputs.find("ShapeTensorList") !=
           fill_constant_inputs.end()) {
-        if (!desc.Input("ShapeTensorList").empty()) return false;
+        if (!desc.Input("ShapeTensorList").empty()) {
+          VLOG(3) << "The fill_constant has ShapeTensorList input.";
+        }
       }
       int dtype = desc.HasAttr("dtype")
                       ? PADDLE_GET_CONST(int, desc.GetAttr("dtype"))
@@ -2197,11 +2227,6 @@ struct SimpleOpTypeSetTeller : public Teller {
         for (auto x : dim) {
           if (x == 0 || (x + input_shape.size() == 0)) return false;
         }
-
-      } else {
-        if (PADDLE_GET_CONST(bool, desc.GetAttr("reduce_all")) &&
-            !PADDLE_GET_CONST(bool, desc.GetAttr("keep_dim")))
-          return false;
       }
 
       auto dtype = x_var_desc->GetDataType();
@@ -2904,6 +2929,8 @@ struct SimpleOpTypeSetTeller : public Teller {
       "grid_sampler",
       "cumsum",
       "unbind",
+      "linspace",
+      "share_data",
       "assign",
       "flip"};
 
@@ -3069,6 +3096,8 @@ struct SimpleOpTypeSetTeller : public Teller {
       "grid_sampler",
       "cumsum",
       "unbind",
+      "linspace",
+      "share_data",
       "assign",
       "flip"};
 };
