@@ -26,6 +26,7 @@ void CalcMedianGradKernel(const Context& dev_ctx,
                           const DenseTensor& x,
                           const DenseTensor& median_index,
                           const DenseTensor& out_grad,
+                          const std::string& mode,
                           DenseTensor* x_grad) {
   T* dx_data = dev_ctx.template Alloc<T>(x_grad);
   if (!dx_data) return;
@@ -38,6 +39,7 @@ void CalcMedianGradKernel(const Context& dev_ctx,
   int64_t numel = x.numel();
   auto x_dim = x.dims();
   int64_t rank = x_dim.size();
+  // [pre_dim, stride]
   int64_t stride = x_dim[rank - 1];
   int64_t pre_dim = numel / stride;
 
@@ -45,14 +47,19 @@ void CalcMedianGradKernel(const Context& dev_ctx,
   int64_t offset = 0;
   for (i = 0; i < pre_dim; i++) {
     if (m_data[2 * i] >= 0) {
-      if (m_data[2 * i] == m_data[2 * i + 1]) {
+      if (mode == "avg") {
+        if (m_data[2 * i] == m_data[2 * i + 1]) {
+          dx_data[offset + m_data[2 * i]] = dout_data[i];
+        } else {
+          dx_data[offset + m_data[2 * i]] = dout_data[i] / static_cast<T>(2.0);
+          dx_data[offset + m_data[2 * i + 1]] =
+              dout_data[i] / static_cast<T>(2.0);
+        }
+      } else {  // min
         dx_data[offset + m_data[2 * i]] = dout_data[i];
-      } else {
-        dx_data[offset + m_data[2 * i]] = dout_data[i] / static_cast<T>(2.0);
-        dx_data[offset + m_data[2 * i + 1]] =
-            dout_data[i] / static_cast<T>(2.0);
       }
     }
+
     offset += stride;
   }
 }
@@ -64,6 +71,7 @@ void NanmedianGradKernel(const Context& dev_ctx,
                          const DenseTensor& out_grad,
                          const IntArray& axes,
                          bool keepdim UNUSED,
+                         const std::string& mode,
                          DenseTensor* x_grad) {
   DenseTensor tmp_x;
   auto rank = x.dims().size();
@@ -71,14 +79,14 @@ void NanmedianGradKernel(const Context& dev_ctx,
     tmp_x = x;
     tmp_x.Resize({x.numel()});
     CalcMedianGradKernel<T, Context>(
-        dev_ctx, tmp_x, median_index, out_grad, x_grad);
+        dev_ctx, tmp_x, median_index, out_grad, mode, x_grad);
   } else {
     funcs::PreprocessMedianKernel<T, Context>(dev_ctx, x, axes, &tmp_x);
 
     DenseTensor tmp_x_grad;
     tmp_x_grad.Resize(x_grad->dims());
     CalcMedianGradKernel<T, Context>(
-        dev_ctx, tmp_x, median_index, out_grad, &tmp_x_grad);
+        dev_ctx, tmp_x, median_index, out_grad, mode, &tmp_x_grad);
 
     dev_ctx.template Alloc<T>(x_grad);
     funcs::PostprocessMedianGradKernel<T, Context>(
