@@ -109,6 +109,7 @@ list(
   einsum_op.cc
   unbind_op.cc
   assign_op.cc
+  share_data_op.cc
   flip_op.cc)
 
 if(${TENSORRT_MAJOR_VERSION} GREATER_EQUAL 7)
