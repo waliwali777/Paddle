@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
+
 import paddle
 from paddle.distributed.auto_parallel.static.dist_attribute import (
     OperatorDistAttr,
@@ -557,10 +559,10 @@ class AMPState:
                         # NOTE: if in_var of consume grad_op has been casted before,
                         # it should be renamed and reset dist_attr.
                         cast_name = self._var_name_dict[fwd_op_id][in_var_name]
-                        op.desc._rename_input(in_var_name, cast_name)
-                        in_var_dist_attr = consume_op_attr.get_input_dist_attr(
-                            in_var_name
+                        in_var_dist_attr = copy.deepcopy(
+                            consume_op_attr.get_input_dist_attr(in_var_name)
                         )
+                        op.desc._rename_input(in_var_name, cast_name)
                         consume_op_attr.set_input_dist_attr(
                             cast_name, in_var_dist_attr
                         )
@@ -611,14 +613,14 @@ class AMPState:
                         cast_name = fwd_cast_name + "@GRAD" + suffix
                         cast_var = block.vars.get(cast_name)
                         if cast_var is None or cast_var.dtype != dst_dtype:
-                            op.desc._rename_output(out_var_name, cast_name)
-                            out_var_dist_attr = (
+                            out_var_dist_attr = copy.deepcopy(
                                 consume_op_attr.get_output_dist_attr(
                                     out_var_name
                                 )
                             )
                             ref_mesh = out_var_dist_attr.process_mesh
                             ref_mapping = out_var_dist_attr.dims_mapping
+                            op.desc._rename_output(out_var_name, cast_name)
                             consume_op_attr.set_output_dist_attr(
                                 cast_name, out_var_dist_attr
                             )
@@ -913,7 +915,7 @@ class AMPPass(PassBase):
                 world_process_group.ranks,
             )
 
-    def _cast_loss(self):
+    def _cast_loss(self, target_dtype):
         main_block = paddle.static.default_main_program().global_block()
         main_block._sync_with_cpp()
 
@@ -990,7 +992,7 @@ class AMPPass(PassBase):
                 outputs={'Out': [pre_grad_name]},
                 attrs={
                     "in_dtype": core.VarDesc.VarType.FP32,
-                    "out_dtype": _str_to_dtype(self.amp_dtype),
+                    "out_dtype": _str_to_dtype(target_dtype),
                     "op_role": OpRole.Backward,
                 },
             )
@@ -1002,6 +1004,7 @@ class AMPPass(PassBase):
             )
             loss_op = cast_op
             loss = cast_loss
+            self.set_attr("loss", loss)
         self._loss = loss
         main_block._sync_with_cpp()
 
