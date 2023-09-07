@@ -29,6 +29,13 @@ limitations under the License. */
 #include "paddle/fluid/platform/collective_helper.h"
 #endif
 
+#if defined(PADDLE_WITH_NCCL) || defined(PADDLE_WITH_RCCL)
+#include "paddle/phi/core/distributed/nccl_comm_context.h"
+#endif
+
+#include "paddle/phi/core/distributed/auto_parallel/reshard_utils.h"
+#include "paddle/phi/core/distributed/comm_context_manager.h"
+
 namespace paddle {
 namespace framework {
 class Scope;
@@ -105,8 +112,17 @@ class CCommInitOp : public framework::OperatorBase {
         device_id = Attr<int>("device_id");
       }
       int rank_id = Attr<int>("rank");
-      CommContext::Instance().CreateComm(
-          comm_id, nranks, rank_id, device_id, rid);
+      const char* dynamic_static_unified_comm =
+          getenv("FLAGS_dynamic_static_unified_comm");
+      if (dynamic_static_unified_comm &&
+          std::string(dynamic_static_unified_comm) == "1") {
+        auto store = phi::distributed::CreateOrGetGlobalTCPStore();
+        phi::distributed::CommContextManager::CreateNCCLCommContext(
+            store, std::to_string(rid), rank_id, nranks);
+      } else {
+        CommContext::Instance().CreateComm(
+            comm_id, nranks, rank_id, device_id, rid);
+      }
 #endif
     }
   }
