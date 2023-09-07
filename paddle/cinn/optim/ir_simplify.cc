@@ -134,7 +134,7 @@ struct SimplifyLoadMutator : public ir::IRMutator<ir::Expr*> {
   void Visit(const For* op, Expr* expr) override {
     auto* min_i = op->min.As<IntImm>();
     auto* extent_i = op->extent.As<IntImm>();
-    if (min_i && extent_i && extent_i->value > min_i->value) {
+    if (min_i && extent_i) {
       var_intervals_.emplace(
           op->loop_var->name,
           common::CasInterval{min_i->value, extent_i->value - 1});
@@ -164,6 +164,56 @@ struct SimplifyStoreMutator : public ir::IRMutator<ir::Expr*> {
         PartialSimplify(&idx, var_intervals_);
       } else {
         SimplifyNoPureMathMutator mutator(var_intervals_);
+        mutator(&idx);
+      }
+    }
+  }
+
+  void Visit(const For* op, Expr* expr) override {
+    auto* min_i = op->min.As<IntImm>();
+    auto* extent_i = op->extent.As<IntImm>();
+    if (min_i && extent_i) {
+      var_intervals_.emplace(
+          op->loop_var->name,
+          common::CasInterval{min_i->value, extent_i->value - 1});
+    }
+
+    auto* node = expr->As<For>();
+
+    operator()(&node->body);
+    operator()(&node->extent);
+
+    if (min_i && extent_i) {
+      var_intervals_.erase(op->loop_var->name);
+    }
+  }
+
+  common::cas_intervals_t var_intervals_;
+};
+
+struct SimplifyLoadStoreMutator : public ir::IRMutator<ir::Expr*> {
+  void operator()(Expr* x) { ir::IRMutator<ir::Expr*>::Visit(x, x); }
+
+  void Visit(const Load* expr, Expr* op) override {
+    auto* node = op->As<Load>();
+    for (auto& idx : node->indices) {
+      if (common::IsPureMath(idx)) {
+        PartialSimplify(&idx, var_intervals_);
+      } else {
+        SimplifyButStoreLoadMutator mutator(var_intervals_);
+        mutator(&idx);
+      }
+    }
+  }
+
+  void Visit(const Store* expr, Expr* op) override {
+    auto* node = op->As<Store>();
+
+    for (auto& idx : node->indices) {
+      if (common::IsPureMath(idx)) {
+        PartialSimplify(&idx, var_intervals_);
+      } else {
+        SimplifyButStoreLoadMutator mutator(var_intervals_);
         mutator(&idx);
       }
     }
@@ -361,6 +411,22 @@ void Simplify(Expr* expr) {
   mutator(expr);
 
   ReplaceFracWithDivMutator()(expr);
+}
+
+void SimplifyFunction(Expr* expr) {
+  VLOG(3) << "Begin Function Simplify " << *expr;
+  optim::CastSimplify(expr);
+  SimplifyRampMutator()(expr);
+  SimplifyLoadStoreMutator()(expr);
+  SimplifyIfThenElseMutator()(expr);
+
+  common::cas_intervals_t var_intervals;
+  SimplifyButStoreLoadMutator mutator(var_intervals);
+  mutator(expr);
+
+  ReplaceFracWithDivMutator()(expr);
+  SimplifyForLoopsMutator()(expr);
+  SimplifyBlocksMutator()(expr);
 }
 
 void SimplifyForLoops(Expr* expr) { SimplifyForLoopsMutator()(expr); }
