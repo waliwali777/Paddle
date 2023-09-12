@@ -771,12 +771,14 @@ class ASTStaticFunction(StaticFunction):
 
     def _perform_call(self, *args, **kwargs):
         # 1. trace ops from dygraph layers and cache the generated program.
+        import sot
         args, kwargs = self._function_spec.unified_args_and_kwargs(args, kwargs)
 
         try:
-            concrete_program, partial_program_layer = self.get_concrete_program(
-                *args, **kwargs, is_train=self._is_train_mode()
-            )
+            with sot.utils.EventGuard("ASTStaticFunction: get_concrete_program"):
+                concrete_program, partial_program_layer = self.get_concrete_program(
+                    *args, **kwargs, is_train=self._is_train_mode()
+                )
             # 2. synchronize self.training attribute.
             if isinstance(self._class_instance, layers.Layer):
                 partial_program_layer.training = self._class_instance.training
@@ -790,7 +792,8 @@ class ASTStaticFunction(StaticFunction):
 
             # 3. return outputs.
             try:
-                return partial_program_layer(args)
+                with sot.utils.EventGuard("ASTStaticFunction: call partial_program_layer"):
+                    return partial_program_layer(args)
             except Exception as e:
                 if not hasattr(e, error.ERROR_DATA):
                     # runtime error

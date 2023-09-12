@@ -224,30 +224,32 @@ class PartialProgramLayer:
         """
         Execute static graph by Interpreter and Return dynamic Tensors.
         """
+        import sot
         with UniqueNameGuard(self._name_generator):
-            in_vars, out_vars, in_var_names = self._prepare(inputs)
-            self._cast_fp16_if_pure_fp16(in_vars)
-            attrs = self._prepare_attributes()
-            attrs.extend(["x_names", in_var_names])
+            with sot.utils.EventGuard("partial program __call__: pre process"):
+                in_vars, out_vars, in_var_names = self._prepare(inputs)
+                self._cast_fp16_if_pure_fp16(in_vars)
+                attrs = self._prepare_attributes()
+                attrs.extend(["x_names", in_var_names])
 
-            self._sync_lr_value_with_scheduler()
+                self._sync_lr_value_with_scheduler()
 
-            with tensor_name_guard(in_vars, in_var_names):
-                _legacy_C_ops.run_program(
-                    self._valid_vars(in_vars),
-                    self._valid_vars(self._params),
-                    self._valid_vars(out_vars),
-                    self._create_scope_vec(
-                        program_id=self.program_id, use_scope_cache=True
-                    ),
-                    self._double_grads,
-                    self._cuda_graph_vec,
-                    *attrs
-                )
-
-            self._update_stop_gradient(out_vars)
-            restored_nest_out = self._restore_out(out_vars)
-            return self._remove_no_value(restored_nest_out)
+            with sot.utils.EventGuard("partial program __call__: call run_program"): 
+                with tensor_name_guard(in_vars, in_var_names):
+                    _legacy_C_ops.run_program(
+                        self._valid_vars(in_vars),
+                        self._valid_vars(self._params),
+                        self._valid_vars(out_vars),
+                        self._create_scope_vec(
+                            program_id=self.program_id, use_scope_cache=True
+                        ),
+                        self._double_grads,
+                        self._cuda_graph_vec,
+                        *attrs
+                    )
+            with sot.utils.EventGuard("partial program __call__: after process"):
+                self._update_stop_gradient(out_vars)
+                return self._restore_out(out_vars)
 
     def _sync_lr_value_with_scheduler(self):
         """Update lr_var value with calculated by lr_scheduler."""
@@ -922,7 +924,8 @@ class PartialProgramLayer:
                 if value.stop_gradient and not value.place._equals(
                     expected_place
                 ):
-                    var = value._copy_to(expected_place, False)
+                    # var = value._copy_to(expected_place, False)
+                    var = value
                     var.stop_gradient = True
                 else:
                     var = value

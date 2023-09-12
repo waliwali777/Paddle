@@ -228,6 +228,7 @@ class InterpreterCoreInfoCache {
     // NOTE(Aurelius84): DO NOT perform finalize in destructor
     // to avoid problems caused by destructor order of static
     // object.
+    VLOG(1) << "[Cache Finalize]: size_=" << info_map_.size();
     info_map_.clear();
   }
 
