@@ -13,22 +13,33 @@
 # limitations under the License
 
 import abc
+import logging
 
 from paddle.distributed.fleet.meta_optimizers.common import OP_ROLE_KEY, OpRole
 
 from ..dist_attribute import OperatorDistAttr
 from ..process_group import new_process_group
-from ..utils import _get_comm_group, _get_corresponding_rank, is_optimize_op
+from ..utils import (
+    _get_comm_group,
+    _get_corresponding_rank,
+    compute_compatible_dims_mapping,
+    get_logger,
+    is_optimize_op,
+)
+
+distop_logger = get_logger(logging.INFO, "DistOpst")
 
 _g_distributed_operator_impl_containers = {}
 
 _g_elementwise_ops = [
     "elementwise",
     "gelu",
-    "dropout",
+    # "dropout",
+    "scale",
+    "relu",
     "cast",
-    "gather",
-    "concat",
+    # "gather",
+    # "concat",
     "fused_softmax_mask_upper_triangle",
 ]
 BACKWARD_ONLY_DIST_OPS = {'check_finite_and_unscale', 'update_loss_scaling'}
@@ -62,7 +73,7 @@ def is_elementwise_op(op_type):
     return False
 
 
-class DistributedOperatorImplContainer:
+class DistributedOperatorImplContainer(abc.ABC):
     def __init__(self, op_type):
         self._type = op_type
         self._impls = []
@@ -110,6 +121,12 @@ class DistributedOperatorImplContainer:
             if impl.is_auto_compatible(dist_op):
                 compatible_impls.append(impl)
         return compatible_impls
+
+    # (NOTE) Currently, both DistributedOperatorImplContainer and DistributedOperatorImpl have update_dims_mapping method.
+    # But this method is supposed to be maitained by ImplContainer, and we are ongoing adding method to DistributedOperatorImplContainer and removing it from DistributedOperatorImpl.
+    # @abc.abstractmethod
+    def update_dims_mapping(self, dist_op):
+        raise NotImplementedError("Please Implement this method in Subclass.")
 
 
 class DistributedOperatorImpl(abc.ABC):
@@ -270,6 +287,35 @@ def find_compatible_distributed_operator_impls(dist_op, fwd=True, partial=True):
     else:
         best_compatible_impl = None
     return best_compatible_impl
+
+
+def find_distributed_operator_impl_container(dist_op):
+    """
+    Return a unique container for dist op.
+    If not specific container found, default container will be return.
+    """
+    op_type = dist_op.serial_op.type
+
+    # Op has a  match container
+    dist_op_impl_container = get_distributed_operator_impl_container(op_type)
+    if dist_op_impl_container is None:
+        # if op is register to elemwise spmd rule and has NO specific container implemented
+        if is_elementwise_op(op_type):
+            dist_op_impl_container = get_distributed_operator_impl_container(
+                "elementwise"
+            )
+        # default container for all bottom line cases
+        else:
+            dist_op_impl_container = get_distributed_operator_impl_container(
+                "default"
+            )
+
+    distop_logger.debug(
+        "Op [{}] Complete DistAttr using {}".format(
+            op_type, type(dist_op_impl_container).__name__
+        )
+    )
+    return dist_op_impl_container
 
 
 def is_parameter_related(varname, block, dist_context=None):
@@ -539,3 +585,97 @@ def is_in_backward_phase(dist_ctx):
     # we use this FLAG to distinguish these two phases temporarily.
 
     return dist_ctx.dist_op_context.in_backward_phase()
+
+
+def merge_forward_backward_dims_mapping(fw_results, bw_results):
+    ninputs = len(fw_results[0])
+    noutputs = len(fw_results[1])
+    infered_input_dims_mappings = []
+    infered_output_dims_mappings = []
+
+    for i in range(ninputs):
+        compatible_dims_mapping = compute_compatible_dims_mapping(
+            [fw_results[0][i].dims_mapping, bw_results[0][i].dims_mapping]
+        )
+        infered_input_dims_mappings.append(compatible_dims_mapping)
+
+    for i in range(noutputs):
+        compatible_dims_mapping = compute_compatible_dims_mapping(
+            [fw_results[1][i].dims_mapping, bw_results[1][i].dims_mapping]
+        )
+        infered_output_dims_mappings.append(compatible_dims_mapping)
+    return infered_input_dims_mappings, infered_output_dims_mappings
+
+
+def update_op_dims_mapping(
+    dist_op,
+    input_arg_names,
+    infered_input_dims_mappings,
+    output_arg_names,
+    infered_output_dims_mappings,
+):
+    op_dist_attr = dist_op.dist_attr
+    changed = False
+    assert len(input_arg_names) == len(
+        infered_input_dims_mappings
+    ), "dims mapping is NOT Match, infered [{}], orignal: [{}]; dist op: [{}]".format(
+        len(infered_input_dims_mappings), len(input_arg_names), str(dist_op)
+    )
+    assert len(output_arg_names) == len(
+        infered_output_dims_mappings
+    ), "dims mapping is NOT Match, infered [{}], orignal: [{}]; dist op: [{}]".format(
+        len(infered_output_dims_mappings), len(output_arg_names), str(dist_op)
+    )
+
+    for i in range(len(input_arg_names)):
+        original_dims_mapping = op_dist_attr.get_input_dims_mapping(
+            input_arg_names[i]
+        )
+        infered_dims_mapping = infered_input_dims_mappings[i]
+        if (infered_dims_mapping is not None) and (
+            original_dims_mapping != infered_dims_mapping
+        ):
+            print(
+                "Changed: Op [{}], name [{}], Original [{}], Infered [{}]".format(
+                    dist_op.serial_op.type,
+                    input_arg_names[i],
+                    original_dims_mapping,
+                    infered_dims_mapping,
+                )
+            )
+            changed = True
+            op_dist_attr.set_input_dims_mapping(
+                input_arg_names[i], infered_dims_mapping
+            )
+
+    for i in range(len(output_arg_names)):
+        original_dims_mapping = op_dist_attr.get_output_dims_mapping(
+            output_arg_names[i]
+        )
+        infered_dims_mapping = infered_output_dims_mappings[i]
+        if (infered_dims_mapping is not None) and (
+            original_dims_mapping != infered_dims_mapping
+        ):
+            print(
+                "Changed: Op [{}], name [{}], Original [{}], Infered [{}]".format(
+                    dist_op.serial_op.type,
+                    output_arg_names[i],
+                    original_dims_mapping,
+                    infered_dims_mapping,
+                )
+            )
+            changed = True
+            op_dist_attr.set_output_dims_mapping(
+                output_arg_names[i], infered_dims_mapping
+            )
+
+    return changed
+
+
+def get_default_distributed_operator_impl():
+    dist_op_default_impl_container = get_distributed_operator_impl_container(
+        "default"
+    )
+    num_impls = len(dist_op_default_impl_container.impls)
+    assert num_impls == 1, f"Default dist op has [{num_impls}] impls"
+    return dist_op_default_impl_container.get_impl(0)

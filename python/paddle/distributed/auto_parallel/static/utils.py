@@ -2515,3 +2515,26 @@ def wrap_data_for_completion(
         attrs[attr_name] = serial_op.desc.attr(attr_name)
 
     return input_specs, output_specs, attrs
+
+
+def get_dist_tensor_spec(dist_op, name, is_input=True):
+    tensor_shape = dist_op.serial_op.block._var_recursive(name).shape
+    if is_input:
+        tensor_dist_attr = dist_op.dist_attr.get_input_dist_attr(name)
+    else:
+        tensor_dist_attr = dist_op.dist_attr.get_output_dist_attr(name)
+    return DistTensorSpec(tensor_shape, tensor_dist_attr)
+
+
+def format_op_name(op_name):
+    OP_NAME_MAPPING = {
+        "matmul_v2": "matmul",
+        "transpose2": "transpose",
+        "reshape2": "reshape",
+        "unsqueeze2": "unsqueeze",
+    }
+
+    if op_name in OP_NAME_MAPPING:
+        return OP_NAME_MAPPING[op_name]
+    else:
+        return op_name
