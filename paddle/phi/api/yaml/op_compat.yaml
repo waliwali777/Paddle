@@ -1371,7 +1371,7 @@
 
 - op : histogram
   inputs :
-    input : X
+    {input : X, weight : Weight}
   outputs :
     out : Out
 
