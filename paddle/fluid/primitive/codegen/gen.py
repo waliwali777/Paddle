@@ -72,7 +72,14 @@ VJPS = [
 ]
 
 
-PRIM_VJP = ['divide_grad', 'sum_grad']  # vjp list of primitive op
+PRIM_VJP = [
+    'divide_grad',
+    'sum_grad',
+    'cast_grad',
+    'add_grad',
+    'multiply_grad',
+    'elementwise_pow_grad',
+]  # vjp list of primitive op
 CUSTOM_VJP = ['gelu_grad']  # custom vjp list of composite op
 VJP_COMPS = PRIM_VJP + CUSTOM_VJP
 
