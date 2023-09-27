@@ -209,7 +209,8 @@ class RecvOpV2CUDAKernel : public framework::OpKernel<T> {
       VLOG(3) << "old NCCLCommContext has rid " << rid;
     }
 
-    if (ctx.Attr<bool>("use_calc_stream")) {
+    bool use_calc_stream = ctx.Attr<bool>("use_calc_stream");
+    if (use_calc_stream) {
       // should ExecutionContext for calc stream.
       stream = ctx.cuda_device_context().stream();
     }
@@ -219,7 +220,9 @@ class RecvOpV2CUDAKernel : public framework::OpKernel<T> {
     ncclDataType_t dtype = platform::ToNCCLDataType(type);
 
     auto *out_var = ctx.OutputVar("Out");
-    if (out_var->IsType<framework::LoDTensorArray>()) {
+    if (out_var->IsType<framework::LoDTensorArray>()) {  // if the tensor being
+                                                         // received is a LoD
+                                                         // tensor
       PADDLE_ENFORCE_EQ(
           dynamic_shape,
           false,
@@ -230,7 +233,14 @@ class RecvOpV2CUDAKernel : public framework::OpKernel<T> {
         VLOG(3) << "LodTensorArray: idx(" << idx << ")";
         auto out = &out_array->at(idx);
         auto out_dims = out->dims();
-        out->mutable_data<T>(out_dims, place, 0);
+        if (use_calc_stream) {
+          // alloc "out" in dedicated cuda stream to enable asynchronous data
+          // receiving
+          out->Resize(out_dims);
+          ctx.cuda_device_context().Alloc<T>(out);
+        } else {
+          out->mutable_data<T>(out_dims, place, 0);
+        }
         auto numel = out->numel();
         if (comm_ctx) {
           comm_ctx->Recv(out, numel, peer, stream);
@@ -242,42 +252,56 @@ class RecvOpV2CUDAKernel : public framework::OpKernel<T> {
         }
       }
       return;
-    }
+    } else {  // otherwise, consider it as a dense tensor
+      auto out_shape = ctx.Attr<std::vector<int>>("out_shape");
+      auto out = ctx.Output<phi::DenseTensor>("Out");
+      auto out_dims = out->dims();
+      auto numel = out->numel();
 
-    auto out_shape = ctx.Attr<std::vector<int>>("out_shape");
-    auto out = ctx.Output<phi::DenseTensor>("Out");
-    auto out_dims = out->dims();
-    auto numel = out->numel();
-
-    if (dynamic_shape) {
-      VLOG(3) << "recv_v2 will use dynamic shape with send_v2";
-      framework::DDim new_dim = recv_shape_info(place,
-                                                stream,
-                                                comm,
-                                                comm_ctx,
-                                                peer,
-                                                /* ProcessGroup* */ nullptr);
-      out->Resize(new_dim);
-      numel = out->numel();
-      out->mutable_data<T>(new_dim, place);
-    } else {
-      out->mutable_data<T>(out_dims, place);
-    }
-    if (comm_ctx) {
-      comm_ctx->Recv(out, numel, peer, stream);
-    } else {
-      comm = platform::NCCLCommContext::Instance().Get(rid, place);
-      PADDLE_ENFORCE_LT(peer,
-                        comm->nranks(),
-                        platform::errors::InvalidArgument(
-                            "The value of peer (%d) you set must "
-                            "be less than comm->nranks (%d).",
-                            peer,
-                            comm->nranks()));
-      PADDLE_ENFORCE_GPU_SUCCESS(platform::dynload::ncclRecv(
-          out->data<T>(), numel, dtype, peer, comm->comm(), stream));
-      VLOG(3) << "rank " << comm->rank() << " recv "
-              << phi::product(out->dims()) << " from " << peer;
+      if (dynamic_shape) {
+        VLOG(3) << "recv_v2 will use dynamic shape with send_v2";
+        framework::DDim new_dim = recv_shape_info(place,
+                                                  stream,
+                                                  comm,
+                                                  comm_ctx,
+                                                  peer,
+                                                  /* ProcessGroup* */ nullptr);
+        out->Resize(new_dim);
+        numel = out->numel();
+        if (use_calc_stream) {
+          // alloc "out" in dedicated cuda stream to enable asynchronous data
+          // receiving
+          out->Resize(new_dim);
+          ctx.cuda_device_context().Alloc<T>(out);
+        } else {
+          out->mutable_data<T>(new_dim, place);
+        }
+      } else {
+        if (use_calc_stream) {
+          // alloc "out" in dedicated cuda stream to enable asynchronous data
+          // receiving
+          out->Resize(out_dims);
+          ctx.cuda_device_context().Alloc<T>(out);
+        } else {
+          out->mutable_data<T>(out_dims, place);
+        }
+      }
+      if (comm_ctx) {
+        comm_ctx->Recv(out, numel, peer, stream);
+      } else {
+        comm = platform::NCCLCommContext::Instance().Get(rid, place);
+        PADDLE_ENFORCE_LT(peer,
+                          comm->nranks(),
+                          platform::errors::InvalidArgument(
+                              "The value of peer (%d) you set must "
+                              "be less than comm->nranks (%d).",
+                              peer,
+                              comm->nranks()));
+        PADDLE_ENFORCE_GPU_SUCCESS(platform::dynload::ncclRecv(
+            out->data<T>(), numel, dtype, peer, comm->comm(), stream));
+        VLOG(3) << "rank " << comm->rank() << " recv "
+                << phi::product(out->dims()) << " from " << peer;
+      }
     }
 #else
     PADDLE_THROW(platform::errors::Unavailable(
