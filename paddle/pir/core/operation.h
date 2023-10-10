@@ -28,6 +28,7 @@ class OpBase;
 class Program;
 class OpOperand;
 class OpResult;
+class PrinterOptions;
 
 namespace detail {
 class OpResultImpl;
@@ -122,6 +123,8 @@ class IR_API alignas(8) Operation final {
   void MoveTo(Block *block, Block::Iterator position);
 
   void Print(std::ostream &os);
+  void Print(std::ostream &os, const PrinterOptions options);
+
   pir::OpInfo info() const { return info_; }
   std::string name() const;
 

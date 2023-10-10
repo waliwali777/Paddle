@@ -17,6 +17,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "paddle/fluid/pir/dialect/operator/interface/op_yaml_info.h"
 #include "paddle/pir/core/block.h"
 #include "paddle/pir/core/builtin_attribute.h"
 #include "paddle/pir/core/builtin_type.h"
@@ -35,54 +36,54 @@ constexpr char newline[] = "\n";  // NOLINT
 
 void BasicIrPrinter::PrintType(Type type) {
   if (!type) {
-    os << "<<NULL TYPE>>";
+    os_ << "<<NULL TYPE>>";
     return;
   }
 
   if (type.isa<BFloat16Type>()) {
-    os << "bf16";
+    os_ << "bf16";
   } else if (type.isa<Float16Type>()) {
-    os << "f16";
+    os_ << "f16";
   } else if (type.isa<Float32Type>()) {
-    os << "f32";
+    os_ << "f32";
   } else if (type.isa<Float64Type>()) {
-    os << "f64";
+    os_ << "f64";
   } else if (type.isa<BoolType>()) {
-    os << "b";
+    os_ << "b";
   } else if (type.isa<Int8Type>()) {
-    os << "i8";
+    os_ << "i8";
   } else if (type.isa<UInt8Type>()) {
-    os << "u8";
+    os_ << "u8";
   } else if (type.isa<Int16Type>()) {
-    os << "i16";
+    os_ << "i16";
   } else if (type.isa<Int32Type>()) {
-    os << "i32";
+    os_ << "i32";
   } else if (type.isa<Int64Type>()) {
-    os << "i64";
+    os_ << "i64";
   } else if (type.isa<IndexType>()) {
-    os << "index";
+    os_ << "index";
   } else if (type.isa<Complex64Type>()) {
-    os << "c64";
+    os_ << "c64";
   } else if (type.isa<Complex128Type>()) {
-    os << "c128";
+    os_ << "c128";
   } else if (type.isa<VectorType>()) {
-    os << "vec[";
+    os_ << "vec[";
     auto inner_types = type.dyn_cast<VectorType>().data();
     PrintInterleave(
         inner_types.begin(),
         inner_types.end(),
         [this](Type v) { this->PrintType(v); },
-        [this]() { this->os << ","; });
-    os << "]";
+        [this]() { this->os_ << ","; });
+    os_ << "]";
   } else {
     auto& dialect = type.dialect();
-    dialect.PrintType(type, os);
+    dialect.PrintType(type, os_);
   }
 }
 
 void BasicIrPrinter::PrintAttribute(Attribute attr) {
   if (!attr) {
-    os << "<#AttrNull>";
+    os_ << "<#AttrNull>";
     return;
   }
 
@@ -98,20 +99,20 @@ void BasicIrPrinter::PrintAttribute(Attribute attr) {
     os << "\"" << s_val << "\"";
   } else if (auto b = attr.dyn_cast<BoolAttribute>()) {
     if (b.data()) {
-      os << "true";
+      os_ << "true";
     } else {
-      os << "false";
+      os_ << "false";
     }
   } else if (auto f = attr.dyn_cast<FloatAttribute>()) {
-    os << "(Float)" << f.data();
+    os_ << "(Float)" << f.data();
   } else if (auto d = attr.dyn_cast<DoubleAttribute>()) {
-    os << "(Double)" << d.data();
+    os_ << "(Double)" << d.data();
   } else if (auto i = attr.dyn_cast<Int32Attribute>()) {
-    os << "(Int32)" << i.data();
+    os_ << "(Int32)" << i.data();
   } else if (auto i = attr.dyn_cast<Int64Attribute>()) {
-    os << "(Int64)" << i.data();
+    os_ << "(Int64)" << i.data();
   } else if (auto p = attr.dyn_cast<PointerAttribute>()) {
-    os << "(Pointer)" << p.data();
+    os_ << "(Pointer)" << p.data();
   } else if (auto arr = attr.dyn_cast<ArrayAttribute>()) {
     const auto& vec = arr.AsVector();
     os << "[";
@@ -119,13 +120,13 @@ void BasicIrPrinter::PrintAttribute(Attribute attr) {
         vec.begin(),
         vec.end(),
         [this](Attribute v) { this->PrintAttribute(v); },
-        [this]() { this->os << ","; });
-    os << "]";
+        [this]() { this->os_ << ","; });
+    os_ << "]";
   } else if (auto type = attr.dyn_cast<TypeAttribute>()) {
-    os << type.data();
+    os_ << type.data();
   } else {
     auto& dialect = attr.dialect();
-    dialect.PrintAttribute(attr, os);
+    dialect.PrintAttribute(attr, os_);
   }
 }
 
@@ -146,31 +147,35 @@ void IrPrinter::PrintOperation(Operation* op) {
   PrintGeneralOperation(op);
 }
 
-void IrPrinter::PrintGeneralOperation(Operation* op) {
+void IrPrinter::PrintOperationWithNoRegion(Operation* op) {
   // TODO(lyk): add API to get opresults directly
   PrintOpResult(op);
-  os << " =";
+  os_ << " =";
 
-  os << " \"" << op->name() << "\"";
+  os_ << " \"" << op->name() << "\"";
 
   // TODO(lyk): add API to get operands directly
   PrintOpOperands(op);
 
   PrintAttributeMap(op);
-  os << " :";
+  os_ << " :";
 
   // PrintOpSingature
   PrintOperandsType(op);
-  os << " -> ";
+  os_ << " -> ";
 
   // TODO(lyk): add API to get opresults directly
   PrintOpReturnType(op);
 }
 
-void IrPrinter::PrintFullOperation(Operation* op) {
-  PrintGeneralOperation(op);
+void IrPrinter::PrintGeneralOperation(Operation* op) {
+  PrintOperationWithNoRegion(op);
+  if (!options_.print_regions) {
+    return;
+  }
+
   if (op->num_regions() > 0) {
-    os << newline;
+    os_ << newline;
   }
   for (size_t i = 0; i < op->num_regions(); ++i) {
     auto& region = op->region(i);
@@ -185,34 +190,34 @@ void IrPrinter::PrintRegion(const Region& region) {
 }
 
 void IrPrinter::PrintBlock(const Block* block) {
-  os << "{\n";
+  os_ << "{\n";
   for (auto item : *block) {
     PrintOperation(item);
-    os << newline;
+    os_ << newline;
   }
-  os << "}\n";
+  os_ << "}\n";
 }
 
 void IrPrinter::PrintValue(Value v) {
   if (!v) {
-    os << "<<NULL VALUE>>";
+    os_ << "<<NULL VALUE>>";
     return;
   }
   const void* key = static_cast<const void*>(v.impl());
   auto ret = aliases_.find(key);
   if (ret != aliases_.end()) {
-    os << ret->second;
+    os_ << ret->second;
     return;
   }
 
   std::string new_name = "%" + std::to_string(cur_var_number_);
   cur_var_number_++;
   aliases_[key] = new_name;
-  os << new_name;
+  os_ << new_name;
 }
 
 void IrPrinter::PrintOpResult(Operation* op) {
-  os << " (";
+  os_ << " (";
   auto num_op_result = op->num_results();
   std::vector<OpResult> op_results;
   op_results.reserve(num_op_result);
@@ -223,31 +228,41 @@ void IrPrinter::PrintOpResult(Operation* op) {
       op_results.begin(),
       op_results.end(),
       [this](Value v) { this->PrintValue(v); },
-      [this]() { this->os << ", "; });
-  os << ")";
+      [this]() { this->os_ << ", "; });
+  os_ << ")";
 }
 
 void IrPrinter::PrintAttributeMap(Operation* op) {
   AttributeMap attributes = op->attributes();
-  std::map<std::string, Attribute, std::less<std::string>> order_attributes(
-      attributes.begin(), attributes.end());
-  os << " {";
+
+  std::vector<std::string> attribute_will_be_printed;
+  for (size_t i = 0u; i < op->info().num_attributes(); i++) {
+    attribute_will_be_printed.push_back(op->info().attribute_name(i));
+  }
+  for (const auto& attr_name : options_.custom_attrs_white_list) {
+    if (attributes.count(attr_name) == 0) {
+      continue;
+    }
+    attribute_will_be_printed.push_back(attr_name);
+  }
+
+  os_ << " {";
 
   PrintInterleave(
-      order_attributes.begin(),
-      order_attributes.end(),
-      [this](std::pair<std::string, Attribute> it) {
-        this->os << it.first;
-        this->os << ":";
-        this->PrintAttribute(it.second);
+      attribute_will_be_printed.begin(),
+      attribute_will_be_printed.end(),
+      [this, &attributes](const std::string& attr_name) {
+        this->os_ << attr_name;
+        this->os_ << ":";
+        this->PrintAttribute(attributes.at(attr_name));
       },
-      [this]() { this->os << ","; });
+      [this]() { this->os_ << ","; });
 
-  os << "}";
+  os_ << "}";
 }
 
 void IrPrinter::PrintOpOperands(Operation* op) {
-  os << " (";
+  os_ << " (";
   auto num_op_operands = op->num_operands();
   std::vector<Value> op_operands;
   op_operands.reserve(num_op_operands);
@@ -258,8 +273,8 @@ void IrPrinter::PrintOpOperands(Operation* op) {
       op_operands.begin(),
       op_operands.end(),
       [this](Value v) { this->PrintValue(v); },
-      [this]() { this->os << ", "; });
-  os << ")";
+      [this]() { this->os_ << ", "; });
+  os_ << ")";
 }
 
 void IrPrinter::PrintOperandsType(Operation* op) {
@@ -274,13 +289,13 @@ void IrPrinter::PrintOperandsType(Operation* op) {
       op_operand_types.emplace_back();
     }
   }
-  os << " (";
+  os_ << " (";
   PrintInterleave(
       op_operand_types.begin(),
       op_operand_types.end(),
       [this](Type t) { this->PrintType(t); },
-      [this]() { this->os << ", "; });
-  os << ")";
+      [this]() { this->os_ << ", "; });
+  os_ << ")";
 }
 
 void IrPrinter::PrintOpReturnType(Operation* op) {
@@ -299,20 +314,24 @@ void IrPrinter::PrintOpReturnType(Operation* op) {
       op_result_types.begin(),
       op_result_types.end(),
       [this](Type t) { this->PrintType(t); },
-      [this]() { this->os << ", "; });
+      [this]() { this->os_ << ", "; });
 }
 
 void Dialect::PrintOperation(Operation* op, IrPrinter& printer) const {
   printer.PrintGeneralOperation(op);
 }
 
-void Program::Print(std::ostream& os) const {
-  IrPrinter printer(os);
+void Program::Print(std::ostream& os) const { Print(os, PrinterOptions()); }
+
+void Program::Print(std::ostream& os, const PrinterOptions& options) const {
+  IrPrinter printer(os, options);
   printer.PrintProgram(this);
 }
 
-void Operation::Print(std::ostream& os) {
-  IrPrinter printer(os);
+void Operation::Print(std::ostream& os) { Print(os, PrinterOptions()); }
+
+void Operation::Print(std::ostream& os, const PrinterOptions options) {
+  IrPrinter printer(os, options);
   printer.PrintOperation(this);
 }
 
@@ -321,13 +340,17 @@ void Value::Print(std::ostream& os) const {
   printer.PrintValue(*this);
 }
 
-void Type::Print(std::ostream& os) const {
-  BasicIrPrinter printer(os);
+void Type::Print(std::ostream& os) const { Print(os, PrinterOptions()); }
+
+void Type::Print(std::ostream& os, const PrinterOptions& options) const {
+  BasicIrPrinter printer(os, options);
   printer.PrintType(*this);
 }
 
-void Attribute::Print(std::ostream& os) const {
-  BasicIrPrinter printer(os);
+void Attribute::Print(std::ostream& os) const { Print(os, PrinterOptions()); }
+
+void Attribute::Print(std::ostream& os, const PrinterOptions& options) const {
+  BasicIrPrinter printer(os, options);
   printer.PrintAttribute(*this);
 }
 
