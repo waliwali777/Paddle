@@ -4270,6 +4270,10 @@ void MaskedMultiheadAttentionInferMeta(const MetaTensor& x,
                                        const MetaTensor& qkv_out_scale,
                                        const MetaTensor& out_shift,
                                        const MetaTensor& out_smooth,
+                                       const MetaTensor& cache_k_quant_scales,
+                                       const MetaTensor& cache_v_quant_scales,
+                                       const MetaTensor& cache_k_dequant_scales,
+                                       const MetaTensor& cache_v_dequant_scales,
                                        int seq_len,
                                        int rotary_emb_dims,
                                        const bool use_neox_rotary_style,
@@ -4280,11 +4284,36 @@ void MaskedMultiheadAttentionInferMeta(const MetaTensor& x,
                                        const float quant_min_bound,
                                        MetaTensor* out,
                                        MetaTensor* cache_kv_out,
-                                       MetaTensor* beam_cache_offset_out) {
+                                       MetaTensor* beam_cache_offset_out,
+                                       MetaConfig config) {
   int bsz = static_cast<int>(x.dims()[0]);
   auto cache_kv_dims = cache_kv.dims();
+
   int num_head = static_cast<int>(cache_kv.dims()[2]);
   int dim_head = static_cast<int>(cache_kv.dims()[4]);
+
+  if (config.is_runtime) {
+    PADDLE_ENFORCE_EQ(
+        cache_k_quant_scales.numel(),
+        bsz * num_head,
+        errors::InvalidArgument("The cache_k_quant_scales must bsz * num_head "
+                                "in dynamic cachekv quantization"));
+    PADDLE_ENFORCE_EQ(
+        cache_v_quant_scales.numel(),
+        bsz * num_head,
+        errors::InvalidArgument("The cache_v_quant_scales must bsz * num_head "
+                                "in dynamic cachekv quantization"));
+    PADDLE_ENFORCE_EQ(
+        cache_k_dequant_scales.numel(),
+        bsz * num_head,
+        errors::InvalidArgument("The cache_k_dequant_scales must bsz * "
+                                "num_head in dynamic cachekv quantization"));
+    PADDLE_ENFORCE_EQ(
+        cache_v_dequant_scales.numel(),
+        bsz * num_head,
+        errors::InvalidArgument("The cache_v_dequant_scales must bsz * "
+                                "num_head in dynamic cachekv quantization"));
+  }
 
   PADDLE_ENFORCE_EQ(
       cache_kv_dims.size(),
