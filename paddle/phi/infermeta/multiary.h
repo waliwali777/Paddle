@@ -864,6 +864,28 @@ void MaskedMultiheadAttentionInferMeta(const MetaTensor& x,
                                        MetaTensor* cache_kv_out,
                                        MetaTensor* beam_cache_offset_out);
 
+void MaskedMultiqueryAttentionInferMeta(const MetaTensor& query,
+                                        const MetaTensor& key,
+                                        const MetaTensor& value,
+                                        const MetaTensor& cache_kv,
+                                        const MetaTensor& src_mask,
+                                        const MetaTensor& cum_offsets,
+                                        const MetaTensor& sequence_lengths,
+                                        const MetaTensor& rotary_tensor,
+                                        const MetaTensor& beam_cache_offset,
+                                        const MetaTensor& out_shift,
+                                        const MetaTensor& out_smooth,
+                                        int seq_len,
+                                        int rotary_emb_dims,
+                                        const bool use_neox_rotary_style,
+                                        const float out_scale,
+                                        const int quant_round_type,
+                                        const float quant_max_bound,
+                                        const float quant_min_bound,
+                                        MetaTensor* out,
+                                        MetaTensor* cache_kv_out,
+                                        MetaTensor* beam_cache_offset_out);
+
 void FullWithTensorInferMeta(const MetaTensor& shape,
                              DataType dtype,
                              MetaTensor* out);

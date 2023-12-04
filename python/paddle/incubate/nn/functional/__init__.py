@@ -31,6 +31,7 @@ from .variable_length_memory_efficient_attention import (
 from .fused_rms_norm import fused_rms_norm
 from .fused_layer_norm import fused_layer_norm
 from .masked_multihead_attention import masked_multihead_attention
+from .masked_multiquery_attention import masked_multiquery_attention
 
 __all__ = [
     'fused_multi_head_attention',
@@ -47,4 +48,5 @@ __all__ = [
     "fused_rms_norm",
     "fused_layer_norm",
     "masked_multihead_attention",
+    "masked_multiquery_attention",
 ]
