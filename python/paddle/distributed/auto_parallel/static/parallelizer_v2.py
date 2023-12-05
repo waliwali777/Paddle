@@ -330,6 +330,28 @@ class Parallelizer:
                 [main_program], [startup_program], self._pass_context
             )
 
+        # apply offload pass
+        # offload is then train-only optimization
+        if self.is_train and self._strategy.offload.enable:
+            # TODO(lizhiyu): only support recompute-offload now
+            if (
+                self._strategy.recompute.enable
+                and self._strategy.offload.recom_offload
+            ):
+                config = copy.deepcopy(self._strategy.offload.to_dict())
+                config["dist_context"] = self._dist_context
+                config["no_grad_set"] = None
+                config["loss"] = loss
+                config["offload_points"] = copy.deepcopy(
+                    auto_parallel_recompute_pass.get_vars_for_offload()
+                )
+                auto_parallel_recom_offload_pass = new_pass(
+                    "auto_parallel_recom_offload", config
+                )
+                auto_parallel_recom_offload_pass.apply(
+                    [main_program], [startup_program], self._pass_context
+                )
+
         return main_program, startup_program, params_grads
 
     def _apply_post_optimization(
