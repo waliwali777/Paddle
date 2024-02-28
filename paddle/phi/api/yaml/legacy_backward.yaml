@@ -581,6 +581,7 @@
   kernel :
     func : reshape_double_grad
   no_need_buffer : grad_out
+  view: (grad_x_grad -> grad_out_grad)
   inplace : (grad_x_grad -> grad_out_grad)
 
 - backward_op : reshape_grad
@@ -598,6 +599,7 @@
     backend: out_grad
     layout: out_grad
   backward : reshape_double_grad
+  view: (out_grad -> x_grad)
   inplace : (out_grad -> x_grad)
 
 - backward_op : rnn_grad
@@ -809,6 +811,7 @@
   args : (Tensor grad_x_grad, int[] perm)
   output : Tensor(grad_out_grad)
   invoke : transpose(grad_x_grad, perm)
+  view: (grad_x_grad -> grad_out_grad)
 
 - backward_op : transpose_grad
   forward : transpose (Tensor x, int[] perm) -> Tensor(out)
@@ -820,6 +823,7 @@
     spmd_rule: TransposeGradInferSpmd
   kernel :
     func : transpose_grad
+  view: (out_grad -> x_grad)
   backward : transpose_double_grad
   composite: transpose_grad(out_grad, perm, x_grad)
 

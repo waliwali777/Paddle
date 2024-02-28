@@ -234,6 +234,10 @@ paddle::small_vector<std::vector<paddle::Tensor>, egr::kSlotSmallVectorSize> {}:
 {}
   // Check NaN and Inf id needed
 {}
+  // Get GradOut
+{}
+  // View Share AutoGradMeta
+{}
   // Get GradOut autograd_meta
 {}
   // Create Grad Node
@@ -286,6 +290,8 @@ TEST_API {} {}({}) {{
   // Check NaN and Inf if needed
 {}
   // Get Outputs
+{}
+  // View Share AutoGradMeta
 {}
   // Get Output AutoGradMeta
 {}
@@ -340,6 +346,8 @@ TEST_API {} {}({}) {{
   // Check NaN and Inf if needed
 {}
   // Get Outputs
+{}
+  // View Share AutoGradMeta
 {}
   VLOG(4) << \"Finish AD API: {}";
 
@@ -757,6 +765,15 @@ class DygraphFunctionGeneratorBase(FunctionGeneratorBase):
 
         inplace_map_str = grad_api_contents['inplace']
         self.backward_inplace_map = ParseYamlInplaceInfo(inplace_map_str)
+
+    def ParseBackwardViewInfo(self):
+        grad_api_contents = self.grad_api_contents
+        if 'view' not in grad_api_contents.keys():
+            self.backward_view_map = None
+            return
+
+        view_map_str = grad_api_contents['view']
+        self.backward_view_map = ParseYamlInplaceInfo(view_map_str)
 
     def DygraphYamlValidationCheck(self):
         forward_api_contents = self.forward_api_contents
@@ -1280,8 +1297,10 @@ class DygraphFunctionGeneratorBase(FunctionGeneratorBase):
         ########################
         # Parse forward and backward inplace_map
         self.ParseForwardInplaceInfo()
+        self.ParseForwardViewInfo()
         if self.grad_api_contents is not None:
             self.ParseBackwardInplaceInfo()
+            self.ParseBackwardViewInfo()
             # Parse no_need_buffer
             self.ParseNoNeedBuffer()
             # Parse composite
@@ -1642,6 +1661,19 @@ class DygraphForwardFunctionGenerator(DygraphFunctionGeneratorBase):
                     f"{indent}auto& {name} = std::get<{pos}>(api_result);\n"
                 )
 
+        # View Share AutoGradMeta
+        view_share_autogradmeta_str = ""
+        if self.forward_view_map is not None:
+            for input, output in self.forward_view_map.items():
+                view_share_autogradmeta_str += f"""
+  if ({input}.initialized() && {output}.initialized() && {input}.is_dense_tensor() && {output}.is_dense_tensor() && std::dynamic_pointer_cast<phi::DenseTensor>({input}.impl())->IsSharedBufferWith(*std::dynamic_pointer_cast<phi::DenseTensor>({output}.impl()))) {{
+    {output}.set_autograd_meta({input}.mutable_autograd_meta());
+    if (grad_node) {{
+      grad_node->SetIsForwardView(true);
+    }}
+  }}
+  """
+
         # Get return type list & outputs
         returns_type_list = ["" for i in range(num_outputs)]
         returns_list = ["" for i in range(num_outputs)]
@@ -1914,6 +1946,7 @@ class DygraphForwardFunctionGenerator(DygraphFunctionGeneratorBase):
                     log_memory_info_str,
                     check_nan_inf_str,
                     get_outputs_str,
+                    view_share_autogradmeta_str,
                     forward_api_name,
                     check_inplace_str,
                     bump_inplace_version_str,
@@ -1942,6 +1975,7 @@ class DygraphForwardFunctionGenerator(DygraphFunctionGeneratorBase):
                 log_memory_info_str,
                 check_nan_inf_str,
                 get_outputs_str,
+                view_share_autogradmeta_str,
                 outputs_autograd_meta_str,
                 check_inplace_str,
                 bump_inplace_version_str,
@@ -2628,9 +2662,9 @@ class DygraphNodeGenerator(DygraphFunctionGeneratorBase):
 
         # 3. Get Output AutoGradMeta
         outputs_autograd_meta_list = []
+        get_outputs_list = []
         # TODO(jiabin): Optimize this with SetStopGradient instead of Pass Stop gradient
 
-        num_fwd_outputs = len(backward_grad_outputs_map.keys())
         for name, (
             rtype,
             pos,
@@ -2645,8 +2679,10 @@ class DygraphNodeGenerator(DygraphFunctionGeneratorBase):
                 transformed_tensor_name
             )
             if IsPlainTensorType(rtype):
-                output_autograd_meta = f"""
+                get_out_put = f"""
   auto& {transformed_tensor_name} = returns[{pos}][0];
+  """
+                output_autograd_meta = f"""
   egr::AutogradMeta* {output_autograd_meta_name} = returns[{pos}][0].initialized() ? egr::EagerUtils::autograd_meta(&{transformed_tensor_name}) : nullptr;
   if ({output_autograd_meta_name}) {output_autograd_meta_name}->SetStopGradient(false);
   """
@@ -2654,8 +2690,10 @@ class DygraphNodeGenerator(DygraphFunctionGeneratorBase):
             else:
                 assert IsVectorTensorType(rtype)
                 if has_higher_order_node > 0:
-                    output_autograd_meta = f"""
+                    get_out_put = f"""
     auto& {transformed_tensor_name} = returns[{pos}];
+"""
+                    output_autograd_meta = f"""
     std::vector<egr::AutogradMeta*> {output_autograd_meta_vec_name} = egr::EagerUtils::autograd_meta(&{transformed_tensor_name});
     std::vector<egr::AutogradMeta*>* {output_autograd_meta_name} = &{output_autograd_meta_vec_name};
     for(auto* meta : {output_autograd_meta_vec_name}){{
@@ -2663,16 +2701,32 @@ class DygraphNodeGenerator(DygraphFunctionGeneratorBase):
     }}
 """
                 else:
-                    output_autograd_meta = f"""
+                    get_out_put = f"""
     auto& {transformed_tensor_name} = returns[{pos}];
+"""
+                    output_autograd_meta = f"""
     std::vector<egr::AutogradMeta*> {output_autograd_meta_vec_name} = egr::EagerUtils::autograd_meta(&{transformed_tensor_name});
     for(auto* meta : {output_autograd_meta_vec_name}){{
         meta->SetStopGradient(false);
     }}
 """
             outputs_autograd_meta_list.append(output_autograd_meta)
+            get_outputs_list.append(get_out_put)
 
         outputs_autograd_meta_str = "\n".join(outputs_autograd_meta_list)
+        get_outputs_str = "\n".join(get_outputs_list)
+
+        # View Share AutoGradMeta
+        view_share_autogradmeta_str = ""
+        if self.backward_view_map is not None:
+            for input, output in self.backward_view_map.items():
+                transformed_input = self.TransformToNextGradName(input)
+                transformed_output = self.TransformToNextGradName(output)
+                view_share_autogradmeta_str += f"""
+  if ({transformed_input}.initialized() && {transformed_output}.initialized() && {transformed_input}.is_dense_tensor() && {transformed_output}.is_dense_tensor() && std::dynamic_pointer_cast<phi::DenseTensor>({transformed_input}.impl())->IsSharedBufferWith(*std::dynamic_pointer_cast<phi::DenseTensor>({transformed_output}.impl()))) {{
+    {transformed_output}.set_autograd_meta({transformed_input}.mutable_autograd_meta());
+  }}
+  """
 
         returns_str = f"{indent}if(NeedComplexToRealConversion()) HandleComplexGradToRealGrad(&returns);\n"
         returns_str += f"{indent}return returns;\n"
@@ -2728,6 +2782,8 @@ class DygraphNodeGenerator(DygraphFunctionGeneratorBase):
             before_log_str,
             grad_function_call_str,
             check_nan_inf_str,
+            get_outputs_str,
+            view_share_autogradmeta_str,
             outputs_autograd_meta_str,
             next_grad_node_creation_str,
             self.backward_api_name,
