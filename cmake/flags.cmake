@@ -158,6 +158,11 @@ if(NOT WIN32)
       -Wimplicit-fallthrough=0 # Warning in tinyformat.h
       ${fsanitize})
 
+  string(TOUPPER "${CMAKE_BUILD_TYPE}" UPPERCASE_CMAKE_BUILD_TYPE)
+  if("${UPPERCASE_CMAKE_BUILD_TYPE}" MATCHES DEBUG|RELWITHDEBINFO)
+    set(COMMON_FLAGS ${COMMON_FLAGS} -mcmodel=large -fdebug-types-section)
+  endif()
+
   if(WITH_IPU)
     set(COMMON_FLAGS ${COMMON_FLAGS} -Wno-sign-compare # Warnings in Popart
                      -Wno-non-virtual-dtor # Warnings in Popart
