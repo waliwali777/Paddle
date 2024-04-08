@@ -40,10 +40,6 @@ from .math import _get_reduce_axis
 __all__ = []
 
 
-# Consistent with kDefaultDim from C++ Backend
-K_DEFAULT_DIM = 9
-
-
 def transpose(x, perm, name=None):
     """
     Permute the data dimensions of `input` according to `perm`.
@@ -1892,7 +1888,7 @@ def t_(input, name=None):
         return out
 
 
-def cross(x, y, axis=9, name=None):
+def cross(x, y, axis=12, name=None):
     """
     Computes the cross product between two tensors along an axis.
 
@@ -1902,7 +1898,7 @@ def cross(x, y, axis=9, name=None):
     Args:
         x (Tensor): The first input tensor, the data type is float16, float32, float64, int32, int64.
         y (Tensor): The second input tensor, the data type is float16, float32, float64, int32, int64.
-        axis (int, optional): The axis along which to compute the cross product. It defaults to be 9 which indicates using the first axis found with the length 3.
+        axis (int, optional): The axis along which to compute the cross product. It defaults to be 12 which indicates using the first axis found with the length 3.
         name (str, optional): Name for the operation (optional, default is None). For more information, please refer to :ref:`api_guide_Name`.
 
     Returns:
@@ -1935,7 +1931,6 @@ def cross(x, y, axis=9, name=None):
              [0., 0., 0.]])
     """
     if in_dynamic_or_pir_mode():
-        axis = K_DEFAULT_DIM if axis is None else axis
         return _C_ops.cross(x, y, axis)
     else:
         check_variable_and_dtype(
