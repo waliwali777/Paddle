@@ -555,6 +555,7 @@ void* GetNVRTCDsoHandle() {
 #else
     return GetDsoHandleFromSearchPath(FLAGS_nvrtc_dir, "libnvrtc.so");
 #endif
+  }
 #elif defined(PADDLE_WITH_HIP)
   return GetDsoHandleFromSearchPath(FLAGS_rocm_dir, "libamdhip64.so", false);
 #else
@@ -566,7 +567,7 @@ void* GetCUDADsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libcuda.dylib", false);
 #elif defined(PADDLE_WITH_HIP)
-    return GetDsoHandleFromSearchPath(FLAGS_rocm_dir, "libamdhip64.so", false);
+  return GetDsoHandleFromSearchPath(FLAGS_rocm_dir, "libamdhip64.so", false);
 #elif defined(_WIN32)
   char system32_dir[MAX_PATH];
   GetSystemDirectory(system32_dir, MAX_PATH);
@@ -584,7 +585,7 @@ void* GetWarpCTCDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(warpctc_dir, "libwarpctc.dylib");
 #elif defined(_WIN32)
-    return GetDsoHandleFromSearchPath(warpctc_dir, "warpctc.dll");
+  return GetDsoHandleFromSearchPath(warpctc_dir, "warpctc.dll");
 #else
   return GetDsoHandleFromSearchPath(warpctc_dir, "libwarpctc.so");
 #endif
@@ -598,7 +599,7 @@ void* GetWarpRNNTDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(warprnnt_dir, "libwarprnnt.dylib");
 #elif defined(_WIN32)
-    return GetDsoHandleFromSearchPath(warprnnt_dir, "warprnnt.dll");
+  return GetDsoHandleFromSearchPath(warprnnt_dir, "warprnnt.dll");
 #else
   return GetDsoHandleFromSearchPath(warprnnt_dir, "libwarprnnt.so");
 #endif
@@ -612,7 +613,7 @@ void* GetFlashAttnDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(flashattn_dir, "libflashattn.dylib");
 #elif defined(_WIN32)
-    return GetDsoHandleFromSearchPath(flashattn_dir, "flashattn.dll");
+  return GetDsoHandleFromSearchPath(flashattn_dir, "flashattn.dll");
 #else
   return GetDsoHandleFromSearchPath(flashattn_dir, "libflashattn.so");
 #endif
@@ -625,18 +626,18 @@ void* GetNCCLDsoHandle() {
       "https://rocmdocs.amd.com/en/latest/Installation_Guide/"
       "Installation-Guide.html before install PaddlePaddle.");
 #else
-    std::string warning_msg(
-        "You may need to install 'nccl2' from NVIDIA official website: "
-        "https://developer.nvidia.com/nccl/nccl-download "
-        "before install PaddlePaddle.");
+  std::string warning_msg(
+      "You may need to install 'nccl2' from NVIDIA official website: "
+      "https://developer.nvidia.com/nccl/nccl-download "
+      "before install PaddlePaddle.");
 #endif
 
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(
       FLAGS_nccl_dir, "libnccl.dylib", true, {}, warning_msg);
 #elif defined(PADDLE_WITH_HIP) && defined(PADDLE_WITH_RCCL)
-    return GetDsoHandleFromSearchPath(
-        FLAGS_rccl_dir, "librccl.so", true, {}, warning_msg);
+  return GetDsoHandleFromSearchPath(
+      FLAGS_rccl_dir, "librccl.so", true, {}, warning_msg);
 #else
 #ifdef WITH_PIP_CUDA_LIBRARIES
   return GetDsoHandleFromSearchPath(
@@ -653,7 +654,7 @@ void* GetTensorRtDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(FLAGS_tensorrt_dir, "libnvinfer.dylib");
 #elif defined(_WIN32)
-    return GetDsoHandleFromSearchPath(FLAGS_mklml_dir, "nvinfer.dll");
+  return GetDsoHandleFromSearchPath(FLAGS_mklml_dir, "nvinfer.dll");
 #else
   return GetDsoHandleFromSearchPath(FLAGS_tensorrt_dir, "libnvinfer.so");
 #endif
@@ -663,7 +664,7 @@ void* GetMKLMLDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(FLAGS_mklml_dir, "libmklml_intel.dylib");
 #elif defined(_WIN32)
-    return GetDsoHandleFromSearchPath(FLAGS_mklml_dir, "mklml.dll");
+  return GetDsoHandleFromSearchPath(FLAGS_mklml_dir, "mklml.dll");
 #else
   return GetDsoHandleFromSearchPath(FLAGS_mklml_dir, "libmklml_intel.so");
 #endif
@@ -677,7 +678,7 @@ void* GetLAPACKDsoHandle() {
   return GetDsoHandleFromSearchPath(FLAGS_lapack_dir, "liblapack.3.dylib");
 #endif
 #elif defined(_WIN32)
-    return GetDsoHandleFromSearchPath(FLAGS_lapack_dir, "liblapack.dll");
+  return GetDsoHandleFromSearchPath(FLAGS_lapack_dir, "liblapack.dll");
 #else
   return GetDsoHandleFromSearchPath(FLAGS_lapack_dir, "liblapack.so.3");
 #endif
@@ -691,7 +692,7 @@ void* GetNvtxDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   PADDLE_THROW(phi::errors::Unimplemented("Nvtx do not support Apple."));
 #elif defined(_WIN32)
-    PADDLE_THROW(phi::errors::Unimplemented("Nvtx do not support Windows."));
+  PADDLE_THROW(phi::errors::Unimplemented("Nvtx do not support Windows."));
 #elif !defined(PADDLE_WITH_CUDA)
   PADDLE_THROW(phi::errors::Unimplemented("Nvtx do not support without CUDA."));
 #else
@@ -703,20 +704,20 @@ void* GetCUFFTDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libcufft.dylib");
 #elif defined(__linux__) && defined(PADDLE_WITH_CUDA)
-    if (CUDA_VERSION >= 11000 && CUDA_VERSION < 12000) {
+  if (CUDA_VERSION >= 11000 && CUDA_VERSION < 12000) {
 #ifdef WITH_PIP_CUDA_LIBRARIES
-      return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libcufft.so.10");
+    return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libcufft.so.10");
 #else
-      return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libcufft.so");
+    return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libcufft.so");
 #endif
-    } else if (CUDA_VERSION >= 12000 && CUDA_VERSION < 12030) {
-      return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libcufft.so.11");
-    } else {
-      std::string warning_msg(
-          "Your CUDA_VERSION is less than 11 or greater than 12, paddle "
-          "temporarily no longer.");
-      return nullptr;
-    }
+  } else if (CUDA_VERSION >= 12000 && CUDA_VERSION < 12030) {
+    return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libcufft.so.11");
+  } else {
+    std::string warning_msg(
+        "Your CUDA_VERSION is less than 11 or greater than 12, paddle "
+        "temporarily no longer.");
+    return nullptr;
+  }
 #elif defined(_WIN32) && defined(PADDLE_WITH_CUDA)
   return GetDsoHandleFromSearchPath(
       FLAGS_cuda_dir, win_cufft_lib, true, {cuda_lib_path});
@@ -729,7 +730,7 @@ void* GetMKLRTDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(FLAGS_mkl_dir, "libmkl_rt.dylib");
 #elif defined(_WIN32)
-    return GetDsoHandleFromSearchPath(FLAGS_mkl_dir, "mkl_rt.dll");
+  return GetDsoHandleFromSearchPath(FLAGS_mkl_dir, "mkl_rt.dll");
 #else
   return GetDsoHandleFromSearchPath(FLAGS_mkl_dir, "libmkl_rt.so");
 #endif
@@ -740,11 +741,11 @@ void* GetCusparseLtDsoHandle() {
 #if defined(PADDLE_WITH_CUDA) && CUDA_VERSION >= 11020
   return GetDsoHandleFromSearchPath(FLAGS_cusparselt_dir, "libcusparseLt.so");
 #else
-    std::string warning_msg(
-        "Your CUDA_VERSION less 11.2, not support cusparseLt. "
-        "If you want to use cusparseLt, please upgrade CUDA and rebuild "
-        "PaddlePaddle.");
-    return nullptr;
+  std::string warning_msg(
+      "Your CUDA_VERSION less 11.2, not support cusparseLt. "
+      "If you want to use cusparseLt, please upgrade CUDA and rebuild "
+      "PaddlePaddle.");
+  return nullptr;
 #endif
 }
 
@@ -752,7 +753,7 @@ void* GetXPTIDsoHandle() {
 #ifdef PADDLE_WITH_XPTI
   return GetDsoHandleFromSearchPath(FLAGS_xpti_dir, "libxpti.so");
 #else
-    return nullptr;
+  return nullptr;
 #endif
 }
 }  // namespace dynload
