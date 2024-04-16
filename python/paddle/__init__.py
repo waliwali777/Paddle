@@ -593,6 +593,9 @@ if is_compiled_with_cuda():
         cupti_dir_lib_path = package_dir + "/.." + "/nvidia/cuda_cupti/lib"
         set_flags({"FLAGS_cupti_dir": cupti_dir_lib_path})
 
+        nvrtc_dir_lib_path = package_dir + "/.." + "/nvidia/cuda_nvrtc/lib"
+        set_flags({"FLAGS_cupti_dir": nvrtc_dir_lib_path})
+
 
 disable_static()
 

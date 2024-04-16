@@ -427,6 +427,7 @@ def get_paddle_extra_install_requirements():
     if '@WITH_PIP_CUDA_LIBRARIES@' == 'ON':
         PADDLE_CUDA_INSTALL_REQUIREMENTS = {
             "V11": (
+                "nvidia-cuda-nvrtc-cu11==11.8.89; platform_system == 'Linux' and platform_machine == 'x86_64' | " 
                 "nvidia-cuda-runtime-cu11==11.8.89; platform_system == 'Linux' and platform_machine == 'x86_64' | "
                 "nvidia-cuda-cupti-cu11==11.8.87; platform_system == 'Linux' and platform_machine == 'x86_64' | "
                 "nvidia-cudnn-cu11==8.7.0.84; platform_system == 'Linux' and platform_machine == 'x86_64' | "
@@ -438,6 +439,7 @@ def get_paddle_extra_install_requirements():
                 "nvidia-nccl-cu11==2.19.3; platform_system == 'Linux' and platform_machine == 'x86_64'"
             ),
             "V12": (
+                "nvidia-cuda-nvrtc-cu12==12.1.105; platform_system == 'Linux' and platform_machine == 'x86_64' | "
                 "nvidia-cuda-runtime-cu12==12.1.105; platform_system == 'Linux' and platform_machine == 'x86_64' | "
                 "nvidia-cuda-cupti-cu12==12.1.105; platform_system == 'Linux' and platform_machine == 'x86_64' | "
                 "nvidia-cudnn-cu12==8.9.2.26; platform_system == 'Linux' and platform_machine == 'x86_64' | "
