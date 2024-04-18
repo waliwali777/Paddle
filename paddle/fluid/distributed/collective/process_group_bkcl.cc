@@ -25,10 +25,12 @@
 #include "paddle/phi/core/device_context.h"
 #include "paddle/phi/core/distributed/check/static_check.h"
 #include "paddle/phi/core/distributed/comm_context_manager.h"
+#include "paddle/phi/core/distributed/utils.h"
 #include "paddle/phi/core/enforce.h"
 
 namespace paddle {
 namespace distributed {
+using phi::distributed::CheckSizeOnEachRank;
 using XPUDeviceContext = paddle::platform::XPUDeviceContext;
 
 ProcessGroupBKCL::BKCLTask::BKCLTask(const Place& place,
@@ -346,6 +348,86 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupBKCL::AllReduce(
       },
       tensor_tmp,
       CommType::ALLREDUCE,
+      sync_op,
+      use_calc_stream);
+}
+
+std::shared_ptr<ProcessGroup::Task> ProcessGroupBKCL::AllToAll(
+    phi::DenseTensor* out_tensor,
+    const phi::DenseTensor& in_tensor,
+    const std::vector<int64_t>& out_size_each_rank,
+    const std::vector<int64_t>& in_size_each_rank,
+    bool sync_op,
+    bool use_calc_stream) {
+  auto tensor_tmp =
+      paddle::experimental::CheckAndTrans2NewContiguousTensor(in_tensor);
+  const phi::DDim& out_dim = out_tensor->dims();
+  const phi::DDim& in_dim = tensor_tmp.dims();
+  CheckSizeOnEachRank(out_dim, out_size_each_rank, size_);
+  CheckSizeOnEachRank(in_dim, in_size_each_rank, size_);
+
+  // NOTE: Since `all_to_all` needs other processes' participation, it cannot
+  // simply be covered by static checks. Factors are set to 0 here to skip the
+  // shape check. Its shape check will be done by dynamic checks with
+  // FLAGS_enable_nccl_dynamic_check.
+  phi::distributed::CommStaticCheck::CheckShape(*out_tensor,
+                                                tensor_tmp,
+                                                /*dst_rank*/ rank_,
+                                                /*cur_rank*/ rank_,
+                                                size_,
+                                                /*out_size_factor*/ 0,
+                                                /*in_size_factor*/ 0,
+                                                phi::AllocationType::XPU);
+  return Collective(
+      [&](phi::distributed::BKCLCommContext* comm_context, XPUStream stream) {
+        int64_t in_row_size = tensor_tmp.numel() / in_dim[0],
+                out_row_size = out_tensor->numel() / out_dim[0];
+        int64_t in_offset = 0, in_numel = 0, out_offset = 0, out_numel = 0;
+        phi::DenseTensor input_partial, output_partial;
+
+        VLOG(3) << "bkcl_all_to_all "
+                << "sendbuff: " << tensor_tmp.data()
+                << ", recvbuff: " << out_tensor->data()
+                << ", count: " << tensor_tmp.numel() << ", datatype: "
+                << BKCLDTypeToString(phi::ToBKCLDataType(tensor_tmp.dtype()))
+                << ", bkcl_comm: " << comm_context->GetBKCLComm()
+                << ", stream: " << stream << ", rank_in_group: " << rank_
+                << ", nranks: " << size_ << ", out_size_each_rank: "
+                << string::join_strings(out_size_each_rank, ',')
+                << ", in_size_each_rank: "
+                << string::join_strings(in_size_each_rank, ',')
+                << ", sync_op: " << sync_op
+                << ", use_calc_stream: " << use_calc_stream;
+
+        phi::XPUPlace dst_place = out_tensor->place();
+        phi::XPUPlace src_place = tensor_tmp.place();
+        GroupStart();
+        for (auto i = 0; i < size_; i++) {
+          in_numel = in_size_each_rank[i] * in_row_size;
+          out_numel = out_size_each_rank[i] * out_row_size;
+          input_partial = GetPartialTensor(tensor_tmp, in_offset, in_numel);
+          output_partial = GetPartialTensor(*out_tensor, out_offset, out_numel);
+          if (rank_ != i) {
+            comm_context->Send(input_partial, in_numel, i, stream);
+            comm_context->Recv(&output_partial, out_numel, i, stream);
+          } else {
+            const std::string& key = GetKeyFromPlace(src_place);
+            const auto* comm_ctx = place_to_comm_ctx_[key].get();
+            phi::backends::xpu::MemcpySyncD2D(
+                output_partial.data(),
+                dst_place,
+                input_partial.data(),
+                src_place,
+                in_numel * SizeOf(input_partial.dtype()),
+                *comm_ctx);
+          }
+          in_offset += in_numel;
+          out_offset += out_numel;
+        }
+        GroupEnd();
+      },
+      tensor_tmp,
+      CommType::ALLTOALL,
       sync_op,
       use_calc_stream);
 }
