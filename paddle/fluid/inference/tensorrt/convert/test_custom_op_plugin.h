@@ -19,6 +19,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "paddle/common/enforce.h"
 #include "paddle/fluid/inference/tensorrt/plugin/trt_plugin.h"
 
 namespace paddle {
@@ -153,14 +154,12 @@ class custom_op_plugin_creator : public nvinfer1::IPluginCreator {
     CHECK_EQ(attr_field.length, 1);
     int int_value = (reinterpret_cast<const int*>(attr_field.data))[0];
     CHECK_EQ(int_value, 1);
-
     // bool_attr
     attr_field = (fc->fields)[2];
     CHECK(attr_field.type == nvinfer1::PluginFieldType::kINT32);
     CHECK_EQ(attr_field.length, 1);
     int bool_value = (reinterpret_cast<const int*>(attr_field.data))[0];
     CHECK_EQ(bool_value, 1);
-
     // string_attr
     attr_field = (fc->fields)[3];
     CHECK(attr_field.type == nvinfer1::PluginFieldType::kCHAR);
@@ -175,6 +174,7 @@ class custom_op_plugin_creator : public nvinfer1::IPluginCreator {
     CHECK(attr_field.type == nvinfer1::PluginFieldType::kINT32);
     CHECK_EQ(attr_field.length, 3);
     const int* ints_value = reinterpret_cast<const int*>(attr_field.data);
+
     CHECK_EQ(ints_value[0], 1);
     CHECK_EQ(ints_value[1], 2);
     CHECK_EQ(ints_value[2], 3);
@@ -187,7 +187,6 @@ class custom_op_plugin_creator : public nvinfer1::IPluginCreator {
     CHECK_EQ(floats_value[0], 1.0);
     CHECK_EQ(floats_value[1], 2.0);
     CHECK_EQ(floats_value[2], 3.0);
-
     // bools_attr
     attr_field = (fc->fields)[6];
     CHECK(attr_field.type == nvinfer1::PluginFieldType::kINT32);
