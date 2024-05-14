@@ -772,7 +772,7 @@ class Engine:
 
             self._inputs = self.program_helper.input_vars
             self._labels = self.program_helper.label_vars
-            # self._process_dist_input_specs()
+            self._process_dist_input_specs()
             outputs = self.program_helper.output_vars
             self._losses = self.program_helper.loss_vars
             self._loss_names = self.program_helper.loss_names

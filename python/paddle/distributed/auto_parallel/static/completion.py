@@ -36,6 +36,7 @@ from .operators.common import (
     _gradient_sync_by_partial_ops,
     find_compatible_distributed_operator_impls,
     find_distributed_operator_impl_container,
+    get_distributed_operator_impl_container,
 )
 from .process_group import get_world_process_group
 from .utils import (
@@ -62,6 +63,22 @@ __skip_dims_mapping_op__ = [
 
 _skip_propagation_prefix = "Auto_Parallel_Completion_Skipped"
 _max_propagation_step = 500
+
+
+def log_program(dist_context, name=""):
+    import paddle
+
+    if name in ["before_update", "after_update", "final"]:
+        from .dist_context import set_default_distributed_context
+
+        set_default_distributed_context(dist_context)
+        print(f"================== {name} ==================")
+        print(dist_context.serial_main_program)
+        if paddle.distributed.get_rank() == 0:
+            with open(f"./main_program_{name}.txt", "w+") as f:
+                f.write(str(dist_context.serial_main_program))
+            with open(f"./startup_program_{name}.txt", "w+") as f:
+                f.write(str(dist_context.serial_startup_program))
 
 
 def mark_as_sharding_propagation_skip_op(op):
@@ -173,7 +190,9 @@ def _can_apply_infer_spmd_rule(dist_op):
         "assign",
         "scale",
         "dropout",
+        "reduce_base",
         "reduce_sum",
+        "reduce_mean",
         "layer_norm",
         "lookup_table_v2",
         "reshape2",
@@ -186,18 +205,45 @@ def _can_apply_infer_spmd_rule(dist_op):
         "swiglu",
         "tile",
         "fused_rms_norm",
+        "scatter",
+        "gather",
+        "cumsum",
     ]
     parallel_ce = os.getenv("PARALLEL_CROSS_ENTROPY")
     if parallel_ce == "true":
         __adapted_ops__.append("softmax_with_cross_entropy")
     op_type = dist_op.serial_op.type
+    if op_type == "reduce_mean":
+        op_type = "reduce_base"
     return enable and contains_spmd_rule(op_type) and op_type in __adapted_ops__
 
 
 def _update_op_dims_mapping_and_distoperatorimpl(
     dist_op, original_op_dist_attr, changed
 ):
-    dist_op_container = find_distributed_operator_impl_container(dist_op)
+    # if dist_op.serial_op.type == "reduce_mean":
+    #     breakpoint()
+    # HACK(zhangyichen): Now "dtensor_from_local_list" op is
+    # labeled with "concat" in serial program, so if the op_type
+    # is "concat" and its output name contains "dtensor_from_local",
+    # it should use "dtensor_from_local_list" container in special.
+    if dist_op.serial_op.type == "assign":
+        # input_arg_names = dist_op.serial_op.desc.input_arg_names()
+        output_arg_names = dist_op.serial_op.desc.output_arg_names()
+        if "dtensor_from_local_api" in output_arg_names[0]:
+            dist_op_container = get_distributed_operator_impl_container(
+                "dtensor_from_local_list"
+            )
+        elif "local_tensor_from_dist_api" in output_arg_names[0]:
+            dist_op_container = get_distributed_operator_impl_container(
+                "local_tensors_from_dist"
+            )
+        else:
+            dist_op_container = find_distributed_operator_impl_container(
+                dist_op
+            )
+    else:
+        dist_op_container = find_distributed_operator_impl_container(dist_op)
     _logger.debug(
         f"Update Op [{dist_op.serial_op.type}] using DistOpContainer [{dist_op_container.type}]."
     )
@@ -1777,6 +1823,108 @@ class Completer:
                 grad_op_dist_attr.set_output_dims_mapping(
                     output_var.name, ref_dims_mapping
                 )
+            elif grad_op.type == "assign" and (
+                "local_tensor_from_dist_api" in grad_op.input_arg_names[0]
+                or "dtensor_from_local_api" in grad_op.input_arg_names[0]
+            ):
+                # Specific completion for local_tensor_from_dist and dtensor_from_local api.
+                # These two apis are used to get local_tensor or dist_tensor, so the process_meshes
+                # of their input and output are different. Here use a specific completion
+                # to set their grad_op's output var dist_attr identical to forward op's input
+                # var dist_attr.
+                input_name = grad_op.input_arg_names[0]
+                fwd_var_name = grad_var_to_var[input_name]
+                ref_dims_mapping = fwd_op_dist_attr.get_output_dims_mapping(
+                    fwd_var_name
+                )
+                grad_op_dist_attr.set_input_dims_mapping(
+                    input_name, ref_dims_mapping
+                )
+
+                output_name = grad_op.output_arg_names[0]
+                fwd_var_name = grad_var_to_var[output_name]
+                ref_dist_attr = vars[fwd_var_name].dist_attr
+                ref_dims_mapping = ref_dist_attr.dims_mapping
+                ref_process_mesh = ref_dist_attr.process_mesh
+
+                output_var = vars[output_name]
+                set_var_dist_attr(
+                    self._dist_context,
+                    output_var,
+                    ref_dims_mapping,
+                    ref_process_mesh,
+                    chunk_id=ref_chunk_id,
+                )
+                grad_op_dist_attr.set_output_dims_mapping(
+                    output_name, ref_dims_mapping
+                )
+            elif grad_op.type == "gather_grad":
+                # gather_grad requires its input to be replicated, but
+                # its corresponding forward op gather's output can be
+                # sharded. So, gather_grad cannot directly use grad's
+                # dist_attr.
+                for input_name in grad_op.input_arg_names:
+                    if (
+                        input_name not in forward_op.input_arg_names
+                        and input_name not in forward_op.output_arg_names
+                    ):
+                        if input_name in grad_var_to_var:
+                            fwd_name = grad_var_to_var[input_name]
+                            ref_dims_mapping = (
+                                fwd_op_dist_attr.get_output_dims_mapping(
+                                    fwd_name
+                                )
+                            )
+                        else:
+                            input_var = vars[input_name]
+                            ref_dims_mapping = self._dist_context.get_tensor_dist_attr_for_program(
+                                input_var
+                            ).dims_mapping
+                    else:
+                        if input_name in forward_op.input_arg_names:
+                            ref_dims_mapping = (
+                                fwd_op_dist_attr.get_input_dims_mapping(
+                                    input_name
+                                )
+                            )
+                        else:
+                            ref_dims_mapping = (
+                                fwd_op_dist_attr.get_output_dims_mapping(
+                                    input_name
+                                )
+                            )
+                    assert (
+                        ref_dims_mapping is not None
+                    ), f"[{input_name}] 's dims mapping is NONE"
+
+                    for i in range(len(ref_dims_mapping)):
+                        ref_dims_mapping[i] = -1
+
+                    grad_op_dist_attr.set_input_dims_mapping(
+                        input_name, ref_dims_mapping
+                    )
+
+                for output_name in grad_op.output_arg_names:
+                    assert output_name in grad_var_to_var, (
+                        "output[%s] is not in grad_var_to_var" % output_name
+                    )
+                    fwd_var_name = grad_var_to_var[output_name]
+                    ref_dist_attr = vars[fwd_var_name].dist_attr
+                    ref_dims_mapping = ref_dist_attr.dims_mapping
+                    for i in range(len(ref_dims_mapping)):
+                        ref_dims_mapping[i] = -1
+                    ref_process_mesh = ref_dist_attr.process_mesh
+                    output_var = vars[output_name]
+                    set_var_dist_attr(
+                        self._dist_context,
+                        output_var,
+                        ref_dims_mapping,
+                        ref_process_mesh,
+                        chunk_id=ref_chunk_id,
+                    )
+                    grad_op_dist_attr.set_output_dims_mapping(
+                        output_name, ref_dims_mapping
+                    )
             else:
                 # complete grad_op's input_dist_attrs, no need to complete input_var's tensor_dist_attr
                 for input_name in grad_op.input_arg_names:

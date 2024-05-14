@@ -158,7 +158,10 @@ class ClipHelper:
     def __init__(
         self, params_grads, rank_id, block, dist_context, pass_context
     ):
-        params, _ = zip(*params_grads)
+        if params_grads == []:
+            params = []
+        else:
+            params, _ = zip(*params_grads)
         self.params = list(params)
         self.params_name = [p.name for p in self.params]
         self.rank_id = rank_id
@@ -276,13 +279,24 @@ class ClipHelper:
                 mapping[rank_] = []
             sizes = [0] * self.world_nranks
             for param in params:
-                rank = sizes.index(min(sizes))
-                mapping[rank].append(param.name)
+                # In MoE expert parallelization, the experts' parameter are
+                # not on all processes, so they should be mapped to the ranks
+                # that they are actuallly on.
+                rank_candidates = param.dist_attr.process_mesh.process_ids
+                target_rank = rank_candidates[0]
+                tmp_size = sizes[target_rank]
+                for rank in rank_candidates:
+                    if sizes[rank] < tmp_size:
+                        target_rank = rank
+                        tmp_size = sizes[rank]
+                mapping[target_rank].append(param.name)
+                # rank = sizes.index(min(sizes))
+                # mapping[rank].append(param.name)
                 numel = reduce(lambda x, y: x * y, param.shape, 1)
                 assert (
                     numel > 0
                 ), f"param [{param.name}] should larger than 0, but it is [{numel}]"
-                sizes[rank] += numel
+                sizes[target_rank] += numel
         return mapping
 
 
