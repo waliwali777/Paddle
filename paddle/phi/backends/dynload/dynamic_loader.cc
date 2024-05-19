@@ -45,6 +45,7 @@ COMMON_DECLARE_string(cusparselt_dir);
 COMMON_DECLARE_string(curand_dir);
 COMMON_DECLARE_string(cusolver_dir);
 COMMON_DECLARE_string(cusparse_dir);
+COMMON_DECLARE_string(nvrtc_dir);
 #ifdef PADDLE_WITH_HIP
 
 PHI_DEFINE_string(miopen_dir,
@@ -541,6 +542,20 @@ void* GetCusparseDsoHandle() {
 void* GetNVRTCDsoHandle() {
 #if defined(__APPLE__) || defined(__OSX__)
   return GetDsoHandleFromSearchPath(FLAGS_cuda_dir, "libnvrtc.dylib", false);
+#elif defined(__linux__) && defined(PADDLE_WITH_CUDA)
+  if (CUDA_VERSION >= 11000 && CUDA_VERSION < 12000) {
+#ifdef WITH_PIP_CUDA_LIBRARIES
+    return GetDsoHandleFromSearchPath(FLAGS_nvrtc_dir, "libnvrtc.so.11.2");
+#else
+    return GetDsoHandleFromSearchPath(FLAGS_nvrtc_dir, "libnvrtc.so");
+#endif
+  } else if (CUDA_VERSION >= 12000 && CUDA_VERSION <= 12030) {
+#ifdef WITH_PIP_CUDA_LIBRARIES
+    return GetDsoHandleFromSearchPath(FLAGS_nvrtc_dir, "libnvrtc.so.12");
+#else
+    return GetDsoHandleFromSearchPath(FLAGS_nvrtc_dir, "libnvrtc.so");
+#endif
+  }
 #elif defined(PADDLE_WITH_HIP)
   return GetDsoHandleFromSearchPath(FLAGS_rocm_dir, "libamdhip64.so", false);
 #else
