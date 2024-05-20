@@ -460,6 +460,7 @@ class TestEmbeddingEltwiseLayerNormFusePassNoBroadcast(PassAutoScanTest):
     def sample_predictor_configs(self, program_config):
         # trt dynamic_shape
         config = self.create_trt_inference_config()
+
         config.enable_tensorrt_engine(
             max_batch_size=4,
             workspace_size=1 << 30,

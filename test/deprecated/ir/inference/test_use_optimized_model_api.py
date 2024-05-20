@@ -82,6 +82,8 @@ class UseOptimizedModel(InferencePassTest):
             self.path_prefix + ".pdmodel", self.path_prefix + ".pdiparams"
         )
         config.enable_use_gpu(100, 0)
+        config.enable_new_ir()
+        config.enable_new_executor()
         config.enable_tensorrt_engine(
             workspace_size=1 << 30,
             max_batch_size=1,

@@ -141,8 +141,10 @@ class BackendPaddle:
                         config.enable_tuned_tensorrt_dynamic_shape(
                             shape_range_file, True
                         )
-        config.disable_glog_info()
+        # config.disable_glog_info()
         config.exp_disable_tensorrt_ops(["range"])
+        config.enable_new_ir()
+        config.enable_new_executor()
 
         self.predictor = paddle_infer.create_predictor(config)
 

@@ -141,6 +141,8 @@ class TestWhileOP(unittest.TestCase):
             use_static=False,
             use_calib_mode=False,
         )
+        config_trt.enable_new_ir()
+        config_trt.enable_new_executor()
         config_trt.set_trt_dynamic_shape_info(
             {
                 "x": [32, 3, 224, 224],

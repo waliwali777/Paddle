@@ -96,6 +96,8 @@ class TestTRTOptimizationLevel(unittest.TestCase):
             self.model_prefix + '.pdmodel', self.model_prefix + '.pdiparams'
         )
         config.enable_use_gpu(256, 0, PrecisionType.Half)
+        config.enable_new_ir()
+        config.enbale_new_executor()
         config.enable_tensorrt_engine(
             workspace_size=1 << 30,
             max_batch_size=1,
