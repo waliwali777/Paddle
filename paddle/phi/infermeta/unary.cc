@@ -1004,6 +1004,11 @@ void DistConcatInferMeta(const MetaTensor& x, int nranks, MetaTensor* out) {
   out->set_dims(dim);
 }
 
+void DistIdentityInferMeta(const MetaTensor& x, MetaTensor* out) {
+  out->set_dtype(x.dtype());
+  out->set_dims(x.dims());
+}
+
 void DistReduceInferMeta(const MetaTensor& x, MetaTensor* out) {
   out->set_dtype(x.dtype());
   out->set_dims(x.dims());
