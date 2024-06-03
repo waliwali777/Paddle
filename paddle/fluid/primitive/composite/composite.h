@@ -521,14 +521,24 @@ Tensor silu_decomp(const Tensor& x) {
 }
 
 template <typename T>
-Tensor swiglu_decomp(const Tensor& x, const paddle::optional<Tensor>& y) {
+Tensor swiglu_decomp(const Tensor& x,
+                     const paddle::optional<Tensor>& y,
+                     bool turn) {
   if (y) {
-    return silu_decomp<T>(x) * y.get();
+    if (turn) {
+      return silu_decomp<T>(x) * y.get();
+    } else {
+      return x * silu_decomp<T>(y.get());
+    }
   } else {
     int axis = x.shape().size() - 1;
     int num = 2;
     std::vector<Tensor> xs = backend::split_with_num<T>(x, num, axis);
-    return silu_decomp<T>(xs[0]) * xs[1];
+    if (turn) {
+      return silu_decomp<T>(xs[0]) * xs[1];
+    } else {
+      return xs[0] * silu_decomp<T>(xs[1]);
+    }
   }
 }
 

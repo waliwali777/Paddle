@@ -2100,30 +2100,54 @@ template <typename T>
 void swiglu_grad(const Tensor& x,
                  const paddle::optional<Tensor>& y,
                  const Tensor& dz,
+                 bool turn,
                  Tensor* dx,
                  Tensor* dy) {
   const auto& x_shape = x.shape();
   auto one_tensor = full<T>(x_shape, 1.0, x.dtype());
   Tensor x_grad;
-  if (y) {
-    const auto& y_tensor = y.get();
-    Tensor sig = sigmoid<T>(x);
-    Tensor tmp = sig * x;
-    x_grad = dz * y_tensor * sig * (one_tensor + x - tmp);
-    Tensor y_grad = dz * tmp;
-    set_output<T>(y_grad, dy);
+  if (turn) {
+    if (y) {
+      const auto& y_tensor = y.get();
+      Tensor sig = sigmoid<T>(x);
+      Tensor tmp = sig * x;
+      x_grad = dz * y_tensor * sig * (one_tensor + x - tmp);
+      Tensor y_grad = dz * tmp;
+      set_output<T>(y_grad, dy);
+    } else {
+      int axis = x.shape().size() - 1;
+      int num = 2;
+      std::vector<Tensor> xs = backend::split_with_num<T>(x, num, axis);
+      Tensor sig = sigmoid<T>(xs[0]);
+      Tensor tmp = sig * xs[0];
+      Tensor x0_grad = dz * xs[1] * sig * (one_tensor + xs[0] - tmp);
+      Tensor x1_grad = dz * tmp;
+      int64_t c_axis = x_shape.size() - 1;
+      x_grad = concat<T>({x0_grad, x1_grad}, c_axis);
+    }
+    set_output<T>(x_grad, dx);
   } else {
-    int axis = x.shape().size() - 1;
-    int num = 2;
-    std::vector<Tensor> xs = backend::split_with_num<T>(x, num, axis);
-    Tensor sig = sigmoid<T>(xs[0]);
-    Tensor tmp = sig * xs[0];
-    Tensor x0_grad = dz * xs[1] * sig * (one_tensor + xs[0] - tmp);
-    Tensor x1_grad = dz * tmp;
-    int64_t c_axis = x_shape.size() - 1;
-    x_grad = concat<T>({x0_grad, x1_grad}, c_axis);
+    if (y) {
+      const auto& y_tensor = y.get();
+      Tensor sig = sigmoid<T>(y_tensor);
+      Tensor tmp = sig * y_tensor;
+      Tensor y_grad = dz * x * sig * (one_tensor + y_tensor - tmp);
+      x_grad = dz * tmp;
+      set_output<T>(x_grad, dx);
+      set_output<T>(y_grad, dy);
+    } else {
+      int axis = x.shape().size() - 1;
+      int num = 2;
+      std::vector<Tensor> xs = backend::split_with_num<T>(x, num, axis);
+      Tensor sig = sigmoid<T>(xs[1]);
+      Tensor tmp = sig * xs[1];
+      Tensor x1_grad = dz * xs[0] * sig * (one_tensor + xs[1] - tmp);
+      Tensor x0_grad = dz * tmp;
+      int64_t c_axis = x_shape.size() - 1;
+      x_grad = concat<T>({x0_grad, x1_grad}, c_axis);
+      set_output<T>(x_grad, dx);
+    }
   }
-  set_output<T>(x_grad, dx);
 }
 
 }  // namespace details

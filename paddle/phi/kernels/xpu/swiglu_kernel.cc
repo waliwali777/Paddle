@@ -21,6 +21,7 @@ template <typename T, typename Context>
 void SwiGluKernel(const Context& ctx,
                   const DenseTensor& x,
                   const paddle::optional<DenseTensor>& y,
+                  bool turn,
                   DenseTensor* z) {
   using XPUType = typename XPUTypeTrait<T>::Type;
   using XPUTypefp32 = typename XPUTypeTrait<float>::Type;
@@ -50,7 +51,7 @@ void SwiGluKernel(const Context& ctx,
                         reinterpret_cast<XPUType*>(z_data),
                         dims_vec,
                         axis,
-                        true,
+                        turn,
                         const_nullptr,
                         nullptr,
                         y_ptr);

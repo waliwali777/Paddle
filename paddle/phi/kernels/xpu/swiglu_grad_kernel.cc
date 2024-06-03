@@ -20,9 +20,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "paddle/phi/kernels/swiglu_grad_kernel.h"
 #include "paddle/phi/backends/xpu/enforce_xpu.h"
 #include "paddle/phi/core/kernel_registry.h"
-#include "paddle/phi/kernels/swiglu_grad_kernel.h"
 
 namespace phi {
 
@@ -31,6 +31,7 @@ void SwiGluGradKernel(const Context& ctx,
                       const DenseTensor& x,
                       const paddle::optional<DenseTensor>& y,
                       const DenseTensor& dz,
+                      bool turn,
                       DenseTensor* dx,
                       DenseTensor* dy) {
   using XPUType = typename XPUTypeTrait<T>::Type;
@@ -64,7 +65,7 @@ void SwiGluGradKernel(const Context& ctx,
                              reinterpret_cast<XPUType*>(dx_data),
                              dims_vec,
                              axis,
-                             true,
+                             turn,
                              y_ptr,
                              dy_ptr);
   PADDLE_ENFORCE_XDNN_SUCCESS(ret, "swiglu_grad");

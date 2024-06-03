@@ -24,7 +24,9 @@ limitations under the License. */
 namespace phi {
 namespace distributed {
 
-SpmdInfo SwiGLUInferSpmd(const DistMetaTensor& x, const DistMetaTensor& y) {
+SpmdInfo SwiGLUInferSpmd(const DistMetaTensor& x,
+                         const DistMetaTensor& y,
+                         bool turn) {
   // y.dist_attr() is empty means y is None
   if (y.dist_attr() == TensorDistAttr()) {
     auto x_dims_mapping = x.dist_attr().dims_mapping();
@@ -42,7 +44,8 @@ SpmdInfo SwiGLUInferSpmd(const DistMetaTensor& x, const DistMetaTensor& y) {
 
 SpmdInfo SwiGLUInferSpmdReverse(const DistMetaTensor& x,
                                 const DistMetaTensor& y,
-                                const DistMetaTensor& out) {
+                                const DistMetaTensor& out,
+                                bool turn) {
   if (y.dist_attr() == TensorDistAttr()) {
     auto x_dims_mapping = x.dist_attr().dims_mapping();
     if (x_dims_mapping.back() != -1) {
@@ -59,7 +62,8 @@ SpmdInfo SwiGLUInferSpmdReverse(const DistMetaTensor& x,
 
 SpmdInfo SwiGLUGradInferSpmd(const DistMetaTensor& x,
                              const DistMetaTensor& y,
-                             const DistMetaTensor& out_grad) {
+                             const DistMetaTensor& out_grad,
+                             bool turn) {
   if (y.dist_attr() == TensorDistAttr()) {
     auto x_dims_mapping = x.dist_attr().dims_mapping();
     if (x_dims_mapping.back() != -1) {
