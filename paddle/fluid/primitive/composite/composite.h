@@ -521,7 +521,9 @@ Tensor silu_decomp(const Tensor& x) {
 }
 
 template <typename T>
-Tensor swiglu_decomp(const Tensor& x, const paddle::optional<Tensor>& y) {
+Tensor swiglu_decomp(const Tensor& x,
+                     const paddle::optional<Tensor>& y,
+                     bool turn) {
   if (y) {
     return silu_decomp<T>(x) * y.get();
   } else {

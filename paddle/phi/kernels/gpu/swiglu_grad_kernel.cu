@@ -111,6 +111,8 @@ void SwiGLUGradKernelImpl(const Context &ctx,
                           const T *x,
                           const T *y,
                           const T *dz,
+                          bool,
+                          turn,
                           T *dx,
                           T *dy,
                           int64_t m,
@@ -127,13 +129,23 @@ void SwiGLUGradKernelImpl(const Context &ctx,
     vec_size = std::min(vec_size, phi::GetVectorizedSize<T>(dy));
   }
 
-#define PD_LAUNCH_SWIGLU_GRAD_CUDA_KERNEL_BASE(                                \
-    __vec_size, __is_combine, __has_dx, __has_dy)                              \
-  case __vec_size: {                                                           \
-    SwiGLUGradCUDAKernel<T, __vec_size, __is_combine, __has_dx, __has_dy>      \
-        <<<config.block_per_grid, config.thread_per_block, 0, ctx.stream()>>>( \
-            x, y, dz, dx, dy, m, n);                                           \
-    break;                                                                     \
+#define PD_LAUNCH_SWIGLU_GRAD_CUDA_KERNEL_BASE(                             \
+    __vec_size, __is_combine, __has_dx, __has_dy)                           \
+  case __vec_size: {                                                        \
+    if (turn) {                                                             \
+      SwiGLUGradCUDAKernel<T, __vec_size, __is_combine, __has_dx, __has_dy> \
+          <<<config.block_per_grid,                                         \
+             config.thread_per_block,                                       \
+             0,                                                             \
+             ctx.stream()>>>(x, y, dz, dx, dy, m, n);                       \
+    } else {                                                                \
+      SwiGLUGradCUDAKernel<T, __vec_size, __is_combine, __has_dx, __has_dy> \
+          <<<config.block_per_grid,                                         \
+             config.thread_per_block,                                       \
+             0,                                                             \
+             ctx.stream()>>>(y, x, dz, dy, dx, m, n);                       \
+    }                                                                       \
+    break;                                                                  \
   }
 
 #define PD_LAUNCH_SWIGLU_GRAD_CUDA_KERNEL(__is_combine, __has_dx, __has_dy) \

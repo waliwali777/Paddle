@@ -3067,12 +3067,12 @@
   optional: u_grad, vh_grad, s_grad
 
 - backward_op : swiglu_grad
-  forward : swiglu (Tensor x, Tensor y) -> Tensor(out)
-  args: (Tensor x, Tensor y, Tensor out_grad)
+  forward : swiglu (Tensor x, Tensor y, bool turn=true) -> Tensor(out)
+  args: (Tensor x, Tensor y, Tensor out_grad, bool turn=true)
   output : Tensor(x_grad), Tensor(y_grad)
   infer_meta:
     func: SwiGLUGradInferMeta
-    param: [x, y]
+    param: [x, y, turn]
     spmd_rule: SwiGLUGradInferSpmd
   kernel:
     func: swiglu_grad

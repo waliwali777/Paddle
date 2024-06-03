@@ -5236,7 +5236,7 @@ template <typename T>
 struct SwiGLUFunctor {
   using MPType = typename phi::dtype::MPTypeTrait<T>::Type;
 
-  HOSTDEVICE T operator()(T x, T y) const {
+  HOSTDEVICE T operator()(T x, T y, bool turn) const {
     MPType mp_x = static_cast<MPType>(x);
     MPType mp_y = static_cast<MPType>(y);
     MPType one = static_cast<MPType>(1);
@@ -5248,7 +5248,7 @@ template <typename T, bool HasDX = true, bool HasDY = true>
 struct SwiGLUGradFunctor {
   using MPType = typename phi::dtype::MPTypeTrait<T>::Type;
 
-  HOSTDEVICE void operator()(T x, T y, T dz, T* dx, T* dy) const {
+  HOSTDEVICE void operator()(T x, T y, T dz, bool turn, T* dx, T* dy) const {
     MPType one = static_cast<MPType>(1);
 
     MPType mp_x = static_cast<MPType>(x);

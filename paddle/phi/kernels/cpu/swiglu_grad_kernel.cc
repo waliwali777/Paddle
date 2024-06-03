@@ -24,6 +24,7 @@ void SwiGLUGradKernelImpl(const Context &ctx,
                           const T *x,
                           const T *y,
                           const T *dz,
+                          bool turn,
                           T *dx,
                           T *dy,
                           int64_t m,
@@ -41,11 +42,21 @@ void SwiGLUGradKernelImpl(const Context &ctx,
   for (int64_t i = 0; i < m; ++i) {
     for (int64_t j = 0; j < n; ++j) {
       T dx_tmp, dy_tmp;
-      functor(x[i * stride + j],
-              y[i * stride + j],
-              dz[i * n + j],
-              &dx_tmp,
-              &dy_tmp);
+      if (turn) {
+        functor(x[i * stride + j],
+                y[i * stride + j],
+                dz[i * n + j],
+                turn,
+                &dx_tmp,
+                &dy_tmp);
+      } else {
+        functor(y[i * stride + j],
+                x[i * stride + j],
+                dz[i * n + j],
+                turn,
+                &dy_tmp,
+                &dx_tmp);
+      }
       if (dx) {
         dx[i * stride + j] = dx_tmp;
       }

@@ -27,7 +27,7 @@ from paddle.distributed.auto_parallel.static.dist_attribute import (
 from paddle.incubate.nn.functional import swiglu as fused_swiglu_impl
 
 
-def swiglu(x, y, out_grad):
+def swiglu(x, y, turn, out_grad):
     if isinstance(x, np.ndarray):
         x = paddle.to_tensor(x)
         y = paddle.to_tensor(y)
@@ -52,7 +52,10 @@ def swiglu(x, y, out_grad):
             y = y.astype(output_dtype)
             need_convert = True
 
-    out = F.silu(x) * y
+    if turn:
+        out = F.silu(x) * y
+    else:
+        out = x * F.silu(y)
     if need_convert:
         out = out.astype(dtype)
     out.backward(out_grad)
@@ -64,13 +67,13 @@ def swiglu(x, y, out_grad):
     return ret
 
 
-def fused_swiglu(x, y, out_grad):
+def fused_swiglu(x, y, turn, out_grad):
     x = x.detach().clone()
     x.stop_gradient = False
     if y is not None:
         y = y.detach().clone()
         y.stop_gradient = False
-    out = fused_swiglu_impl(x, y)
+    out = fused_swiglu_impl(x, y, turn)
     out.backward(out_grad)
 
     output_dtype = x.dtype
@@ -104,20 +107,21 @@ class TestSwiGLUDygraph(unittest.TestCase):
         y = paddle.randn(shape, dtype=dtype)
         out_grad = paddle.randn(shape, dtype=dtype)
 
-        ret1 = swiglu(x, y, out_grad)
-        ret2 = fused_swiglu(x, y, out_grad)
-        ret3 = fused_swiglu(paddle.concat([x, y], axis=-1), None, out_grad)
-
-        atol, rtol = tol_map[dtype]
-        err_msg = (
-            f"Failed when device = {device}, dtype = {dtype}, shape = {shape}"
-        )
-        for t1, t2, t3 in zip(ret1, ret2, ret3):
-            t1, t2, t3 = t1.numpy(), t2.numpy(), t3.numpy()
-            np.testing.assert_allclose(
-                t1, t2, atol=atol, rtol=rtol, err_msg=err_msg
+        for turn in [True, False]:
+            ret1 = swiglu(x, y, turn, out_grad)
+            ret2 = fused_swiglu(x, y, turn, out_grad)
+            ret3 = fused_swiglu(
+                paddle.concat([x, y], axis=-1), None, turn, out_grad
             )
-            np.testing.assert_equal(t2, t3, err_msg=err_msg)
+
+            atol, rtol = tol_map[dtype]
+            err_msg = f"Failed when device = {device}, dtype = {dtype}, shape = {shape}"
+            for t1, t2, t3 in zip(ret1, ret2, ret3):
+                t1, t2, t3 = t1.numpy(), t2.numpy(), t3.numpy()
+                np.testing.assert_allclose(
+                    t1, t2, atol=atol, rtol=rtol, err_msg=err_msg
+                )
+                np.testing.assert_equal(t2, t3, err_msg=err_msg)
 
     def check_dygraph(self, shape):
         metas = [('cpu', paddle.float32), ('cpu', paddle.float64)]
@@ -144,18 +148,19 @@ class TestSwiGLUDygraph(unittest.TestCase):
             shape=list(shape[:-1]) + [shape[-1] * 2],
             dtype=dtype,
         )
-        out1 = fused_swiglu_impl(x, y)
-        out2 = fused_swiglu_impl(concated_x)
+        for turn in [True, False]:
+            out1 = fused_swiglu_impl(x, y, turn)
+            out2 = fused_swiglu_impl(concated_x, None, turn)
 
-        concated_x_np = np.random.random(concated_x.shape).astype(dtype)
-        x_np, y_np = np.split(concated_x_np, 2, axis=-1)
+            concated_x_np = np.random.random(concated_x.shape).astype(dtype)
+            x_np, y_np = np.split(concated_x_np, 2, axis=-1)
 
-        exe = paddle.static.Executor()
-        t1, t2 = exe.run(
-            feed={'x': x_np, 'y': y_np, 'concated_x': concated_x_np},
-            fetch_list=[out1, out2],
-        )
-        np.testing.assert_equal(t1, t2)
+            exe = paddle.static.Executor()
+            t1, t2 = exe.run(
+                feed={'x': x_np, 'y': y_np, 'concated_x': concated_x_np},
+                fetch_list=[out1, out2],
+            )
+            np.testing.assert_equal(t1, t2)
 
     def check_main(self, shape):
         self.check_dygraph(shape)
@@ -185,7 +190,7 @@ class TestSwigluOp(OpTest):
         x = np.random.uniform(-1, 1, self.x_shape).astype("float64")
         y = np.random.uniform(-1, 1, self.x_shape).astype("float64")
         out_grad = np.random.uniform(-1, 1, self.x_shape).astype("float64")
-        res = swiglu(x, y, out_grad)
+        res = swiglu(x, y, True, out_grad)
         self.inputs = {'x': x, 'y': y}
         self.outputs = {'out': res[0].numpy()}
         self.placements = {
@@ -219,7 +224,7 @@ class TestSwigluOp2(TestSwigluOp):
         x = tmp_inputs[0]
         y = tmp_inputs[1]
         out_grad = np.random.uniform(-1, 1, x.shape).astype("float64")
-        res = swiglu(x, y, out_grad)
+        res = swiglu(x, y, True, out_grad)
         self.inputs = {'x': x, 'y': y}
         self.outputs = {'out': res[0].numpy()}
         self.placements = {

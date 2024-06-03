@@ -4092,7 +4092,7 @@
   backward : svd_grad
 
 - op : swiglu
-  args : (Tensor x, Tensor y)
+  args : (Tensor x, Tensor y, bool turn=true)
   output : Tensor(out)
   infer_meta :
      func : SwiGLUInferMeta

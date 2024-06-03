@@ -1554,6 +1554,7 @@ void StackGradInferMeta(const MetaTensor& out_grad,
 
 void SwiGLUGradInferMeta(const MetaTensor& x,
                          const MetaTensor& y,
+                         bool turn,
                          MetaTensor* x_grad,
                          MetaTensor* y_grad) {
   if (x_grad) {

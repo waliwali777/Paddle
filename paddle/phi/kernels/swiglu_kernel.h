@@ -20,13 +20,19 @@
 namespace phi {
 
 template <typename T, typename Context>
-void SwiGLUKernelImpl(
-    const Context &ctx, const T *x, const T *y, T *z, int64_t m, int64_t n);
+void SwiGLUKernelImpl(const Context &ctx,
+                      const T *x,
+                      const T *y,
+                      bool turn,
+                      T *z,
+                      int64_t m,
+                      int64_t n);
 
 template <typename T, typename Context>
 void SwiGLUKernel(const Context &ctx,
                   const DenseTensor &x,
                   const paddle::optional<DenseTensor> &y,
+                  bool turn,
                   DenseTensor *z) {
   const auto *x_ptr = x.data<T>();
   auto *z_ptr = ctx.template Alloc<T>(z);
@@ -43,7 +49,7 @@ void SwiGLUKernel(const Context &ctx,
                                      y_dims,
                                      dims));
     SwiGLUKernelImpl<T, Context>(
-        ctx, x_ptr, y_tensor.data<T>(), z_ptr, x.numel(), 1);
+        ctx, x_ptr, y_tensor.data<T>(), turn, z_ptr, x.numel(), 1);
   } else {
     auto dims_2d = flatten_to_2d(dims, dims.size() - 1);
     int64_t m = dims_2d[0], n = dims_2d[1];
@@ -53,7 +59,7 @@ void SwiGLUKernel(const Context &ctx,
                           "The last dim of Input(X) should be exactly divided "
                           "by 2 when Input(Y) is None, but got %d",
                           n));
-    SwiGLUKernelImpl<T, Context>(ctx, x_ptr, nullptr, z_ptr, m, n / 2);
+    SwiGLUKernelImpl<T, Context>(ctx, x_ptr, nullptr, turn, z_ptr, m, n / 2);
   }
 }
 
