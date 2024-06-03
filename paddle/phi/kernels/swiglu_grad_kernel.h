@@ -24,6 +24,7 @@ void SwiGLUGradKernelImpl(const Context &ctx,
                           const T *x,
                           const T *y,
                           const T *dz,
+                          bool turn,
                           T *dx,
                           T *dy,
                           int64_t m,
@@ -34,6 +35,7 @@ void SwiGLUGradKernel(const Context &ctx,
                       const DenseTensor &x,
                       const paddle::optional<DenseTensor> &y,
                       const DenseTensor &dz,
+                      bool turn,
                       DenseTensor *dx,
                       DenseTensor *dy) {
   const auto *x_ptr = x.data<T>();
@@ -52,8 +54,15 @@ void SwiGLUGradKernel(const Context &ctx,
                                      "to the shape of Input(X):[%s].",
                                      y_dims,
                                      dims));
-    SwiGLUGradKernelImpl<T, Context>(
-        ctx, x_ptr, y_tensor.data<T>(), dz_ptr, dx_ptr, dy_ptr, x.numel(), 1);
+    SwiGLUGradKernelImpl<T, Context>(ctx,
+                                     x_ptr,
+                                     y_tensor.data<T>(),
+                                     dz_ptr,
+                                     turn,
+                                     dx_ptr,
+                                     dy_ptr,
+                                     x.numel(),
+                                     1);
   } else {
     auto dims_2d = flatten_to_2d(dims, dims.size() - 1);
     int64_t m = dims_2d[0], n = dims_2d[1];
@@ -64,7 +73,7 @@ void SwiGLUGradKernel(const Context &ctx,
                           "by 2 when Input(Y) is None, but got %d",
                           n));
     SwiGLUGradKernelImpl<T, Context>(
-        ctx, x_ptr, nullptr, dz_ptr, dx_ptr, nullptr, m, n / 2);
+        ctx, x_ptr, nullptr, dz_ptr, turn, dx_ptr, nullptr, m, n / 2);
   }
 }
 

@@ -78,17 +78,32 @@ __global__ void SwiGLUCUDAKernel(const T *__restrict__ x,
 }
 
 template <typename T, typename Context>
-void SwiGLUKernelImpl(
-    const Context &ctx, const T *x, const T *y, T *z, int64_t m, int64_t n) {
+void SwiGLUKernelImpl(const Context &ctx,
+                      const T *x,
+                      const T *y,
+                      bool turn,
+                      T *z,
+                      int64_t m,
+                      int64_t n) {
   int vec_size =
       std::min(phi::GetVectorizedSize<T>(x), phi::GetVectorizedSize<T>(z));
 
-#define PD_LAUNCH_SWIGLU_CUDA_KERNEL_BASE(__vec_size, __is_combine)            \
-  case __vec_size: {                                                           \
-    SwiGLUCUDAKernel<T, __vec_size, __is_combine>                              \
-        <<<config.block_per_grid, config.thread_per_block, 0, ctx.stream()>>>( \
-            x, y, z, m, n);                                                    \
-    break;                                                                     \
+#define PD_LAUNCH_SWIGLU_CUDA_KERNEL_BASE(__vec_size, __is_combine) \
+  case __vec_size: {                                                \
+    if (turn) {                                                     \
+      SwiGLUCUDAKernel<T, __vec_size, __is_combine>                 \
+          <<<config.block_per_grid,                                 \
+             config.thread_per_block,                               \
+             0,                                                     \
+             ctx.stream()>>>(x, y, z, m, n);                        \
+    } else {                                                        \
+      SwiGLUCUDAKernel<T, __vec_size, __is_combine>                 \
+          <<<config.block_per_grid,                                 \
+             config.thread_per_block,                               \
+             0,                                                     \
+             ctx.stream()>>>(y, x, z, m, n);                        \
+    }                                                               \
+    break;                                                          \
   }
 
 #define PD_LAUNCH_SWIGLU_CUDA_KERNEL(__is_combine)               \

@@ -17,18 +17,19 @@ from paddle import _C_ops
 from ....framework import LayerHelper, in_dynamic_or_pir_mode
 
 
-def swiglu(x, y=None, name=None):
+def swiglu(x, y=None, turn=True, name=None):
     """
     This function performs SwiGLU activation to the input Tensor.
 
     .. math::
 
-        out = silu(x) * y when y is not None
-        out = silu(xs[0]) * xs[1] when y is None, where xs = paddle.chunk(x, 2, axis=-1)
+        out = silu(x) * y or x * silu(y) when y is not None
+        out = silu(xs[0]) * xs[1] or xs[0] * silu(xs[1]) when y is None, where xs = paddle.chunk(x, 2, axis=-1)
 
     Args:
         x (Tensor): The first input Tensor of SwiGLU.
         y (Tensor, optional): The second input Tensor of SwiGLU. Default: None.
+        turn (bool, optional): Whether do silu to LHS or RHS. turn = True, silu(x) * y or silu(xs[0]) * xs[1]. turn = False, x * silu(y) or xs[0] * silu(xs[1]). xs = paddle.chunk(x, 2, axis=-1).
         name (str, optional): For details, please refer to :ref:`api_guide_Name`. Generally, no setting is required. Default: None.
 
     Returns:
@@ -47,11 +48,14 @@ def swiglu(x, y=None, name=None):
                    [0.73105860, 3.52318811])
     """
     if in_dynamic_or_pir_mode():
-        return _C_ops.swiglu(x, y)
+        return _C_ops.swiglu(x, y, turn)
     else:
         helper = LayerHelper("swiglu", **locals())
         out = helper.create_variable_for_type_inference(dtype=x.dtype)
         helper.append_op(
-            type="swiglu", inputs={"x": x, "y": y}, outputs={"out": out}
+            type="swiglu",
+            inputs={"x": x, "y": y},
+            attrs={"turn": turn},
+            outputs={"out": out},
         )
         return out

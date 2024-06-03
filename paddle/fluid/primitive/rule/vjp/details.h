@@ -2100,6 +2100,7 @@ template <typename T>
 void swiglu_grad(const Tensor& x,
                  const paddle::optional<Tensor>& y,
                  const Tensor& dz,
+                 bool turn,
                  Tensor* dx,
                  Tensor* dy) {
   const auto& x_shape = x.shape();

@@ -3996,6 +3996,7 @@ void SolveInferMeta(const MetaTensor& x, const MetaTensor& y, MetaTensor* out) {
 
 void SwiGLUInferMeta(const MetaTensor& x,
                      const MetaTensor& y,
+                     bool turn,
                      MetaTensor* out) {
   if (y) {
     PADDLE_ENFORCE_EQ(
