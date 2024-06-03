@@ -23,6 +23,7 @@
 #include "paddle/fluid/memory/allocation/auto_growth_best_fit_allocator_v2.h"
 #include "paddle/fluid/memory/allocation/cpu_allocator.h"
 #include "paddle/fluid/memory/allocation/naive_best_fit_allocator.h"
+#include "paddle/fluid/memory/allocation/pinned_allocator.h"
 #include "paddle/fluid/memory/allocation/retry_allocator.h"
 #include "paddle/fluid/memory/allocation/stat_allocator.h"
 #include "paddle/fluid/platform/device_context.h"
@@ -35,7 +36,6 @@
 
 #include "paddle/fluid/memory/allocation/cuda_allocator.h"
 #include "paddle/fluid/memory/allocation/cuda_managed_allocator.h"
-#include "paddle/fluid/memory/allocation/pinned_allocator.h"
 #include "paddle/fluid/memory/allocation/stream_safe_cuda_allocator.h"
 #include "paddle/fluid/memory/allocation/thread_local_allocator.h"
 #include "paddle/fluid/platform/device/gpu/gpu_info.h"
@@ -63,6 +63,7 @@
 #include "paddle/fluid/memory/allocation/stream_safe_xpu_allocator.h"
 #include "paddle/fluid/memory/allocation/xpu_allocator.h"
 #include "paddle/fluid/platform/device/xpu/xpu_info.h"
+#include "paddle/phi/backends/cpu/cpu_info.h"
 #include "paddle/phi/backends/xpu/xpu_context.h"
 #endif
 
@@ -229,6 +230,7 @@ class AllocatorFacadePrivate {
         for (int dev_id = 0; dev_id < platform::GetXPUDeviceCount(); ++dev_id) {
           InitNaiveBestFitXPUAllocator(platform::XPUPlace(dev_id));
         }
+        InitNaiveBestFitXPUPinnedAllocator();
 #endif
 #ifdef PADDLE_WITH_CUSTOM_DEVICE
         auto device_types = phi::DeviceManager::GetAllCustomDeviceTypes();
@@ -290,6 +292,7 @@ class AllocatorFacadePrivate {
           is_stream_safe_cuda_allocator_used_ = true;
         }
 
+        InitNaiveBestFitXPUPinnedAllocator();
 #endif
 #ifdef PADDLE_WITH_IPU
         for (int dev_id = 0; dev_id < platform::GetIPUDeviceCount(); ++dev_id) {
@@ -319,6 +322,7 @@ class AllocatorFacadePrivate {
         for (int dev_id = 0; dev_id < platform::GetXPUDeviceCount(); ++dev_id) {
           InitNaiveBestFitXPUAllocator(platform::XPUPlace(dev_id));
         }
+        InitNaiveBestFitXPUPinnedAllocator();
 #endif
 #ifdef PADDLE_WITH_IPU
         for (int dev_id = 0; dev_id < platform::GetIPUDeviceCount(); ++dev_id) {
@@ -1223,6 +1227,23 @@ class AllocatorFacadePrivate {
 #endif
 
 #ifdef PADDLE_WITH_XPU
+  void InitNaiveBestFitXPUPinnedAllocator() {
+    if (FLAGS_use_auto_growth_pinned_allocator) {
+      auto chunk_size = FLAGS_auto_growth_chunk_size_in_mb << 20;
+      VLOG(4) << "FLAGS_auto_growth_chunk_size_in_mb is "
+              << FLAGS_auto_growth_chunk_size_in_mb;
+      auto pinned_allocator = std::make_shared<CPUPinnedAllocator>();
+      allocators_[platform::XPUPinnedPlace()] =
+          std::make_shared<AutoGrowthBestFitAllocator>(
+              pinned_allocator,
+              phi::backends::cpu::CUDAPinnedMinChunkSize(),
+              chunk_size,
+              allow_free_idle_chunk_);
+    } else {
+      allocators_[platform::XPUPinnedPlace()] =
+          std::make_shared<NaiveBestFitAllocator>(platform::XPUPinnedPlace());
+    }
+  }
   void InitNaiveBestFitXPUAllocator(platform::XPUPlace p) {
     allocators_[p] = std::make_shared<NaiveBestFitAllocator>(p);
   }
@@ -1424,6 +1445,8 @@ class AllocatorFacadePrivate {
     if (!system_allocators_.empty()) return;
     system_allocators_[platform::CPUPlace()] = std::make_shared<CPUAllocator>();
 #ifdef PADDLE_WITH_XPU
+    system_allocators_[platform::XPUPinnedPlace()] =
+        std::make_shared<CPUPinnedAllocator>();
     int device_count = platform::GetXPUDeviceCount();
     for (int i = 0; i < device_count; ++i) {
       platform::XPUPlace p(i);
@@ -1473,6 +1496,7 @@ class AllocatorFacadePrivate {
     for (int dev_id = 0; dev_id < device_count; ++dev_id) {
       places.emplace_back(platform::XPUPlace(dev_id));
     }
+    places.emplace_back(platform::XPUPinnedPlace());
 #endif
 #ifdef PADDLE_WITH_IPU
     int device_count = platform::GetIPUDeviceCount();
@@ -1534,6 +1558,7 @@ class AllocatorFacadePrivate {
       const platform::Place& place = pair.first;
       if (platform::is_cpu_place(place) ||
           platform::is_cuda_pinned_place(place) ||
+          platform::is_xpu_pinned_place(place) ||
           platform::is_gpu_place(place) || platform::is_custom_place(place) ||
           platform::is_xpu_place(place)) {
         pair.second = std::make_shared<StatAllocator>(pair.second);
