@@ -16,6 +16,7 @@ import logging
 from collections import OrderedDict
 from enum import Enum
 
+import paddle
 from paddle.base import core
 from paddle.base.framework import Parameter, Program
 from paddle.distributed.auto_parallel.static.dist_attribute import (
@@ -1281,3 +1282,96 @@ def split_matmul_grad_to_matmul(
     dist_context.set_op_dist_attr_for_program(matmul_op, matmul_grad_dist_attr)
 
     block._remove_op(matmul_grad_id, sync=False)
+
+
+def _split_and_replace_recv(types, sub_program_list, num_model_chunks):
+    rtn_types = []
+    rtn_sub_program_list = []
+    assert len(types) == len(
+        sub_program_list
+    ), f"len of sub_program_list({len(sub_program_list)}) should equal == len of types({len(types)})"
+    for i in range(len(sub_program_list)):
+        no_recv_program = sub_program_list[i].clone()
+        recv4_program = paddle.base.framework.Program()
+        recv4_program_with_sync = paddle.base.framework.Program()
+        # Insert a record_stream_op to achieve cross-stream sync of subsequent recv_ops.
+        with paddle.static.program_guard(recv4_program):
+            paddle.full(shape=[1], fill_value=1.0)
+
+        # Move all recv_ops at the beginning of program into recv4_program, and replace the recv_ops with data_ops.
+        for index, op in enumerate(list(no_recv_program.global_block().ops)):
+            if op.type == "recv_v2":
+                recv_arg_name = op.output("Out")[0]
+                recv_var = no_recv_program.global_block().var(recv_arg_name)
+                recv_ring_id = int(op.attr("ring_id"))
+
+                _create_program(
+                    no_recv_program.global_block(),
+                    recv4_program.global_block(),
+                    op,
+                )
+                recv4_program._sync_with_cpp()
+
+                recv4_program.global_block().append_op(
+                    type="shadow_output",
+                    inputs={"x": recv_arg_name},
+                    outputs={"out": recv_arg_name},  # unused
+                    attrs={"name": recv_arg_name},
+                )
+
+                if types[i] == "backward" + str(num_model_chunks - 1):
+                    _create_program(
+                        no_recv_program.global_block(),
+                        recv4_program_with_sync.global_block(),
+                        op,
+                    )
+                    recv4_program_with_sync._sync_with_cpp()
+
+                    recv4_program_with_sync.global_block().append_op(
+                        type="c_sync_comm_stream",
+                        inputs={'X': recv_arg_name},
+                        outputs={'Out': recv_arg_name},
+                        attrs={'ring_id': recv_ring_id},
+                    )
+
+                    recv4_program_with_sync.global_block().append_op(
+                        type="shadow_output",
+                        inputs={"x": recv_arg_name},
+                        outputs={"out": recv_arg_name},  # unused
+                        attrs={"name": recv_arg_name},
+                    )
+
+                no_recv_program.global_block()._remove_op(index, sync=False)
+                no_recv_program.global_block()._insert_op(
+                    index,
+                    type="data",
+                    outputs={"out": recv_arg_name},
+                    attrs={
+                        "shape": recv_var.shape,
+                        "dtype": recv_var.dtype,
+                        "place": 2,  # GPUPlace
+                        "name": recv_arg_name,
+                    },
+                )
+            elif op.type == "feed" or op.type == "data":
+                continue
+            else:
+                break
+
+        if len(recv4_program.block(0).ops) > 1:
+            recv4_program._sync_with_cpp()
+            rtn_types.append("recv4_" + types[i])
+            rtn_sub_program_list.append(recv4_program)
+
+            no_recv_program._sync_with_cpp()
+            rtn_types.append("no_recv_" + types[i])
+            rtn_sub_program_list.append(no_recv_program)
+
+            if types[i] == "backward" + str(num_model_chunks - 1):
+                recv4_program_with_sync._sync_with_cpp()
+                rtn_types.append("recv4_" + types[i] + "_with_sync")
+                rtn_sub_program_list.append(recv4_program_with_sync)
+
+        rtn_types.append(types[i])
+        rtn_sub_program_list.append(sub_program_list[i])
+    return rtn_types, rtn_sub_program_list

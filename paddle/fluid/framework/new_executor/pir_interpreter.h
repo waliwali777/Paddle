@@ -124,6 +124,15 @@ class PirInterpreter : public InterpreterBaseImpl {
     force_events_to_wait_ = force_events_to_wait;
   }
 
+  void AddEventToRecord(std::shared_ptr<platform::DeviceEvent> event) {
+    VLOG(0) << "Add event to record " << event.get();
+    events_to_record_.push_back(event);
+  }
+  void AddEventToWait(std::shared_ptr<platform::DeviceEvent> event) {
+    VLOG(0) << "Add event to wait " << event.get();
+    events_to_wait_.push_back(event);
+  }
+
  private:
   // build graph
   void UpdateSyncOpNum();
@@ -134,6 +143,7 @@ class PirInterpreter : public InterpreterBaseImpl {
       InstructionSchedulingPriorityLess compare);
   void ConstructEventForJitInput();
   void CalculateLastLiveOps();
+  void ConstructEvent();
 
   // gc
   void ClearLoDTensorArrayInLocalScope();
@@ -283,6 +293,9 @@ class PirInterpreter : public InterpreterBaseImpl {
 #endif
   size_t last_calculate_instr_id_;
   bool enable_job_schedule_profiler_;
+
+  std::vector<std::shared_ptr<platform::DeviceEvent>> events_to_record_;
+  std::vector<std::shared_ptr<platform::DeviceEvent>> events_to_wait_;
 };
 
 }  // namespace framework

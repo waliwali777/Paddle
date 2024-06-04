@@ -59,6 +59,15 @@ StandaloneExecutor::StandaloneExecutor(const platform::Place& place,
   VLOG(6) << ss.str();
 
   const auto& jobs = plan_.JobList();
+
+  const auto event_names = plan.AllEvents();
+  std::unordered_map<std::string, std::shared_ptr<platform::DeviceEvent>>
+      events;
+  for (auto event_name : event_names) {
+    events[event_name] = std::make_shared<platform::DeviceEvent>(
+        place_, platform::GenerateDeviceEventFlag());
+  }
+
   for (size_t job_idx = 0; job_idx < jobs.size(); ++job_idx) {
     const auto& job = jobs[job_idx];
     const std::string& job_type = job->Type();
@@ -132,6 +141,12 @@ StandaloneExecutor::StandaloneExecutor(const platform::Place& place,
           static_cast<const PirInterpreter*>(interpretercores_.back()->Impl()));
       pir_inter->SetForceEventsToWaitInfo(
           &(vec_force_events_to_wait_[micro_batch_id]));
+      for (auto event_name : job->EventToRecord()) {
+        pir_inter->AddEventToRecord(events[event_name]);
+      }
+      for (auto event_name : job->EventToWait()) {
+        pir_inter->AddEventToWait(events[event_name]);
+      }
     } else {
       interpretercores_.emplace_back(
           std::make_shared<InterpreterCore>(place_,
