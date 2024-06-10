@@ -40,7 +40,7 @@ void abs_grad(const Tensor& x, const Tensor& out_grad, Tensor* x_grad) {
 template <typename T>
 void assign_grad(const Tensor& out_grad, Tensor* x_grad) {
   if (x_grad) {
-    by_pass<T>(out_grad, x_grad);
+    set_output<T>(out_grad, x_grad);
   }
 }
 
@@ -475,7 +475,7 @@ void scatter_nd_add_grad(const Tensor& index,
                          Tensor* x_grad,
                          Tensor* updates_grad) {
   if (x_grad) {
-    by_pass<T>(out_grad, x_grad);
+    set_output<T>(out_grad, x_grad);
   }
   if (updates_grad) {
     // Gradient by Gather: dUpdates = dO[Ids]
@@ -563,7 +563,7 @@ void add_grad(const Tensor& x,
       set_output<T>(dy_tmp, dy);
 
     } else {
-      by_pass<T>(out_grad, dy);
+      set_output<T>(out_grad, dy);
     }
   }
   if (dx) {
@@ -574,7 +574,7 @@ void add_grad(const Tensor& x,
       auto dx_tmp = reshape<T>(dx_reduce_res, common::vectorize(x.dims()));
       set_output<T>(dx_tmp, dx);
     } else {
-      by_pass<T>(out_grad, dx);
+      set_output<T>(out_grad, dx);
     }
   }
 }
@@ -596,7 +596,7 @@ void subtract_grad(const Tensor& x,
       auto dy_tmp = reshape<T>(dy_reduce_res, common::vectorize(y.dims()));
       set_output<T>(dy_tmp, dy);
     } else {
-      by_pass<T>(scale_out_grad, dy);
+      set_output<T>(scale_out_grad, dy);
     }
   }
   if (dx) {
@@ -607,7 +607,7 @@ void subtract_grad(const Tensor& x,
       auto dx_tmp = reshape<T>(dx_reduce_res, common::vectorize(x.dims()));
       set_output<T>(dx_tmp, dx);
     } else {
-      by_pass<T>(out_grad, dx);
+      set_output<T>(out_grad, dx);
     }
   }
 }
@@ -864,7 +864,7 @@ void dropout_grad(const Tensor& mask,
   if (!x_grad) return;
   if (is_test) {
     if (mode == "upscale_in_train") {
-      by_pass<T>(out_grad, x_grad);
+      set_output<T>(out_grad, x_grad);
     } else {
       set_output<T>(out_grad * (1.0 - p.to<float>()), x_grad);
     }
@@ -909,7 +909,7 @@ void expand_grad(const Tensor& x,
       }
       set_output<T>(reduced, x_grad);
     } else {
-      by_pass<T>(out_grad, x_grad);
+      set_output<T>(out_grad, x_grad);
     }
   }
 }
@@ -1617,7 +1617,7 @@ void topk_grad(const Tensor& x,
   if (x_grad) {
     // put_along_axis doesn't support zero dim
     if (x.dims().size() == 0) {
-      by_pass<T>(out_grad, x_grad);
+      set_output<T>(out_grad, x_grad);
       return;
     }
     auto zero_tensor = full<T>(common::vectorize(x.dims()), 0, x.dtype());
