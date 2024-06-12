@@ -17,7 +17,6 @@
 #include <cstdint>
 #include <mutex>
 #include "paddle/common/flags.h"
-#include "paddle/common/macros.h"
 #include "paddle/fluid/memory/allocation/allocator.h"
 #include "paddle/fluid/memory/allocation/stream_safe_cuda_allocator.h"
 
@@ -74,7 +73,47 @@
  */
 COMMON_DECLARE_double(cuda_malloc_async_pool_memory_throttle_ratio);
 
+#include "paddle/utils/optional.h"
+
+PHI_DECLARE_double(cuda_malloc_async_pool_memory_throttle_ratio);
+
 namespace paddle::memory::allocation {
+
+/*
+ * Note: [cuda_malloc_async_pool_memory_throttle_ratio]
+ * The primary purpose of the memory_throttle_ratio is to provide a
+ * threshold that determines when to initiate synchronization operations to
+ * deallocate memory. This mechanism helps in ensuring that the system does
+ * not exceed its memory capacity while also attempting to minimize performance
+ * degradation caused by frequent memory synchronization.
+ *
+ * ```
+ *   utilization = (allocated_size + pending_release_size) / total_memory_size
+ *   if(utilization > memory_throttle_ratio)
+ *      sync(free_stream, malloc_stream)
+ * ```
+ *
+ * When the utilization exceeds the memory_throttle_ratio, we
+ * initiate a stream synchronization operation before malloc.
+ *
+ * During synchronization, all memory deallocation requests in the free queue
+ * are processed, effectively lowering the memory utilization before
+ * any new memory allocation operations are going to proceed.
+ *
+ * [Impact on Performance and Memory Usage]
+ *
+ * - Lower memory_throttle_ratio Values
+ * the synchronization operation will be triggered more frequently.
+ * This can lead to better memory utilization but might result in decreased
+ * performance due to the increased number of synchronization operations.
+ *
+ * - Higher memory_throttle_ratio Values
+ * Conversely, setting a higher value allows for more memory to be allocated
+ * before triggering synchronization, which can enhance performance by reducing
+ * the number of sync operations. However, this increases the risk of reaching
+ * an OOM condition since more memory can be allocated without
+ * immediate deallocation.
+ */
 
 thread_local std::once_flag CUDAMallocAsyncAllocation::once_flag_;
 
