@@ -25,6 +25,8 @@
 #include "paddle/phi/core/distributed/check/static_check.h"
 #include "paddle/phi/core/distributed/comm_context_manager.h"
 #include "paddle/phi/core/distributed/comm_task_manager.h"
+#include "paddle/phi/core/distributed/nccl_async_recorder.h"
+#include "paddle/phi/core/distributed/nccl_async_time_profiler.h"
 #include "paddle/phi/core/distributed/nccl_comm_task.h"
 #include "paddle/phi/core/distributed/nccl_tools.h"
 #include "paddle/phi/core/distributed/utils.h"
@@ -37,6 +39,7 @@ COMMON_DECLARE_bool(nccl_blocking_wait);
 COMMON_DECLARE_bool(use_stream_safe_cuda_allocator);
 COMMON_DECLARE_bool(use_cuda_malloc_async_allocator);
 COMMON_DECLARE_bool(enable_async_trace);
+COMMON_DECLARE_bool(enable_async_time_profiler);
 
 // set this flag to `true` and recompile to enable dynamic checks
 constexpr bool FLAGS_enable_nccl_dynamic_check = false;
@@ -123,7 +126,8 @@ ProcessGroupNCCL::ProcessGroupNCCL(
     int size,
     int gid,
     int64_t timeout,
-    int nccl_comm_init_option)
+    int nccl_comm_init_option,
+    std::string recorder_name)
     : ProcessGroupWithStream(rank, size, gid),
       store_(store),
       place_to_calc_event_(),
@@ -133,16 +137,24 @@ ProcessGroupNCCL::ProcessGroupNCCL(
       place_to_group_key_(),
       pg_timeout_(timeout),
       nccl_comm_init_option_(nccl_comm_init_option),
+      recorder_name_(recorder_name),
       allocation_stream_pairs() {
   LOG(INFO) << "ProcessGroupNCCL pg_timeout_ " << pg_timeout_;
   LOG(INFO) << "ProcessGroupNCCL nccl_comm_init_option_ "
             << nccl_comm_init_option_;
+  if (FLAGS_enable_async_time_profiler) {
+    phi::distributed::NCCLAsyncTimeProfiler::GetInstance().RegisterTimer(
+        gid_, rank_, recorder_name_);
+  }
 }
 ProcessGroupNCCL::~ProcessGroupNCCL() {
   LOG(INFO) << "ProcessGroupNCCL destruct ";
   if (FLAGS_enable_async_trace) {
     auto& comm_task_manager = phi::distributed::CommTaskManager::GetInstance();
     comm_task_manager.Stop();
+  }
+  if (FLAGS_enable_async_time_profiler) {
+    phi::distributed::NCCLAsyncTimeProfiler::GetInstance().Stop();
   }
 }
 
@@ -162,6 +174,13 @@ void ProcessGroupNCCL::GroupEnd() {
 #else  // PADDLE_WITH_HIP
     PADDLE_ENFORCE_GPU_SUCCESS(hipDeviceSynchronize());
 #endif
+  }
+}
+
+void ProcessGroupNCCL::LogSingleStep() {
+  if (FLAGS_enable_async_time_profiler) {
+    LOG(WARNING) << "[LogSingleStep]";
+    phi::distributed::NCCLAsyncTimeProfiler::GetInstance().LogSingleStep();
   }
 }
 
@@ -843,9 +862,15 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupNCCL::Collective(
 
   auto nccl_comm_ctx = this->GetCommContext(&store_key);
 
-  if (!FLAGS_enable_async_trace) {
+  if (FLAGS_enable_async_time_profiler) {
+    auto recoder = std::make_shared<phi::distributed::NCCLAsyncRecorder>(
+        place, rank_, gid_, nccl_stream, comm_type);
+    recoder->StartRecord();
     fn(nccl_comm_ctx, nccl_stream);
-  } else {
+    recoder->EndRecord();
+    auto& profiler = phi::distributed::NCCLAsyncTimeProfiler::GetInstance();
+    profiler.AddRecorder(std::move(recoder));
+  } else if (FLAGS_enable_async_trace) {
     std::string group_key = place_to_group_key_.at(key);
     auto comm_task =
         std::make_shared<phi::distributed::NCCLCommTask>(place,
@@ -868,6 +893,8 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupNCCL::Collective(
 
     auto& comm_task_manager = phi::distributed::CommTaskManager::GetInstance();
     comm_task_manager.CommTaskEnqueue(std::move(comm_task));
+  } else {
+    fn(nccl_comm_ctx, nccl_stream);
   }
 
   if (!use_calc_stream) {
@@ -974,9 +1001,15 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupNCCL::Point2Point(
 
   auto nccl_comm_ctx = this->GetCommContext(&store_key);
 
-  if (!FLAGS_enable_async_trace) {
+  if (FLAGS_enable_async_time_profiler) {
+    auto recoder = std::make_shared<phi::distributed::NCCLAsyncRecorder>(
+        place, p2p_rank, gid_, nccl_stream, comm_type);
+    recoder->StartRecord();
     fn(nccl_comm_ctx, nccl_stream, p2p_target_rank);
-  } else {
+    recoder->EndRecord();
+    auto& profiler = phi::distributed::NCCLAsyncTimeProfiler::GetInstance();
+    profiler.AddRecorder(std::move(recoder));
+  } else if (FLAGS_enable_async_trace) {
     comm_task->StartRecord();
     fn(nccl_comm_ctx, nccl_stream, p2p_target_rank);
     comm_task->EndRecord();
@@ -984,6 +1017,8 @@ std::shared_ptr<ProcessGroup::Task> ProcessGroupNCCL::Point2Point(
 
     auto& comm_task_manager = phi::distributed::CommTaskManager::GetInstance();
     comm_task_manager.CommTaskEnqueue(std::move(comm_task));
+  } else {
+    fn(nccl_comm_ctx, nccl_stream, p2p_target_rank);
   }
 
   if (!use_calc_stream) {
@@ -1021,9 +1056,10 @@ std::shared_ptr<ProcessGroupNCCL> ProcessGroupNCCL::CreateProcessGroupNCCL(
     int size,
     int gid,
     int64_t timeout,
-    int nccl_comm_init_option) {
+    int nccl_comm_init_option,
+    std::string recorder_name) {
   auto process_group = std::make_shared<ProcessGroupNCCL>(
-      store, rank, size, gid, timeout, nccl_comm_init_option);
+      store, rank, size, gid, timeout, nccl_comm_init_option, recorder_name);
   ProcessGroupIdMap::GetInstance().emplace(gid, process_group);
   return process_group;
 }
