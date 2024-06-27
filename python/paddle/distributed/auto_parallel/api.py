@@ -935,8 +935,9 @@ class _ShardOptimizer:
         ), "The sharding degree is None in ShardOptimizer"
 
     def _shard_accumulator(self, param):
-        # create the accumulators
-        self._inner_opt._create_accumulators(self.target_block, [param])
+        # create the accumulators with lazy guard
+        with paddle.LazyGuard():
+            self._inner_opt._create_accumulators(self.target_block, [param])
 
         target_name = param.name
         if param.name in self._inner_opt._master_weights.keys():
@@ -971,6 +972,8 @@ class _ShardOptimizer:
                         placements=placements,
                     )
 
+            # lazy init
+            accumulator.initialize()
             self._inner_opt._accumulators[key][target_name].name = (
                 target_name + "_" + key
             )
