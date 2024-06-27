@@ -58,8 +58,10 @@ from .parallelizer_v2 import Parallelizer
 from .pir_pass import (
     apply_partition_pass,
     apply_reshard_pass,
+    pipeline_pass,
     remove_other_rank_op_pass,
     remove_unuseful_comm_op_pass,
+    split_program_pass,
 )
 from .planner_v2 import Planner
 from .process_group import get_all_process_groups, new_process_group
@@ -218,6 +220,12 @@ class Engine:
         self._startup_progs = {}
         self._pir_dist_main_progs = {}
         self._pir_dense_main_progs = {}
+        self._pir_dist_fwd_progs = {}
+        self._pir_dense_fwd_progs = {}
+        self._pir_dist_bwd_progs = {}
+        self._pir_dense_bwd_progs = {}
+        self._pir_dist_opt_progs = {}
+        self._pir_dense_opt_progs = {}
         self._pir_fetch_values = []
         self._pir_user_defined_fetch_names = []
         self._orig_optimizer = copy.deepcopy(self._optimizer)
@@ -251,6 +259,7 @@ class Engine:
         self._dygraph_mode = False
         self._tuning = self._strategy.tuning
         self._acc_steps = 1
+        self._pipeline_plan = None
         self._in_pir_mode = paddle.base.framework.get_flags(
             "FLAGS_enable_pir_api"
         )["FLAGS_enable_pir_api"]
@@ -653,6 +662,7 @@ class Engine:
         # TODO(JZ-LIANG) regulization pass with pass management.
         dist_program = mix_fw_program.clone()
         apply_mix2dist_pass(dist_program)
+        last_fwd_op = dist_program.global_block().ops[-1]
         # Step 1.2: pir backward
         if mode == "train" and self._loss and self._optimizer:
             loss = dist_program.get_output_value_by_name(self._loss_names[0])
@@ -661,6 +671,7 @@ class Engine:
                     params_grads = paddle.autograd.ir_backward.append_backward(
                         loss
                     )
+                    last_bwd_op = dist_program.global_block().ops[-1]
                     self._optimizer._apply_optimize(
                         loss, startup_program, params_grads=params_grads
                     )
@@ -691,13 +702,25 @@ class Engine:
         #   insert reshard op if operand tensor's placements if different from what the cumsumer op need.
         #   Partition the computation graph into different pipeline stage if need.
         apply_partition_pass(dist_program)
+        if self._strategy.pipeline.enable:
+            fwd_program, bwd_program, opt_program = split_program_pass(
+                dist_program, last_fwd_op, last_bwd_op
+            )
 
         # TODO(hitywt) Step 3.2: Reshard Pass
         #   resolute the reshard op into special collective operation.
         #   collect the communicator created during resolution.
         apply_reshard_pass(dist_program)
+        if self._strategy.pipeline.enable:
+            apply_reshard_pass(fwd_program)
+            apply_reshard_pass(bwd_program)
+            apply_reshard_pass(opt_program)
 
         remove_other_rank_op_pass(dist_program)
+        if self._strategy.pipeline.enable:
+            remove_other_rank_op_pass(fwd_program)
+            remove_other_rank_op_pass(bwd_program)
+            remove_other_rank_op_pass(opt_program)
 
         # Part 4: Optimization Pass
         # NOTE Only those Optimization Pass that related to Parallelism (need dist attr) should be placed here and all the Pass should be Optional.
@@ -721,10 +744,55 @@ class Engine:
         # NOTE All optimization pass that need dist_attr info should be called before Dist2Dense Pass.
         dense_program = dist_program.clone()
         paddle.base.libpaddle.pir.apply_dist2dense_pass(dense_program)
+        if self._strategy.pipeline.enable:
+            dense_fwd_program = fwd_program.clone()
+            dense_bwd_program = bwd_program.clone()
+            dense_opt_program = opt_program.clone()
+            paddle.base.libpaddle.pir.apply_dist2dense_pass(dense_fwd_program)
+            paddle.base.libpaddle.pir.apply_dist2dense_pass(dense_bwd_program)
+            paddle.base.libpaddle.pir.apply_dist2dense_pass(dense_opt_program)
+
         remove_unuseful_comm_op_pass(dense_program)
+        print("==== original dense program ====")
+        print(dense_program)
+        if self._strategy.pipeline.enable:
+            remove_unuseful_comm_op_pass(dense_fwd_program)
+            remove_unuseful_comm_op_pass(dense_bwd_program)
+            remove_unuseful_comm_op_pass(dense_opt_program)
+
+            self._pir_dist_fwd_progs[mode] = fwd_program
+            self._pir_dist_bwd_progs[mode] = bwd_program
+            self._pir_dist_opt_progs[mode] = opt_program
+            self._pir_dense_fwd_progs[mode] = dense_fwd_program
+            self._pir_dense_bwd_progs[mode] = dense_bwd_program
+            self._pir_dense_opt_progs[mode] = dense_opt_program
+
+            print("==== pir_dense_fwd_prog ====")
+            print(self._pir_dense_fwd_progs[mode])
+            print("==== pir_dense_bwd_prog ====")
+            print(self._pir_dense_bwd_progs[mode])
+            print("==== pir_dense_opt_prog ===")
+            print(self._pir_dense_opt_progs[mode])
+            if self._strategy.pipeline.schedule_mode is not None:
+                self._pipeline_plan = pipeline_pass(
+                    dense_fwd_program,
+                    dense_bwd_program,
+                    dense_opt_program,
+                    self._strategy.pipeline,
+                )
 
         self._pir_dense_main_progs[mode] = dense_program
         self._pir_dist_main_progs[mode] = dist_program
+
+    def _create_executor(self, plan):
+        self._place = _get_device()
+        if isinstance(self._place, paddle.framework.CUDAPlace):
+            self._place = paddle.framework.CUDAPlace(
+                paddle.distributed.ParallelEnv().dev_id
+            )
+        executor = paddle.static.Executor(self._place)
+        executor._set_plan(plan)
+        return executor
 
     def _prepare_program(self, mode, init_parameters=True):
         # Do the build process
@@ -1081,6 +1149,9 @@ class Engine:
             # 6. vpp init adaption
 
             # self._init_lr(self._pir_dense_main_progs[mode])
+            self.program_helper.init_pir(
+                self._pir_dist_main_progs[mode], self._place
+            )
             if self._executor is None:
                 self._executor = paddle.static.Executor(self._place)
                 startup_prog = self._startup_progs[mode].clone()
@@ -1104,11 +1175,14 @@ class Engine:
                             continue
                 for del_op in del_ops:
                     del_op.erase()
+                print("==== startup prog ====")
+                print(startup_prog)
                 self._executor.run(startup_prog)
-            self.program_helper.init_pir(
-                self._pir_dist_main_progs[mode], self._place
-            )
-
+            if self._pipeline_plan is not None:
+                # pipeline scheduling should be enabled after running
+                # startup program, otherwise the startup program cannot
+                # run correctly.
+                self._executor._set_plan(self._pipeline_plan)
             return
 
         if self._strategy.seed:
@@ -1850,7 +1924,16 @@ class Engine:
         if self._in_pir_mode:
             use_cache = False
             no_fetch = False  # not last rank should not fetch loss in pipeline parallel
-            loss_value = self.main_program.get_output_value_by_name(
+            if self._pir_dense_fwd_progs == {}:
+                program_for_executor = self.main_program
+            else:
+                # NOTE: If pipeline scheduling is enabled, The program_for_executor
+                # is used to tell the executor where to feed data and add fetch op,
+                # not the program to be executed. The ``plan`` object is already
+                # constructed, and the programs to be executed are  stored in the
+                # ``plan`` object.
+                program_for_executor = self._pir_dense_fwd_progs[self._mode]
+            loss_value = program_for_executor.get_output_value_by_name(
                 self._loss_names[0]
             )
             if paddle.pir.is_fake_value(loss_value):
@@ -1860,6 +1943,19 @@ class Engine:
                 fetch_names = [loss_value]
             fetch_names += self._pir_fetch_values
 
+        # self._executor.plan = None
+        # if self._pir_dense_fwd_progs != {}:
+        #     print("==== run fwd ====")
+        #     outs = self._executor.run(
+        #         self._pir_dense_fwd_progs[self._mode],
+        #         feed=feed_dict,
+        #         fetch_list=fetch_names,
+        #         use_program_cache=use_cache,
+        #         return_numpy=self._strategy.return_numpy,
+        #     )
+        #     print("==== run bwd ====")
+        #     self._executor.run(self._pir_dense_bwd_progs[self._mode])
+        # else:
         outs = self._executor.run(
             self.main_program,
             feed=feed_dict,
@@ -1867,6 +1963,8 @@ class Engine:
             use_program_cache=use_cache,
             return_numpy=self._strategy.return_numpy,
         )
+        print("==== outs in engine ====")
+        print(outs)
 
         if self._in_pir_mode:
             if no_fetch:

@@ -14,6 +14,7 @@
 
 import paddle
 from paddle.autograd.backward_utils import ValueDict
+from paddle.distributed.passes.pass_base import PassContext, new_pass
 
 from .process_group import get_process_group
 from .reshard_funcs.base_reshard_func import (
@@ -190,6 +191,7 @@ def apply_reshard_pass(dist_program):
                 op.operand_source(0),
                 op.result(0).type(),
             )
+            out_value.persistable = op.result(0).persistable
             if out_value is not None:
                 op.result(0).replace_all_uses_with(out_value)
             if op.result(0).use_empty():
@@ -215,6 +217,10 @@ def remove_other_rank_op_pass(dist_program):
                 0
             ).use_empty(), f'There should not have useful dist.reshard op in remove_other_rank_op_pass. but find : {op}'
             op.erase()
+
+    for key, arg in dist_program.global_block().kwargs().items():
+        if cur_rank not in arg.dist_attr().process_mesh.process_ids:
+            dist_program.global_block().erase_kwarg(key)
 
     # merge pd.data ops for
     lr_ops = []
@@ -277,3 +283,164 @@ def eliminate_transpose_by_reshape(program):
                 transpose_var.replace_all_uses_with(reshape_var)
                 op.erase()
     return program
+
+
+def split_program_pass(main_program, last_fwd_op, last_bwd_op):
+    ops = main_program.global_block().ops
+    num_ops = len(ops)
+
+    fwd_program = main_program.clone()
+    bwd_program = main_program.clone()
+    opt_program = main_program.clone()
+    fwd_ops = fwd_program.global_block().ops
+    bwd_ops = bwd_program.global_block().ops
+    opt_ops = opt_program.global_block().ops
+    opt_block = opt_program.global_block()
+    bwd_block = bwd_program.global_block()
+
+    region = "opt"
+    for i in range(num_ops - 1, -1, -1):
+        if ops[i] == last_bwd_op:
+            region = "bwd"
+        if ops[i] == last_fwd_op:
+            region = "fwd"
+
+        if (
+            ops[i].name() == "pd_op.data"
+            and "learning_rate" in ops[i].attrs()["name"]
+        ):
+            fwd_ops[i].erase()
+            bwd_ops[i].erase()
+            continue
+
+        if region == "opt":
+            fwd_ops[i].erase()
+            bwd_ops[i].erase()
+        elif region == "bwd":
+            fwd_ops[i].erase()
+            # in optimize program, both forward and backward ops should be removed
+            for idx in range(opt_ops[i].num_results()):
+                # if this op's output is used, create the persistable
+                # var to be used in other programs.
+                result_in_opt = opt_ops[i].result(idx)
+                if result_in_opt.use_empty() is False:
+                    name = (
+                        "var_" + str(i) + "_" + ops[i].name() + "_" + str(idx)
+                    )
+                    paddle.pir.set_insertion_point_after(bwd_ops[i])
+                    paddle._C_ops.set_persistable_value(
+                        bwd_ops[i].result(idx), name
+                    )
+                    # bwd_ops[i].result(idx).persistable = True
+                    new_result_var_in_opt = opt_block.add_kwarg(
+                        name, result_in_opt.type()
+                    )
+                    new_result_var_in_opt.persistable = (
+                        result_in_opt.persistable
+                    )
+                    opt_ops[i].result(idx).replace_all_uses_with(
+                        new_result_var_in_opt
+                    )
+            opt_ops[i].erase()
+        else:
+            # in backward program, only the forward ops should be removed
+            for idx in range(opt_ops[i].num_results()):
+                # if this op's output is used, create the persistable
+                # var to be used in other programs.
+                result_in_opt = opt_ops[i].result(idx)
+                result_in_bwd = bwd_ops[i].result(idx)
+                if (
+                    result_in_opt.use_empty() is False
+                    or result_in_bwd.use_empty() is False
+                ):
+                    if (
+                        fwd_ops[i].name() == "pd_op.data"
+                        or fwd_ops[i].name() == "builtin.parameter"
+                    ):
+                        name = fwd_ops[i].result(idx).name
+                        # fwd_ops[i].result(idx).persistable = True
+                    else:
+                        result_value = ops[i].result(idx)
+                        used_ops = result_value.all_used_ops()
+                        shadow_output_op_used = None
+                        for used_op in used_ops:
+                            if used_op.name() == "builtin.shadow_output":
+                                shadow_output_op_used = used_op
+                        if shadow_output_op_used is not None:
+                            name = shadow_output_op_used.attrs()["output_name"]
+                            # fwd_ops[i].result(idx).persistable = True
+                        else:
+                            name = (
+                                "var_"
+                                + str(i)
+                                + "_"
+                                + ops[i].name()
+                                + "_"
+                                + str(idx)
+                            )
+                            paddle.pir.set_insertion_point_after(fwd_ops[i])
+                            paddle._C_ops.set_persistable_value(
+                                fwd_ops[i].result(idx), name
+                            )
+                            # fwd_ops[i].result(idx).persistable = True
+                if result_in_opt.use_empty() is False:
+                    new_result_var_in_opt = opt_block.add_kwarg(
+                        name, result_in_opt.type()
+                    )
+                    new_result_var_in_opt.persistable = (
+                        result_in_opt.persistable
+                    )
+                    opt_ops[i].result(idx).replace_all_uses_with(
+                        new_result_var_in_opt
+                    )
+                if result_in_bwd.use_empty() is False:
+                    new_result_var_in_bwd = bwd_block.add_kwarg(
+                        name, result_in_bwd.type()
+                    )
+                    new_result_var_in_bwd.persistable = (
+                        result_in_bwd.persistable
+                    )
+                    bwd_ops[i].result(idx).replace_all_uses_with(
+                        new_result_var_in_bwd
+                    )
+            opt_ops[i].erase()
+            bwd_ops[i].erase()
+
+    return fwd_program, bwd_program, opt_program
+
+
+def pipeline_pass(fwd_program, bwd_program, opt_program, pipeline_strategy):
+    """
+    Pipeline schedule pass for auto parallel. Enables the pipeline parallel scheduling
+    strategies like FThenB, 1F1B, etc.
+    TODO (zhangyichen): Now splitting program is performed on the original dist program.
+    We should move the splitting program process to this pipeline pass and perform the
+    splitting program pass on dense program instead.
+    """
+    import os
+
+    pass_name = pipeline_strategy.schedule_mode
+    assert pass_name in [
+        "FThenB",
+    ], f"pipeline scheduler only support FThenB now, but receive {pass_name}"
+
+    pass_attr = {}
+    pass_attr["num_micro_batches"] = pipeline_strategy.accumulate_steps
+
+    if pass_name == "1F1B":
+        # TODO(Ruibiao): Move FLAGS_1f1b_backward_forward_overlap and
+        # FLAGS_mp_async_allreduce_in_backward to auto parallel Strategy
+        # after these two optimizations are available.
+        pass_attr["enable_backward_forward_overlap"] = int(
+            os.environ.get("FLAGS_1f1b_backward_forward_overlap", 0)
+        )
+
+    pipeline_pass = new_pass("pipeline_scheduler_" + pass_name, pass_attr)
+    pass_context = PassContext()
+    pipeline_pass.apply(
+        [fwd_program, bwd_program, opt_program],
+        [fwd_program, bwd_program, opt_program],
+        pass_context,
+    )
+    plan = pass_context.get_attr("plan")
+    return plan
