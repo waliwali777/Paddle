@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#include <glog/logging.h>
 
 #include "paddle/fluid/framework/convert_utils.h"
 #include "paddle/fluid/framework/data_layout_transform.h"
@@ -207,6 +208,11 @@ void Tensor::CopyFromCpu(const T *data) {
   if (place_ == PlaceType::kCPU) {
     auto *t_data = tensor->mutable_data<T>(paddle::platform::CPUPlace());
     std::memcpy(static_cast<void *>(t_data), data, ele_size);
+    VLOG(4) << "lyf -- t_data ptr is: " << t_data;
+    VLOG(4) << "lyf -- data ptr is: " << data;
+    for (int i = 0; i < tensor->numel(); i++) {
+      VLOG(4) << "lyf -- CopyToCpuImpl data[" << i << "] is: " << data[i];
+    }
   } else if (place_ == PlaceType::kGPU) {
 #if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
 
@@ -225,6 +231,8 @@ void Tensor::CopyFromCpu(const T *data) {
                          data,
                          ele_size,
                          dev_ctx->stream());
+    VLOG(4) << "lyf -- CopyFromCpu xpu t_data ptr is: " << t_data;
+    VLOG(4) << "lyf -- CopyFromCpu cpu data ptr is: " << data;
 #else
     PADDLE_THROW(paddle::platform::errors::Unavailable(
         "Can not create tensor with CUDA place because paddle is not compiled "
@@ -239,6 +247,11 @@ void Tensor::CopyFromCpu(const T *data) {
                          paddle::platform::CPUPlace(),
                          data,
                          ele_size);
+    VLOG(4) << "lyf -- CopyFromCpu xpu t_data ptr is: " << t_data;
+    VLOG(4) << "lyf -- CopyFromCpu cpu data ptr is: " << data;
+    for (int i = 0; i < tensor->numel(); i++) {
+      VLOG(4) << "lyf -- CopyFromCpu data[" << i << "] is: " << data[i];
+    }
 #else
     PADDLE_THROW(paddle::platform::errors::Unavailable(
         "Can not create tensor with XPU place because paddle is not compiled "
@@ -258,6 +271,8 @@ void Tensor::CopyFromCpu(const T *data) {
                          data,
                          ele_size,
                          dev_ctx->stream());
+    VLOG(4) << "lyf -- CopyFromCpu xpu t_data ptr is: " << t_data;
+    VLOG(4) << "lyf -- CopyFromCpu cpu data ptr is: " << data;
 #else
     PADDLE_THROW(paddle::platform::errors::Unavailable(
         "Can not create tensor with Custom place because paddle is not "
@@ -332,6 +347,7 @@ void Tensor::ShareExternalData(const T *data,
                                const std::vector<int> &shape,
                                PlaceType place,
                                DataLayout layout) {
+  VLOG(4) << "lyf -- data ptr is: " << data;
   EAGER_GET_TENSOR(phi::DenseTensor)
   size_t size =
       std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int>()) *
@@ -343,6 +359,7 @@ void Tensor::ShareExternalData(const T *data,
         std::make_shared<phi::Allocation>(
             const_cast<T *>(data), size, paddle::platform::CPUPlace()),
         meta);
+    VLOG(4) << "lyf -- data ptr is: " << data;
     *tensor = std::move(dtensor);
   } else if (place == PlaceType::kGPU) {
     phi::DenseTensor dtensor(
@@ -356,7 +373,9 @@ void Tensor::ShareExternalData(const T *data,
             const_cast<T *>(data), size, paddle::platform::XPUPlace(device_)),
         meta);
     *tensor = std::move(dtensor);
+    VLOG(4) << "lyf -- data ptr is: " << data;
   } else if (place == PlaceType::kCUSTOM) {
+    VLOG(4) << "lyf -- PlaceType::kCUSTOM ";
     phi::DenseTensor dtensor(
         std::make_shared<phi::Allocation>(
             const_cast<T *>(data),
@@ -372,6 +391,7 @@ void Tensor::ShareExternalData(const T *data,
 }
 
 void Tensor::CopyStringsFromCpu(const paddle_infer::Strings *data) {
+  VLOG(4) << "lyf -- CopyStringsFromCpu ";
   EAGER_GET_TENSOR(paddle::framework::Strings);
   PADDLE_ENFORCE_GE(tensor->size(),
                     0,
@@ -391,7 +411,8 @@ void Tensor::CopyToCpuImpl(T *data,
   auto ele_num = tensor->numel();
   auto *t_data = tensor->data<T>();
   auto t_place = tensor->place();
-
+  VLOG(4) << "lyf -- t_data ptr is: " << t_data;
+  VLOG(4) << "lyf -- data ptr is: " << data;
   if (paddle::platform::is_cpu_place(t_place)) {
 #ifdef PADDLE_WITH_DNNL
     if (tensor->layout() == phi::DataLayout::ONEDNN) {
@@ -409,13 +430,19 @@ void Tensor::CopyToCpuImpl(T *data,
           &out,
           paddle::platform::CPUPlace(),
           true);
+      VLOG(4) << "lyf -- is_cpu_place";
     } else {
       std::memcpy(static_cast<void *>(data), t_data, ele_num * sizeof(T));
+      VLOG(4) << "lyf -- t_data ptr is: " << t_data;
+      VLOG(4) << "lyf -- data ptr is: " << data;
     }
 #else
     std::memcpy(static_cast<void *>(data), t_data, ele_num * sizeof(T));
+    VLOG(4) << "lyf -- t_data ptr is: " << t_data;
+    VLOG(4) << "lyf -- data ptr is: " << data;
 #endif
   } else if (paddle::platform::is_ipu_place(t_place)) {
+    VLOG(4) << "lyf -- CopyToCpuImpl ipu place";
 #ifdef PADDLE_WITH_IPU
     std::memcpy(static_cast<void *>(data), t_data, ele_num * sizeof(T));
 #else
@@ -425,6 +452,7 @@ void Tensor::CopyToCpuImpl(T *data,
 #endif
   } else if (place_ == PlaceType::kGPU) {
 #if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
+    VLOG(4) << "lyf -- CopyToCpuImpl gpu place";
     auto gpu_place = t_place;
     auto *dev_ctxs = reinterpret_cast<const std::map<
         phi::Place,
@@ -443,12 +471,16 @@ void Tensor::CopyToCpuImpl(T *data,
 #else
     // async, return stream
     if (nullptr != exec_stream) {
+      VLOG(4) << "lyf -- nullptr != exec_stream";
+      cudaStreamSynchronize(dev_ctx->stream());
       *(static_cast<cudaStream_t *>(exec_stream)) = dev_ctx->stream();
       // async with callback
     } else if (cb) {
+      VLOG(4) << "lyf -- cudaLaunchHostFunc";
       cudaLaunchHostFunc(dev_ctx->stream(), cb, cb_params);
       // sync
     } else {
+      VLOG(4) << "lyf -- cudaStreamSynchronize";
       cudaStreamSynchronize(dev_ctx->stream());
     }
 #endif
@@ -465,6 +497,12 @@ void Tensor::CopyToCpuImpl(T *data,
                          xpu_place,
                          t_data,
                          ele_num * sizeof(T));
+    VLOG(4) << "lyf -- CopyToCpuImpl cpu data ptr is: " << data;
+    VLOG(4) << "lyf -- CopyToCpuImpl xpu t_data ptr is: " << t_data;
+    for (int i = 0; i < ele_num; i++) {
+      VLOG(4) << "lyf -- CopyToCpuImpl data[" << i << "] is: " << data[i];
+    }
+
 #else
     PADDLE_THROW(paddle::platform::errors::Unavailable(
         "Can not create tensor with XPU place because paddle is not compiled "
@@ -472,6 +510,7 @@ void Tensor::CopyToCpuImpl(T *data,
 #endif
   } else {
 #ifdef PADDLE_WITH_CUSTOM_DEVICE
+    VLOG(4) << "lyf -- CopyToCpuImpl custom device";
     paddle::platform::DeviceContextPool &pool =
         paddle::platform::DeviceContextPool::Instance();
     auto custom_place = t_place;
@@ -483,6 +522,11 @@ void Tensor::CopyToCpuImpl(T *data,
                          t_data,
                          ele_num * sizeof(T),
                          dev_ctx->stream());
+    VLOG(4) << "lyf -- CopyToCpuImpl cpu data ptr is: " << data;
+    VLOG(4) << "lyf -- CopyToCpuImpl xpu t_data ptr is: " << t_data;
+    for (int i = 0; i < ele_num; i++) {
+      VLOG(4) << "lyf -- CopyToCpuImpl data[" << i << "] is: " << data[i];
+    }
     dev_ctx->GetStream()->Synchronize();
 #else
     PADDLE_THROW(paddle::platform::errors::InvalidArgument(
@@ -496,20 +540,23 @@ void Tensor::CopyToCpu(T *data) const {
 #ifdef PADDLE_WITH_ONNXRUNTIME
   if (is_ort_tensor_) {
     ORTCopyToCpu<T>(data);
+    VLOG(4) << "lyf -- data ptr is: " << data;
     return;
   }
 #endif
-
+  VLOG(4) << "lyf -- CopyToCpuImpl";
   CopyToCpuImpl<T>(data, nullptr, nullptr, nullptr);
 }
 
 template <typename T>
 void Tensor::CopyToCpuAsync(T *data, void *exec_stream) const {
+  VLOG(4) << "lyf -- CopyToCpuAsync";
   CopyToCpuImpl<T>(data, exec_stream, nullptr, nullptr);
 }
 
 template <typename T>
 void Tensor::CopyToCpuAsync(T *data, CallbackFunc cb, void *cb_params) const {
+  VLOG(4) << "lyf -- CopyToCpuAsync";
   CopyToCpuImpl<T>(data, nullptr, cb, cb_params);
 }
 
@@ -694,6 +741,7 @@ void *Tensor::FindTensor() const {
 
 std::vector<int> Tensor::shape() const {
 #ifdef PADDLE_WITH_ONNXRUNTIME
+  VLOG(3) << "lyf -- PADDLE_WITH_ONNXRUNTIME ";
   if (is_ort_tensor_) {
     std::vector<int> shape;
     // input handle
@@ -787,6 +835,8 @@ void Tensor::SetOrtBinding(const std::shared_ptr<Ort::IoBinding> binding) {
 
 template <typename T>
 T *Tensor::ORTGetMutableData() {
+  VLOG(4) << "lyf -- ORTGetMutableData";
+
   auto binding = binding_.lock();
   PADDLE_ENFORCE_NOT_NULL(binding,
                           paddle::platform::errors::PreconditionNotMet(
@@ -798,6 +848,7 @@ T *Tensor::ORTGetMutableData() {
 
 template <typename T>
 void Tensor::ORTCopyToCpu(T *data) const {
+  VLOG(4) << "lyf -- ORTCopyToCpu";
   auto binding = binding_.lock();
   PADDLE_ENFORCE_NOT_NULL(binding,
                           paddle::platform::errors::PreconditionNotMet(
@@ -809,6 +860,7 @@ void Tensor::ORTCopyToCpu(T *data) const {
 
   if (place_ == PlaceType::kCPU) {
     std::memcpy(static_cast<void *>(data), value.GetTensorData<void *>(), size);
+    VLOG(4) << "lyf -- data ptr is : " << data;
   } else {
     PADDLE_THROW(paddle::platform::errors::Unavailable(
         "CopyToCpu error.The current ONNXRuntime backend doesn't support "
@@ -828,6 +880,8 @@ template <typename T>
 void InternalUtils::CopyFromCpuWithIoStream(paddle_infer::Tensor *t,
                                             const T *data,
                                             cudaStream_t stream) {
+  VLOG(4) << "lyf -- data ptr is : " << data;
+
   if (t->tensor_ == nullptr) {
     PADDLE_ENFORCE_EQ(
         t->name_.empty(),
@@ -881,6 +935,8 @@ template <typename T>
 void InternalUtils::CopyToCpuWithIoStream(paddle_infer::Tensor *t,
                                           T *data,
                                           cudaStream_t stream) {
+  VLOG(4) << "lyf -- data ptr is : " << data;
+
   if (t->tensor_ == nullptr) {
     PADDLE_ENFORCE_EQ(
         t->name_.empty(),
@@ -901,6 +957,8 @@ void InternalUtils::CopyToCpuWithIoStream(paddle_infer::Tensor *t,
   auto *tensor = static_cast<phi::DenseTensor *>(t->tensor_);
   auto ele_num = tensor->numel();
   auto *t_data = tensor->data<T>();
+  VLOG(4) << "lyf -- t_data ptr is : " << t_data;
+
   auto t_place = tensor->place();
 
   if (paddle::platform::is_cpu_place(t_place)) {
@@ -922,9 +980,13 @@ void InternalUtils::CopyToCpuWithIoStream(paddle_infer::Tensor *t,
           true);
     } else {
       std::memcpy(static_cast<void *>(data), t_data, ele_num * sizeof(T));
+      VLOG(4) << "lyf -- data ptr is : " << data;
+      VLOG(4) << "lyf -- t_data ptr is : " << t_data;
     }
 #else
     std::memcpy(static_cast<void *>(data), t_data, ele_num * sizeof(T));
+    VLOG(4) << "lyf -- data ptr is : " << data;
+    VLOG(4) << "lyf -- t_data ptr is : " << t_data;
 #endif
   } else if (t->place_ == PlaceType::kGPU) {
 #if defined(PADDLE_WITH_CUDA) || defined(PADDLE_WITH_HIP)
