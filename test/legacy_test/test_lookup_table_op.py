@@ -22,13 +22,45 @@ from op_test import (
     skip_check_grad_ci,
 )
 
+import paddle
 import paddle.nn.functional as F
 from paddle.base import core
+
+
+def api_wrapper(
+    w,
+    ids,
+    is_sparse=False,
+    is_distributed=False,
+    padding_idx=-1,
+    remote_prefetch=False,
+    entry_config="",
+    is_test=False,
+    entry="none",
+    table_class="none",
+    table_names=[],
+    trainer_id=0,
+    slot_id=0,
+    grad_inplace=False,
+    epmap=[],
+    height_sections=[],
+):
+    return paddle._legacy_C_ops.lookup_table(
+        w,
+        ids,
+        "is_sparse",
+        is_sparse,
+        "padding_idx",
+        padding_idx,
+        "is_test",
+        is_test,
+    )
 
 
 class TestLookupTableOp(OpTest):
     def setUp(self):
         self.op_type = "lookup_table"
+        self.python_api = api_wrapper
         table = np.random.random((17, 31)).astype("float64")
         ids = np.random.randint(0, 17, 4).astype("int64")
         ids_expand = np.expand_dims(ids, axis=1)
@@ -45,6 +77,7 @@ class TestLookupTableOp(OpTest):
 class TestLookupTableOpWithTensorIds(OpTest):
     def setUp(self):
         self.op_type = "lookup_table"
+        self.python_api = api_wrapper
         table = np.random.random((17, 31)).astype("float64")
         ids = np.random.randint(low=0, high=17, size=(2, 4, 5, 1)).astype(
             "int64"
@@ -160,6 +193,7 @@ class TestLookupTableWithTensorIdsWIsSelectedRows(
 class TestLookupTableOpInt8(OpTest):
     def setUp(self):
         self.op_type = "lookup_table"
+        self.python_api = api_wrapper
         table = np.random.randint(low=-128, high=127, size=(17, 31)).astype(
             "int8"
         )
@@ -180,6 +214,7 @@ class TestLookupTableOpInt8(OpTest):
 class TestLookupTableOpWithTensorIdsInt8(OpTest):
     def setUp(self):
         self.op_type = "lookup_table"
+        self.python_api = api_wrapper
         table = np.random.randint(low=-128, high=127, size=(17, 31)).astype(
             "int8"
         )
@@ -302,6 +337,7 @@ class TestLookupTableWithTensorIdsWIsSelectedRowsInt8(
 class TestLookupTableOpInt16(OpTest):
     def setUp(self):
         self.op_type = "lookup_table"
+        self.python_api = api_wrapper
         table = np.random.randint(low=-128, high=127, size=(17, 31)).astype(
             "int16"
         )
@@ -318,6 +354,7 @@ class TestLookupTableOpInt16(OpTest):
 class TestLookupTableOpWithTensorIdsInt16(OpTest):
     def setUp(self):
         self.op_type = "lookup_table"
+        self.python_api = api_wrapper
         table = np.random.randint(low=-128, high=127, size=(17, 31)).astype(
             "int16"
         )

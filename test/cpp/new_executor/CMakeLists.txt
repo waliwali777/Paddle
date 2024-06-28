@@ -7,7 +7,6 @@ endif()
 set(OPS
     fill_constant_op
     uniform_random_op
-    lookup_table_op
     transpose_op
     reshape_op
     split_op

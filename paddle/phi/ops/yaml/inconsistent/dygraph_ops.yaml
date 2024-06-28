@@ -221,6 +221,23 @@
   inplace: (x -> out)
   traits : paddle::dialect::ForwardOnlyTrait
 
+- op : lookup_table
+  args : (Tensor w, Tensor ids, bool is_sparse = false, bool is_distributed = false,
+    int64_t padding_idx = -1, bool remote_prefetch = false, str entry_config
+    = "", bool is_test = false, str entry = "none", str table_class = "none", str[]
+    table_names = {}, int trainer_id = 0, int slot = 0, bool grad_inplace = false, str[]
+    epmap = {}, int64_t[] height_sections = {})
+  output : Tensor (out)
+  infer_meta:
+    func: LookupTableInferMeta
+    param: [w, ids]
+  kernel:
+    func : lookup_table {dense, dense -> dense}
+           lookup_table_sr {selected_rows, dense -> selected_rows}
+    param: [w, ids, is_sparse, is_distributed, padding_idx, remote_prefetch, entry_config, is_test, entry, table_class, table_names, trainer_id, grad_inplace, epmap, height_sections]
+    data_type: w
+  backward: lookup_table_grad
+
 - op : matmul
   args : (Tensor x, Tensor y, bool transpose_x = false, bool transpose_y = false)
   output : Tensor
