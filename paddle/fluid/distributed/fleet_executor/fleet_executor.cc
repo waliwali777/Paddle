@@ -32,7 +32,7 @@
 namespace paddle {
 namespace distributed {
 
-FleetExecutor::FleetExecutor(const std::string& exe_desc_str) {
+FleetExecutor::FleetExecutor(const std::string& exe_desc_str) : carrier_ids_() {
   bool parse_flag = exe_desc_.ParseFromString(exe_desc_str);
   PADDLE_ENFORCE(parse_flag,
                  platform::errors::PreconditionNotMet(
@@ -42,8 +42,13 @@ FleetExecutor::FleetExecutor(const std::string& exe_desc_str) {
   InitMessageBus();
 }
 
+<<<<<<< HEAD
 FleetExecutor::FleetExecutor(FleetExecutorDesc exe_desc)
     : exe_desc_(std::move(exe_desc)) {
+=======
+FleetExecutor::FleetExecutor(const FleetExecutorDesc& exe_desc)
+    : exe_desc_(exe_desc), carrier_ids_() {
+>>>>>>> 2b4a472bb38fae94a9eb0c5ddc3e16f316f4c5df
   // Message bus will be created and inited only once
   GlobalVal<MessageBus>::Create();
   InitMessageBus();
