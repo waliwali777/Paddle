@@ -446,6 +446,11 @@ PD_REGISTER_SPMD_RULE(swiglu,
 
 // reduction rule
 PD_REGISTER_SPMD_RULE(
+    reduce_base,
+    PD_INFER_SPMD(phi::distributed::ReductionInferSpmdBase),
+    PD_INFER_SPMD(phi::distributed::ReductionInferSpmdReverse));
+
+PD_REGISTER_SPMD_RULE(
     all,
     PD_INFER_SPMD(phi::distributed::ReductionInferSpmd),
     PD_INFER_SPMD(phi::distributed::ReductionInferSpmdReverse));
@@ -557,6 +562,11 @@ PD_REGISTER_SPMD_RULE(
 PD_REGISTER_SPMD_RULE(slice,
                       PD_INFER_SPMD(phi::distributed::SliceInferSpmd),
                       PD_INFER_SPMD(phi::distributed::SliceInferSpmdReverse));
+
+PD_REGISTER_SPMD_RULE(
+    strided_slice,
+    PD_INFER_SPMD(phi::distributed::StridedSliceInferSpmd),
+    PD_INFER_SPMD(phi::distributed::StridedSliceGradInferSpmd));
 
 PD_REGISTER_SPMD_RULE(concat,
                       PD_INFER_SPMD(phi::distributed::ConcatInferSpmd),

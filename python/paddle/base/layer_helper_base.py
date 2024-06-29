@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import annotations
 
 import copy
 
@@ -26,6 +27,7 @@ from .framework import (
     default_main_program,
     default_startup_program,
     in_dygraph_mode,
+    in_dynamic_or_pir_mode,
     in_pir_mode,
 )
 from .initializer import _global_bias_initializer, _global_weight_initializer
@@ -102,8 +104,7 @@ class LayerHelperBase:
             return value
         else:
             raise TypeError(
-                "The type of input value is invalid, expected type is 'ndarray' or 'Variable', but received %s"
-                % type(value)
+                f"The type of input value is invalid, expected type is 'ndarray' or 'Variable', but received {type(value)}"
             )
 
     def _create_weight_normalize(self, attr, shape, dtype):
@@ -377,7 +378,7 @@ class LayerHelperBase:
                 else default_initializer
             )
         if attr.name is None:
-            if in_dygraph_mode():
+            if in_dynamic_or_pir_mode():
                 attr.name = unique_name.generate(".".join([self.name, suffix]))
             else:
                 attr.name = self.main_program._name_generator.generate(
@@ -459,7 +460,7 @@ class LayerHelperBase:
 
     def create_variable_for_type_inference(
         self, dtype, stop_gradient=False, shape=None
-    ):
+    ) -> paddle.Tensor:
         """Create a temporary variable that should be type inferred layer.
 
         Note:
