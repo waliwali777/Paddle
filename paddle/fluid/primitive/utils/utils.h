@@ -16,13 +16,15 @@
 #include <vector>
 
 #include "paddle/common/ddim.h"
-#include "paddle/fluid/operators/common_infer_shape_functions.h"
+#include "paddle/fluid/framework/details/op_registry.h"
+#include "paddle/fluid/framework/operator.h"
 #include "paddle/fluid/primitive/type/lazy_tensor.h"
 #include "paddle/phi/api/include/tensor.h"
+#include "paddle/phi/kernels/funcs/common_infer_shape_functions.h"
 
 namespace paddle {
+class Tensor;
 namespace primitive {
-
 template <typename T>
 void set_output(const Tensor& x_tmp, Tensor* x);
 
@@ -161,7 +163,7 @@ static phi::DDim get_reduce_dims_from_out(const phi::DDim& dout_dims,
 
 static phi::DDim get_reduce_dims(const phi::DDim& x_dims,
                                  const phi::DDim& y_dims) {
-  auto out_dims = paddle::operators::details::BroadcastTwoDims(x_dims, y_dims);
+  auto out_dims = phi::funcs::BroadcastTwoDims(x_dims, y_dims);
   return get_reduce_dims_from_out(out_dims, x_dims);
 }
 
@@ -180,12 +182,27 @@ static bool find_value(const std::vector<int64_t>& vec, int64_t value) {
   }
 }
 
-static bool has_dynamic_shape(const std::vector<int64_t>& vec) {
-  if (std::find(vec.begin(), vec.end(), -1) != vec.end()) {
-    return true;
-  } else {
-    return false;
+static bool has_dynamic_shape(const std::vector<int64_t>& shape) {
+  return std::find(shape.begin(), shape.end(), -1) != shape.end();
+}
+
+static bool has_dynamic_shape(const std::vector<int64_t>& shape,
+                              const std::vector<int64_t>& axis) {
+  bool flag = false;
+  const int64_t rank = shape.size();
+  for (int64_t idx : axis) {
+    if (idx < 0) idx += rank;
+    PADDLE_ENFORCE_LT(
+        idx,
+        rank,
+        ::common::errors::PreconditionNotMet(
+            "Required idx < shape.size(), but received %d.", idx));
+    if (shape[idx] == -1) {
+      flag = true;
+      break;
+    }
   }
+  return flag;
 }
 
 }  // namespace primitive

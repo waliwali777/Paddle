@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# type: ignore[abstract]
+
 import abc
 import functools
 import multiprocessing
@@ -609,8 +611,8 @@ class HDFSClient(FS):
         return self._ls_dir(fs_path)
 
     def _ls_dir(self, fs_path):
-        cmd = ["-ls", fs_path]
-        ret, lines = self._run_safe_cmd(cmd)
+        cmd = f"ls {fs_path}"
+        ret, lines = self._run_cmd(cmd)
 
         if ret != 0:
             raise ExecuteError(cmd)

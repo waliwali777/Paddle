@@ -14,10 +14,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Sequence
 
 from ....utils import BreakGraphError, FallbackError
-from ..pycode_generator import PyCodeGen
 from ..tracker import ConstTracker, DummyTracker
 from .base import VariableBase, VariableFactory
 from .basic import ConstantVariable
@@ -25,6 +24,7 @@ from .container import ContainerVariable, TupleVariable
 
 if TYPE_CHECKING:
     from ..function_graph import FunctionGraph
+    from ..pycode_generator import PyCodeGen
     from ..tracker import Tracker
 
 
@@ -189,7 +189,9 @@ class ZipVariable(SequenceIterVariable):
 
     @staticmethod
     def from_iterator(
-        value: list[VariableBase], graph: FunctionGraph | None, tracker: Tracker
+        value: Sequence[VariableBase],
+        graph: FunctionGraph | None,
+        tracker: Tracker,
     ):
         assert isinstance(value, (list, tuple))
         zip_targets = []

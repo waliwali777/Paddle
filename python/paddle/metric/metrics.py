@@ -85,6 +85,8 @@ class Metric(metaclass=abc.ABCMeta):
         .. code-block:: python
             :name: code-compute-example
 
+            >>> import paddle
+
             >>> def compute(pred, label):
             ...     # sort prediction and slice the top-5 scores
             ...     pred = paddle.argsort(pred, descending=True)[:, :5]
@@ -271,7 +273,7 @@ class Accuracy(Metric):
         elif label.shape[-1] != 1:
             # one-hot label
             label = paddle.argmax(label, axis=-1, keepdim=True)
-        correct = pred == label
+        correct = pred == label.astype(pred.dtype)
         return paddle.cast(correct, dtype='float32')
 
     def update(self, correct, *args):
