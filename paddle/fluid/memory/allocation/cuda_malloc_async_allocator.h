@@ -42,6 +42,7 @@ class CUDAMallocAsyncAllocator;
 // managing memory allocations with CUDA async malloc. It includes methods to
 // handle stream associations and to query the owning stream of the allocation.
 class CUDAMallocAsyncAllocation : public Allocation {
+#ifdef PADDLE_WITH_CUDA
  public:
   CUDAMallocAsyncAllocation(void* ptr,
                             size_t size,
@@ -65,12 +66,14 @@ class CUDAMallocAsyncAllocation : public Allocation {
 
   SpinLock recorded_streams_lock_;
   std::unordered_set<gpuStream_t> recorded_streams_;
+#endif
 };
 
 // The `CUDAMallocAsyncAllocator` class extends `Allocator` and is specialized
 // for asynchronous memory allocation in CUDA. It offers thread-safe allocation
 // and incorporates a default stream for memory operations.
 class CUDAMallocAsyncAllocator : public Allocator {
+#ifdef PADDLE_WITH_CUDA
  public:
   explicit CUDAMallocAsyncAllocator(
       std::shared_ptr<Allocator> underlying_allocator,
@@ -133,6 +136,7 @@ class CUDAMallocAsyncAllocator : public Allocator {
   std::unordered_map<CUDAMallocAsyncAllocation*, CUDAGraphID>
       graph_owned_allocations_;
   SpinLock graph_owned_allocations_lock_;
+#endif
 };
 
 #endif
