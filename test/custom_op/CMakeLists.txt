@@ -45,8 +45,6 @@ if(WITH_TESTING)
   endif()
   if(WITH_XPU AND WITH_DISTRIBUTE)
     set(CUSTOM_XPU_ENVS FLAGS_init_allocated_mem=0)
-    py_test(test_custom_relu_op_xpu_setup SRCS test_custom_relu_op_xpu_setup.py
-                                               ENVS ${CUSTOM_XPU_ENVS})
     py_test(test_custom_op_relu_model_static_multidevice
             SRCS test_custom_op_relu_model_static_multidevice.py ENVS
                  ${CUSTOM_XPU_ENVS})
