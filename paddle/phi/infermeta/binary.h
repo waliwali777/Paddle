@@ -459,6 +459,12 @@ void IndexAddInferMeta(const MetaTensor& x,
 
 void KronInferMeta(const MetaTensor& x, const MetaTensor& y, MetaTensor* out);
 
+void LegacyCropInferMeta(const MetaTensor& x,
+                         const MetaTensor& y,
+                         const IntArray& offsets,
+                         const std::vector<int>& shape,
+                         MetaTensor* out);
+
 void LimitByCapacityInferMeta(const MetaTensor& expert_count,
                               const MetaTensor& capacity,
                               int n_worker,
@@ -543,6 +549,18 @@ void MatrixRankTolInferMeta(const MetaTensor& x,
                             bool use_default_tol,
                             bool hermitian,
                             MetaTensor* out);
+
+void MulticlassNmsv1InferMeta(const MetaTensor& b_boxes,
+                              const MetaTensor& scores,
+                              float score_threshold,
+                              int nms_top_k,
+                              int keep_top_k,
+                              float nms_threshold,
+                              float nms_eta,
+                              bool normalized,
+                              int background_label,
+                              MetaTensor* out,
+                              MetaConfig config = MetaConfig());
 
 void MvInferMeta(const MetaTensor& x, const MetaTensor& vec, MetaTensor* out);
 

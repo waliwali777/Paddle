@@ -72,13 +72,8 @@ static const std::unordered_set<std::string> deprecated_op_names(
      "bilinear_interp_grad",
      "trilinear_interp",
      "trilinear_interp_grad",
-     "nearest_interp",
-     "nearest_interp_grad",
      "bicubic_interp",
-     "bicubic_interp_grad",
-     "crop",
-     "crop_grad",
-     "generate_proposals"});
+     "bicubic_interp_grad"});
 
 class DefaultKernelSignatureMap {
  public:

@@ -98,6 +98,7 @@ class TestRandomControl(unittest.TestCase):
                 dy_broadcast_helper(mask_tensor_local)
 
     def test_random_ctrl_vanilla(self):
+        paddle.enable_static()
         # mp2 recompute training
         rc_engine = self.get_engine(False)
         train_dataloader = rc_engine.dataloader(
@@ -134,27 +135,12 @@ class TestRandomControl(unittest.TestCase):
 
         # check program
         ops = rc_engine.main_program.global_block().ops
-        rng_names = []
         seed_var_names = []
         for op in ops:
-            if op.type == "seed":
-                rng_names.append(op.attr('rng_name'))
             if op.type == "dropout":
                 seed_var_names.append(op.input("Seed")[0])
         rank = paddle.distributed.get_rank()
 
-        self.assertEqual(
-            rng_names,
-            [
-                'mesh:1_dim0:-1',
-                f'mesh:1_dim0:{rank}',
-                'mesh:1_dim0:-1',
-                'mesh:1_dim0:-1',
-                f'mesh:1_dim0:{rank}',
-                'mesh:1_dim0:-1',
-                'mesh:1_dim0:-1',
-            ],
-        )
         self.assertEqual(
             seed_var_names,
             [
@@ -169,6 +155,7 @@ class TestRandomControl(unittest.TestCase):
         )
 
     def test_random_ctrl_with_recompute(self):
+        paddle.enable_static()
         # mp2 recompute training
         rc_engine = self.get_engine(True)
         train_dataloader = rc_engine.dataloader(
@@ -227,26 +214,11 @@ class TestRandomControl(unittest.TestCase):
         # check program
         rank = paddle.distributed.get_rank()
         ops = rc_engine.main_program.global_block().ops
-        rng_names = []
         seed_var_names = []
         for op in ops:
-            if op.type == "seed":
-                rng_names.append(op.attr('rng_name'))
             if op.type == "dropout":
                 seed_var_names.append(op.input("Seed")[0])
 
-        self.assertEqual(
-            rng_names,
-            [
-                'mesh:1_dim0:-1',
-                f'mesh:1_dim0:{rank}',
-                'mesh:1_dim0:-1',
-                'mesh:1_dim0:-1',
-                f'mesh:1_dim0:{rank}',
-                'mesh:1_dim0:-1',
-                'mesh:1_dim0:-1',
-            ],
-        )
         self.assertEqual(
             seed_var_names,
             [

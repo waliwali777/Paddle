@@ -206,6 +206,12 @@
     amin_grad : GetReduceGradExpectedKernelType
   manual_signature : [amin]
 
+- op : anchor_generator
+  inputs:
+    input : Input
+  outputs:
+    {anchors : Anchors, variances_out : Variances}
+
 - op : angle
   backward : angle_grad
   inputs :
@@ -2121,6 +2127,25 @@
     attrs : [bool use_mkldnn = false, str mkldnn_data_type = "float32"]
   manual_signature : [legacy_expand, legacy_expand_grad]
 
+- op : legacy_generate_proposals(generate_proposals)
+  inputs:
+    {scores : Scores, bbox_deltas : BboxDeltas, im_info : ImInfo, anchors : Anchors, variances : Variances}
+  attrs:
+    {pre_nms_top_n : pre_nms_topN, post_nms_top_n : post_nms_topN}
+  outputs:
+    {rpn_rois : RpnRois, rpn_roi_probs : RpnRoiProbs, rpn_rois_num : RpnRoisNum}
+
+- op : legacy_nearest_interp (nearest_interp)
+  backward : legacy_nearest_interp_grad (nearest_interp_grad)
+  inputs :
+    {x : X, out_size : OutSize, size_tensor : SizeTensor, scale_tensor : Scale}
+  outputs :
+    output : Out
+  attrs:
+    data_format: data_layout
+  extra :
+    attrs : [bool use_mkldnn = false]
+
 - op : lerp
   backward : lerp_grad
   inputs :
@@ -2539,6 +2564,14 @@
   attrs :
     {scale_data : Scale_data,  shift_data : Shift_data}
   manual_signature : [multi_gru]
+
+- op : multiclass_nms
+  inputs:
+    {bboxes : BBoxes, scores : Scores}
+  outputs:
+    out : Out
+  get_expected_kernel_type :
+    multiclass_nms : GetMulticlassNmsExpectedKernelType
 
 - op : multiclass_nms3
   inputs :
@@ -3181,6 +3214,8 @@
 - op : seed
   outputs :
     out : Out
+  get_expected_kernel_type :
+    seed : GetSeedExpectedKernelType
   extra :
     attrs : [bool deterministic = false, str rng_name = "", bool force_cpu = false]
 
@@ -4280,6 +4315,17 @@
     {param : Param, grad : Grad, velocity : Velocity, learning_rate : LearningRate, master_param : MasterParam}
   outputs :
     {param_out: ParamOut, velocity_out: VelocityOut, master_param_out: MasterParamOut}
+
+- op: legacy_crop (crop)
+  backward: legacy_crop_grad (crop_grad)
+  inputs:
+    {x : X, y : Y}
+  outputs:
+    out : Out
+  int_array:
+    offsets :
+      data_type : int
+      tensor_name : Offsets
 
 - op: limit_by_capacity
   outputs :
