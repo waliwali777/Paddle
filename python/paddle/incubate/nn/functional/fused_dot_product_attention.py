@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 
 from paddle import _C_ops
 from paddle.framework import LayerHelper, in_dynamic_or_pir_mode
@@ -29,6 +30,7 @@ def cudnn_flash_attention(
     training=True,
     mask_type=None,
     bias_type=None,
+    deterministic=False,
     name=None,
 ):
     r"""
@@ -48,6 +50,7 @@ def cudnn_flash_attention(
         training (bool): A flag indicating whether it is in train phrase or not.
         mask_type (str, optional): The mask type. It can be 'none', 'padding', 'causal', 'paddle_causal'. Default is None.
         bias_type (str, optional): The bias type. It can be 'none', 'pre_scale_bias', 'post_scale_bias'. Default is None.
+        deterministic (bool): A flag indicating whether to ensure the result is deterministic.
 
 
     Returns:
@@ -56,6 +59,10 @@ def cudnn_flash_attention(
     Note:
         This API is provides the full functionality of the cuDNN flash attention. Such as dbias, padding_causal mask, etc.
     """
+
+    if deterministic:
+        # this env forces cudnn frontend to use workspace optimization always, which is deterministic.
+        os.environ["CUDNN_FRONTEND_ATTN_DP_WORKSPACE_LIMIT"] = "-1"
 
     batch_size = q.shape[0]
     q_seqlen = q.shape[1]
@@ -138,6 +145,7 @@ def fused_dot_product_attention(
     dropout_prob=0.0,
     is_causal=False,
     training=True,
+    deterministic=False,
     name=None,
 ):
     r"""
@@ -153,6 +161,7 @@ def fused_dot_product_attention(
                 key, value that is added to the attention score.
         dropout_prob (float): The dropout probability.
         is_causal (bool): A flag indicating whether it is causal masking or not. If True, the mask will be ignored.
+        deterministic (bool): A flag indicating whether to ensure the result is deterministic.
         training (bool): A flag indicating whether it is in train phrase or not.
 
 
@@ -170,6 +179,10 @@ def fused_dot_product_attention(
 
 
     """
+
+    if deterministic:
+        # this env forces cudnn frontend to use workspace optimization always, which is deterministic.
+        os.environ["CUDNN_FRONTEND_ATTN_DP_WORKSPACE_LIMIT"] = "-1"
 
     cu_seqlen_q = None
     cu_seqlen_k = None
