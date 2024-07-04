@@ -2110,6 +2110,17 @@
   extra :
     attrs : [bool use_mkldnn = false]
 
+- op : legacy_bilinear_interp (bilinear_interp)
+  backward : legacy_bilinear_interp_grad (bilinear_interp_grad)
+  inputs :
+    {x : X, out_size : OutSize, size_tensor : SizeTensor, scale_tensor : Scale}
+  outputs :
+    output : Out
+  attrs:
+    data_format: data_layout
+  extra :
+    attrs : [bool use_mkldnn = false]
+
 - op : legacy_expand (expand)
   backward : legacy_expand_grad (expand_grad)
   inputs :

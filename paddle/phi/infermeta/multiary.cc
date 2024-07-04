@@ -3503,8 +3503,10 @@ void LegacyInterpolateInferMeta(
     MetaConfig config) {
   const auto& dim_x = x.dims();
   std::vector<float> scale_vec;
-  for (int i = 0; i < dim_x.size() - 2; i++) {
-    scale_vec.push_back(scale);
+  if (scale > 0) {
+    for (int i = 0; i < dim_x.size() - 2; i++) {
+      scale_vec.push_back(scale);
+    }
   }
   InterpolateInferMeta(x,
                        out_size,
