@@ -15,6 +15,7 @@
 #include "paddle/phi/backends/xpu/enforce_xpu.h"
 #include "paddle/phi/common/float16.h"
 #include "paddle/phi/core/kernel_registry.h"
+#include "paddle/utils/optional.h"
 
 namespace phi {
 
@@ -26,12 +27,12 @@ void ResNetUnitXPUKernel(const Context &dev_ctx,
                          const DenseTensor &bias_x_in,
                          const DenseTensor &mean_x_in,
                          const DenseTensor &var_x_in,
-                         const DenseTensor &z_in,
-                         const DenseTensor &filter_z_in,
-                         const DenseTensor &scale_z_in,
-                         const DenseTensor &bias_z_in,
-                         const DenseTensor &mean_z_in,
-                         const DenseTensor &var_z_in,
+                         const paddle::optional<DenseTensor> &z_in,
+                         const paddle::optional<DenseTensor> &filter_z_in,
+                         const paddle::optional<DenseTensor> &scale_z_in,
+                         const paddle::optional<DenseTensor> &bias_z_in,
+                         const paddle::optional<DenseTensor> &mean_z_in,
+                         const paddle::optional<DenseTensor> &var_z_in,
                          int stride,
                          int stride_z,
                          int padding,
@@ -113,10 +114,10 @@ void ResNetUnitXPUKernel(const Context &dev_ctx,
   std::vector<const float *> w_maxlist = {nullptr};
   if (has_shortcut) {
     // input z
-    const phi::DenseTensor *input_z = &z_in;
-    const phi::DenseTensor *filter_z = &filter_z_in;
-    const phi::DenseTensor *scale_z = &scale_z_in;
-    const phi::DenseTensor *bias_z = &bias_z_in;
+    const phi::DenseTensor *input_z = z_in.get_ptr();
+    const phi::DenseTensor *filter_z = filter_z_in.get_ptr();
+    const phi::DenseTensor *scale_z = scale_z_in.get_ptr();
+    const phi::DenseTensor *bias_z = bias_z_in.get_ptr();
 
     phi::DenseTensor *conv_out_z = conv_z;
 
@@ -145,7 +146,7 @@ void ResNetUnitXPUKernel(const Context &dev_ctx,
     w_maxlist.push_back(nullptr);
   } else {
     if (fuse_add) {
-      const phi::DenseTensor *input_z = &z_in;
+      const phi::DenseTensor *input_z = z_in.get_ptr();
       auto input_z_shape = common::vectorize<int>(input_z->dims());
       x_list.push_back(reinterpret_cast<const XPUType *>(input_z->data<T>()));
       x_shape_list.push_back(input_z_shape);

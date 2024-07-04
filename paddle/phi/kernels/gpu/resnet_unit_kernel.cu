@@ -19,6 +19,7 @@
 #include "paddle/phi/kernels/fusion/gpu/cudnn_bn_stats_finalize.cu.h"
 #include "paddle/phi/kernels/fusion/gpu/cudnn_norm_conv.cu.h"
 #include "paddle/phi/kernels/fusion/gpu/cudnn_scale_bias_add_relu.cu.h"
+#include "paddle/utils/optional.h"
 
 #if CUDNN_VERSION >= 8000
 namespace phi {
@@ -31,12 +32,12 @@ void ResNetUnitKernel(const Context &dev_ctx,
                       const DenseTensor &bias_x_in,
                       const DenseTensor &mean_x_in,
                       const DenseTensor &var_x_in,
-                      const DenseTensor &z_in,
-                      const DenseTensor &filter_z_in,
-                      const DenseTensor &scale_z_in,
-                      const DenseTensor &bias_z_in,
-                      const DenseTensor &mean_z_in,
-                      const DenseTensor &var_z_in,
+                      const paddle::optional<DenseTensor> &z_in,
+                      const paddle::optional<DenseTensor> &filter_z_in,
+                      const paddle::optional<DenseTensor> &scale_z_in,
+                      const paddle::optional<DenseTensor> &bias_z_in,
+                      const paddle::optional<DenseTensor> &mean_z_in,
+                      const paddle::optional<DenseTensor> &var_z_in,
                       int stride,
                       int stride_z,
                       int padding,
@@ -152,10 +153,10 @@ void ResNetUnitKernel(const Context &dev_ctx,
                                                 bitmask_shape);
   if (has_shortcut) {
     // input z
-    const phi::DenseTensor *input_z = &z_in;
-    const phi::DenseTensor *filter_z = &filter_z_in;
-    const phi::DenseTensor *scale_z = &scale_z_in;
-    const phi::DenseTensor *bias_z = &bias_z_in;
+    const phi::DenseTensor *input_z = z_in.get_ptr();
+    const phi::DenseTensor *filter_z = filter_z_in.get_ptr();
+    const phi::DenseTensor *scale_z = scale_z_in.get_ptr();
+    const phi::DenseTensor *bias_z = bias_z_in.get_ptr();
     // norm conv
     phi::DenseTensor *conv_out_z = conv_z;
 
@@ -210,7 +211,7 @@ void ResNetUnitKernel(const Context &dev_ctx,
                     output,
                     bitmask);
   } else {
-    const phi::DenseTensor *input_z = fuse_add ? &z_in : nullptr;
+    const phi::DenseTensor *input_z = fuse_add ? z_in.get_ptr() : nullptr;
     sbar_op.Forward(dev_ctx,
                     *conv_out_x,
                     equiv_scale_x,
@@ -236,12 +237,12 @@ void ResNetUnitEmptyKernel(const Context &dev_ctx,
                            const DenseTensor &bias_x_in,
                            const DenseTensor &mean_x_in,
                            const DenseTensor &var_x_in,
-                           const DenseTensor &z_in,
-                           const DenseTensor &filter_z_in,
-                           const DenseTensor &scale_z_in,
-                           const DenseTensor &bias_z_in,
-                           const DenseTensor &mean_z_in,
-                           const DenseTensor &var_z_in,
+                           const paddle::optional<DenseTensor> &z_in,
+                           const paddle::optional<DenseTensor> &filter_z_in,
+                           const paddle::optional<DenseTensor> &scale_z_in,
+                           const paddle::optional<DenseTensor> &bias_z_in,
+                           const paddle::optional<DenseTensor> &mean_z_in,
+                           const paddle::optional<DenseTensor> &var_z_in,
                            int stride,
                            int stride_z,
                            int padding,
