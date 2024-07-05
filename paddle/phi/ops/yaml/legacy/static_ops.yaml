@@ -411,7 +411,7 @@
   args : (Tensor x, Tensor out_size, Tensor[] size_tensor, Tensor scale_tensor, str data_format="NCHW", int out_d=0, int out_h=0, int out_w=0, float scale=0.0, str interp_method="bilinear", bool align_corners=true, int align_mode=1)
   output : Tensor(output)
   infer_meta :
-    func : InterpolateInferMeta
+    func : LegacyInterpolateInferMeta
   optional: out_size, size_tensor, scale_tensor
   kernel :
     func : legacy_bilinear_interp
