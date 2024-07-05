@@ -491,7 +491,6 @@ set(TEST_OPS_WITH_GC
     test_scatter_op
     test_concat_op
     test_elementwise_add_op
-    test_lookup_table_op
     test_elementwise_sub_op
     test_gather_op
     test_mean_op
@@ -770,6 +769,7 @@ set_tests_properties(test_activation_nn_grad PROPERTIES TIMEOUT 250)
 set_tests_properties(test_empty_op PROPERTIES TIMEOUT 120)
 set_tests_properties(test_elementwise_div_op PROPERTIES TIMEOUT 120)
 set_tests_properties(test_multiclass_nms_op PROPERTIES TIMEOUT 120)
+set_tests_properties(test_flash_attention PROPERTIES TIMEOUT 420)
 if(NOT WIN32)
   if(WITH_NV_JETSON)
     set_tests_properties(test_ir_memory_optimize_nlp PROPERTIES TIMEOUT 1200)
@@ -1036,7 +1036,6 @@ set(STATIC_BUILD_TESTS
     test_nce
     test_layer_norm_op
     test_eigh_op
-    test_matmul_op
     test_matmul_v2_op
     test_paddle_save_load_binary
     test_assign_pos_op
@@ -1164,7 +1163,6 @@ set_tests_properties(test_imperative_star_gan_with_gradient_penalty
 set_tests_properties(test_index_add_op PROPERTIES TIMEOUT 120)
 set_tests_properties(test_index_select_op PROPERTIES TIMEOUT 120)
 set_tests_properties(test_lstm_op PROPERTIES TIMEOUT 120)
-set_tests_properties(test_matmul_op PROPERTIES TIMEOUT 120)
 set_tests_properties(test_matmul_v2_op PROPERTIES TIMEOUT 120)
 set_tests_properties(test_nearest_interp_v2_op PROPERTIES TIMEOUT 120)
 set_tests_properties(test_pad3d_op PROPERTIES TIMEOUT 120)
@@ -1181,7 +1179,6 @@ endif()
 set_tests_properties(test_svd_op PROPERTIES TIMEOUT 80)
 set_tests_properties(test_static_save_load PROPERTIES TIMEOUT 250)
 set_tests_properties(test_trilinear_interp_v2_op PROPERTIES TIMEOUT 120)
-set_tests_properties(test_matmul_op_static_build PROPERTIES TIMEOUT 120)
 set_tests_properties(test_matmul_v2_op_static_build PROPERTIES TIMEOUT 120)
 set_tests_properties(test_paddle_save_load_binary_static_build
                      PROPERTIES TIMEOUT 120)

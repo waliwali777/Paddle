@@ -453,4 +453,5 @@ phi::KernelKey GetSeedExpectedKernelType(
     const framework::OperatorWithKernel* op_ptr) {
   return phi::KernelKey(framework::proto::VarType::INT32, ctx.GetPlace());
 }
+
 }  // namespace paddle::operators
