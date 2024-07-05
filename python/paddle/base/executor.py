@@ -1123,6 +1123,9 @@ class _ExecutorCache:
         place,
         scope,
     ):
+        _add_pir_fetch_ops(
+            program, fetch_list=fetch_list, fetch_var_name=fetch_var_name
+        )
         return self._get_cached_program_and_executor_pir_mode(
             self._CachedData(
                 program,
@@ -1143,10 +1146,6 @@ class _ExecutorCache:
         fetch_var_name = cached_data.fetch_var_name
         place = cached_data.place
         scope = cached_data.scope
-
-        _add_pir_fetch_ops(
-            program, fetch_list=fetch_list, fetch_var_name=fetch_var_name
-        )
 
         default_job = core.Job("default")
         type_to_program = {"default": program}
@@ -1459,8 +1458,7 @@ class Executor:
                 _fetch_list.append(item)
             else:
                 raise TypeError(
-                    "The item in fetch_list should be str, variable or optimize_op, but received %s.",
-                    type(item),
+                    f"The item in fetch_list should be str, variable or optimize_op, but received {type(item)}.",
                 )
 
         for index, item in enumerate(fetch_list):
@@ -3134,7 +3132,7 @@ class Executor:
                 >>> dataset.set_use_var([x, y])
                 >>> dataset.set_thread(1)
                 >>> # you should set your own filelist, e.g. filelist = ["dataA.txt"]
-                >>> filelist = []
+                >>> filelist = [] # type: ignore[var-annotated]
                 >>> dataset.set_filelist(filelist)
                 >>> exe.run(paddle.static.default_startup_program())
                 >>> exe.infer_from_dataset(program=paddle.static.default_main_program(),
@@ -3256,7 +3254,7 @@ class Executor:
                 >>> dataset.set_use_var([x, y])
                 >>> dataset.set_thread(1)
                 >>> # you should set your own filelist, e.g. filelist = ["dataA.txt"]
-                >>> filelist = []
+                >>> filelist = [] # type: ignore[var-annotated]
                 >>> dataset.set_filelist(filelist)
                 >>> exe.run(paddle.static.default_startup_program())
                 >>> exe.train_from_dataset(program=paddle.static.default_main_program(),

@@ -365,9 +365,6 @@ void HashInferMeta(const MetaTensor& x,
                    int64_t mod_by,
                    MetaTensor* out);
 
-void HistogramInferMeta(
-    const MetaTensor& input, int64_t bins, int min, int max, MetaTensor* out);
-
 void IdentityLossInferMeta(const MetaTensor& x, int reduction, MetaTensor* out);
 
 void IncrementInferMeta(const MetaTensor& x, float value, MetaTensor* out);
@@ -422,6 +419,7 @@ void MaxPoolWithIndexInferMeta(const MetaTensor& x,
                                const std::vector<int>& paddings,
                                bool global_pooling,
                                bool adaptive,
+                               bool ceil_mode,
                                MetaTensor* out,
                                MetaTensor* mask,
                                MetaConfig config = MetaConfig());
@@ -675,6 +673,8 @@ void SequencePoolInferMeta(const MetaTensor& x,
 
 void SetValueInferMeta(const MetaTensor& x, MetaTensor* out);
 
+void ShareDataInferMeta(const MetaTensor& x, MetaTensor* out);
+
 void ShapeInferMeta(const MetaTensor& input, MetaTensor* out);
 
 void ShardIndexInferMeta(const MetaTensor& in,
@@ -719,6 +719,8 @@ void FillSplitOutDims(const MetaTensor& x,
                       const int axis_value,
                       const std::vector<int64_t>& sections_vec,
                       std::vector<MetaTensor*>* out);
+
+void SequenceSoftmaxInferMeta(const MetaTensor& x, MetaTensor* out);
 
 void SplitInferMeta(const MetaTensor& x_meta,
                     const IntArray& sections,

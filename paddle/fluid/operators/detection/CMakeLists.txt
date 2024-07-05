@@ -28,8 +28,6 @@ function(detection_library TARGET_NAME)
       PARENT_SCOPE)
 endfunction()
 
-detection_library(multiclass_nms_op SRCS multiclass_nms_op.cc DEPS phi common)
-
 if(WITH_GPU OR WITH_ROCM)
   if(WITH_GPU)
     if(${CMAKE_CUDA_COMPILER_VERSION} LESS 11.0)
