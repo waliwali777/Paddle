@@ -211,7 +211,7 @@ class TRTConvertValidation {
     for (const std::string& name : input_output_names) {
       auto* var = scope_.FindVar(name);
       auto* tensor = var->GetMutable<phi::DenseTensor>();
-#if IS_TRT_VERSION_GE(10000)
+#if IS_TRT_VERSION_GE(8600)
       const int bind_index = tensor_index[std::string(name.c_str())];
 #else
       const int bind_index = engine_->engine()->getBindingIndex(name.c_str());
