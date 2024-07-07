@@ -448,4 +448,10 @@ phi::KernelKey GetMulticlassNmsExpectedKernelType(
                         phi::CPUPlace());
 }
 
+phi::KernelKey GetSeedExpectedKernelType(
+    const framework::ExecutionContext& ctx,
+    const framework::OperatorWithKernel* op_ptr) {
+  return phi::KernelKey(framework::proto::VarType::INT32, ctx.GetPlace());
+}
+
 }  // namespace paddle::operators
