@@ -667,7 +667,6 @@ set_tests_properties(test_reduce_op PROPERTIES TIMEOUT 500)
 set_tests_properties(test_program_prune_backward_deprecated PROPERTIES TIMEOUT
                                                                        120)
 set_tests_properties(test_imperative_optimizer_v2 PROPERTIES TIMEOUT 250)
-set_tests_properties(test_decoupled_py_reader_deprecated PROPERTIES TIMEOUT 120)
 set_tests_properties(test_fuse_bn_act_pass_deprecated PROPERTIES TIMEOUT 120)
 set_tests_properties(test_conv2d_api_deprecated PROPERTIES TIMEOUT 120)
 set_tests_properties(test_dygraph_multi_forward PROPERTIES TIMEOUT 120)
@@ -679,7 +678,6 @@ set_tests_properties(test_dataloader_keep_order_deprecated PROPERTIES TIMEOUT
                                                                       120)
 set_tests_properties(test_dataloader_unkeep_order_deprecated PROPERTIES TIMEOUT
                                                                         120)
-set_tests_properties(test_reader_reset PROPERTIES TIMEOUT 120)
 set_tests_properties(test_split_program PROPERTIES TIMEOUT 120)
 set_tests_properties(test_uniform_random_op_deprecated PROPERTIES TIMEOUT 60)
 
@@ -731,7 +729,6 @@ set(STATIC_BUILD_TESTS
     test_adamw_op_deprecated
     test_arg_min_max_op
     test_batch_norm_op_deprecated
-    test_decoupled_py_reader_deprecated
     test_fetch_lod_tensor_array
     test_fuse_bn_act_pass_deprecated
     test_layer_norm_op_deprecated
@@ -774,8 +771,6 @@ foreach(PIR_COVERAGE_TEST ${PIR_COVERAGE_TESTS})
   message(STATUS "PIR Copied OpTest: ${PIR_COVERAGE_TEST}_pir in legacy_test")
 endforeach()
 
-set_tests_properties(test_decoupled_py_reader_deprecated_static_build
-                     PROPERTIES TIMEOUT 120)
 set_tests_properties(test_fuse_bn_act_pass_deprecated_static_build
                      PROPERTIES TIMEOUT 120)
 set_tests_properties(

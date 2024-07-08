@@ -205,17 +205,7 @@ class _DataLoaderIterSingleProcess(_DataLoaderIterBase):
             self._blocking_queue_capacity,
             len(self._places) > 1,
         )
-        self._reader = core.create_py_reader(
-            self._blocking_queue,
-            self._var_names,
-            self._shapes,
-            self._dtypes,
-            self._need_check_feed,
-            self._places,
-            self._use_buffer_reader,
-            True,
-            self._pin_memory,
-        )
+        self._reader = None
 
         self._thread = threading.Thread(
             target=self._thread_loop, args=(_current_expected_place(),)
@@ -510,17 +500,7 @@ class _DataLoaderIterMultiProcess(_DataLoaderIterBase):
         core._set_max_memory_map_allocation_pool_size(
             self._main_thread_shm_buffer_size
         )
-        self._reader = core.create_py_reader(
-            self._blocking_queue,
-            self._var_names,
-            self._shapes,
-            self._dtypes,
-            self._need_check_feed,
-            self._places,
-            self._use_buffer_reader,
-            True,
-            self._pin_memory,
-        )
+        self._reader = None
 
         self._thread_done_event = threading.Event()
         # thread event is only need in multi-processing mode

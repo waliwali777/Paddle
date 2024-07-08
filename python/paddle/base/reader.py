@@ -592,17 +592,6 @@ class DygraphGeneratorLoader(DataLoaderBase):
             core.Variable(), self._capacity, False
         )
         self._reader = None
-        self._reader = core.create_py_reader(
-            self.queue,
-            self._var_names,
-            self._shapes,
-            self._dtypes,
-            self._need_check_feed,
-            self._places,
-            self._use_double_buffer,
-            True,
-            self._pin_memory,
-        )
 
     def _start(self):
         if self._use_multiprocess:
@@ -856,17 +845,6 @@ class GeneratorLoader(DataLoaderBase):
             core.Variable(), self._capacity, self._keep_order
         )
         self._reader = None
-        self._reader = core.create_py_reader(
-            self.queue,
-            self._var_names,
-            self._shapes,
-            self._dtypes,
-            self._need_check_feed,
-            self._places,
-            self._use_double_buffer,
-            self._drop_last,
-            False,
-        )
 
     def _init_non_iterable(self):
         lod_levels = []
@@ -904,20 +882,6 @@ class GeneratorLoader(DataLoaderBase):
             block = default_startup_program().current_block()
 
         reader_var = block.create_var(name=reader_name)
-
-        dtype_int = [int(t) for t in dtypes]
-        block.append_op(
-            type='create_py_reader',
-            inputs={'blocking_queue': [queue_name]},
-            outputs={'Out': [reader_var]},
-            attrs={
-                'shape_concat': shape_concat,
-                'lod_levels': lod_levels,
-                'dtypes': dtype_int,
-                'need_check_feed': need_check_feed,
-                'ranks': ranks,
-            },
-        )
 
         reader_var.desc.set_dtypes(dtypes)
         reader_var.persistable = True
