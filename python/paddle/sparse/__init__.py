@@ -15,6 +15,7 @@
 from . import nn  # noqa: F401
 from .binary import (
     add,
+    concat,
     divide,
     is_same_shape,
     mask_as,
@@ -92,4 +93,5 @@ __all__ = [
     'reshape',
     'isnan',
     'slice',
+    'concat',
 ]

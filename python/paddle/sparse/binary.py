@@ -12,8 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import paddle
 from paddle import _C_ops
-from paddle.base.framework import core, dygraph_only, in_dynamic_or_pir_mode
+from paddle.base.framework import (
+    Variable,
+    core,
+    dygraph_only,
+    in_dynamic_or_pir_mode,
+)
 from paddle.base.layer_helper import LayerHelper
 
 from .unary import cast
@@ -509,3 +515,28 @@ def mask_as(x, mask, name=None):
 
     """
     return _C_ops.sparse_mask_as(x, mask)
+
+
+@dygraph_only
+def concat(x, axis=0, name=None):
+    """
+    Concatenates the input along the axis. It doesn't support 0-D Tensor because it requires a certain axis, and 0-D Tensor
+    doesn't have any axis.
+
+    Args:
+        x (list|tuple): ``x`` is a sparse Tensor() list or Tensor tuple which is with data type bool, float16, bfloat16,
+            float32, float64, int8, int16, int32, int64, uint8, uint16. All the Tensors in ``x`` must have same data type.
+        axis (int|Tensor, optional): Specify the axis to operate on the input Tensors.
+            Tt should be integer or 0-D int Tensor with shape []. The effective range is [-R, R), where R is Rank(x). When ``axis < 0``,
+            it works the same way as ``axis+R``. Default is 0.
+        name (str, optional): Name for the operation (optional, default is None). For more information, please refer to :ref:`api_guide_Name`.
+
+    Returns:
+        Tensor, A Tensor with the same data type as ``x``.
+    """
+    input = x
+    if isinstance(axis, Variable):
+        axis = axis.item(0)
+    if not isinstance(input, (Variable, paddle.pir.Value)):
+        input = [t for t in input if t.shape.count(0) == 0]
+    return _C_ops.sparse_concat(input, axis)
