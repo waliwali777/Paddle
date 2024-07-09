@@ -37,6 +37,17 @@
     func : all_to_all
     param: [x]
 
+- op : alltoall
+  args: (Tensor x, int ring_id = 0, bool use_calc_stream = false)
+  output: Tensor (out)
+  infer_meta:
+    func: AllToAllInferMeta
+    param: [x]
+  kernel :
+    func : alltoall
+    data_type: x
+    param: [x]
+
 - op : amax
   args : (Tensor x, IntArray axis={0}, bool keepdim=false, bool reduce_all=false, int in_dtype=-1, int out_dtype=-1)
   output : Tensor(out)
