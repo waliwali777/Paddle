@@ -49,7 +49,7 @@ void AllToAllOpCUDAKernel(const Context& dev_ctx,
   auto place = dev_ctx.GetPlace();
 
   gpuStream_t stream = nullptr;
-  platform::NCCLComm* comm = nullptr;
+  paddle::platform::NCCLComm* comm = nullptr;
   phi::distributed::NCCLCommContext* comm_ctx = nullptr;
   int nranks = 0;
 
@@ -76,7 +76,7 @@ void AllToAllOpCUDAKernel(const Context& dev_ctx,
     nranks = comm_ctx->GetSize();
     VLOG(3) << "new comm_context_manager has rid " << ring_id;
   } else {
-    comm = platform::NCCLCommContext::Instance().Get(ring_id, place);
+    comm = paddle::platform::NCCLCommContext::Instance().Get(ring_id, place);
     stream = comm->stream();
     nranks = comm->nranks();
     VLOG(3) << "old NCCLCommContext has rid " << ring_id;
