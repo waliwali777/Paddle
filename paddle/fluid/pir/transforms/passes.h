@@ -83,6 +83,7 @@ USE_PIR_PASS(conv2d_transpose_bias_bn_fuse_pass);
 #ifdef PADDLE_WITH_XPU
 USE_PIR_PASS(add_layernorm_xpu_fuse_pass);
 USE_PIR_PASS(conv2d_bn_xpu_fuse_pass);
+USE_PIR_PASS(decoder_attention_xpu_fuse_pass);
 USE_PIR_PASS(conv2d_add_xpu_fuse_pass);
 USE_PIR_PASS(fc_xpu_fuse_pass);
 #endif
