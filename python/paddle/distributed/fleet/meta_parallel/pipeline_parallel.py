@@ -432,6 +432,13 @@ class PipelineParallel(MetaParallelBase):
         self.timers.log(all_flag_names)
 
     def _record_stamp(self, name, step, phase, color):
+        if phase == '"E"' and os.getenv("FLAGS_log_memory_stats") in [
+            "1",
+            "true",
+            1,
+            True,
+        ]:
+            print(f"Run job ({step}) end.")
         if self._profiling:
             paddle.device.synchronize()
             self._records.append(
@@ -1059,6 +1066,16 @@ class PipelineParallelWithInterleave(PipelineParallel):
             self._backward_micro_step_counter[i] = 0
 
     def _record_stamp(self, name, step, phase, forward=True):
+        if phase == '"E"' and os.getenv("FLAGS_log_memory_stats") in [
+            "1",
+            "true",
+            1,
+            True,
+        ]:
+            if forward:
+                print(f"Run job ({step}) end, type = forward.")
+            else:
+                print(f"Run job ({step}) end, type = backward.")
         if self._profiling:
             paddle.device.synchronize()
             virtual_pp_rank = self._get_virtual_pp_rank(step, forward=forward)
