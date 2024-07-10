@@ -2290,6 +2290,16 @@
   outputs :
     out : Out
 
+- op : lookup_table
+  backward: lookup_table_grad
+  inputs:
+    {w : W, ids : Ids}
+  outputs:
+    out : Out
+  extra:
+    attrs: [int slot = 0]
+  manual_signature : [lookup_table_grad]
+
 - op : lrn
   backward : lrn_grad
   inputs :

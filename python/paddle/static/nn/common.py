@@ -4016,18 +4016,14 @@ def sparse_embedding(
         slot = 0
 
     helper.append_op(
-        type='lookup_table',
+        type='lookup_table_v2',
         inputs={'Ids': input, 'W': w},
         outputs={'Out': tmp},
         attrs={
-            'padding_idx': padding_idx,
             'is_sparse': True,
             'is_distributed': True,
             'remote_prefetch': True,
-            'is_test': is_test,
-            'entry': entry_str,
-            'table_class': table_class,
-            'slot': slot,
+            'padding_idx': padding_idx,
         },
     )
     return tmp
