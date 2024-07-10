@@ -166,10 +166,11 @@ void EagerDeletionOpHandle::RunImpl() {
           var_info->Name()));
     }
   }
-
+#ifndef PADDLE_WITH_CINN
   if (!garbages.empty()) {
     ClearGarbages(&garbages);
   }
+#endif
 }
 
 void EagerDeletionOpHandle::ClearGarbages(
