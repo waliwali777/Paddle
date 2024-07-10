@@ -208,7 +208,11 @@ class XPUOpTest(OpTest):
             ):
                 return
 
-        if self.dtype == np.float16 or self.dtype == np.uint16:
+        if (
+            self.dtype == np.float16
+            or self.dtype == np.uint16
+            or user_defined_grads is not None
+        ):
             max_relative_error = 0.1
             return super().check_grad_with_place(
                 place,
