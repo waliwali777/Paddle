@@ -17,6 +17,7 @@ import unittest
 import numpy as np
 
 import paddle
+from paddle.pir_utils import test_with_pir_api
 from paddle.vision.transforms import transforms
 
 SEED = 2022
@@ -28,6 +29,13 @@ class TestTransformUnitTestBase(unittest.TestCase):
             np.float32
         )
         self.set_trans_api()
+        self.init_dy_res()
+
+    def init_dy_res(self):
+        # Obtain the dynamic transform result first before test_transform.
+        self.dy_res = self.dynamic_transform()
+        if isinstance(self.dy_res, paddle.Tensor):
+            self.dy_res = self.dy_res.numpy()
 
     def get_shape(self):
         return (3, 64, 64)
@@ -58,13 +66,10 @@ class TestTransformUnitTestBase(unittest.TestCase):
         paddle.disable_static()
         return res[0]
 
+    @test_with_pir_api
     def test_transform(self):
-        dy_res = self.dynamic_transform()
-        if isinstance(dy_res, paddle.Tensor):
-            dy_res = dy_res.numpy()
         st_res = self.static_transform()
-
-        np.testing.assert_almost_equal(dy_res, st_res)
+        np.testing.assert_almost_equal(self.dy_res, st_res)
 
 
 class TestResize(TestTransformUnitTestBase):
@@ -135,10 +140,9 @@ class TestRandomCrop_random(TestTransformUnitTestBase):
         assert not res_assert
 
     def test_transform(self):
-        dy_res = self.dynamic_transform().numpy()
         st_res = self.static_transform()
 
-        self.assert_test_random_equal(dy_res)
+        self.assert_test_random_equal(self.dy_res)
         self.assert_test_random_equal(st_res)
 
 
@@ -176,13 +180,11 @@ class TestRandomErasing(TestTransformUnitTestBase):
             prob=1, value=self.value, scale=self.scale, ratio=self.ratio
         )
 
+    @test_with_pir_api
     def test_transform(self):
-        dy_res = self.dynamic_transform()
-        if isinstance(dy_res, paddle.Tensor):
-            dy_res = dy_res.numpy()
         st_res = self.static_transform()
 
-        self.assert_test_erasing(dy_res)
+        self.assert_test_erasing(self.dy_res)
         self.assert_test_erasing(st_res)
 
     def assert_test_erasing(self, arr):
