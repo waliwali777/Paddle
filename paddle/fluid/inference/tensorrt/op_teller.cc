@@ -1902,6 +1902,21 @@ struct SimpleOpTypeSetTeller : public Teller {
       }
     }
 
+    if (op_type == "put_along_axis") {
+#if !IS_TRT_VERSION_GE(8200)
+      VLOG(3) << "put_along_axis is not supported when TensorRT < 8.2";
+      return false;
+#endif
+      if (!with_dynamic_shape) {
+        VLOG(3) << "The put_along_axis op does not support static shape yet";
+        return false;
+      }
+      if (!desc.HasAttr("Axis")) {
+        VLOG(3) << "The put_along_axis layer of TRT need attr Axis.";
+        return false;
+      }
+    }
+
     if (op_type == "prelu") {
       if (desc.Input("X").size() != 1) {
         VLOG(3) << "Invalid input X's size of prelu TRT converter. "
@@ -3054,6 +3069,7 @@ struct SimpleOpTypeSetTeller : public Teller {
       "grid_sampler",
       "cumsum",
       "unbind",
+      "put_along_axis",
       "assign",
       "flip",
       "quantize_linear",
@@ -3226,6 +3242,7 @@ struct SimpleOpTypeSetTeller : public Teller {
       "grid_sampler",
       "cumsum",
       "unbind",
+      "put_along_axis",
       "assign",
       "flip",
       "quantize_linear",
