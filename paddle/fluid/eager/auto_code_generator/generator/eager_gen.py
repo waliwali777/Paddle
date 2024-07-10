@@ -155,6 +155,7 @@ strided_op_list = {
     "unsqueeze",
     "view_shape",
     "view_dtype",
+    "flash_attn",
 }
 
 strided_op_need_flags_check_list = {
