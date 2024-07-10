@@ -44,14 +44,14 @@ bool ArgmaxOpInferSymbolicShape(pir::Operation *op,
       }
     } else {
       for (int i = 0; i < axis; i++) {
-        out_sym_shape.emplace_back(input_sym_shape[i]);
+        out_sym_shape.emplace_back(input_sym_shape.at(i));
       }
       if (keepdims) {
         out_sym_shape.emplace_back(std::int64_t(1));
       }
 
       for (int i = axis + 1; i < rank; i++) {
-        out_sym_shape.emplace_back(input_sym_shape[i]);
+        out_sym_shape.emplace_back(input_sym_shape.at(i));
       }
     }
     return out_sym_shape;
@@ -295,13 +295,6 @@ bool DistributeFpnProposalsOpInferSymbolicShape(
   return true;
 }
 
-bool EinsumOpInferSymbolicShape(pir::Operation *op,
-                                pir::InferSymbolicShapeContext *infer_context) {
-  PADDLE_THROW(phi::errors::Unimplemented(
-      op->name() + " 's InferSymbolicShape interface is NOT implemented now."));
-  return true;
-}
-
 bool FlattenOpInferSymbolicShape(
     pir::Operation *op, pir::InferSymbolicShapeContext *infer_context) {
   const auto &attributes = op->attributes();
@@ -389,13 +382,13 @@ bool KthvalueOpInferSymbolicShape(
   if (axis < 0) axis += dim_size;
   std::vector<symbol::DimExpr> out_dims;
   for (int i = 0; i < axis; i++) {
-    out_dims.emplace_back(input_dims[i]);
+    out_dims.emplace_back(input_dims.at(i));
   }
   if (keepdim && dim_size > 0) {
     out_dims.emplace_back(symbol::DimExpr(1));
   }
   for (int i = axis + 1; i < dim_size; i++) {
-    out_dims.emplace_back(input_dims[i]);
+    out_dims.emplace_back(input_dims.at(i));
   }
   symbol::ShapeOrDataDimExprs shape_data{
       symbol::TensorShapeOrDataDimExprs(out_dims)};
@@ -506,7 +499,8 @@ bool PadOpInferSymbolicShape(pir::Operation *op,
     std::vector<symbol::DimExpr> out_dims;
     out_dims.reserve(rank);
     for (size_t i = 0; i < rank; ++i) {
-      out_dims.push_back(x_dims_sym[i] + paddings[2 * i] + paddings[2 * i + 1]);
+      out_dims.push_back(x_dims_sym.at(i) + paddings[2 * i] +
+                         paddings[2 * i + 1]);
     }
     return out_dims;
   }();
@@ -619,9 +613,9 @@ bool RepeatInterleaveOpInferSymbolicShape(
     std::vector<symbol::DimExpr> out_sym_shape;
     for (int i = 0; i < x_rank; i++) {
       if (i == axis) {
-        out_sym_shape.push_back(in_dims_sym[i] * repeats);
+        out_sym_shape.push_back(in_dims_sym.at(i) * repeats);
       } else {
-        out_sym_shape.push_back(in_dims_sym[i]);
+        out_sym_shape.push_back(in_dims_sym.at(i));
       }
     }
     return out_sym_shape;
@@ -659,6 +653,13 @@ bool ReshapeOpInferSymbolicShape(
     return true;
   };
 
+  const auto &IsPositiveInteger = [&](const symbol::DimExpr &dim_expr) {
+    if (dim_expr.isa<int64_t>()) {
+      return dim_expr.dyn_cast<int64_t>() > static_cast<int64_t>(0);
+    }
+    return true;
+  };
+
   const auto &IsZero = [&](const symbol::DimExpr &dim_expr) {
     if (dim_expr.isa<int64_t>()) {
       return dim_expr.dyn_cast<int64_t>() == static_cast<int64_t>(0);
@@ -669,26 +670,33 @@ bool ReshapeOpInferSymbolicShape(
   const std::vector<symbol::DimExpr> out_dims = [&] {
     const auto &original_shape =
         infer_context->GetShapeOrDataForValue(op->operand_source(0)).shape();
+    ExprVec target_shape;
+    if (shape_dim_expr.data().has_value()) {
+      target_shape = shape_dim_expr.data().value();
+    }
 
+    // replace '0' with original shape
+    for (size_t i = 0; i < target_shape.size(); i++) {
+      if (i < original_shape.size() && IsZero(target_shape.at(i))) {
+        target_shape.at(i) = original_shape.at(i).dyn_cast<int64_t>();
+      }
+    }
+
+    // replace '-1' with infered shape
     const auto &numel =
         GetProduct(original_shape, [](const auto &) { return true; });
-
-    ExprVec target_shape = details::GetExprVecFromData(shape_dim_expr);
     const auto &product_exclude_minus_one =
-        GetProduct(target_shape, IsNotMinusOne);
-
+        GetProduct(target_shape, IsPositiveInteger);
     const auto &input_dims = target_shape;
 
     std::vector<symbol::DimExpr> out_dims;
     out_dims.reserve(input_dims.size());
     for (size_t i = 0; i < input_dims.size(); ++i) {
-      auto out_dim_expr = IsNotMinusOne(input_dims[i])
-                              ? input_dims[i]
+      auto out_dim_expr = IsNotMinusOne(input_dims.at(i))
+                              ? input_dims.at(i)
                               : (numel / product_exclude_minus_one);
-      out_dim_expr = IsZero(input_dims[i]) ? original_shape[i] : out_dim_expr;
       out_dims.emplace_back(out_dim_expr);
     }
-
     return out_dims;
   }();
 
@@ -747,24 +755,20 @@ bool SliceOpInferSymbolicShape(pir::Operation *op,
 
   std::vector<int64_t> axes_vec = details::GetVectorAttr(op, "axes");
 
-  // // Currently, we DO NOT support any element in `starts` is a Symbol.
   ExprVec starts = slice_utils::GetExprVecFromData(starts_shape_data);
   ExprVec ends = slice_utils::GetExprVecFromData(ends_shape_data);
 
   std::vector<int64_t> infer_flags = details::GetVectorAttr(op, "infer_flags");
-
   const std::vector<int64_t> decrease_axis =
       details::GetVectorAttr(op, "decrease_axis");
-
-  infer_context->SetShapeOrDataForValue(
-      res,
+  auto res_shape_or_data =
       slice_utils::SliceRawInferSymbolicShape(operand_shape_or_data,
                                               starts,
                                               ends,
                                               axes_vec,
                                               infer_flags,
-                                              decrease_axis));
-
+                                              decrease_axis);
+  infer_context->SetShapeOrDataForValue(res, res_shape_or_data);
   return true;
 }
 
@@ -870,6 +874,7 @@ bool SplitWithNumOpInferSymbolicShape(
     pir::Operation *op, pir::InferSymbolicShapeContext *infer_context) {
   const symbol::ShapeOrDataDimExprs &axis_shape_data =
       infer_context->GetShapeOrDataForValue(op->operand_source(1));
+
   PADDLE_ENFORCE_EQ(
       axis_shape_data.data().has_value(),
       true,
@@ -882,35 +887,78 @@ bool SplitWithNumOpInferSymbolicShape(
       true,
       phi::errors::InvalidArgument(
           "In SplitWithNumOp, data of axis should be one dimension"));
-  if (!axis_data[0].isa<int64_t>()) {
-    PADDLE_THROW(
-        phi::errors::InvalidArgument("The type of axis must be int64_t"));
-  }
-  int64_t axis = axis_data[0].dyn_cast<int64_t>();
 
   const auto &attributes = op->attributes();
   int num = attributes.at("num").dyn_cast<pir::Int32Attribute>().data();
+
   const auto &x_s_or_d =
       infer_context->GetShapeOrDataForValue(op->operand_source(0));
   int rank = x_s_or_d.shape().size();
-  axis = axis < 0 ? axis + rank : axis;
 
-  symbol::DimExpr input_axis_dim = x_s_or_d.shape().at(axis);
-  symbol::DimExpr axis_shape = input_axis_dim / symbol::DimExpr{num};
+  const auto &out_s_d = [&](int64_t split_axis, int64_t res_num) {
+    symbol::DimExpr input_axis_dim = x_s_or_d.shape().at(split_axis);
+    symbol::DimExpr axis_shape = input_axis_dim / symbol::DimExpr{res_num};
 
-  const auto &out_s_d = [&] {
-    std::vector<symbol::DimExpr> out_s_d;
+    std::vector<symbol::DimExpr> res_s_d;
     for (size_t i = 0; i < x_s_or_d.shape().size(); ++i) {
-      const auto &sym_dim =
-          axis == static_cast<int64_t>(i) ? axis_shape : x_s_or_d.shape()[i];
-      out_s_d.push_back(sym_dim);
+      const auto &sym_dim = split_axis == static_cast<int64_t>(i)
+                                ? axis_shape
+                                : x_s_or_d.shape().at(i);
+      res_s_d.push_back(sym_dim);
     }
-    return symbol::TensorShapeOrDataDimExprs(out_s_d);
-  }();
+    return symbol::TensorShapeOrDataDimExprs(res_s_d);
+  };
 
-  symbol::TensorListShapeOrDataDimExprs outs_s_d(num, out_s_d);
-  infer_context->SetShapeOrDataForValue(op->result(0),
-                                        symbol::ShapeOrDataDimExprs{outs_s_d});
+  if (axis_data.at(0).isa<int64_t>()) {
+    // case 1: DimExpr of axis is int.  axis_shape_or_data: {shape:{1},
+    // data:{3}} eg: axis generator op is full_op and assign_op
+    int64_t axis = axis_data[0].dyn_cast<int64_t>();
+    axis = axis < 0 ? axis + rank : axis;
+    symbol::TensorListShapeOrDataDimExprs res_list_s_d(num, out_s_d(axis, num));
+    infer_context->SetShapeOrDataForValue(
+        op->result(0), symbol::ShapeOrDataDimExprs{res_list_s_d});
+  } else if (axis_data.at(0).isa<std::string>()) {
+    // case 2: DimExpr of axis is a symbol(string).  axis_shape_or_data:
+    // {shape:{1}, data:{s0}} eg: axis generator op is data_op
+    int candidate_axis = -1;
+    int count = 0;
+    for (size_t i = 0; i < x_s_or_d.shape().size(); ++i) {
+      if (x_s_or_d.shape().at(i).isa<int64_t>()) {
+        if (x_s_or_d.shape().at(i).dyn_cast<int64_t>() % num == 0) {
+          count++;
+          candidate_axis = i;
+        }
+      } else {
+        PADDLE_THROW(
+            phi::errors::InvalidArgument("The type of X must be int64_t."));
+      }
+    }
+    if (count == 1) {
+      // caculate the axis of split_with_num_op
+      symbol::TensorListShapeOrDataDimExprs res_list_s_d(
+          num, out_s_d(candidate_axis, num));
+      infer_context->SetShapeOrDataForValue(
+          op->result(0), symbol::ShapeOrDataDimExprs{res_list_s_d});
+    } else {
+      // create new Symbol
+      std::vector<symbol::DimExpr> res_s;
+      for (size_t i = 0; i < x_s_or_d.shape().size(); ++i) {
+        const auto &s_dim =
+            x_s_or_d.shape().at(i).dyn_cast<std::int64_t>() % num == 0
+                ? symbol::DimExpr(infer_context->GetNextSymName())
+                : x_s_or_d.shape().at(i);
+        res_s.emplace_back(s_dim);
+      }
+      const symbol::TensorShapeOrDataDimExprs &res_s_d =
+          symbol::TensorShapeOrDataDimExprs(res_s);
+      symbol::TensorListShapeOrDataDimExprs res_list_s_d(num, res_s_d);
+      infer_context->SetShapeOrDataForValue(
+          op->result(0), symbol::ShapeOrDataDimExprs{res_list_s_d});
+    }
+  } else {
+    PADDLE_THROW(phi::errors::InvalidArgument(
+        "The type of axis must be int64_t or string."));
+  }
   return true;
 }
 
@@ -977,7 +1025,7 @@ bool TileOpInferSymbolicShape(pir::Operation *op,
   }
 
   for (size_t i = 0; i < repeat_times_dimexpr.size(); ++i) {
-    out_shape[i] = x_dimexpr[i] * repeat_times_dimexpr[i];
+    out_shape.at(i) = x_dimexpr.at(i) * repeat_times_dimexpr.at(i);
   }
 
   symbol::ShapeOrDataDimExprs shape_data{
@@ -1018,7 +1066,7 @@ bool TopkOpInferSymbolicShape(pir::Operation *op,
       if (i == axis) {
         out_sym_shape.push_back(symbol::DimExpr(k));
       } else {
-        out_sym_shape.push_back(in_dims_sym[i]);
+        out_sym_shape.push_back(in_dims_sym.at(i));
       }
     }
     return out_sym_shape;
@@ -1086,7 +1134,7 @@ bool TransposeOpInferSymbolicShape(
 
   std::vector<symbol::DimExpr> out_dims(x_dims);
   for (int i = 0; i < axis_size; ++i) {
-    out_dims[i] = x_dims[formatted_axis[i]];
+    out_dims.at(i) = x_dims[formatted_axis.at(i)];
   }
 
   infer_context->SetShapeOrDataForValue(op->result(0),
@@ -1150,8 +1198,8 @@ bool SqueezeOpInferSymbolicShape(
     for (size_t i = 0; i < in_dims_sym.size(); ++i) {
       // TODO(lanxianghit): if symbol here, maybe we need the result of dim expr
       // simplification
-      if (in_dims_sym[i] == 1) {
-        should_squeeze[i] = true;
+      if (in_dims_sym.at(i) == 1) {
+        should_squeeze.at(i) = true;
       }
     }
   } else {
@@ -1159,8 +1207,9 @@ bool SqueezeOpInferSymbolicShape(
       if (in_dims_sym.size() == 0) {
         continue;
       }
-      int current = squeeze_dims[i] < 0 ? squeeze_dims[i] + in_dims_sym.size()
-                                        : squeeze_dims[i];
+      int current = squeeze_dims.at(i) < 0
+                        ? squeeze_dims.at(i) + in_dims_sym.size()
+                        : squeeze_dims.at(i);
 
       if (!should_squeeze[current]) {
         // At compile time, dim of SYMBOL is allowed to squeeze?
@@ -1178,8 +1227,8 @@ bool SqueezeOpInferSymbolicShape(
   // Make output dimensions
   std::vector<symbol::DimExpr> output_shape_sym;
   for (size_t i = 0; i < in_dims_sym.size(); ++i) {
-    if (!should_squeeze[i]) {
-      output_shape_sym.emplace_back(in_dims_sym[i]);
+    if (!should_squeeze.at(i)) {
+      output_shape_sym.emplace_back(in_dims_sym.at(i));
     }
   }
 
@@ -1434,10 +1483,10 @@ bool UnsqueezeOpInferSymbolicShape(
 
     // Move old axis, and insert new axis
     for (int i = cur_output_rank; i >= cur; --i) {
-      if (result_sym_dims[i] == 1) {
+      if (result_sym_dims.at(i) == 1) {
         // Move axis
         result_sym_dims[i + 1] = 1;
-        result_sym_dims[i] = 0;
+        result_sym_dims.at(i) = 0;
       }
     }
     result_sym_dims[cur] = 1;

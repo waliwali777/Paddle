@@ -3022,7 +3022,6 @@ bool ExpandOp::InferSymbolicShape(
       infer_context->GetShapeOrDataForValue(shape());
 
   const std::vector<symbol::DimExpr> &x_dims = x_shape_or_data.shape();
-
   const std::vector<symbol::DimExpr> &expand_shape = [&] {
     std::vector<symbol::DimExpr> dims;
 
@@ -3069,7 +3068,6 @@ bool ExpandOp::InferSymbolicShape(
       out(),
       symbol::ShapeOrDataDimExprs{
           symbol::TensorShapeOrDataDimExprs(out_shape)});
-
   return true;
 }
 

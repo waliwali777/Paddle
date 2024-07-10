@@ -153,7 +153,6 @@ bool DataOpInferSymbolicShape(pir::Operation *op,
   }();
 
   infer_context->SetShapeOrDataForValue(op->result(0), shape_or_data);
-
   return true;
 }
 
