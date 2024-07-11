@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <sys/stat.h>
+
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -41,6 +43,7 @@ COMMON_DECLARE_uint64(initial_gpu_memory_in_mb);
 COMMON_DECLARE_bool(use_cinn);
 #endif
 
+COMMON_DECLARE_bool(enable_pir_api);
 namespace paddle {
 struct MkldnnQuantizerConfig;
 
@@ -85,17 +88,69 @@ AnalysisConfig::AnalysisConfig(const std::string &model_dir) {
 
   Update();
 }
-AnalysisConfig::AnalysisConfig(const std::string &prog_file,
-                               const std::string &params_file) {
-  prog_file_ = prog_file;
-  params_file_ = params_file;
+
+bool is_directory(const std::string &path) {
+  struct stat info;
+  if (stat(path.c_str(), &info) != 0) {
+    return false;
+  } else if (info.st_mode & S_IFDIR) {
+    return true;
+  }
+  return false;
+}
+
+AnalysisConfig::AnalysisConfig(const std::string &prog_file_or_model_dir,
+                               const std::string &params_file_or_model_prefix) {
+  if (is_directory(prog_file_or_model_dir)) {
+    if (FLAGS_enable_pir_api) {
+      prog_file_ =
+          prog_file_or_model_dir + "/" + params_file_or_model_prefix + ".json";
+    } else {
+      prog_file_ = prog_file_or_model_dir + "/" + params_file_or_model_prefix +
+                   ".pdmodel";
+    }
+    params_file_ = prog_file_or_model_dir + "/" + params_file_or_model_prefix +
+                   ".pdiparams";
+  } else {
+    prog_file_ = prog_file_or_model_dir;
+    params_file_ = params_file_or_model_prefix;
+  }
+
+  std::ifstream fin(prog_file_, std::ios::in | std::ios::binary);
+  PADDLE_ENFORCE_EQ(
+      static_cast<bool>(fin.is_open()),
+      true,
+      platform::errors::NotFound(
+          "Cannot open file %s, please confirm whether the file is normal.",
+          prog_file_));
 
   Update();
 }
-void AnalysisConfig::SetModel(const std::string &prog_file_path,
-                              const std::string &params_file_path) {
-  prog_file_ = prog_file_path;
-  params_file_ = params_file_path;
+
+void AnalysisConfig::SetModel(
+    const std::string &prog_file_path_or_model_dir_path,
+    const std::string &params_file_path_or_model_prefix) {
+  if (is_directory(prog_file_path_or_model_dir_path)) {
+    if (FLAGS_enable_pir_api) {
+      prog_file_ = prog_file_path_or_model_dir_path + "/" +
+                   params_file_path_or_model_prefix + ".json";
+    } else {
+      prog_file_ = prog_file_path_or_model_dir_path + "/" +
+                   params_file_path_or_model_prefix + ".pdmodel";
+    }
+    params_file_ = prog_file_path_or_model_dir_path + "/" +
+                   params_file_path_or_model_prefix + ".pdiparams";
+  } else {
+    prog_file_ = prog_file_path_or_model_dir_path;
+    params_file_ = params_file_path_or_model_prefix;
+  }
+  std::ifstream fin(prog_file_, std::ios::in | std::ios::binary);
+  PADDLE_ENFORCE_EQ(
+      static_cast<bool>(fin.is_open()),
+      true,
+      platform::errors::NotFound(
+          "Cannot open file %s, please confirm whether the file is normal.",
+          prog_file_));
 
   Update();
 }
