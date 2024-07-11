@@ -3793,6 +3793,87 @@ function trt_convert_test() {
     fi
 }
 
+function clang-tidy_check() {
+    set +x
+    trap 'abort' 0
+    set -e
+
+    modified_files=$(git diff --name-only test..upstream/develop)
+    diff_files=()
+    num_diff_files=0
+
+    for file in $modified_files
+    do
+        if [[ $file == *.cpp || $file == *.cc || $file == *.cxx || $file == *.c++ || $file == *.h || $file == *.hpp || $file == *.hh || $file == *.hxx || $file == *.h++ ]]; then
+            diff_files+=($file)
+            num_diff_files+=1
+        fi
+    done
+
+    echo ${diff_files[@]}
+    echo "Checking code style by clang-tidy ..."
+    startTime_s=`date +%s`
+    cd ${PADDLE_ROOT}
+    pwd
+    python ./tools/codestyle/clang-tidy.py -p=build -j=20 \
+    -clang-tidy-binary=clang-tidy \
+    -extra-arg=-Wno-unknown-warning-option \
+    -extra-arg=-Wno-pessimizing-move \
+    -extra-arg=-Wno-braced-scalar-init \
+    -extra-arg=-Wno-deprecated-copy \
+    -extra-arg=-Wno-dangling-gsl \
+    -extra-arg=-Wno-final-dtor-non-final-class \
+    -extra-arg=-Wno-implicit-int-float-conversion \
+    -extra-arg=-Wno-inconsistent-missing-override \
+    -extra-arg=-Wno-infinite-recursion \
+    -extra-arg=-Wno-mismatched-tags  \
+    -extra-arg=-Wno-self-assign \
+    -extra-arg=-Wno-sign-compare \
+    -extra-arg=-Wno-sometimes-uninitialized \
+    -extra-arg=-Wno-tautological-overlap-compare \
+    -extra-arg=-Wno-unused-const-variable \
+    -extra-arg=-Wno-unused-lambda-capture \
+    -extra-arg=-Wno-unused-private-field \
+    -extra-arg=-Wno-unused-value \
+    -extra-arg=-Wno-unused-variable  \
+    -extra-arg=-Wno-overloaded-virtual  \
+    -extra-arg=-Wno-defaulted-function-deleted  \
+    -extra-arg=-Wno-delete-non-abstract-non-virtual-dtor  \
+    -extra-arg=-Wno-return-type-c-linkage  \
+    -extra-arg=-fopenmp=libomp  \
+    check_error=$?
+    endTime_s=`date +%s`
+    [ -n "$startTime_firstBuild" ] && startTime_s=$startTime_firstBuild
+    echo "Files Num: $[ $num_diff_files ]"
+    echo "Check Time: $[ $endTime_s - $startTime_s ]s"
+
+    echo -e '\n************************************************************************************'
+    if [ ${check_error} != 0 ];then
+        echo "Your PR code style clang-tidy check failed."
+        echo "Please install clang-tidy locally:"
+        echo ""
+        echo "    pip install clang-tidy==15.0.2.1"
+        echo ""
+        echo ""
+        if [[ $num_diff_files -le 100 ]];then
+            echo "After the build is completed, run clang-tidy to check codestyle issues in your PR:"
+            echo ""
+            echo "    python ./tools/codestyle/clang-tidy.py -p=build -j=10 -clang-tidy-binary=clang-tidy --files" $(echo ${diff_files} | tr "\n" " ")
+            echo ""
+        fi
+        echo "For more information, please refer to our codestyle check guide:"
+        echo "https://www.paddlepaddle.org.cn/documentation/docs/zh/develop/dev_guides/git_guides/codestyle_check_guide_cn.html"
+    else
+        echo "Your PR code style clang-tidy check passed."
+    fi
+    echo -e '************************************************************************************\n'
+
+    trap : 0
+    set -x
+
+    exit ${check_error}
+}
+
 function build_pr_and_develop() {
     run_setup ${PYTHON_ABI:-""} bdist_wheel ${parallel_number}
     if [ ! -d "${PADDLE_ROOT}/build/python/dist/" ]; then
@@ -3807,6 +3888,8 @@ function build_pr_and_develop() {
     generate_api_spec "$1" "PR"
     mkdir ${PADDLE_ROOT}/build/pr_whl && cp ${PADDLE_ROOT}/build/python/dist/*.whl ${PADDLE_ROOT}/build/pr_whl
     rm -f ${PADDLE_ROOT}/build/python/dist/*.whl && rm -f ${PADDLE_ROOT}/build/python/build/.timestamp
+
+    clang-tidy_check
 
     git checkout $BRANCH
     dev_commit=`git log -2|grep -w 'commit'|awk '{print $2}'`
