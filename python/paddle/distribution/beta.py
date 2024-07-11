@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 import numbers
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
 import paddle
 from paddle.distribution import dirichlet, exponential_family
@@ -142,14 +142,14 @@ class Beta(exponential_family.ExponentialFamily):
         """
         return self._dirichlet.log_prob(paddle.stack([value, 1.0 - value], -1))
 
-    def sample(self, shape=()):
+    def sample(self, shape: Sequence[int] = ()) -> Tensor:
         """Sample from beta distribution with sample shape.
 
         Args:
             shape (Sequence[int], optional): Sample shape.
 
         Returns:
-            Sampled data with shape `sample_shape` + `batch_shape` + `event_shape`.
+            Tensor, Sampled data with shape `sample_shape` + `batch_shape` + `event_shape`.
         """
         shape = shape if isinstance(shape, tuple) else tuple(shape)
         return paddle.squeeze(self._dirichlet.sample(shape)[..., 0], axis=-1)
