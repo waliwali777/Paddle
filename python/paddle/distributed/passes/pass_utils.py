@@ -15,11 +15,16 @@
 import logging
 from collections import OrderedDict
 from enum import Enum
+from functools import reduce
 
+import paddle
 from paddle.base import core
 from paddle.base.framework import Parameter, Program
 from paddle.distributed.auto_parallel.static.dist_attribute import (
     OperatorDistAttr,
+)
+from paddle.distributed.auto_parallel.static.dist_tensor import (
+    DistributedTensor,
 )
 from paddle.distributed.auto_parallel.static.utils import (
     get_logger,
@@ -229,6 +234,32 @@ def var_can_be_deleted(var_name, block):
     return var is not None and not var.persistable
 
 
+def _get_required_vars_of_program(program):
+    """
+    Get all vars in the program that are non-persistable and not in op's no_need_buffer.
+    """
+    required_vars = set()
+    for block in program.blocks:
+        for op in block.ops:
+            if op.type in [
+                "c_sync_comm_stream",
+                "conditional_block",
+                "data",
+                "nop",
+                "while",
+            ]:
+                continue
+
+            op_info = OpInOutInfo()
+            op_info.build_info(op)
+            for arg_name in op.input_arg_names + op.output_arg_names:
+                if var_can_be_deleted(arg_name, block) and op_info.is_needed(
+                    arg_name
+                ):
+                    required_vars.add(arg_name)
+    return required_vars
+
+
 def set_skip_gc_vars(num_micro_batches, job_types, sub_programs, jobs):
     """
     Set `skip_gc_vars` for every job in jobs.
@@ -243,25 +274,7 @@ def set_skip_gc_vars(num_micro_batches, job_types, sub_programs, jobs):
     # step1: Get all vars of every sub_program that are non-persistable and not in op's no_need_buffer.
     type_to_required_vars = {}
     for type, program in type_to_program.items():
-        type_to_required_vars[type] = set()
-        for block in program.blocks:
-            for op in block.ops:
-                if op.type in [
-                    "c_sync_comm_stream",
-                    "conditional_block",
-                    "data",
-                    "nop",
-                    "while",
-                ]:
-                    continue
-
-                op_info = OpInOutInfo()
-                op_info.build_info(op)
-                for arg_name in op.input_arg_names + op.output_arg_names:
-                    if var_can_be_deleted(
-                        arg_name, block
-                    ) and op_info.is_needed(arg_name):
-                        type_to_required_vars[type].add(arg_name)
+        type_to_required_vars[type] = _get_required_vars_of_program(program)
 
     # step2: Set `skip_gc_vars` for each job
     suffixed_required_vars = [set() for i in range(num_micro_batches)]
@@ -735,10 +748,20 @@ def _program_for_vpp(
 
         return type_to_ops
 
+    type_to_program = _build_vpp_sub_programs(program, _split_ops)
+
+    for prog in type_to_program.values():
+        prog._sync_with_cpp()
+        prog._roll_to_global_block()
+
+    return list(type_to_program.keys()), list(type_to_program.values())
+
+
+def _build_vpp_sub_programs(program, split_method):
     type_to_program = OrderedDict()
 
     for ib, src_block in enumerate(program.blocks):
-        type_to_ops = _split_ops(src_block)
+        type_to_ops = split_method(src_block)
         fetch_ops = type_to_ops.pop("fetch", [])
         dst_blocks = []
 
@@ -771,11 +794,7 @@ def _program_for_vpp(
             if fetch_block:
                 _create_program(src_block, fetch_block, fetch_op)
 
-    for prog in type_to_program.values():
-        prog._sync_with_cpp()
-        prog._roll_to_global_block()
-
-    return list(type_to_program.keys()), list(type_to_program.values())
+    return type_to_program
 
 
 def _program_for_vpp_split_bwk(
@@ -1090,6 +1109,93 @@ def _program_for_zero_bubble(program, enable_send_recv_overlap=False):
     return list(type_to_program.keys()), list(type_to_program.values())
 
 
+def _program_for_zero_bubble_vpp(
+    program, num_model_chunks, dist_context, enable_send_recv_overlap=False
+):
+    if enable_send_recv_overlap:
+        _overlap_send_recv(program)
+    else:
+        _insert_sync_for_fthenb_1f1b(program, dist_context)
+
+    oprole_type = {
+        0: "forward",
+        1: "backward_b",
+        2: "backward_w",
+        3: "optimizer",
+    }
+
+    def _split_ops(block):
+        type_to_ops = OrderedDict()
+        chunk_ids = list(range(num_model_chunks))
+        for type in oprole_type.values():
+            if type == "optimizer":
+                type_to_ops[type] = []
+            elif type in ["forward", "backward_b"]:
+                chunk_ids = (
+                    chunk_ids if type != "backward_b" else reversed(chunk_ids)
+                )
+                for chunk_id in chunk_ids:
+                    type_to_ops[type + str(chunk_id)] = []
+                    if type == "backward_b":
+                        type_to_ops["backward_w" + str(chunk_id)] = []
+        type_to_ops["fetch"] = []
+
+        dealed_op_idx = 0
+        dealed_types = []
+        for idx, op in enumerate(block.ops):
+            if idx < dealed_op_idx:
+                type = dealed_types[len(dealed_types) - dealed_op_idx + idx]
+            else:
+                if is_forward_op(op):
+                    type = oprole_type[0]
+                elif is_backward_op(op):
+                    type = _get_backward_op_type(block, op, idx)
+                    dealed_op_idx = dealed_op_idx + len(type) - 1
+                    dealed_types = type[1:]
+                    type = type[0]
+                elif is_optimize_op(op):
+                    type = oprole_type[3]
+                else:
+                    raise ValueError(
+                        "The op role: "
+                        + str(op.attr('op_role'))
+                        + " isn't one of Forward, Backward or Optimizer."
+                    )
+                dealed_op_idx += 1
+
+            dist_op = dist_context.get_dist_op_for_program(op)
+            if _is_fetch_op(op):
+                type_to_ops["fetch"].append(op)
+            elif is_optimize_op(op):
+                type_to_ops[type].append(op)
+            elif op.type == "feed":
+                type_to_ops[type + str(0)].append(op)
+            elif op.type == "share_buffer":
+                dist_pre_op = dist_context.get_dist_op_for_program(
+                    block.ops[idx - 1]
+                )
+                type_to_ops[type + str(dist_pre_op.dist_attr.chunk_id)].append(
+                    op
+                )
+            elif (
+                dist_op
+                and type + str(dist_op.dist_attr.chunk_id) in type_to_ops
+            ):
+                type_to_ops[type + str(dist_op.dist_attr.chunk_id)].append(op)
+            else:
+                raise ValueError(f"There is not dist_attr for op[{op.type}].")
+
+        return type_to_ops
+
+    type_to_program = _build_vpp_sub_programs(program, _split_ops)
+
+    for prog in type_to_program.values():
+        prog._sync_with_cpp()
+        prog._roll_to_global_block()
+
+    return list(type_to_program.keys()), list(type_to_program.values())
+
+
 def _add_event_dependency(recorder_op, waiter_op):
     '''
     Add the extra event dependency of the two operators.
@@ -1238,6 +1344,17 @@ def split_matmul_grad_to_matmul(
     matmul_grad_dist_attr = dist_context.get_op_dist_attr_for_program(
         matmul_grad_op
     )
+    matmul_grad_dist_attr.set_input_dist_attr(
+        new_x.name, dist_context.get_tensor_dist_attr_for_program(var_x)
+    )
+    matmul_grad_dist_attr.set_input_dist_attr(
+        new_out_grad.name,
+        dist_context.get_tensor_dist_attr_for_program(var_out_grad),
+    )
+    matmul_grad_dist_attr.set_output_dist_attr(
+        new_y_grad.name,
+        dist_context.get_tensor_dist_attr_for_program(var_y_grad),
+    )
 
     matmul_op = block._insert_op_without_sync(
         index=matmul_grad_id + 3,
@@ -1278,6 +1395,270 @@ def split_matmul_grad_to_matmul(
         },
     )
 
-    dist_context.set_op_dist_attr_for_program(matmul_op, matmul_grad_dist_attr)
+    dist_context.set_op_dist_attr_for_program(
+        matmul_op, dist_context.get_op_dist_attr_for_program(matmul_grad_op)
+    )
 
     block._remove_op(matmul_grad_id, sync=False)
+
+
+class PipelineMemoryEstimator:
+    def __init__(self):
+        self.type_to_skip_gc_vars = {}
+        self.program_types = []
+        self.logger = logging.getLogger(__name__)
+
+    def set_program_skip_gc_vars(self, type_to_program, program_types):
+        """
+        Get the skip_gc_vars for each type of program.
+
+        The order of program_types is the same as the order in the pipeline's micro batch.
+        For example, in 1F1B pipeline, the order of program_types is ['forward', 'backward'].
+        """
+        self.program_types = program_types
+
+        type_to_required_vars = {}
+        for type, program in type_to_program.items():
+            type_to_required_vars[type] = _get_required_vars_of_program(program)
+            self.type_to_skip_gc_vars[type] = {}
+
+        suffixed_required_vars = set()
+        for job_type in reversed(program_types):
+            required_vars = type_to_required_vars[job_type]
+            skip_gc_vars = required_vars & suffixed_required_vars
+
+            if job_type in ["backward", "backward_w"]:
+                assert (
+                    len(skip_gc_vars) == 0
+                ), f"When enabling pipeline parallelism strategy, the skip_gc_vars for {job_type} subprogram must be empty, but it is {skip_gc_vars}."
+
+            skip_gc_vars = dict(zip(skip_gc_vars, [-1] * len(skip_gc_vars)))
+            self.type_to_skip_gc_vars[job_type] = skip_gc_vars
+            suffixed_required_vars |= required_vars
+
+    def estimate_memory(self, program, program_type, dist_context):
+        if program_type not in self.type_to_skip_gc_vars:
+            raise ValueError(
+                f"Please set the skip_gc_vars before estimating memory for {program_type} program."
+            )
+
+        ordered_ops = [
+            [op.desc.id(), op] for block in program.blocks for op in block.ops
+        ]
+        ordered_ops.sort(key=lambda x: x[0])
+
+        # Step1: Process operations to get the var info
+        var_info = self._get_program_var_info(ordered_ops, dist_context)
+        for var_name in self.type_to_skip_gc_vars[program_type]:
+            if var_name not in var_info:
+                continue
+            self.type_to_skip_gc_vars[program_type][var_name] = var_info[
+                var_name
+            ]["size"]
+
+        # Step2: Record the visited vars in the previous program
+        visited_vars = {}
+        skip_gc_vars = self.type_to_skip_gc_vars[program_type]
+        if self.program_types.index(program_type) >= 1:
+            prev_program_type = self.program_types[
+                self.program_types.index(program_type) - 1
+            ]
+            visited_vars = self.type_to_skip_gc_vars[prev_program_type]
+
+        # Step3: Estimate the max memory usage during the program execution
+        mem_usage, max_memory = self._estimate_max_memory(
+            ordered_ops, var_info, skip_gc_vars, visited_vars
+        )
+
+        return mem_usage, max_memory
+
+    def _estimate_max_memory(
+        self, ordered_ops, var_info, skip_gc_vars, visited_vars
+    ):
+        mem_usage = 0
+        max_memory = 0
+        has_used_vars = set()
+
+        # no need to allocate memory for the variables
+        # that are already allocated in the previous program
+        for var_name in visited_vars:
+            has_used_vars.add(var_name)
+
+        for _, op in ordered_ops:
+            if op.type in [
+                "create_py_reader",
+                "create_double_buffer_reader",
+                "read",
+            ]:
+                continue
+
+            last_use_vars = []
+            for var_name in op.input_arg_names + op.output_arg_names:
+                if var_name not in var_info:
+                    continue
+
+                var_info[var_name]["count"] -= 1
+                if var_name not in has_used_vars and not self._is_perisitable(
+                    var_name, var_info
+                ):
+                    has_used_vars.add(var_name)
+                    self.logger.debug(
+                        f"add {var_name}, var size: {var_info[var_name]['size']},"
+                        f"count: {var_info[var_name]['count']},"
+                        f"mem_usage: {mem_usage} -> {mem_usage + var_info[var_name]['size']},"
+                        f"op type: {op.type}, input_arg_names: {op.input_arg_names}, output_arg_names: {op.output_arg_names}"
+                    )
+                    mem_usage += var_info[var_name]["size"]
+                    max_memory = max(max_memory, mem_usage)
+
+                if self._is_last_used(var_name, var_info):
+                    if (
+                        not self._is_perisitable(var_name, var_info)
+                        and var_name not in skip_gc_vars
+                    ):
+                        last_use_vars.append(var_name)
+
+                max_memory = max(max_memory, mem_usage)
+
+            # Release the memory of the variables that are not used anymore
+            for var_name in set(last_use_vars):
+                self.logger.debug(
+                    f"remove {var_name}, var size: {var_info[var_name]['size']},"
+                    f"count: {var_info[var_name]['count']},"
+                    f"mem_usage: {mem_usage} -> {mem_usage - var_info[var_name]['size']},"
+                    f"op type: {op.type}, input_arg_names: {op.input_arg_names}, output_arg_names: {op.output_arg_names}"
+                )
+                mem_usage -= var_info[var_name]["size"]
+                if var_name in visited_vars:
+                    visited_vars[var_name] -= var_info[var_name]["size"]
+
+        for var_name in visited_vars:
+            if var_name not in skip_gc_vars:
+                mem_usage -= visited_vars[var_name]
+
+        return mem_usage, max_memory
+
+    def _get_increase_memory(self, program_type):
+        """
+        For a given type of program, calculate the increase memory usage.
+
+        The increase memory usage is the memory usage of the variables that are setting to skip_gc_vars.
+        Persistable variables are not included in the increase memory usage because they are allocated when
+        running the startup program.
+        """
+        skip_gc_vars = self.type_to_skip_gc_vars[program_type]
+        increase_memory = sum([mem for _, mem in skip_gc_vars.items()])
+        if increase_memory < 0:
+            raise ValueError(
+                "No size info for skip_gc_vars, please run estimate_memory to get var size info."
+            )
+        return increase_memory
+
+    def _get_program_var_info(self, ordered_ops, dist_context):
+        var_info = {}
+
+        for _, op in ordered_ops:
+            if op.type in [
+                "create_py_reader",
+                "create_double_buffer_reader",
+                "read",
+            ]:
+                continue
+
+            op_info = OpInOutInfo()
+            op_info.build_info(op)
+
+            for var_name in op.input_arg_names + op.output_arg_names:
+                if not op_info.is_needed(var_name):
+                    continue
+
+                dist_op = dist_context.get_dist_op_for_program(op)
+                if dist_op:
+                    self._update_var_info(
+                        var_name,
+                        dist_op,
+                        var_info,
+                        is_input=var_name in op.input_arg_names,
+                    )
+
+        return var_info
+
+    def _update_var_info(self, var_name, dist_op, var_info, is_input):
+        var = (
+            dist_op.get_serial_input(var_name)
+            if is_input
+            else dist_op.get_serial_output(var_name)
+        )
+
+        process_mesh = dist_op.dist_attr.process_mesh
+        dims_mapping = (
+            dist_op.dist_attr.get_input_dims_mapping(var_name)
+            if is_input
+            else dist_op.dist_attr.get_output_dims_mapping(var_name)
+        )
+
+        if var_name not in var_info:
+            var_info.setdefault(
+                var_name, {"size": 0, "count": 1, "persistable": False}
+            )
+            if var.persistable:
+                var_info[var_name]["persistable"] = True
+                return
+            var_size = self._get_local_var_size(var, dims_mapping, process_mesh)
+            var_info[var_name]["size"] = var_size
+            var_info[var_name]["process_mesh"] = process_mesh
+            var_info[var_name]["dims_mapping"] = dims_mapping
+        else:
+            var_info[var_name]["count"] += 1
+            if var_info[var_name]["persistable"]:
+                return
+
+            if (
+                process_mesh != var_info[var_name]["process_mesh"]
+                or dims_mapping != var_info[var_name]["dims_mapping"]
+            ):
+                var_info[var_name]["size"] = self._get_local_var_size(
+                    var, dims_mapping, process_mesh
+                )
+                var_info[var_name]["process_mesh"] = process_mesh
+                var_info[var_name]["dims_mapping"] = dims_mapping
+
+    def _get_local_var_size(self, var, dims_mapping, process_mesh):
+        var_shape = [1 if dim == -1 else dim for dim in var.shape]
+        local_sizes = DistributedTensor.get_local_sizes(
+            var_shape,
+            dims_mapping,
+            process_mesh.shape,
+            process_mesh.process_ids,
+        )
+        return self._calculate_bytes(local_sizes, var.dtype)
+
+    def _calculate_bytes(self, sizes, dtype):
+        dtype_to_size = {
+            paddle.float64: 8,
+            paddle.int64: 8,
+            paddle.float32: 4,
+            paddle.int32: 4,
+            paddle.float16: 2,
+            paddle.bfloat16: 2,
+            paddle.int16: 2,
+            paddle.int8: 1,
+            paddle.uint8: 1,
+        }
+
+        total_count = reduce(lambda x, y: x * y, sizes, 1) if sizes else 0
+        dtype_factor = dtype_to_size.get(dtype, 4)
+
+        return total_count * dtype_factor
+
+    def _is_last_used(self, var_name, var_info):
+        if var_name not in var_info:
+            return False
+
+        return var_info[var_name]["count"] == 0
+
+    def _is_perisitable(self, var_name, var_info):
+        if var_name not in var_info:
+            return False
+
+        return var_info[var_name]["persistable"]
