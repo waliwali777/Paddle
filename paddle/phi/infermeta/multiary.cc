@@ -4714,8 +4714,10 @@ void RmsNormInferMeta(const MetaTensor& x,
 
 void RmsNormGradInferMeta(const MetaTensor& x,
                           const MetaTensor& norm_weight,
+                          const MetaTensor& norm_bias,
                           MetaTensor* x_grad,
-                          MetaTensor* norm_weight_grad) {
+                          MetaTensor* norm_weight_grad,
+                          MetaTensor* norm_bias_grad) {
   x_grad->set_dtype(x.dtype());
   x_grad->set_layout(x.layout());
   x_grad->share_lod(x);
@@ -4725,6 +4727,13 @@ void RmsNormGradInferMeta(const MetaTensor& x,
   norm_weight_grad->set_layout(norm_weight.layout());
   norm_weight_grad->share_lod(norm_weight);
   norm_weight_grad->set_dims(norm_weight.dims());
+
+  if (norm_bias_grad != nullptr) {
+    norm_bias_grad->set_dtype(norm_bias.dtype());
+    norm_bias_grad->set_layout(norm_bias.layout());
+    norm_bias_grad->share_lod(norm_bias);
+    norm_bias_grad->set_dims(norm_bias.dims());
+  }
 }
 
 void RmspropInferMeta(const MetaTensor& param,

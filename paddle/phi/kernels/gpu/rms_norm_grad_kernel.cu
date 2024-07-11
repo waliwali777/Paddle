@@ -167,7 +167,8 @@ void RmsNormGradKernel(const Context& dev_ctx,
                        const int begin_norm_axis,
                        const float quant_scale,
                        DenseTensor* grad_x,
-                       DenseTensor* grad_norm_weight) {
+                       DenseTensor* grad_norm_weight,
+                       DenseTensor* grad_norm_bias) {
   if (bias || residual || norm_bias) {
     PADDLE_THROW(phi::errors::Unimplemented(
         "bias or residual or norm_bias is not supported yet"));

@@ -3111,6 +3111,19 @@
       support_tensor : true
   manual_signature : [reverse]
 
+- op : rms_norm
+  backward : rms_norm_grad
+  inputs :
+    x : X
+    bias : Bias
+    residual : Residual
+    norm_weight : Norm_weight
+    norm_bias : Norm_bias
+  outputs :
+    out : Y
+    residual_out : Residual_out
+    inv_var : Inv_var
+
 - op : rmsprop_ (rmsprop)
   inputs :
     {param: Param, mean_square: MeanSquare, mean_grad: MeanGrad, learning_rate: LearningRate, grad: Grad, moment: Moment, master_param: MasterParam}
