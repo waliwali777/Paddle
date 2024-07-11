@@ -30,6 +30,7 @@ from paddle.base.wrapped_decorator import signature_safe_contextmanager
 # TODO(CZ): to be removed when we support dynamic shape by default.
 ALLOW_DYNAMIC_SHAPE_VJP_OPS = [
     "pd_op.abs",
+    "pd_op.add",
     "pd_op.assign",
     "pd_op.sin",
     "pd_op.cos",
@@ -293,8 +294,8 @@ def dynamic_shape_prim_vjp_guard(op, inputs):
         skip_prim = (
             origin_prim
             and core._enable_prim_skip_dynamic_shape()
-            and _check_vjp_dynamic_shape(op, inputs)
             and op.name() not in ALLOW_DYNAMIC_SHAPE_VJP_OPS
+            and _check_vjp_dynamic_shape(op, inputs)
         )
 
     try:
