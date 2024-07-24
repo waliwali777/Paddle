@@ -20,6 +20,8 @@
 #include "paddle/phi/core/tensor_utils.h"
 #include "paddle/phi/kernels/funcs/scatter.cu.h"
 
+#include "glog/logging.h"
+
 namespace phi {
 
 template <typename T, typename Context>
@@ -29,6 +31,7 @@ void ScatterKernel(const Context &ctx,
                    const DenseTensor &updates,
                    bool overwrite,
                    DenseTensor *out) {
+  VLOG(1) << "xxx---------------------- begin new scatter kernel cu";
   phi::Copy(ctx, x, ctx.GetPlace(), false, out);
   // use template class to support int32_t and int64_t
   auto index_type = index.dtype();
@@ -49,6 +52,7 @@ void ScatterKernel(const Context &ctx,
     phi::funcs::GPUScatterAssign<T, int64_t>(
         ctx, updates, index, out, overwrite);
   }
+  VLOG(1) << "xxx---------------------- end new scatter kernel cd";
 }
 
 }  // namespace phi

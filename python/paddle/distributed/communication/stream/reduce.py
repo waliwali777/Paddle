@@ -59,20 +59,26 @@ def _reduce_in_static_mode(
         'reduce',
     )
 
-    op_type = _get_reduce_op(op, "reduce")
+    # op_type = _get_reduce_op(op, "reduce")
+    op_type = 'reduce'
     ring_id = 0 if group is None else group.id
 
     helper = framework.LayerHelper(op_type, **locals())
+
+    print('xxxxxx---------- reduce.py : begin ', op_type)
+
     helper.append_op(
         type=op_type,
-        inputs={'X': [tensor]},
-        outputs={'Out': [tensor]},
+        inputs={'x': [tensor]},
+        outputs={'out': [tensor]},
         attrs={
             'ring_id': ring_id,
-            'use_calc_stream': sync_op,
+            # 'use_calc_stream': sync_op,
             'root_id': dst_rank_in_group,
+            'reduce_type': op,
         },
     )
+    print('xxxxxx---------- reduce.py : begin ', op_type)
 
 
 def reduce(

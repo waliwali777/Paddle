@@ -710,15 +710,7 @@
     param : [n, dtype]
     data_type : dtype
 
-- op : reduce
-  args : (Tensor x, int ring_id = 0, int root_id = 0, int reduce_type = 0)
-  output : Tensor(out)
-  infer_meta :
-    func : DistReduceInferMeta
-    param: [x]
-  kernel :
-    func : reduce
-    param: [x, root_id, reduce_type]
+
 
 - op : reduce_scatter
   args : (Tensor x, int ring_id = 0, int nranks = 1)

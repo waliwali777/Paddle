@@ -23,6 +23,8 @@ limitations under the License. */
 COMMON_DECLARE_bool(dynamic_static_unified_comm);
 #endif
 
+#include "glog/logging.h"
+
 namespace paddle {
 namespace operators {
 
@@ -30,6 +32,7 @@ template <typename T, typename DeviceContext>
 class CScatterOpCUDAKernel : public framework::OpKernel<T> {
  public:
   void Compute(const framework::ExecutionContext& ctx) const override {
+    VLOG(1) << "xxx---------------------- begin old scatter kernel cu";
 #if defined(PADDLE_WITH_NCCL) || defined(PADDLE_WITH_RCCL)
     auto x = ctx.Input<phi::DenseTensor>("X");
     auto out = ctx.Output<phi::DenseTensor>("Out");
@@ -158,6 +161,7 @@ class CScatterOpCUDAKernel : public framework::OpKernel<T> {
         false,
         phi::errors::Unavailable("PaddlePaddle should compile with GPU."));
 #endif
+    VLOG(1) << "xxx---------------------- end old scatter kernel cu";
   }
 };
 
