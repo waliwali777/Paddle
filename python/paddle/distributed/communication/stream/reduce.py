@@ -65,7 +65,8 @@ def _reduce_in_static_mode(
 
     helper = framework.LayerHelper(op_type, **locals())
 
-    print('xxxxxx---------- reduce.py : begin ', op_type)
+    print(f"xxxxxx---------- reduce.py : begin op: {op_type}")
+    print(f"xxxxxx---------- ring_id: {ring_id}")
 
     helper.append_op(
         type=op_type,
@@ -78,7 +79,8 @@ def _reduce_in_static_mode(
             'reduce_type': op,
         },
     )
-    print('xxxxxx---------- reduce.py : begin ', op_type)
+    print(f"xxxxxx---------- reduce.py : end op: {op_type}")
+    # print('xxxxxx---------- reduce.py : begin ', op_type)
 
 
 def reduce(

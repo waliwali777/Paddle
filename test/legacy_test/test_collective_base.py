@@ -234,9 +234,14 @@ class TestDistBase(unittest.TestCase):
         tr1_out, tr1_err = tr1_proc.communicate()
         sys.stderr.write(f'trainer 0 stderr: {tr0_err}\n')
         sys.stderr.write(f'trainer 1 stderr: {tr1_err}\n')
+        sys.stderr.write(f'tr0_out stderr: {tr0_out}\n')
+        sys.stderr.write(f'tr1_out stderr: {tr1_out}\n')
         # close trainer file
         tr0_pipe.close()
         tr1_pipe.close()
+
+        print(f"[xxxxx]tr0_out: {tr0_out}")
+        print(f"[xxxxx]tr1_out: {tr1_out}")
 
         def load_and_remove(path):
             with open(path, 'rb') as f:
