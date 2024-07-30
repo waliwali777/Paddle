@@ -81,7 +81,7 @@ def _scatter_in_static_mode(
     nranks = dist.get_world_size() if group is None else group.nranks
     rank = dist.get_rank()
 
-    input_tensor = tensor_or_tensor_list
+    updates_tensor = tensor_or_tensor_list
     if isinstance(tensor_or_tensor_list, list):
         tensor_list = tensor_or_tensor_list
         if rank == src_rank_in_group:
@@ -93,9 +93,9 @@ def _scatter_in_static_mode(
             tensor_list = [tensor for _ in range(nranks)]
         # 0-D use stack/unstack while others use concat/split
         if len(tensor_list[0].shape) == 0:
-            input_tensor = paddle.stack(tensor_list, axis=0)
+            updates_tensor = paddle.stack(tensor_list, axis=0)
         else:
-            input_tensor = paddle.concat(tensor_list, axis=0)
+            updates_tensor = paddle.concat(tensor_list, axis=0)
 
     ring_id = 0 if group is None else group.id
 
@@ -115,19 +115,30 @@ def _scatter_in_static_mode(
         'scatter',
     )
 
-    op_type = 'c_scatter'
+    op_type = 'scatter'
     helper = framework.LayerHelper(op_type, **locals())
+    out_dim = tensor.shape[0]
+    ids = []
+    for id in range(nranks):
+        # ids.append(id for _ in range(out_dim))
+        for _ in range(out_dim):
+            ids.append(id)
+
     helper.append_op(
         type=op_type,
-        inputs={'X': [input_tensor]},
-        outputs={'Out': [tensor]},
+        inputs={"X": tensor, "Ids": paddle.to_tensor(ids), "Updates": updates_tensor},
+        # inputs={'X': [input_tensor]},
+        outputs={'Out': tensor},
         attrs={
-            'ring_id': ring_id,
-            'root': src_rank_in_group,
-            'use_calc_stream': sync_op,
-            'nranks': nranks,
+            'overwrite': True,
+            # 'ring_id': ring_id,
+            # 'root': src_rank_in_group,
+            # 'use_calc_stream': sync_op,
+            # 'nranks': nranks,
         },
     )
+    if sync_op:
+        op.dist_attr.execution_stream = "default"
 
 
 def scatter(

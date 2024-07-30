@@ -27,11 +27,11 @@ class TestCollectiveScatterAPI(TestDistBase):
 
     def test_scatter_gloo(self):
         self.check_with_place(
-            "collective_scatter_api.py", "scatter", "gloo", "4"
+            "collective_scatter_api.py", "scatter", "gloo", "4", need_envs={"FLAGS_dynamic_static_unified_comm": "true"},
         )
 
     def test_scatter_nccl(self):
-        self.check_with_place("collective_scatter_api.py", "scatter", "nccl")
+        self.check_with_place("collective_scatter_api.py", "scatter", "nccl", need_envs={"FLAGS_dynamic_static_unified_comm": "true"})
 
     def test_scatter_nccl_with_new_comm(self):
         dtypes_to_test = [
@@ -48,6 +48,26 @@ class TestCollectiveScatterAPI(TestDistBase):
                 "nccl",
                 dtype=dtype,
                 need_envs={"FLAGS_dynamic_static_unified_comm": "true"},
+            )
+
+    def test_scatter_nccl_with_new_comm_pir(self):
+        dtypes_to_test = [
+            "float16",
+            "float32",
+            "float64",
+            "int32",
+            "int64",
+        ]
+        for dtype in dtypes_to_test:
+            self.check_with_place(
+                "collective_scatter_api.py",
+                "scatter",
+                "nccl",
+                dtype=dtype,
+                need_envs={
+                    "FLAGS_dynamic_static_unified_comm": "true",
+                    "FLAGS_enable_pir_in_executor": "1",
+                },
             )
 
     def test_scatter_nccl_dygraph(self):
