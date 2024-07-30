@@ -39,7 +39,7 @@ def _recv_in_dygraph(
 def _recv_in_static_mode(
     tensor, src_rank_in_group, group, sync_op, use_calc_stream
 ):
-    op_type = 'recv_v2'
+    op_type = 'p_recv'
     data_feeder.check_variable_and_dtype(
         tensor,
         'tensor',
@@ -48,17 +48,20 @@ def _recv_in_static_mode(
     )
     ring_id = 0 if group is None else group.id
     helper = framework.LayerHelper(op_type, **locals())
-    helper.append_op(
+    op = helper.append_op(
         type=op_type,
         outputs={'Out': [tensor]},
         attrs={
             'ring_id': ring_id,
             'peer': src_rank_in_group,
-            'out_shape': tensor.shape,
+            # 'out_shape': tensor.shape,
             'dtype': tensor.dtype,
-            'use_calc_stream': sync_op,
+            'dynamic_shape': False
+            # tmp dynamic_shape == False
         },
     )
+    if sync_op:
+         op.dist_attr.execution_stream = "default"
 
 
 def recv(tensor, src=0, group=None, sync_op=True, use_calc_stream=False):

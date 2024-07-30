@@ -601,17 +601,6 @@
     data_type : x
   traits : paddle::dialect::ForwardOnlyTrait
 
-- op : p_recv
-  args : (int ring_id = 0, int peer = 0, DataType dtype = DataType::FLOAT32, bool dynamic_shape = false)
-  output : Tensor(out)
-  infer_meta :
-    func : PRecvInferMeta
-    param : [peer, dtype]
-  kernel :
-    func : p_recv
-    param : [peer, dtype, dynamic_shape]
-    data_type : dtype
-
 - op : p_recv_array
   args : (int ring_id = 0, int peer = 0, DataType dtype = DataType::FLOAT32, int[] out_shape = {})
   output : Tensor(out)
@@ -621,17 +610,6 @@
   kernel :
     func : p_recv_array
     param : [peer, dtype, out_shape]
-
-- op : p_send
-  args : (Tensor x, int ring_id = 0, int peer = 0, bool dynamic_shape = false)
-  output :
-  infer_meta :
-    func : PSendInferMeta
-    param : [x, peer]
-  kernel :
-    func : p_send
-    param : [x, peer, dynamic_shape]
-    data_type : x
 
 - op : p_send_array
   args : (Tensor x, int ring_id = 0, int peer = 0, bool dynamic_shape = false)
