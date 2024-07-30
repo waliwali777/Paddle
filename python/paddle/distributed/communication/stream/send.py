@@ -55,8 +55,8 @@ def _send_in_static_mode(
         attrs={
             'ring_id': ring_id,
             'peer': dst_rank_in_group,
-            'dynamic_shape': False
-            # tmp dynamic_shape == False
+            'dynamic_shape': True
+            # tmp dynamic_shape == True
         },
     )
     if sync_op:

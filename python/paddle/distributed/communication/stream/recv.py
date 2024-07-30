@@ -56,8 +56,8 @@ def _recv_in_static_mode(
             'peer': src_rank_in_group,
             # 'out_shape': tensor.shape,
             'dtype': tensor.dtype,
-            'dynamic_shape': False
-            # tmp dynamic_shape == False
+            'dynamic_shape': True,
+            # tmp dynamic_shape == True
         },
     )
     if sync_op:

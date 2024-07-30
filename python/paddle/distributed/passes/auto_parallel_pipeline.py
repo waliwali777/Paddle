@@ -95,7 +95,7 @@ class PipelinePass(PassBase):
             # insert sync ops
             for index, op in enumerate(list(block.ops)):
                 # NOTE: pipeline might hang when dynamic_shape is True
-                if op.type in ['send_v2', 'recv_v2']:
+                if op.type in ['p_send', 'p_recv']:
                     op._set_attr("dynamic_shape", False)
                 # set send op on comm stream
                 if op.type == 'send_v2':
@@ -363,7 +363,7 @@ class PipelinePass(PassBase):
                     if (
                         is_after_send_op
                         and not is_after_recv_op
-                        and op.type == "recv_v2"
+                        and op.type == "p_recv"
                     ):
                         is_after_recv_op = True
 
@@ -372,7 +372,7 @@ class PipelinePass(PassBase):
                             # NOTE: the c_sync_calc_stream about all_gather cannot be removed
                             if (
                                 op.type == "c_sync_calc_stream"
-                                and src_block.ops[i + 1].type == "send_v2"
+                                and src_block.ops[i + 1].type == "p_send"
                             ):
                                 continue
                             if op.type == "nop":
@@ -381,7 +381,7 @@ class PipelinePass(PassBase):
                             if (
                                 op.type
                                 not in [
-                                    "recv_2",
+                                    "p_recv",
                                     "assign",
                                     "all_gather",
                                 ]
@@ -397,10 +397,10 @@ class PipelinePass(PassBase):
                                     send_vars_name.add(
                                         op.desc.input_arg_names()[0]
                                     )
-                                    if op.type == "send_v2":
+                                    if op.type == "p_send":
                                         remove_process_group(op.attr("ring_id"))
                                     continue
-                                if op.type == "send_v2":
+                                if op.type == "p_send":
                                     remove_process_group(op.attr("ring_id"))
                                     continue
                         _create_program(
@@ -409,13 +409,13 @@ class PipelinePass(PassBase):
                         continue
 
                     if is_after_send_op and is_after_recv_op:
-                        # HACKCODE: the varname of recv_v2 op, assign op should be recorded for brpc comm
+                        # HACKCODE: the varname of p_recv op, assign op should be recorded for brpc comm
                         if op.has_attr(
                             'op_namescope'
                         ) and "/auto_parallel/reshard" in op.attr(
                             'op_namescope'
                         ):
-                            if op.type in ["send_v2", "recv_v2"]:
+                            if op.type in ["p_send", "p_recv"]:
                                 remove_process_group(op.attr("ring_id"))
                             # remove the suffix of "@RESHARD"
                             var_name = op.desc.output_arg_names()[0]

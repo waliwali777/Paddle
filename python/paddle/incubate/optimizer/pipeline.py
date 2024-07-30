@@ -796,17 +796,19 @@ class PipelineOptimizer:
                         ring_id = self._pp_ring_map[pair_key]
 
                     if self.schedule_mode == 'F-then-B':  # F-then-B
-                        block._insert_op_without_sync(
+                        send_op = block._insert_op_without_sync(
                             index=index + extra_index_info['index'],
-                            type='send_v2',
+                            type='p_send',
                             inputs={'X': var},
                             attrs={
-                                self._op_device_key: prev_dev,
-                                self._op_role_key: op_role,
-                                'use_calc_stream': True,
                                 'peer': 1,
                                 'ring_id': ring_id,
+                                'dynamic_shape': True
+                                # tmp dynamic_shape == True
                             },
+                        )
+                        send_op.set_execution_stream(
+                            AutoParallelStreamType.CALC_STREAM.value
                         )
                         extra_index_info['index'] += 1
                         var_shape = list(var.shape)
@@ -817,7 +819,7 @@ class PipelineOptimizer:
                         )
                         block._insert_op_without_sync(
                             index=index + extra_index_info['index'],
-                            type='recv_v2',
+                            type='p_recv',
                             outputs={'Out': [var]},
                             attrs={
                                 'out_shape': var_shape,
@@ -889,7 +891,7 @@ class PipelineOptimizer:
                         )
                         block._insert_op_without_sync(
                             index=index + extra_index_info['index'],
-                            type='send_v2'
+                            type='p_send'
                             if not use_mp or is_param
                             else 'partial_send',
                             inputs={'X': var},
@@ -899,7 +901,7 @@ class PipelineOptimizer:
                                 'use_calc_stream': False,
                                 'ring_id': ring_id,
                                 'peer': 1,
-                                # if send_v2, num&id attr is not in op_attrs, will not insert
+                                # if p_send, num&id attr is not in op_attrs, will not insert
                                 'num': self.mp_degree,
                                 'id': self.mp_rank,
                             },
@@ -1553,7 +1555,7 @@ class PipelineOptimizer:
                 block = prog.block(0)
                 for op in block.ops:
                     if (
-                        op.type == "recv_v2"
+                        op.type == "p_recv"
                         or op.type == "create_py_reader"
                         or op.type == "read"
                         or op.type == "update_loss_scaling"
@@ -1601,18 +1603,18 @@ class PipelineOptimizer:
 
                 write_block._insert_op(
                     index=0,
-                    type='send_v2',
+                    type='p_send',
                     inputs={
                         'X': write_block.var(var_name),
                     },
                     attrs={
                         self._op_device_key: write_device,
-                        'use_calc_stream': False,
                         # A trick to make the role LRSched to avoid copy every
                         # microbatch
-                        self._op_role_key: self._op_role.LRSched,
                         'peer': read_dev_index,
                         'ring_id': ring_id,
+                        'dynamic_shape': True
+                        # tmp dynamic_shape == True
                     },
                 )
                 read_block._insert_op(

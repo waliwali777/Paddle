@@ -73,13 +73,14 @@ class SameStatusReshardFunction(ReshardFunction):
                 assert (
                     -1 not in dst_type.shape
                 ), "dynamic shape is not supported by pir-auto parallel yet."
-                recv_value = paddle._C_ops.recv_v2(
+                recv_value = paddle._C_ops.p_recv(
                     dst_type._local_shape,
                     dst_type.dtype,
                     src_local_rank,
                     comm_group.id,
                     True,
                     False,
+                    # ???????????????
                 )
                 new_op = recv_value.get_defining_op()
                 new_op.dist_attr = (
@@ -88,6 +89,9 @@ class SameStatusReshardFunction(ReshardFunction):
                     )
                 )
                 recv_value.set_type(dst_type)
+                recv_value.get_defining_op().set_execution_stream(
+                    AutoParallelStreamType.CALC_STREAM.value
+                )
                 is_send = False
                 break
 
